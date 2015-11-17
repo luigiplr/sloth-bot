@@ -11,9 +11,10 @@ config.json should resemble:
 
 ```
 {
-	"prefix": "!", // prefix to use bot commands
-    "slackToken": "xxxxxxxx", // user token for slack api requests
-    "slackAPIToken": "xxxxxx", //bot token for joining
-    "googleToken": "xxxxx" // youtube token 
+	"botname":			"sloth", 	// name of the bot in slack
+	"prefix":			"!", 		// prefix to use bot commands
+	"slackToken":		"xxxxx", 	// user token for slack api requests
+	"slackAPIToken":	"xxxxx",	//bot token for joining
+	"googleToken":		"xxxxx" 	// youtube token 
 }
 ```
