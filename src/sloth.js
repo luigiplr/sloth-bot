@@ -31,29 +31,16 @@ slackClient.on('message', message => {
         parseMsg(user, channel, text)
             .then(response => {
                 switch (response.type) {
-
                     case 'dm':
-                        slackClient.openDM(message.user, openDmData => {
-                            if (openDmData.ok) {
-
-                                response.forEach((line) => {
-                                    console.log('REPLY: ', line);
-                                    dmChannel.send(line);
-                                });
-
-                            }
+                        slackClient.openDM(message.user, dm => {
+                            if (dm.ok)
+                                response.message ? dm.send(response.message) : response.messages.forEach(dm.send);
                         });
                         break;
                     case 'channel':
-                        response.forEach(function(line) {
-                            console.log('REPLY: ', line);
-                            channel.send(line);
-                        });
+                        response.message ? channel.send(response.message) : response.messages.forEach(channel.send);
                         break;
-
                     case 'remote-channel':
-
-
                         break;
                 }
 

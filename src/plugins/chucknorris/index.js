@@ -11,12 +11,16 @@ module.exports = {
     help: {
         chucknorris: 'chucknorris someone!'
     },
-    chucknorris(user, input = 'Chuck Norris') {
+    chucknorris(user, channel, input = 'Chuck Norris') {
+        console.log(input)
         let jokes = new chuck(input);
         return new Promise((resolve, reject) => {
             try {
                 jokes.random((err, joke) => {
-                    resolve('(' + user + ') ' + _.unescape(joke));
+                    resolve({
+                        type: 'channel',
+                        message: _.unescape(joke)
+                    });
                 });
             } catch (e) {
                 reject(e);
