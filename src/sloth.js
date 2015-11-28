@@ -1,13 +1,13 @@
 import Slack from 'slack-client';
 import _ from 'lodash';
 import {
-    parse as parseMsg
-}
-from 'parseMsg';
-import {
     createInterface as readline
 }
 from 'readline';
+import {
+    parse as parseMsg
+}
+from './parseMessage';
 
 const rl = readline(process.stdin, process.stdout);
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
@@ -28,7 +28,7 @@ slackClient.on('message', () => {
     let text = message.text;
 
     if (message.type === 'message' && (text !== null) && (channel !== null)) {
-        parseMsg(user, text, channel)
+        parseMsg(user, channel, text)
             .then(response => {
                 switch (response.type) {
 
@@ -76,8 +76,7 @@ rl.on('line', cmd => {
             var channel = _.filter(slack.channels, item => {
                 return item.name === cmd.split(' ')[1];
             });
-            channel = slack.getChannelGroupOrDMByID(channel[0].id);
-            channel.send(cmd.split(' ').splice(2).join(' '));
+            slack.getChannelGroupOrDMByID(channel[0].id).send(cmd.split(' ').splice(2).join(' '));
             break;
         case 'quit':
         case 'exit':

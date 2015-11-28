@@ -6,7 +6,7 @@ module.exports = {
     alias: {
         chucknorris: this.chucknorris,
         cn: this.chucknorris
-    }
+    },
     help: {
         chucknorris: 'chucknorris someone!'
     },
