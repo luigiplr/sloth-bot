@@ -12,7 +12,6 @@ module.exports = {
         chucknorris: 'chucknorris someone!'
     },
     chucknorris(user, channel, input = 'Chuck Norris') {
-        console.log(input)
         let jokes = new chuck(input);
         return new Promise((resolve, reject) => {
             try {
