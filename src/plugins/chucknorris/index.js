@@ -9,7 +9,7 @@ module.exports = {
         command: 'chucknorris'
     }],
     help: [{
-        command: 'chucknorris',
+        command: ['help', 'h'],
         usage: 'CHUCK THE NORRIS'
     }],
     chucknorris(user, channel, input = 'Chuck Norris') {
