@@ -18,17 +18,14 @@ module.exports = {
 
             plugins.forEach(plugin => {
                 console.log(plugin.help)
-                plugin['help'].forEach(command => {
+                plugin.help.forEach(command => {
                     commands.push(command.usage)
-
                 })
             });
-
             resolve({
                 type: 'channel',
-                message: commands
+                messages: commands
             });
-            console.log(plugins)
         });
     }
 };

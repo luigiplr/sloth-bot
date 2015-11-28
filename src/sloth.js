@@ -34,11 +34,15 @@ slackClient.on('message', message => {
                     case 'dm':
                         slackClient.openDM(message.user, dm => {
                             if (dm.ok)
-                                response.message ? dm.send(response.message) : response.messages.forEach(dm.send);
+                                response.message ? dm.send(response.message) : response.messages.forEach(message => {
+                                    dm.send(message)
+                                });
                         });
                         break;
                     case 'channel':
-                        response.message ? channel.send(response.message) : response.messages.forEach(channel.send);
+                        response.message ? channel.send(response.message) : response.messages.forEach(message => {
+                            channel.send(message)
+                        });
                         break;
                     case 'remote-channel':
                         break;
