@@ -7,7 +7,7 @@ module.exports = {
     help: {
         chucknorris: 'chucknorris someone!'
     },
-    defualt(user, input = 'Chuck Norris') {
+    default(user, input = 'Chuck Norris') {
         let jokes = new chuck(input);
         return new Promise((resolve) => {
             jokes.random((err, joke) => {
