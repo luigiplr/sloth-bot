@@ -49,7 +49,7 @@ slackClient.on('message', () => {
                             console.log('REPLY: ', responseline);
                             channel.send(responseline);
                         });
-                        break:
+                        break;
 
                     case 'remote-channel':
 

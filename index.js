@@ -7,4 +7,4 @@
  * ----------------------------------------------------------------------------
  */
 
-module.exports = require('./lib/sloth.js');
+module.exports = require('./src/sloth.js');

@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         babel: {
             options: {
                 plugins: ['transform-minify-booleans'],
-                presets: ['es2015', ],
+                presets: ['es2015'],
                 compact: true
             },
             dist: {
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
                     expand: true,
                     cwd: 'src/',
                     src: ['**/*.js'],
-                    dest: 'build/js'
+                    dest: 'build/src'
                 }]
             }
         },
@@ -44,22 +44,26 @@ module.exports = function(grunt) {
             options: {
                 spawn: true
             },
-            livereload: {
-                options: {
-                    livereload: true
-                },
-                files: ['build/**/*', '!build/resources/bin/plugins/**/*']
-            },
             js: {
                 files: ['src/**/*.js'],
                 tasks: ['newer:babel']
             }
-        }
+        },
+        nodemon: {
+
+            script: 'index.js',
+            options: {
+                env: {
+                    cwd: 'build'
+                }
+            }
+
+        },
     });
 
-    grunt.registerTask('default', ['newer:babel', 'newer:copy:dev', 'watchChokidar']);
+    grunt.registerTask('default', ['newer:babel', 'newer:copy:dev', 'nodemon', 'watchChokidar']);
 
-    grunt.registerTask('run', ['watchChokidar']);
+    grunt.registerTask('run', ['nodemon', 'watchChokidar']);
 
 
     process.on('SIGINT', function() {
