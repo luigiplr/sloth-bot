@@ -63,20 +63,20 @@ slackClient.on('message', () => {
 
 });
 
-slack.on('error', error => {
+slackClient.on('error', error => {
     return console.error("Error: " + error);
 });
 
-slack.login();
+slackClient.login();
 
 
 rl.on('line', cmd => {
     switch (cmd.split(' ')[0]) {
         case 'say':
-            var channel = _.filter(slack.channels, item => {
+            var channel = _.filter(slackClient.channels, item => {
                 return item.name === cmd.split(' ')[1];
             });
-            slack.getChannelGroupOrDMByID(channel[0].id).send(cmd.split(' ').splice(2).join(' '));
+            slackClient.getChannelGroupOrDMByID(channel[0].id).send(cmd.split(' ').splice(2).join(' '));
             break;
         case 'quit':
         case 'exit':
