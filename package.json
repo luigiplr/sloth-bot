@@ -1,6 +1,6 @@
 {
     "name": "sloth-bot",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "",
     "author": {
         "name": "Luigi Poole",
@@ -14,7 +14,7 @@
     "license": "GPL-3.0",
     "dependencies": {
         "blasphemy": "0.0.2",
-        "bluebird": "^2.9.34",
+        "bluebird": "^3.0.5",
         "chuck": "0.0.4",
         "cleverbot-node": "^0.2.1",
         "codepad": "^0.1.1",
@@ -27,7 +27,7 @@
         "lodash": "^3.10.1",
         "lokijs": "^1.3.10",
         "moment": "^2.10.6",
-        "needle": "^0.10.0",
+        "needle": "^0.11.0",
         "shakespeare-insult": "^1.0.0",
         "slack-client": "^1.4.1",
         "urban": "^0.3.0",
