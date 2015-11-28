@@ -56,7 +56,13 @@ module.exports = function(grunt) {
             }
         },
         concurrent: {
-            target: {
+            compile: {
+                tasks: ['newer:copy:dev', 'newer:babel'],
+                options: {
+                    logConcurrentOutput: true
+                }
+            },
+            run: {
                 tasks: ['nodemon', 'watchChokidar'],
                 options: {
                     logConcurrentOutput: true
@@ -65,9 +71,9 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['newer:babel', 'newer:copy:dev', 'concurrent']);
+    grunt.registerTask('default', ['concurrent:compile', 'concurrent:run']);
 
-    grunt.registerTask('run', ['concurrent']);
+    grunt.registerTask('run', ['concurrent:run']);
 
 
     process.on('SIGINT', function() {
