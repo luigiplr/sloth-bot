@@ -12,16 +12,11 @@ from './utils/plugins';
 
 database();
 
-
-
 var plugins = [];
 
 findPlugins().forEach(plugin => {
     plugins.push(require('./plugins/' + plugin))
 });
-
-
-
 
 module.exports = {
     parse(user, channel, text) {
@@ -42,7 +37,7 @@ module.exports = {
             if (!plugin)
                 return reject('Command not found')
 
-            plugin[call](user, channel, context)
+            plugin[call](user, channel, context, plugins)
                 .then(resolve)
                 .catch(reject);
         });

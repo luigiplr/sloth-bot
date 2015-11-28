@@ -8,9 +8,10 @@ module.exports = {
         alias: ['cn', 'chucknorris'],
         command: 'chucknorris'
     }],
-    help: {
-        chucknorris: 'chucknorris someone!'
-    },
+    help: [{
+        command: 'chucknorris',
+        usage: 'CHUCK THE NORRIS'
+    }],
     chucknorris(user, channel, input = 'Chuck Norris') {
         return new Promise((resolve, reject) => {
             try {
