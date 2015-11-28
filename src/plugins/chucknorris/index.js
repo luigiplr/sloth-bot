@@ -1,16 +1,13 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import chuck from './util/chuck';
+import chuck from './utils/chuck';
 
 module.exports = {
-    alias: {
-        chucknorris: this.chucknorris,
-        cn: this.chucknorris
-    },
+    alias: ['chucknorris', 'cn'],
     help: {
         chucknorris: 'chucknorris someone!'
     },
-    chucknorris(user, input = 'Chuck Norris') {
+    defualt(user, input = 'Chuck Norris') {
         let jokes = new chuck(input);
         return new Promise((resolve) => {
             jokes.random((err, joke) => {

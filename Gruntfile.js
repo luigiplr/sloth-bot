@@ -52,7 +52,8 @@ module.exports = function(grunt) {
         nodemon: {
             script: 'index.js',
             options: {
-                cwd: 'build'
+                cwd: 'build',
+                delay: 500
             }
         },
         concurrent: {

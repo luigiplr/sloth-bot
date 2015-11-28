@@ -22,12 +22,12 @@ slackClient.on('open', () => {
 });
 
 
-slackClient.on('message', () => {
+slackClient.on('message', message => {
     let user = slackClient.getUserByID(message.user);
     let channel = slackClient.getChannelGroupOrDMByID(message.channel);
     let text = message.text;
 
-    if (message.type === 'message' && (text !== null) && (channel !== null)) {
+    if (message.type === 'message' && (text !== null) && (channel !== null) && (text.charAt(0) === config.prefix)) {
         parseMsg(user, channel, text)
             .then(response => {
                 switch (response.type) {
