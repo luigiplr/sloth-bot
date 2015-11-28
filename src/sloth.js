@@ -40,7 +40,6 @@ slackClient.on('message', message => {
                                 });
                             }
                         });
-                        channel = slackClient.getChannelGroupOrDMByID(message.user);
                         break;
                     case 'channel':
                         response.message ? channel.send(response.message) : response.messages.forEach(message => {
