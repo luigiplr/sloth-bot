@@ -1,11 +1,15 @@
 import path from 'path'
+import fs from 'fs';
 import Promise from 'bluebird';
 import loki from 'lokijs';
 
+var db;
 
 module.exports = {
-    init() {
-        this.db = new loki(path.normalize(path.join(process.env.APPDATA, 'Sloth-Bot', 'database.json')), {
+    init(dir = path.join(process.env.APPDATA, 'Sloth-Bot')) {
+        if (!fs.existsSync(dir))
+            fs.mkdirSync(dir);
+        db = new loki(path.join(dir, 'database.json'), {
             autoload: true,
             autosave: true
         });
@@ -13,19 +17,24 @@ module.exports = {
 
     save(Collection, data) {
 
-        if (this.db.getCollection(Collection) === null)
-            this.db.addCollection(Collection);
+        if (db.getCollection(Collection) === null)
+            db.addCollection(Collection);
 
-        Collection = this.db.getCollection(Collection);
+        Collection = db.getCollection(Collection);
         return new Promise((resolve, reject) => {
-            Collection.insert(data);
-            this.db.saveDatabase();
-            resolve(true);
+            try {
+                Collection.insert(data);
+                db.saveDatabase();
+                resolve(true);
+            } catch (e) {
+                reject(e);
+            }
+
         });
     },
 
     get(Collection, data) {
-        Collection = this.db.getCollection(Collection);
+        Collection = db.getCollection(Collection);
         return new Promise(function(resolve, reject) {
             if (Collection === null)
                 return reject('NOCOLLECTION');

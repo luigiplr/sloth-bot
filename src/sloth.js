@@ -17,7 +17,7 @@ const config = require('./../config.json');
 slackClient.on('open', () => {
     let unreads = slackClient.getUnreadCount();
 
-    console.log('Welcome to Slack. You are @', slack.self.name, 'of', slack.team.name);
+    console.log('Welcome to Slack. You are @', slackClient.self.name, 'of', slackClient.team.name);
     return console.log('You have ', unreads, ' unread ', (unreads === 1) ? 'message' : 'messages');
 });
 
