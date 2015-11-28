@@ -21,7 +21,7 @@ findPlugins().forEach(plugin => {
 module.exports = {
     parse(user, channel, text) {
         let command = text.substr(1).split(' ')[0];
-        let context = text.substr(1).split(' ').splice(1)[0] ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
+        let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
         return new Promise((resolve, reject) => {
             let call = false;
             let plugin = _.find(plugins, plugin => {

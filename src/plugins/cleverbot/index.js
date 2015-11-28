@@ -23,7 +23,7 @@ module.exports = {
                     cleverb.write(input, reply => {
                         resolve({
                             type: 'channel',
-                            message: _.unescape('Input Message: ' + input + ' | Cleverbot: ' + reply.message)
+                            message: 'Cleverbot: ' + _.unescape(reply.message)
                         });
                     });
                 });
