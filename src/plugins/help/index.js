@@ -24,7 +24,7 @@ module.exports = {
                 })
             });
             resolve({
-                type: 'channel',
+                type: 'dm',
                 messages: commands
             });
         });

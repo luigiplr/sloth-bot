@@ -33,11 +33,14 @@ slackClient.on('message', message => {
                 switch (response.type) {
                     case 'dm':
                         slackClient.openDM(message.user, dm => {
-                            if (dm.ok)
-                                response.message ? dm.send(response.message) : response.messages.forEach(message => {
-                                    dm.send(message)
+                            if (dm.ok) {
+                                channel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
+                                response.message ? channel.send(response.message) : response.messages.forEach(message => {
+                                    channel.send(message)
                                 });
+                            }
                         });
+                        channel = slackClient.getChannelGroupOrDMByID(message.user);
                         break;
                     case 'channel':
                         response.message ? channel.send(response.message) : response.messages.forEach(message => {
