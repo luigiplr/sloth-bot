@@ -4,22 +4,28 @@ import google from 'google';
 import giSearch from 'google-images';
 import YouTube from 'youtube-node';
 
-var youTube = new YouTube();
+const youTube = new YouTube();
 
 module.exports = {
     commands: [{
-        alias: ['g', 'google'], command: 'googleSearch'
+        alias: ['g', 'google'],
+        command: 'googleSearch'
     }, {
-        alias: ['gi', 'googleimage'], command: 'googleImage'
+        alias: ['gi', 'googleimage'],
+        command: 'googleImage'
     }, {
-        alias: ['yt', 'youtube'], command: 'youtubeSearch'
+        alias: ['yt', 'youtube'],
+        command: 'youtubeSearch'
     }],
     help: [{
-        command: ['g', 'google'], usage: 'google <query>'
+        command: ['g', 'google'],
+        usage: 'google <query>'
     }, {
-        command: ['gi', 'googleimage'], usage: 'googleimage <query>'
+        command: ['gi', 'googleimage'],
+        usage: 'googleimage <query>'
     }, {
-        command: ['yt', 'youtube'], usage: 'youtube <query>'
+        command: ['yt', 'youtube'],
+        usage: 'youtube <query>'
     }],
     googleSearch(user, channel, input) {
         return new Promise((resolve, reject) => {
@@ -30,7 +36,7 @@ module.exports = {
                 });
             }
             try {
-                
+
             } catch (e) {
                 reject(e);
             }
@@ -45,7 +51,7 @@ module.exports = {
                 });
             }
             try {
-               
+
             } catch (e) {
                 reject(e);
             }
