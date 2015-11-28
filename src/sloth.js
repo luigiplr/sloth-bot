@@ -36,18 +36,18 @@ slackClient.on('message', message => {
                         slackClient.openDM(message.user, openDmData => {
                             if (openDmData.ok) {
 
-                                response.forEach((responseline) => {
-                                    console.log('REPLY: ', responseline);
-                                    dmChannel.send(responseline);
+                                response.forEach((line) => {
+                                    console.log('REPLY: ', line);
+                                    dmChannel.send(line);
                                 });
 
                             }
                         });
                         break;
                     case 'channel':
-                        responsefromparse.forEach(function(responseline) {
-                            console.log('REPLY: ', responseline);
-                            channel.send(responseline);
+                        response.forEach(function(line) {
+                            console.log('REPLY: ', line);
+                            channel.send(line);
                         });
                         break;
 
@@ -58,7 +58,9 @@ slackClient.on('message', message => {
                 }
 
             })
-            .catch(console.error);
+            .catch(err => {
+                channel.send('(' + user.name + ') ' + err);
+            });
     }
 
 });

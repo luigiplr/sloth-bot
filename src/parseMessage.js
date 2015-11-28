@@ -23,20 +23,17 @@ module.exports = {
 
         let command = text.substr(1).split(' ')[0];
 
-        console.log(command);
+        let plugin = _.filter(plugins, plugin => {
+            return plugin.alias.indexOf(command) > -1;
+        })[0];
 
+        console.log(plugin);
 
         return new Promise((resolve, reject) => {
-
-
+            if (!plugin)
+                return reject('Command not found')
 
 
         });
-
-
-
-
-    },
-
-
+    }
 };
