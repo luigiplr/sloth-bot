@@ -1,4 +1,4 @@
-import Slack from 'Slack';
+import Slack from 'slack-client';
 import _ from 'lodash';
 import {
     parse as parseMsg

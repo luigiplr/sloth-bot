@@ -7,7 +7,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: '.',
-                    src: ['package.json'],
+                    src: ['package.json', 'index.js'],
                     dest: 'build/'
                 }, {
                     cwd: 'node_modules/',
@@ -50,15 +50,11 @@ module.exports = function(grunt) {
             }
         },
         nodemon: {
-
             script: 'index.js',
             options: {
-                env: {
-                    cwd: 'build'
-                }
+                cwd: 'build'
             }
-
-        },
+        }
     });
 
     grunt.registerTask('default', ['newer:babel', 'newer:copy:dev', 'nodemon', 'watchChokidar']);
