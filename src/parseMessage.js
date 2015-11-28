@@ -12,20 +12,29 @@ from './utils/plugins';
 
 database();
 
+
+
 var plugins = [];
 
 findPlugins().forEach(plugin => {
     plugins.push(require('./plugins/' + plugin))
 });
 
+
+
+
 module.exports = {
     parse(user, channel, text) {
 
         let command = text.substr(1).split(' ')[0];
 
-        let plugin = _.filter(plugins, plugin => {
-            return plugin.alias.indexOf(command) > -1;
-        })[0];
+
+        let plugin = _.find(plugins, plugin => {
+            return _.find(plugin.commands, cmd => {
+                return cmd.alias.indexOf(command) > -1;
+            });
+        });
+
 
         console.log(plugin);
 

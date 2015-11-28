@@ -18,7 +18,7 @@ slackClient.on('open', () => {
     let unreads = slackClient.getUnreadCount();
 
     console.log('Welcome to Slack. You are @', slackClient.self.name, 'of', slackClient.team.name);
-    return console.log('You have ', unreads, ' unread ', (unreads === 1) ? 'message' : 'messages');
+    return console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
 });
 
 
@@ -66,7 +66,8 @@ slackClient.on('message', message => {
 });
 
 slackClient.on('error', error => {
-    return console.error("Error: " + error);
+    if (error)
+        console.error("Error: " + error);
 });
 
 slackClient.login();
