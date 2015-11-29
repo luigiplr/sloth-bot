@@ -102,7 +102,7 @@ module.exports = {
                             if (players) {
                                 return resolve({
                                     type: 'channel',
-                                    message: '_' + app.name + '_ currently has *' + players.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '* active players'
+                                    message: 'There are currently *' + players.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '* people playing _' + app.name + '_ right now'
                                 });
                             } else {
                                 return resolve({
