@@ -27,7 +27,8 @@ slackClient.on('message', message => {
     let channel = slackClient.getChannelGroupOrDMByID(message.channel);
     let text = message.text;
 
-    if (message.type === 'message' && (text !== null) && (channel !== null) && (text.charAt(0) === config.prefix)) {
+    if (message.type === 'message' && (text !== null) && (channel !== null)) {
+        if (text.charAt(0) !== config.prefix) return false;
         parseMsg(user, channel, text)
             .then(response => {
                 switch (response.type) {
