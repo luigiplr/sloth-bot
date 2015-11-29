@@ -27,7 +27,7 @@ slackClient.on('message', message => {
     let channel = slackClient.getChannelGroupOrDMByID(message.channel);
     let text = message.text;
 
-    if (message.type === 'message' && (text !== null) && (channel !== null)) {
+    if (message.type === 'message' && text != null && channel != null) {
         if (text.charAt(0) !== config.prefix) return false;
         parseMsg(user, channel, text)
             .then(response => {
@@ -37,26 +37,24 @@ slackClient.on('message', message => {
                             if (dm.ok) {
                                 channel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                 response.message ? channel.send(response.message) : response.messages.forEach(message => {
-                                    channel.send(message)
+                                    channel.send(message);
                                 });
                             }
                         });
                         break;
                     case 'channel':
                         response.message ? channel.send(response.message) : response.messages.forEach(message => {
-                            channel.send(message)
+                            channel.send(message);
                         });
                         break;
                     case 'remote-channel':
                         break;
                 }
-
             })
             .catch(err => {
                 channel.send('(' + user.name + ') ' + err);
             });
     }
-
 });
 
 slackClient.on('error', error => {
@@ -65,7 +63,6 @@ slackClient.on('error', error => {
 });
 
 slackClient.login();
-
 
 rl.on('line', cmd => {
     switch (cmd.split(' ')[0]) {
@@ -84,7 +81,6 @@ rl.on('line', cmd => {
             console.log('You just typed: ' + cmd);
     }
 });
-
 
 process.on('uncaughtException', err => {
     console.log(err);
