@@ -7,10 +7,16 @@ module.exports = {
     commands: [{
         alias: ['sp', 'profile', 'steamprofile'],
         command: 'steamProfile'
+    }, {
+        alias: ['players'],
+        command: 'players'
     }],
     help: [{
         command: ['sp', 'profile', 'steamprofile'],
         usage: 'steamprofile <steamid/vanityid>'
+    }, {
+        command: ['players'],
+        usage: 'players <appid>'
     }],
     steamProfile(user, channel, input) {
         return new Promise((resolve, reject) => {
@@ -18,18 +24,37 @@ module.exports = {
                 return resolve({
                     type: 'channel',
                     message: 'Please specifiy a SteamID/64 or VanityURL ID'
-                })
+                });
             }
             try {
                 // 76561198035864385 or STEAM_0:1:37799328 or [U:1:75598657]
                 if (input.match(/^[0-9]+$/) || input.match(/^STEAM_([0-5]):([0-1]):([0-9]+)$/) || input.match(/^\[([a-zA-Z]):([0-5]):([0-9]+)(:[0-9]+)?\]$/)) {
-                    //GetProfileInfo
-                    //GenerateResponse
-
+                    let sid = new SteamID(input);
+                    if (sid.isValid()) {
+                        new Steam(sid.getSteamID64()).getProfileInfo().then(info => {
+                            if (info) {
+                                return resolve({
+                                    type: 'channel',
+                                    messages: generateProfileResponse(info)
+                                });
+                            } else {
+                                return resolve({
+                                    type: 'channel',
+                                    messages: 'Error retrieving profile info'
+                                });
+                            }
+                        });
+                    } else {
+                        return resolve({
+                            type: 'channel',
+                            message: 'Invalid ID'
+                        });
+                    }
                 // VanityURL ID
                 } else {
                     try {
-                        new Steam(input).getIDFromProfile().then(newID => {
+                        let steam = new Steam(input);
+                        steam.getIDFromProfile().then(newID => {
                             if (newID.error) {
                                 return resolve({
                                     type: 'channel',
@@ -37,13 +62,13 @@ module.exports = {
                                 });
                             }
                             else {
-                                new Steam(newID).getProfileInfo().then(info => {
-                                    if (info)
+                                steam.getProfileInfo(newID).then(info => {
+                                    if (info) {
                                         return resolve({
                                             type: 'channel',
                                             messages: generateProfileResponse(info)
                                         });
-                                    else {
+                                    } else {
                                         return resolve({
                                             type: 'channel',
                                             message: 'Error retrieving profile info'
@@ -55,10 +80,44 @@ module.exports = {
                     } catch (e) {
                         console.log('Error got returned');
                     }
-                    //GetIDFromProfile
-                    //GetProfileInfo
-                    //GenerateResponse
                 }
+            } catch (e) {
+                reject(e);
+            }
+        });
+    },
+    players(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input) {
+                return resolve({
+                    type: 'channel',
+                    message: 'Please enter a valid AppID'
+                });
+            }
+            try {
+                let steam = new Steam();
+                steam.getAppDetails(input).then(app => {
+                    if (app) {
+                       steam.getNumberOfCurrentPlayers(input).then(players => {
+                            if (players) {
+                                return resolve({
+                                    type: 'channel',
+                                    message: '_' + app.name + '_ currently has *' + players.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '* active players'
+                                });
+                            } else {
+                                return resolve({
+                                    type: 'channel',
+                                    message: 'Error fetching player stats for ' + app.name
+                                });
+                            }
+                        });
+                    } else {
+                        return resolve({
+                            type: 'channel',
+                            message: 'Invalid AppID'
+                        });
+                    }
+                });
             } catch (e) {
                 reject(e);
             }

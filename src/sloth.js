@@ -37,6 +37,7 @@ slackClient.on('message', message => {
                             if (dm.ok) {
                                 channel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                 response.message ? channel.send(response.message) : response.messages.forEach(message => {
+                                    console.log("DM:", message);
                                     channel.send(message);
                                 });
                             }
@@ -44,6 +45,7 @@ slackClient.on('message', message => {
                         break;
                     case 'channel':
                         response.message ? channel.send(response.message) : response.messages.forEach(message => {
+                            console.log("CHANNEL:", message);
                             channel.send(message);
                         });
                         break;
