@@ -14,21 +14,24 @@ const endpoints = {
 var Steam, appList;
 
 var getUrl = function(type, id) {
+	console.log(endpoints[type].replace('%id%', id));
     return endpoints[type].replace('%id%', id);
 };
 
 module.exports = Steam = (() => {
+	let SteamID = null;
 	function Steam(id) {
 		if (id)
-			this.SteamID = id;
+			SteamID = id;
 	}
 
 	Steam.prototype.getIDFromProfile = function() {
 		return new Promise((resolve, reject) => {
 			try {
-				needle.get(getUrl('profile', this.SteamID), (err, resp, body) => {
+				needle.get(getUrl('profile', SteamID), (err, resp, body) => {
 					if (!err) {
 						if (body.profile) {//body.profile will be returned if valid profile
+							SteamID = body.profile.steamID64;
 							resolve(body.profile.steamID64);
 						} else { //if invalid pofile body.response will contain a .error
 							resolve(body.response);
@@ -43,13 +46,13 @@ module.exports = Steam = (() => {
 		});
 	};
 
-	Steam.prototype.getProfileInfo = function(id) {
+	Steam.prototype.getProfileInfo = function() {
 		return new Promise((resolve, reject) => {
 			try {
-				needle.get(getUrl('profileSummary', id ? id : this.SteamID), (err, resp, body) => {
+				needle.get(getUrl('profileSummary', SteamID), (err, resp, body) => {
 					if (!err) {
 						let profile = body.response.players[0];
-						return this.getProfileGameInfo(id ? id : this.SteamID).then(games => {
+						return this.getProfileGameInfo().then(games => {
 							let sortedGames = games.games.sort((a, b) => {
 								return b.playtime_forever - a.playtime_forever;
 							});
@@ -72,10 +75,10 @@ module.exports = Steam = (() => {
 		});
 	};
 
-	Steam.prototype.getProfileGameInfo = function(id) {
+	Steam.prototype.getProfileGameInfo = function() {
 		return new Promise((resolve, reject) => {
 			try {
-				needle.get(getUrl('gameSummary', id), (err, resp, body) => {
+				needle.get(getUrl('gameSummary', SteamID), (err, resp, body) => {
 					if (!err)
 						return resolve(body.response);
 					else
@@ -90,15 +93,14 @@ module.exports = Steam = (() => {
 	Steam.prototype.getAppDetails = function(id) {
 		return new Promise((resolve, reject) => {
 			try {
-				needle.get(getUrl('appDetails', id), (err, resp, body) => {
-					if (!err) {
+				needle.get(getUrl('appDetails', id ? id : SteamID), (err, resp, body) => {
+					if (!err)
 						if (body[id].success)
 							return resolve(body[id].data);
 						else
 							return resolve(undefined);
-					} else {
+					else
 						return resolve(0);
-					}
 				});
 			} catch (e) {
 				reject(e);
@@ -109,15 +111,14 @@ module.exports = Steam = (() => {
 	Steam.prototype.getNumberOfCurrentPlayers = function(id) {
 		return new Promise((resolve, reject) => {
 			try {
-				needle.get(getUrl('numPlayers', id), (err, resp, body) => {
-					if (!err) {
+				needle.get(getUrl('numPlayers', id ? id : SteamID), (err, resp, body) => {
+					if (!err)
 						if (typeof body.response.player_count != 'undefined')
-						return resolve(body.response);
+							return resolve(body.response);
+						else
+							return resolve(0);
 					else
 						return resolve(0);
-					} else {
-						return resolve(0);
-					}
 				});
 			} catch (e) {
 				reject(e);

@@ -62,7 +62,7 @@ module.exports = {
                                 });
                             }
                             else {
-                                steam.getProfileInfo(newID).then(info => {
+                                steam.getProfileInfo().then(info => {
                                     if (info) {
                                         return resolve({
                                             type: 'channel',
