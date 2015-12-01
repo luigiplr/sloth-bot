@@ -79,7 +79,6 @@ module.exports = {
             try {
                 youTube.search(input, 1, (error, result) => {
                     if (error || !result.items[0].snippet)
-                        console.log(error);
                         return resolve({
                             type: 'channel',
                             message: 'No results found'
@@ -89,7 +88,7 @@ module.exports = {
                         description = result.items[0].snippet.description,
                         title = result.items[0].snippet.title;
 
-                    youTube.getById(result.items[0].id.videoId, function(error, singleresult) {
+                    youTube.getById(result.items[0].id.videoId, (error, singleresult) => {
                         if (error) {
                             resolve(error);
                         } else {
