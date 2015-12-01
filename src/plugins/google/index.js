@@ -37,10 +37,10 @@ module.exports = {
                 });
             }
             try {
-                google(input, function(err, next, link) {
+                google(input, (err, next, link) => {
                     return resolve({
                         type: 'channel',
-                        message: !err ? link[0].link + ' - ' + link[0].title + ' - ' + link[0].description : err
+                        message: !err ? link[0].href + ' - ' + link[0].title + ' - ' + link[0].description : err
                     });
                 });
             } catch (e) {
