@@ -15,13 +15,13 @@ module.exports = {
     }],
     help: [{
         command: ['quote'],
-        usage: ''
+        usage: 'quote a user <username> <quotenumber (optional)>'
     }, {
         command: ['quotes'],
-        usage: ''
+        usage: 'list all quotes for a user <username>'
     }, {
         command: ['grab'],
-        usage: ''
+        usage: 'grab a quote for a username <username>'
     }],
     grab(user, channel, input = false) {
         return new Promise((resolve, reject) => {
