@@ -25,7 +25,7 @@ module.exports = function(grunt) {
             options: {
                 plugins: ['transform-minify-booleans'],
                 presets: ['es2015'],
-                compact: true
+                compact: false
             },
             dist: {
                 files: [{
@@ -57,12 +57,6 @@ module.exports = function(grunt) {
             }
         },
         concurrent: {
-            compile: {
-                tasks: ['newer:copy:dev', 'newer:babel'],
-                options: {
-                    logConcurrentOutput: true
-                }
-            },
             run: {
                 tasks: ['nodemon', 'watchChokidar'],
                 options: {
@@ -72,7 +66,9 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['concurrent:compile', 'concurrent:run']);
+    grunt.registerTask('default', ['newer:babel', 'concurrent:run']);
+
+    grunt.registerTask('deps', ['newer:copy:dev']);
 
     grunt.registerTask('run', ['concurrent:run']);
 
