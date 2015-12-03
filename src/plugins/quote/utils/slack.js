@@ -48,7 +48,7 @@ module.exports = {
                     return resolve(total);
                 } else if (quotes[quotenum]) {
                     var date = moment(quotes[quotenum].date).format("DD-MM-YYYY");
-                    var returnstuff = '<' + user + '> ' + '(' + date + '): ' + quotes[quotenum].quote;
+                    var returnstuff = '<' + user + '> ' + quotes[quotenum].quote;
                     return resolve(this.urlify(returnstuff));
                 } else {
                     if (quotenum === 0) return resolve('No quotes found for ' + user + ', grab a quote via `' + prefix + 'grab <username>`');
