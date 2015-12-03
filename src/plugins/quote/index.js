@@ -15,7 +15,7 @@ module.exports = {
     }],
     help: [{
         command: ['quote'],
-        usage: 'quote a user <username> <quotenumber (optional)>'
+        usage: 'quote <username> <quotenumber (optional)>'
     }, {
         command: ['quotes'],
         usage: 'quotes <username>'
