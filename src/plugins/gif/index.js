@@ -21,12 +21,12 @@ module.exports = {
             if (input)
                 giphy.search({
                     q: input.replace(' ', '+'),
-                    limit: 5,
+                    limit: 10,
                     rating: 'r',
                     fmt: 'json'
                 }, (err, res) => {
                     if (res.pagination.count > 0) {
-                        let number = getRandomInt(0, 4);
+                        let number = getRandomInt(0, res.pagination.count - 1);
                         return resolve({
                             type: 'channel',
                             message: res.data[number].images.original.url
