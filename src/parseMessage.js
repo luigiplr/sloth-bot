@@ -1,16 +1,13 @@
 import _ from 'lodash';
 import path from 'path';
 import Promise from 'bluebird';
-import {
-    init as database
-}
-from './database';
+import database from './database';
 import {
     find as findPlugins
 }
 from './utils/plugins';
 
-database();
+
 
 var plugins = [];
 
