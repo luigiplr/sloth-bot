@@ -12,7 +12,7 @@ const fileExists = filePath => {
     }
 }
 
-const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], 'Sloth-Bot');
+const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot');
 
 if (!fs.existsSync(dbDir))
     fs.mkdirSync(dbDir);
