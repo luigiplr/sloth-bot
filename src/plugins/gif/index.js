@@ -26,8 +26,7 @@ module.exports = {
                     fmt: 'json'
                 }, (err, res) => {
                     if (res.pagination.count > 0) {
-                        let number = getRandomInt(0, 5);
-                        console.log(number)
+                        let number = getRandomInt(0, 4);
                         return resolve({
                             type: 'channel',
                             message: res.data[number].images.original.url
