@@ -15,6 +15,6 @@ module.exports = {
                 type: 'channel',
                 message: 'ಠ_ಠ ' + input
             });
-        }) ;
+        });
     }
 };

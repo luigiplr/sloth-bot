@@ -18,7 +18,6 @@ module.exports = {
                     message: !err ? excuse : err
                 });
             });
-            
-        }) ;
+        });
     }
 };

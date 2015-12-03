@@ -1,11 +1,10 @@
-import _ from 'lodash';
 import CleverBot, {
     prepare
 }
 from 'cleverbot-node';
 import Promise from 'bluebird';
 
-var cleverb = new CleverBot;
+const cleverb = new CleverBot;
 
 module.exports = {
     commands: [{
@@ -23,7 +22,7 @@ module.exports = {
                     cleverb.write(input, reply => {
                         resolve({
                             type: 'channel',
-                            message: 'Cleverbot: ' + _.unescape(reply.message)
+                            message: 'Cleverbot: ' + reply.message
                         });
                     });
                 });

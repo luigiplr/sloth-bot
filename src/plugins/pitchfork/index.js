@@ -18,6 +18,6 @@ module.exports = {
                     '/r/pitchforkemporium WE GOT \'EM ALL! http://i.imgur.com/LGLPjWP.png#' + Math.floor(Math.random() * 1000)
                 ]
             });
-        }) ;
+        });
     }
 };

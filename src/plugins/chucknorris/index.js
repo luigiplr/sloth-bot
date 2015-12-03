@@ -1,7 +1,5 @@
-import _ from 'lodash';
 import Promise from 'bluebird';
 import chuck from './utils/chuck';
-
 
 module.exports = {
     commands: [{
@@ -18,7 +16,7 @@ module.exports = {
                 new chuck(input).random((err, joke) => {
                     resolve({
                         type: 'channel',
-                        message: _.unescape(joke)
+                        message: joke
                     });
                 });
             } catch (e) {

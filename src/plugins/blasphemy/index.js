@@ -16,6 +16,6 @@ module.exports = {
                 type: 'channel',
                 message: blasphemer.blaspheme()
             });
-        }) ;
+        });
     }
 };

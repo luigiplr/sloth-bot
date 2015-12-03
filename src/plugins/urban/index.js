@@ -19,12 +19,11 @@ module.exports = {
     }],
     urbandictionary(user, channel, input) {
         return new Promise((resolve, reject) => {
-            if (!input) {
+            if (!input)
                 return resolve({
                     type: 'channel',
                     message: 'Specify a word pls'
                 });
-            }
             try {
                 new urban(input).first((definition) => {
                     resolve({
