@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import google from 'google';
-import giSearch from 'google-images';
+import imageScraper from 'images-scraper';
 import YouTube from 'youtube-node';
 
 const youTube = new YouTube();
@@ -14,6 +14,9 @@ module.exports = {
     }, {
         alias: ['gi', 'googleimage'],
         command: 'googleImage'
+    }, {
+        alias: ['bi', 'bingimage'],
+        command: 'bingImage'
     }, {
         alias: ['yt', 'youtube'],
         command: 'youtubeSearch'
@@ -57,10 +60,41 @@ module.exports = {
                 });
             }
             try {
-                giSearch.search(input, (err, images) => {
+                new imageScraper.Google().list({
+                    keyword: input,
+                    num: 4,
+                    detail: false,
+                    nightmare: {
+                        show: false
+                    }
+                }).then(images => {
                     return resolve({
                         type: 'channel',
-                        message: !err ? images[Math.floor(Math.random() * 4)].url + '#'+Math.floor(Math.random() * 1000) : err.toString()
+                        message:  images[Math.floor(Math.random() * 4)] + '#'+Math.floor(Math.random() * 1000)
+                    });
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
+    },
+    bingImage(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input) {
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: bingimage <query> | Returns any of the first 4 results for query'
+                });
+            }
+            try {
+                new imageScraper.Bing().list({
+                    keyword: input,
+                    num: 4,
+                    detail: false
+                }).then(images => {
+                    return resolve({
+                        type: 'channel',
+                        message:  images[Math.floor(Math.random() * 4)] + '#'+Math.floor(Math.random() * 1000)
                     });
                 });
             } catch (e) {

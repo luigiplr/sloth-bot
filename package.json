@@ -23,6 +23,7 @@
     "google": "^1.3.0",
     "google-images": "^0.1.2",
     "ideone-npm": "^1.0.6",
+    "images-scraper": "^2.0.6",
     "insultgenerator": "0.0.2",
     "lodash": "^3.10.1",
     "lokijs": "^1.3.10",
