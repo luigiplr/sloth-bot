@@ -18,13 +18,18 @@ module.exports = {
         usage: 'quote a user <username> <quotenumber (optional)>'
     }, {
         command: ['quotes'],
-        usage: 'list all quotes for a user <username>'
+        usage: 'quotes <username>'
     }, {
         command: ['grab'],
-        usage: 'grab a quote for a username <username>'
+        usage: 'grab <username>'
     }],
-    grab(user, channel, input = false) {
+    grab(user, channel, input) {
         return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: grab <username> - grabs and saves a quote from the user'
+                });
             slack.grabQuote(input, channel)
                 .then(res => {
                     resolve({
@@ -37,6 +42,11 @@ module.exports = {
     },
     quote(user, channel, input) {
         return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: quote <username> <quotenumber (optional)> - retrives and displays a users most recent or specified quote'
+                });
             slack.quote(input, input.split(' ')[1])
                 .then(res => {
                     resolve({
@@ -49,6 +59,11 @@ module.exports = {
     },
     quotes(user, channel, input) {
         return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: quotes <username> - lists all saved quotes for the user'
+                });
             slack.quote(input, 'all')
                 .then(res => {
                     resolve({

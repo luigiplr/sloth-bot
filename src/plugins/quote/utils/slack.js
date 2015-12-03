@@ -33,12 +33,14 @@ module.exports = {
         });
     },
     quote(user, quotenum = 0) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             database.get('quotes', {
                 key: 'user',
                 value: user
             }).then(quotes => {
                 if (quotenum === 'all') {
+                    if (quotes.length === 0)
+                        return reject('No quotes found for ' + user);
                     var total = ['<' + user + '> Quotes (' + quotes.length + ') :'];
                     quotes.forEach(quotenums => {
                         total.push(this.urlify(' (' + moment(quotenums.date).format("DD-MM-YYYY") + ') ' + quotenums.quote));
