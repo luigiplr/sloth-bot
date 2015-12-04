@@ -10,6 +10,9 @@ module.exports = {
     }, {
         alias: ['players'],
         command: 'players'
+    }, {
+        alias: ['app', 'game', 'steamgame'],
+        command: 'app'
     }],
     help: [{
         command: ['sp', 'profile', 'steamprofile'],
@@ -17,13 +20,16 @@ module.exports = {
     }, {
         command: ['players'],
         usage: 'players <appid>'
+    }, {
+        command: ['app', 'game', 'steamgame'],
+        usage: 'game <appid or game name>'
     }],
     steamProfile(user, channel, input) {
         return new Promise((resolve, reject) => {
             if (!input) {
                 return resolve({
-                    type: 'channel',
-                    message: 'Please specifiy a SteamID/64 or VanityURL ID'
+                    type: 'dm',
+                    message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information'
                 });
             }
             try {
@@ -90,8 +96,8 @@ module.exports = {
         return new Promise((resolve, reject) => {
             if (!input) {
                 return resolve({
-                    type: 'channel',
-                    message: 'Please enter a valid AppID'
+                    type: 'dm',
+                    message: 'Usage: players <appid> - Returns the current amount of players for the game'
                 });
             }
             try {
@@ -117,9 +123,47 @@ module.exports = {
                             message: 'Invalid AppID'
                         });
                     }
-                });
+                }).catch(reject);
             } catch (e) {
                 reject(e);
+            }
+        });
+    },
+    app(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
+                });
+            if (input.match(/^\d+$/)) {
+                new Steam(input).getAppInfo().then(game => {
+                    resolve({
+                        type: 'channel',
+                        messages: generateAppDetailsResponse(game)
+                    });
+                }).catch(reject);
+            } else {
+                let steam = new Steam(input);
+                steam.getAppIDByGameName().then(apps => {
+                    if(apps) {
+                        steam.getAppInfo().then(game => {
+                            if ((game.type != 'game' || game.type != 'dlc') && apps.length >= 2) {
+                                steam.getAppInfo(apps[1].appid).then(secondgame => {
+                                    resolve({
+                                        type: 'channel',
+                                        messages: generateAppDetailsResponse(secondgame)
+                                    });
+                                });
+                            } else {
+                                resolve({
+                                    type: 'channel',
+                                    messages: generateAppDetailsResponse(game)
+                                });
+                            }
+                        }).catch(reject);
+                    }
+                }).catch(reject);
             }
         });
     }
@@ -137,6 +181,27 @@ var generateProfileResponse = function(profile) {
         return profile.personaname + ' appears to be a private profile';
     } else {
         return 'Error fetching profile info';
+    }
+};
+
+var generateAppDetailsResponse = function(app) {
+    if (app && (app.type == 'game' || app.type == 'dlc')) {
+        let out = [
+            '*' + app.name + '* _(' + app.steam_appid + ')_'];
+        if (app.is_free)
+            out.push(
+                '*Cost:* This game is Free 2 Play, yay :)');
+        else if (app.price_overview.discount_percent > 0)
+            out.push(
+                '*Cost:* ~$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) +  '~ *$' + formatCurrency(app.price_overview.final/100, app.price_overview.currency) + '* ' + app.price_overview.discount_percent + '% OFF!!! :eyes::scream:');
+        else
+            out.push(
+                '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency));
+        out.push(
+            app.player_count ? '*Current Players:* ' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '');
+        return(out);
+    } else {
+        return ["Error: App: _" + app.name + "_ isn't a valid game or dlc"];
     }
 };
 

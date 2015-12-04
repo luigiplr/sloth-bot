@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Promise from 'bluebird';
 import needle from 'needle';
 
@@ -14,7 +13,6 @@ const endpoints = {
 var Steam, appList;
 
 var getUrl = function(type, id) {
-	console.log(endpoints[type].replace('%id%', id));
     return endpoints[type].replace('%id%', id);
 };
 
@@ -94,13 +92,13 @@ module.exports = Steam = (() => {
 		return new Promise((resolve, reject) => {
 			try {
 				needle.get(getUrl('appDetails', id ? id : SteamID), (err, resp, body) => {
-					if (!err)
+					if (!err && body)
 						if (body[id].success)
 							return resolve(body[id].data);
 						else
-							return resolve(undefined);
+							return reject('Couldn\'t fetch app details for that AppID, invalid?');
 					else
-						return resolve(0);
+						return reject('Error retrieving game details');
 				});
 			} catch (e) {
 				reject(e);
@@ -123,6 +121,33 @@ module.exports = Steam = (() => {
 			} catch (e) {
 				reject(e);
 			}
+		});
+	};
+
+	Steam.prototype.getAppIDByGameName = function(index) {
+		return new Promise((resolve, reject) => {
+			appList = require('./../../../../steamGames.json').applist.apps;
+			var apps = appList.filter(function(game) {
+				if (game.name.toUpperCase().replace('-',' ').indexOf(SteamID.toUpperCase().replace('-',' ')) >= 0)
+					return game;
+			});
+			if (apps[0] && apps.length > 0) {
+				SteamID = apps[0].appid;
+				resolve(apps);
+			} else {
+				reject("Couldn't find a game with that name");
+			}
+		});
+	};
+
+	Steam.prototype.getAppInfo = function(id) {
+		return new Promise((resolve, reject) => {
+			Promise.join(this.getAppDetails(id ? id : SteamID), this.getNumberOfCurrentPlayers(id ? id : SteamID), (info, players) => {
+				if (info && players) {
+					info.player_count = players.player_count;
+					resolve(info);
+				}
+			}).catch(reject);
 		});
 	};
 

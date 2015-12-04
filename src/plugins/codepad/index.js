@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import codepad from 'codepad';
+import _ from 'lodash';
 
 const langs = ['C','C++','D','Haskell','Lua','OCaml','PHP','Perl','Python','Ruby','Scheme','Tcl'];
 
