@@ -29,7 +29,7 @@ module.exports = {
                         let number = getRandomInt(0, res.pagination.count);
                         return resolve({
                             type: 'channel',
-                            message: res.data[number].images.original.url
+                            message: res.data[number] ? res.data[number].images.original.url : 'Error selecting a gif'
                         });
                     } else
                         resolve({
