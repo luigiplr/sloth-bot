@@ -14,14 +14,16 @@ module.exports = {
         return new Promise(resolve => {
             let commands = [];
             plugins.forEach(plugin => {
-                plugin.help.forEach(help => {
-                    let cmdalias = '';
-                    help.command.forEach(cmd => {
-                        cmdalias += config.prefix + cmd + ' ';
-                    });
-
-                    commands.push(cmdalias + '| ' + help.usage);
-                })
+                if (plugin.help && plugin.help.length > 0)
+                    plugin.help.forEach(help => {
+                        if (!help.command || !help.usage)
+                            return;
+                        let cmdalias = '';
+                        help.command.forEach(cmd => {
+                            cmdalias += config.prefix + cmd + ' ';
+                        });
+                        commands.push(cmdalias + '| ' + help.usage);
+                    })
             });
             resolve({
                 type: 'dm',
