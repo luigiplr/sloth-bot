@@ -12,11 +12,17 @@ module.exports = {
         userLevel: ['admin', 'superadmin'],
         command: 'ignore'
     }, {
+        alias: ['admins'],
+        command: 'admins'
+    }, {
         alias: ['unignore'],
         userLevel: ['admin', 'superadmin'],
         command: 'unignore'
     }],
     help: [{
+        command: ['admins'],
+        usage: 'admins - lists admins'
+    }, {
         command: ['unignore'],
         usage: 'unignore <username> - unignores a user'
     }, {
@@ -26,6 +32,14 @@ module.exports = {
         command: ['set'],
         usage: 'set <username> <level> - set users permissions level'
     }],
+    admins() {
+        return new Promise(resolve => {
+            resolve({
+                type: 'channel',
+                message: 'Admins: ' + permissions.admins.concat(permissions.superadmins).join(', ')
+            });
+        });
+    },
     unignore(user, channel, input) {
         return new Promise(resolve => {
             let username = input.split(' ')[0].toString().toLowerCase();
