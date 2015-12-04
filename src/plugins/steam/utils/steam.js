@@ -92,12 +92,13 @@ module.exports = Steam = (() => {
 		return new Promise((resolve, reject) => {
 			try {
 				needle.get(getUrl('appDetails', id ? id : SteamID), (err, resp, body) => {
-					if (!err && body)
+					if (!err && body) {
+						id = id ? id : SteamID;
 						if (body[id].success)
 							return resolve(body[id].data);
 						else
-							return reject('Couldn\'t fetch app details for that AppID, invalid?');
-					else
+							return reject('Couldn\'t fetch app details for that AppID, invalid? ' + id);
+					} else
 						return reject('Error retrieving game details');
 				});
 			} catch (e) {
@@ -124,7 +125,7 @@ module.exports = Steam = (() => {
 		});
 	};
 
-	Steam.prototype.getAppIDByGameName = function(index) {
+	Steam.prototype.getAppIDByGameName = function() {
 		return new Promise((resolve, reject) => {
 			appList = require('./../../../../steamGames.json').applist.apps;
 			var apps = appList.filter(function(game) {
