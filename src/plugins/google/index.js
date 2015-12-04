@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import google from 'google';
-import imageScraper from 'images-scraper';
 import YouTube from 'youtube-node';
 
 const youTube = new YouTube();
@@ -12,21 +11,12 @@ module.exports = {
         alias: ['g', 'google'],
         command: 'googleSearch'
     }, {
-        alias: ['gi', 'googleimage'],
-        command: 'googleImage'
-    }, {
-        alias: ['bi', 'bingimage'],
-        command: 'bingImage'
-    }, {
         alias: ['yt', 'youtube'],
         command: 'youtubeSearch'
     }],
     help: [{
         command: ['g', 'google'],
         usage: 'google <query>'
-    }, {
-        command: ['gi', 'googleimage'],
-        usage: 'googleimage <query>'
     }, {
         command: ['yt', 'youtube'],
         usage: 'youtube <query>'
@@ -44,57 +34,6 @@ module.exports = {
                     return resolve({
                         type: 'channel',
                         message: !err ? link[0].href + ' - ' + link[0].title + ' - ' + link[0].description : err
-                    });
-                });
-            } catch (e) {
-                reject(e);
-            }
-        });
-    },
-    googleImage(user, channel, input) {
-        return new Promise((resolve, reject) => {
-            if (!input) {
-                return resolve({
-                    type: 'dm',
-                    message: 'Usage: googleimage <query> | Returns any of the first 4 results for query'
-                });
-            }
-            try {
-                new imageScraper.Google().list({
-                    keyword: input,
-                    num: 4,
-                    detail: false,
-                    nightmare: {
-                        show: false
-                    }
-                }).then(images => {
-                    return resolve({
-                        type: 'channel',
-                        message:  images[Math.floor(Math.random() * 4)] + '#'+Math.floor(Math.random() * 1000)
-                    });
-                });
-            } catch (e) {
-                reject(e);
-            }
-        });
-    },
-    bingImage(user, channel, input) {
-        return new Promise((resolve, reject) => {
-            if (!input) {
-                return resolve({
-                    type: 'dm',
-                    message: 'Usage: bingimage <query> | Returns any of the first 4 results for query'
-                });
-            }
-            try {
-                new imageScraper.Bing().list({
-                    keyword: input,
-                    num: 4,
-                    detail: false
-                }).then(images => {
-                    return resolve({
-                        type: 'channel',
-                        message:  images[Math.floor(Math.random() * 4)] + '#'+Math.floor(Math.random() * 1000)
                     });
                 });
             } catch (e) {
