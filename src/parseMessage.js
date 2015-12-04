@@ -2,6 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import Promise from 'bluebird';
 import database from './database';
+import permissions from './permissions';
 import {
     find as findPlugins
 }
@@ -17,6 +18,13 @@ findPlugins().forEach(plugin => {
 
 module.exports = {
     parse(user, channel, text) {
+
+
+        let username = user.name.toString().toLowerCase();
+
+        if (!(permissions.users.indexOf(username) > -1) && !(permissions.admins.indexOf(username) > -1))
+            permissions.add(username, 'user');
+
         let command = text.substr(1).split(' ')[0];
         let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
         return new Promise((resolve, reject) => {
