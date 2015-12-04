@@ -4,33 +4,27 @@ import slack from './utils/slack';
 
 module.exports = {
     commands: [{
-        alias: ['grab'],
-        command: 'grab'
+        alias: ['kick'],
+        command: 'kick'
     }, {
-        alias: ['quote'],
-        command: 'quote'
-    }, {
-        alias: ['quotes'],
-        command: 'quotes'
+        alias: ['invite'],
+        command: 'invite'
     }],
     help: [{
-        command: ['quote'],
-        usage: 'quote <username> <quotenumber (optional)>'
+        command: ['kick'],
+        usage: 'kick <username> <reason (optional)>'
     }, {
-        command: ['quotes'],
-        usage: 'quotes <username>'
-    }, {
-        command: ['grab'],
-        usage: 'grab <username>'
+        command: ['invite'],
+        usage: 'invite <email>'
     }],
-    grab(user, channel, input) {
+    kick(user, channel, input = false) {
         return new Promise((resolve, reject) => {
             if (!input)
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: grab <username> - grabs and saves a quote from the user'
+                    message: 'Usage: kick <username> <reason (optional)> - removes user from channel'
                 });
-            slack.grabQuote(input, channel)
+            slack.kick(user, channel, input)
                 .then(res => {
                     resolve({
                         type: 'channel',
@@ -40,14 +34,14 @@ module.exports = {
                 .catch(reject);
         });
     },
-    quote(user, channel, input) {
+    invite(user, channel, input) {
         return new Promise((resolve, reject) => {
             if (!input)
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: quote <username> <quotenumber (optional)> - retrives and displays a users most recent or specified quote'
+                  message: 'Usage: invite <email> - invites a person to the slack channel'
                 });
-            slack.quote(input, input.split(' ')[1])
+            slack.invite(input)
                 .then(res => {
                     resolve({
                         type: 'channel',
@@ -57,21 +51,5 @@ module.exports = {
                 .catch(reject);
         });
     },
-    quotes(user, channel, input) {
-        return new Promise((resolve, reject) => {
-            if (!input)
-                return resolve({
-                    type: 'dm',
-                    message: 'Usage: quotes <username> - lists all saved quotes for the user'
-                });
-            slack.quote(input, 'all')
-                .then(res => {
-                    resolve({
-                        type: 'channel',
-                        messages: res
-                    });
-                })
-                .catch(reject);
-        });
-    }
+
 };
