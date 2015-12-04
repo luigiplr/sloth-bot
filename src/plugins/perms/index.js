@@ -5,25 +5,21 @@ const config = require('../../../config.json');
 module.exports = {
     commands: [{
         alias: ['set'],
+        userLevel: ['admin', 'superadmin'],
         command: 'set'
     }, {
         alias: ['ignore'],
+        userLevel: ['admin', 'superadmin'],
         command: 'ignore'
     }, {
         alias: ['unignore'],
+        userLevel: ['admin', 'superadmin'],
         command: 'unignore'
     }],
     help: [],
-    unignore(user, channel, input, plugin, userlevel) {
+    unignore(user, channel, input) {
         return new Promise(resolve => {
-            if (userlevel === 'user')
-                return resolve({
-                    type: 'channel',
-                    message: 'Insufficient Permissions'
-                });
-
             let username = input.split(' ')[0].toString().toLowerCase();
-
             if (username) {
                 permissions.add(username, 'unignore')
                 resolve({
@@ -37,16 +33,9 @@ module.exports = {
                 });
         });
     },
-    ignore(user, channel, input, plugin, userlevel) {
+    ignore(user, channel, input,) {
         return new Promise(resolve => {
-            if (userlevel === 'user')
-                return resolve({
-                    type: 'channel',
-                    message: 'Insufficient Permissions'
-                });
-
             let username = input.split(' ')[0].toString().toLowerCase();
-
             if (username) {
                 permissions.add(username, 'ignore')
                 resolve({
@@ -62,11 +51,6 @@ module.exports = {
     },
     set(user, channel, input, plugin, userlevel) {
         return new Promise(resolve => {
-            if (userlevel === 'user')
-                return resolve({
-                    type: 'channel',
-                    message: 'Insufficient Permissions'
-                });
 
             let username = input.split(' ')[0].toString().toLowerCase();
             let level = input.split(' ')[1].toString().toLowerCase();

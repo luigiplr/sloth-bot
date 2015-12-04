@@ -7,14 +7,14 @@ import database from '../../../database';
 
 
 var config = require('../../../../config.json');
-var prefix = config.prefix;
+
 
 
 
 module.exports = {
-    invite(input, user) {
+    invite(input) {
         var email = input.substr(8).split('|')[0];
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             needle.post('https://magics.slack.com/api/users.admin.invite', {
                 email: email,
                 token: config.slackToken,
@@ -22,20 +22,25 @@ module.exports = {
             }, (err, resp) => {
 
                 if (err || resp.body.error)
-                    return resolve('(' + user + ') Error: ' + (resp.body.error || err));
+                    return reject('Error: ' + (resp.body.error || err));
 
                 if (resp.body && resp.body.ok === true)
-                    resolve('(' + user + '): ' + email + ' invited successfully.');
+                    resolve(email + ' invited successfully.');
                 else
-                    resolve('(' + user + ') Error: ' + resp.body.error);
-
+                    reject('Error: ' + resp.body.error);
             });
         });
     },
-    kick(user, channel, kicker, reason) {
-        return new Promise((resolve) => {
+    kick(user, channel, input) {
+        user = input.split(' ')[0];
+        let reason = input.split(' ')[1];
+        channel = channel.id;
+
+        console.log(channel, user)
+
+        return new Promise((resolve, reject) => {
             if (user === (config.botname)) {
-                return resolve('Error: Bitch. No.');
+                return reject('Error: Bitch. No.');
             }
             this.finduser(user).then(uID => {
                 needle.post('https://magics.slack.com/api/channels.kick', {
@@ -44,8 +49,8 @@ module.exports = {
                     user: uID[0]
                 }, (err, resp) => {
                     if (err || resp.body.error)
-                        return resolve('(' + user + ') Error: ' + (resp.body.error || err));
-                    resolve('(' + kicker + ') Kicked: ' + user + ' for ' + (reason ? reason : 'no reason.'));
+                        return reject('Error: ' + (resp.body.error || err));
+                    resolve('Kicked: ' + user + ' for ' + (reason ? reason : 'no reason.'));
                 });
             });
         });
