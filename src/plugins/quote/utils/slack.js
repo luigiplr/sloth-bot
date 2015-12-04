@@ -19,20 +19,22 @@ module.exports = {
                 value: user
             }).then(quotes => {
                 if (quotenum === 'all') {
-                    if (quotes.length === 0)
-                        return reject('No quotes found for ' + user);
                     var total = ['<' + user + '> Quotes (' + quotes.length + ') :'];
-                    quotes.forEach(quotenums => {
-                        total.push(this.urlify(' (' + moment(quotenums.date).format("DD-MM-YYYY") + ') ' + quotenums.quote));
+                    quotes.forEach((quotenums, i) => {
+                        total.push(this.urlify('[' + i + '] (' + moment(quotenums.date).format("DD-MM-YYYY") + ') ' + quotenums.quote));
                     });
                     return resolve(total);
-                } else if (quotes[quotenum]) {
-                    var date = moment(quotes[quotenum].date).format("DD-MM-YYYY");
-                    var returnstuff = '<' + user + '> ' + quotes[quotenum].quote;
-                    return resolve(this.urlify(returnstuff));
                 } else {
-                    if (quotenum === 0) return resolve('No quotes found for ' + user + ', grab a quote via `' + prefix + 'grab <username>`');
-                    return resolve('I dont have quotes that far back for ' + user);
+                    let quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum);
+                    if (quotes[quoteindex]) {
+                        let returnstuff = '<' + user + '> ' + quotes[quoteindex].quote;
+                        return resolve(this.urlify(returnstuff));
+                    } else {
+                        if (quotes.length > 0)
+                            reject("I don't have quotes that far back for " + user);
+                        else
+                            reject('No quotes found for ' + user + ', grab a quote via `' + prefix + 'grab <username>`');
+                    }
                 }
             });
         });

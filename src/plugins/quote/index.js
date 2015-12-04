@@ -47,7 +47,9 @@ module.exports = {
                     type: 'dm',
                     message: 'Usage: quote <username> <quotenumber (optional)> - retrives and displays a users most recent or specified quote'
                 });
-            slack.quote(input, input.split(' ')[1])
+            let grabee = input.split(' ')[0];
+            let index = input.split(' ')[1] ? input.split(' ')[1] : undefined;
+            slack.quote(grabee, index)
                 .then(res => {
                     resolve({
                         type: 'channel',
