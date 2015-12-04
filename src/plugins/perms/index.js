@@ -16,7 +16,16 @@ module.exports = {
         userLevel: ['admin', 'superadmin'],
         command: 'unignore'
     }],
-    help: [],
+    help: [{
+        command: ['unignore'],
+        usage: 'unignore <username> - unignores a user'
+    }, {
+        command: ['ignore'],
+        usage: 'ignore <username> - have sloth ignore all commands from a user'
+    }, {
+        command: ['set'],
+        usage: 'set <username> <level> - set users permissions level'
+    }],
     unignore(user, channel, input) {
         return new Promise(resolve => {
             let username = input.split(' ')[0].toString().toLowerCase();
@@ -33,7 +42,7 @@ module.exports = {
                 });
         });
     },
-    ignore(user, channel, input,) {
+    ignore(user, channel, input) {
         return new Promise(resolve => {
             let username = input.split(' ')[0].toString().toLowerCase();
             if (username) {
