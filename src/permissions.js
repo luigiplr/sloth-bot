@@ -21,8 +21,8 @@ if (!fs.existsSync(dbDir))
 
 if (!fileExists(permsFile))
     fs.writeFileSync(permsFile, JSON.stringify({
-        users: [],
-        admins: []
+        admins: [],
+        superadmins: []
     }));
 
 
@@ -49,18 +49,19 @@ class Perms {
     constructor() {
 
         this.adminList = [];
-        this.userList = [];
+        this.superadminList = [];
         this.ignoreList = [];
 
         this.refresh();
     }
 
-    get admins() {
-        return this.adminList;
+
+    get superadmins() {
+        return this.superadminList;
     }
 
-    get users() {
-        return this.userList;
+    get admins() {
+        return this.adminList;
     }
 
     get ignored() {
@@ -69,16 +70,37 @@ class Perms {
 
     add(username, mode) {
         switch (mode) {
+            case 'superadmin':
+                if (this.adminList.indexOf(username) > -1) {
+                    this.adminList.splice(this.adminList.indexOf(username), 1);
+                }
+                this.superadminList.push(username);
+                break;
             case 'admin':
-                this.userList.splice(this.userList.indexOf(username), 1);
+                if (this.superadminList.indexOf(username) > -1) {
+                    this.superadminList.splice(this.superadminList.indexOf(username), 1);
+                }
                 this.adminList.push(username);
                 break;
             case 'user':
-                var index = this.adminList.indexOf(username);
-                if (index > -1) {
-                    this.adminList.splice(index, 1);
+                if (this.adminList.indexOf(username) > -1) {
+                    this.adminList.splice(this.adminList.indexOf(username), 1);
                 }
-                this.userList.push(username);
+                if (this.superadminList.indexOf(username) > -1) {
+                    this.superadminList.splice(this.superadminList.indexOf(username), 1);
+                }
+                break;
+            case 'ignore':
+                if (!(this.ignoreList.indexOf(username) > -1)) {
+                    this.ignoreList.push(username);
+                }
+                return true;
+                break;
+            case 'unignore':
+                if (this.ignoreList.indexOf(username) > -1) {
+                    this.ignoreList.splice(this.ignoreList.indexOf(username), 1);
+                }
+                return true;
                 break;
             default:
                 return false;
@@ -86,8 +108,8 @@ class Perms {
         console.log('Adding', username, 'as', mode);
 
         saveJson(permsFile, {
-            users: this.userList,
-            admins: this.adminList
+            admins: this.adminList,
+            superadmins: this.superadminList
         });
 
     }
@@ -95,8 +117,8 @@ class Perms {
     refresh() {
         readJson(permsFile)
             .then(json => {
-                this.userList = json.users;
                 this.adminList = json.admins;
+                this.superadminList = json.superadmins;
             })
     }
 

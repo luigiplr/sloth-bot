@@ -16,18 +16,31 @@ findPlugins().forEach(plugin => {
     plugins.push(require('./plugins/' + plugin))
 });
 
+const getUserlevel = user => {
+    if ((permissions.superadmins.indexOf(user) > -1))
+        return 'superadmin';
+    else if ((permissions.admins.indexOf(user) > -1))
+        return 'admin';
+    else
+        return 'user';
+}
+
+
+
 module.exports = {
     parse(user, channel, text) {
-
-
-        let username = user.name.toString().toLowerCase();
-
-        if (!(permissions.users.indexOf(username) > -1) && !(permissions.admins.indexOf(username) > -1))
-            permissions.add(username, 'user');
-
-        let command = text.substr(1).split(' ')[0];
-        let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
         return new Promise((resolve, reject) => {
+        	
+            let username = user.name.toString().toLowerCase();
+
+            if ((permissions.ignored.indexOf(username) > -1))
+                return resolve(false);
+
+            let userLevel = getUserlevel(username);
+
+            let command = text.substr(1).split(' ')[0];
+            let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
+
             let call = false;
             let plugin = _.find(plugins, plugin => {
                 return _.find(plugin.commands, cmd => {
@@ -42,7 +55,7 @@ module.exports = {
             if (!plugin)
                 return reject('Command not found')
 
-            plugin[call](user, channel, context, plugins)
+            plugin[call](user, channel, context, plugins, userLevel)
                 .then(resolve)
                 .catch(reject);
         });

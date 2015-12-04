@@ -31,6 +31,8 @@ slackClient.on('message', message => {
         if (text.charAt(0) !== config.prefix) return false;
         parseMsg(user, channel, text)
             .then(response => {
+                if (!response)
+                    return false;
                 switch (response.type) {
                     case 'dm':
                         slackClient.openDM(message.user, dm => {
