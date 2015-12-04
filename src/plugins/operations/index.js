@@ -16,6 +16,9 @@ module.exports = {
     help: [{
         command: ['shutdown'],
         usage: 'shutdown'
+    }, {
+        command: ['restart'],
+        usage: 'restart'
     }],
     shutdown() {
         return new Promise((resolve, reject) => {

@@ -1,5 +1,6 @@
 import Slack from 'slack-client';
 import _ from 'lodash';
+import cluster from 'cluster';
 import {
     createInterface as readline
 }
@@ -8,6 +9,12 @@ import {
     parse as parseMsg
 }
 from './parseMessage';
+
+process.on('uncaughtException', err => {
+    console.error(err);
+    cluster.fork();
+    _.delay(process.exit, 3000);
+});
 
 const rl = readline(process.stdin, process.stdout);
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
@@ -84,8 +91,4 @@ rl.on('line', cmd => {
         default:
             console.log('You just typed: ' + cmd);
     }
-});
-
-process.on('uncaughtException', err => {
-    console.log(err);
 });
