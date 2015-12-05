@@ -12,16 +12,13 @@ module.exports = {
     }],
     kickass(user, channel, input = '') {
         return new Promise((resolve, reject) => {
-
-
-            kickass.search('test', true).then((data) => {
+            kickass.search(input, true).then((data) => {
                 let result = data.results[0];
                 resolve({
                     type: 'channel',
-                    message: result.link + ' - ' + result.torrentLink + ' - ' + result.title
+                    message: result.title + ' - ' + result.link
                 });
             }).catch(reject);
-
         });
     }
 };
