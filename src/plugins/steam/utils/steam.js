@@ -25,85 +25,69 @@ module.exports = Steam = (() => {
 
 	Steam.prototype.getIDFromProfile = function() {
 		return new Promise((resolve, reject) => {
-			try {
-				needle.get(getUrl('profile', SteamID), (err, resp, body) => {
-					if (!err) {
-						if (body.profile) {//body.profile will be returned if valid profile
-							SteamID = body.profile.steamID64;
-							resolve(body.profile.steamID64);
-						} else { //if invalid pofile body.response will contain a .error
-							resolve(body.response);
-						}
-					} else {
-						resolve(0);
+			needle.get(getUrl('profile', SteamID), (err, resp, body) => {
+				if (!err && body) {
+					if (body.profile) {//body.profile will be returned if valid profile
+						SteamID = body.profile.steamID64;
+						resolve(body.profile.steamID64);
+					} else { //if invalid pofile body.response will contain a .error
+						resolve(body.response);
 					}
-				});
-			} catch (e) {
-				reject(e);
-			}
+				} else {
+					reject('Error retrieving profile ID');
+				}
+			});
 		});
 	};
 
 	Steam.prototype.getProfileInfo = function() {
 		return new Promise((resolve, reject) => {
-			try {
-				needle.get(getUrl('profileSummary', SteamID), (err, resp, body) => {
-					if (!err) {
-						let profile = body.response.players[0];
-						return this.getProfileGameInfo().then(games => {
-							let sortedGames = games.games.sort((a, b) => {
-								return b.playtime_forever - a.playtime_forever;
-							});
-							profile.totalgames = games.game_count;
-							profile.mostplayed = sortedGames[0];
-							return this.getAppDetails(sortedGames[0].appid).then(game => {
-								if (game) {
-									profile.mostplayed.name = game.name;
-									return resolve(profile);
-								}
-							});
+			needle.get(getUrl('profileSummary', SteamID), (err, resp, body) => {
+				if (!err && body) {
+					let profile = body.response.players[0];
+					return this.getProfileGameInfo().then(games => {
+						let sortedGames = games.games.sort((a, b) => {
+							return b.playtime_forever - a.playtime_forever;
 						});
-					} else {
-						return resolve(0);
-					}
-				});
-			} catch (e) {
-				reject(e);
-			}
+						profile.totalgames = games.game_count;
+						profile.mostplayed = sortedGames[0];
+						return this.getAppDetails(sortedGames[0].appid).then(game => {
+							if (game) {
+								profile.mostplayed.name = game.name;
+								resolve(profile);
+							}
+						}).catch(reject);
+					}).catch(reject);
+				} else {
+					return reject('Error retrieving profile info');
+				}
+			});
 		});
 	};
 
 	Steam.prototype.getProfileGameInfo = function() {
 		return new Promise((resolve, reject) => {
-			try {
-				needle.get(getUrl('gameSummary', SteamID), (err, resp, body) => {
-					if (!err)
-						return resolve(body.response);
-					else
-						return resolve(0);
-				});
-			} catch (e) {
-				reject(e);
-			}
+			needle.get(getUrl('gameSummary', SteamID), (err, resp, body) => {
+				if (!err && body)
+					resolve(body.response);
+				else
+					reject('Error retrieving profile game info');
+			});
 		});
 	};
 
 	Steam.prototype.getAppDetails = function(id) {
 		return new Promise((resolve, reject) => {
-			try {
-				needle.get(getUrl('appDetails', id ? id : SteamID), (err, resp, body) => {
-					if (!err && body) {
-						id = id ? id : SteamID;
-						if (body[id].success)
-							return resolve(body[id].data);
-						else
-							return reject('Couldn\'t fetch app details for that AppID, invalid? ' + id);
-					} else
-						return reject('Error retrieving game details');
-				});
-			} catch (e) {
-				reject(e);
-			}
+			needle.get(getUrl('appDetails', id ? id : SteamID), (err, resp, body) => {
+				if (!err && body) {
+					id = id ? id : SteamID;
+					if (body[id].success)
+						resolve(body[id].data);
+					else
+						reject("Couldn't fetch app details for that AppID, invalid? " + id);
+				} else
+					reject('Error retrieving game details');
+			});
 		});
 	};
 
@@ -111,13 +95,13 @@ module.exports = Steam = (() => {
 		return new Promise((resolve, reject) => {
 			try {
 				needle.get(getUrl('numPlayers', id ? id : SteamID), (err, resp, body) => {
-					if (!err)
+					if (!err && body)
 						if (typeof body.response.player_count != 'undefined')
-							return resolve(body.response);
+							resolve(body.response);
 						else
-							return resolve(0);
+							reject('Unable to view player counts for this app');
 					else
-						return resolve(0);
+						reject('Error retrieving player counts');
 				});
 			} catch (e) {
 				reject(e);
@@ -128,7 +112,7 @@ module.exports = Steam = (() => {
 	Steam.prototype.getAppIDByGameName = function() {
 		return new Promise((resolve, reject) => {
 			appList = require('./../../../../steamGames.json').applist.apps;
-			var apps = appList.filter(function(game) {
+			let apps = appList.filter(function(game) {
 				if (game.name.toUpperCase().replace('-',' ').indexOf(SteamID.toUpperCase().replace('-',' ')) >= 0)
 					return game;
 			});
