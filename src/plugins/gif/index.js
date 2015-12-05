@@ -21,15 +21,14 @@ module.exports = {
             if (input)
                 giphy.search({
                     q: input.replace(' ', '+'),
-                    limit: 10,
+                    limit: 1,
                     rating: 'r',
                     fmt: 'json'
                 }, (err, res) => {
                     if (res.pagination.count > 0) {
-                        let number = getRandomInt(0, res.pagination.count);
                         return resolve({
                             type: 'channel',
-                            message: res.data[number] ? res.data[number].images.original.url : 'Error selecting a gif'
+                            message: res.data[0] ? res.data[0].images.original.url : 'Error selecting a gif'
                         });
                     } else
                         resolve({

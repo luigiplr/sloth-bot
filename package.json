@@ -13,6 +13,7 @@
   "main": "index.js",
   "license": "GPL-3.0",
   "dependencies": {
+    "URIjs": "^1.16.1",
     "blasphemy": "0.0.2",
     "bluebird": "^3.0.5",
     "chuck": "0.0.4",
@@ -32,6 +33,7 @@
     "moment": "^2.10.6",
     "needle": "^0.11.0",
     "node-uuid": "^1.4.7",
+    "request": "^2.67.0",
     "shakespeare-insult": "^1.0.0",
     "slack-client": "^1.4.1",
     "steamid": "^0.3.1",
