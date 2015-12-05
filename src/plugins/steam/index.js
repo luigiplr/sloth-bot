@@ -173,9 +173,9 @@ var generateProfileResponse = (profile => {
             '*Total Games:* ' + profile.totalgames + ' | *Most Played:* ' + profile.mostplayed.name + ' w/ ' + formatPlaytime(profile.mostplayed.playtime_forever)
         ];
     } else if (profile && profile.communityvisibilitystate == 1) {
-        return profile.personaname + ' appears to be a private profile';
+        return [profile.personaname + ' appears to be a private profile'];
     } else {
-        return 'Error fetching profile info';
+        return ['Error fetching profile info'];
     }
 });
 
