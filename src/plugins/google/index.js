@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 import google from 'google';
 import YouTube from 'youtube-node';
+import MetaInspector from 'node-metainspector';
 
 const youTube = new YouTube();
 youTube.setKey(require('./../../../config.json').googleToken);
@@ -13,6 +14,9 @@ module.exports = {
     }, {
         alias: ['yt', 'youtube'],
         command: 'youtubeSearch'
+    }, {
+        alias: ['gi', 'googleimage'],
+        command: ['googleImage']
     }],
     help: [{
         command: ['g', 'google'],
@@ -20,7 +24,40 @@ module.exports = {
     }, {
         command: ['yt', 'youtube'],
         usage: 'youtube <query>'
+    }, {
+        command: ['gi', 'googleimage'],
+        usage: 'googleimage <query>'
     }],
+    googleImage(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input) {
+                return resolve({
+                    type: 'channel',
+                    message: 'Usage: googleimage <query> - Returns any of the first 4 images returned for query'
+                });
+            }
+            let client = new MetaInspector('https://www.google.ro/search?q=' + input.split(' ').join('+') + '&tbm=isch', { timeout: 5000 });
+            let urls = [];
+            client.on("fetch", function() {
+                client.links.relative.forEach(function(el) {
+                    if (el.startsWith('/imgres?imgurl=')) {
+                        let url = el.replace('/imgres?imgurl=','');
+                        url = url.substr(0,url.indexOf('&'));
+                        urls.push(url);
+                        console.log(url);
+                    }
+                });
+            });
+
+            client.on("error", function(err){
+                reject(err);
+            });
+            console.log("Done1");
+            client.fetch();
+
+            console.log("Done1");
+        });
+    },
     googleSearch(user, channel, input) {
         return new Promise((resolve, reject) => {
             if (!input) {

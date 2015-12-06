@@ -8,12 +8,10 @@ import {
 }
 from './utils/plugins';
 
-
-
 var plugins = [];
 
 findPlugins().forEach(plugin => {
-    plugins.push(require('./plugins/' + plugin))
+    plugins.push(require('./plugins/' + plugin));
 });
 
 const getUserlevel = user => {
@@ -23,12 +21,10 @@ const getUserlevel = user => {
         return 'admin';
     else
         return 'user';
-}
-
-
+};
 
 module.exports = {
-    parse(user, channel, text) {
+    parse(user, channel, text, slackClient) {
         return new Promise((resolve, reject) => {
 
             let username = user.name.toString().toLowerCase();
@@ -57,7 +53,7 @@ module.exports = {
             });
 
             if (!plugin)
-                return reject('Command not found')
+                return reject('Command not found');
 
             if (cmdLevel && !(cmdLevel.indexOf(userLevel) > -1))
                 return resolve({
@@ -65,7 +61,7 @@ module.exports = {
                     message: 'Insufficient Permissions'
                 });
 
-            plugin[call](user, channel, context, plugins, userLevel)
+            plugin[call](user, channel, context, slackClient, plugins, userLevel)
                 .then(resolve)
                 .catch(reject);
         });

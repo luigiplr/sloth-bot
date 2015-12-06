@@ -36,13 +36,13 @@ slackClient.on('message', message => {
 
     if (message.type === 'message' && text != null && channel != null) {
         if (text.charAt(0) !== config.prefix) return false;
-        parseMsg(user, channel, text)
+        parseMsg(user, channel, text, slackClient)
             .then(response => {
                 if (!response)
                     return false;
                 switch (response.type) {
                     case 'dm':
-                        slackClient.openDM(message.user, dm => {
+                        slackClient.openDM(response.user ? response.user.id : message.user, dm => {
                             if (dm.ok) {
                                 channel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                 response.message ? channel.send(response.message) : response.messages.forEach(message => {
