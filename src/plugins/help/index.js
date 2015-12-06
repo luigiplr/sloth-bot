@@ -13,18 +13,24 @@ module.exports = {
     default (user, channel, context, slackClient, plugins) {
         return new Promise(resolve => {
             let commands = [];
+
             plugins.forEach(plugin => {
-                if (plugin.help && plugin.help.length > 0)
+                if (plugin.help && Array.isArray(plugin.help))
+
+
                     plugin.help.forEach(help => {
-                        if (!help.command || !help.usage)
-                            return;
-                        let cmdalias = '';
-                        help.command.forEach(cmd => {
-                            cmdalias += config.prefix + cmd + ' ';
-                        });
-                        commands.push(cmdalias + '| ' + help.usage);
-                    })
+
+                    if (!help.command || !help.usage)
+                        return;
+                    
+                    let cmdalias = '';
+                    help.command.forEach(cmd => {
+                        cmdalias += config.prefix + cmd + ' ';
+                    });
+                    commands.push(cmdalias + '| ' + help.usage);
+                })
             });
+
             resolve({
                 type: 'dm',
                 messages: commands

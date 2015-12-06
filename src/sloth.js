@@ -28,7 +28,7 @@ const multiLine = (channel, input) => {
                 return reject('Error: ' + (resp.body.error || err));
 
             if (resp.body && resp.body.ok === true)
-                console.log(resp.body);
+                console.log('sent');
             else
                 reject('Error: ' + resp.body.error);
         });
@@ -72,7 +72,12 @@ slackClient.on('message', message => {
                 }
             })
             .catch(err => {
-                channel.send('(' + user.name + ') ' + err);
+                if (err) {
+                    if (typeof(err) === 'string')
+                        console.error(err);
+                    else
+                        console.error(JSON.stringify(err));
+                }
             });
     }
 });
