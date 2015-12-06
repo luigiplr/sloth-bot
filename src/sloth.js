@@ -20,7 +20,6 @@ const multiLine = (channel, input) => {
             text: input,
             channel: channel,
             username: 'sloth',
-            as_user: true,
             token: config.slackToken,
             parse: 'full'
         }, (err, resp) => {
