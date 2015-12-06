@@ -36,27 +36,48 @@ module.exports = {
                     message: 'Usage: googleimage <query> - Returns any of the first 4 images returned for query'
                 });
             }
-            let client = new MetaInspector('https://www.google.ro/search?q=' + input.split(' ').join('+') + '&tbm=isch', { timeout: 5000 });
+
+
+            let client = new MetaInspector('https://www.google.ro/search?q=' + input.split(' ').join('+') + '&tbm=isch', {
+                timeout: 5000
+            });
             let urls = [];
-            client.on("fetch", function() {
-                client.links.relative.forEach(function(el) {
+            client.on("fetch", () => {
+                client.links.relative.forEach(el => {
                     if (el.startsWith('/imgres?imgurl=')) {
-                        let url = el.replace('/imgres?imgurl=','');
-                        url = url.substr(0,url.indexOf('&'));
+                        let url = el.replace('/imgres?imgurl=', '');
+                        url = url.substr(0, url.indexOf('&'));
                         urls.push(url);
-                        console.log(url);
                     }
                 });
+
+                if (urls.length >= 4) {
+                    resolve({
+                        type: 'channel',
+                        message: urls[Math.floor(Math.random() * 4) + 1] + '#' + this.makeid()
+                    });
+                    resolve();
+                } else if (urls.length !== 0) {
+                    resolve({
+                        type: 'channel',
+                        message: urls[0] + '#' + this.makeid()
+                    });
+                }
+
             });
 
-            client.on("error", function(err){
-                reject(err);
-            });
-            console.log("Done1");
+            client.on("error", reject);
             client.fetch();
-
-            console.log("Done1");
         });
+    },
+    makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
     },
     googleSearch(user, channel, input) {
         return new Promise((resolve, reject) => {
@@ -111,8 +132,7 @@ module.exports = {
                                 length = singleresult.items[0].contentDetails.duration;
                             return resolve({
                                 type: 'channel',
-                                message: error ? error :
-                                    title + ' - length: ' + length + ' - ' + likes + ' like(s),' + dislikes + ' dislike(s) ' + percent + ' - ' + views + ' view(s) ' + channel + ' - ' + url
+                                message: error ? error : title + ' - length: ' + length + ' - ' + likes + ' like(s),' + dislikes + ' dislike(s) ' + percent + ' - ' + views + ' view(s) ' + channel + ' - ' + url
                             });
                         }
                     });
