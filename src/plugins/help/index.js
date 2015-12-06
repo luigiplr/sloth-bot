@@ -11,6 +11,9 @@ module.exports = {
         usage: 'shows help for commands'
     }],
     default (user, channel, context, plugins) {
+
+        console.log(JSON.stringify(plugins, null, 2))
+
         return new Promise(resolve => {
             let commands = [];
             plugins.forEach(plugin => {
