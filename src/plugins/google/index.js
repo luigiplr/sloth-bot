@@ -16,7 +16,7 @@ module.exports = {
         command: 'youtubeSearch'
     }, {
         alias: ['gi', 'googleimage'],
-        command: ['googleImage']
+        command: 'googleImage'
     }],
     help: [{
         command: ['g', 'google'],

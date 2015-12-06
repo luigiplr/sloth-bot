@@ -14,7 +14,7 @@ module.exports = {
             if (!input)
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: poopbomb <username> <amount || 4>| Poop bombs the user :))))'
+                    message: 'Usage: poopbomb <username> <amount || 4> - Poop bombs the user :))))'
                 });
         
             let poopee = slackClient.getUserByName(input.split(' ')[0]);
