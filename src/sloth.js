@@ -1,4 +1,5 @@
 import Slack from 'slack-client';
+import needle from 'needle'
 import _ from 'lodash';
 import {
     parse as parseMsg
@@ -11,6 +12,30 @@ process.on('uncaughtException', err => {
 
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
 const config = require('./../config.json');
+
+
+const multiLine = (channel, input) => {
+    return new Promise((resolve, reject) => {
+        needle.post('https://magics.slack.com/api/chat.postMessage', {
+            text: input,
+            channel: channel,
+            username: 'sloth',
+            as_user: true,
+            token: config.slackToken,
+            parse: 'full'
+        }, (err, resp) => {
+
+            if (err || resp.body.error)
+                return reject('Error: ' + (resp.body.error || err));
+
+            if (resp.body && resp.body.ok === true)
+                console.log(resp.body);
+            else
+                reject('Error: ' + resp.body.error);
+        });
+    });
+
+}
 
 
 slackClient.on('open', () => {
@@ -36,19 +61,12 @@ slackClient.on('message', message => {
                     case 'dm':
                         slackClient.openDM(response.user ? response.user.id : message.user, dm => {
                             if (dm.ok) {
-                                channel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
-                                response.message ? channel.send(response.message) : response.messages.forEach(message => {
-                                    console.log("DM:", message);
-                                    channel.send(message);
-                                });
+                                response.message ? multiLine(dm.channel.id, response.message) : multiLine(dm.channel.id, response.messages.join('\n'))
                             }
                         });
                         break;
                     case 'channel':
-                        response.message ? channel.send(response.message) : response.messages.forEach(message => {
-                            console.log("CHANNEL:", message);
-                            channel.send(message);
-                        });
+                        response.message ? channel.send(response.message) : multiLine(message.channel, response.messages.join('\n'))
                         break;
                     case 'remote-channel':
                         break;
