@@ -1,22 +1,14 @@
 import Slack from 'slack-client';
 import _ from 'lodash';
-import cluster from 'cluster';
-import {
-    createInterface as readline
-}
-from 'readline';
 import {
     parse as parseMsg
 }
 from './parseMessage';
 
 process.on('uncaughtException', err => {
-    console.error(err);
-    cluster.fork();
-    _.delay(process.exit, 3000);
+    console.log(err);
 });
 
-const rl = readline(process.stdin, process.stdout);
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
 const config = require('./../config.json');
 
@@ -74,21 +66,3 @@ slackClient.on('error', error => {
 });
 
 slackClient.login();
-
-rl.on('line', cmd => {
-    switch (cmd.split(' ')[0]) {
-        case 'say':
-            var channel = _.filter(slackClient.channels, item => {
-                return item.name === cmd.split(' ')[1];
-            });
-            slackClient.getChannelGroupOrDMByID(channel[0].id).send(cmd.split(' ').splice(2).join(' '));
-            break;
-        case 'quit':
-        case 'exit':
-            console.log('Killing Bot.');
-            process.exit();
-            break;
-        default:
-            console.log('You just typed: ' + cmd);
-    }
-});

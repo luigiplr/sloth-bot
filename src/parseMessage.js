@@ -29,10 +29,13 @@ module.exports = {
 
             let username = user.name.toString().toLowerCase();
 
-            if ((permissions.ignored.indexOf(username) > -1))
-                return resolve(false);
 
             let userLevel = getUserlevel(username);
+
+            if ((permissions.ignored.indexOf(username) > -1) && userLevel === 'user')
+                return resolve(false);
+
+
 
             let command = text.substr(1).split(' ')[0];
             let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
