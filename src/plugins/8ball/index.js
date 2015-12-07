@@ -4,7 +4,6 @@ import Promise from 'bluebird';
 module.exports = {
     commands: [{
         alias: ['8ball'],
-        userLevel: 'admins',
         command: 'eightball'
     }],
     help: [{
