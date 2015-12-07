@@ -51,14 +51,17 @@ module.exports = {
                 });
 
                 if (urls.length >= 4) {
-                    var url = _.unescape(urls[0] + '#' + this.makeid())
+                    var url = _.unescape(urls[0] + '#' + this.makeid()).split('%');
 
                 } else if (urls.length !== 0) {
-                    var url = _.unescape(urls[0] + '#' + this.makeid())
+                    var url = _.unescape(urls[0] + '#' + this.makeid()).split('%');
                 }
+                if (url.length > 1)
+                    url.pop();
+
                 resolve({
                     type: 'channel',
-                    message: url.split('%').pop().join('')
+                    message: url.join('')
                 });
             });
 
