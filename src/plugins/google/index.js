@@ -53,12 +53,12 @@ module.exports = {
                 if (urls.length >= 4) {
                     resolve({
                         type: 'channel',
-                        message: _.unescape(urls[Math.floor(Math.random() * 4) + 1] + '#' + this.makeid())
+                        message: _.unescape(urls[0] + '#' + this.makeid()).split('%').pop().join('')
                     });
                 } else if (urls.length !== 0) {
                     resolve({
                         type: 'channel',
-                        message: _.unescape(urls[0] + '#' + this.makeid())
+                        message: _.unescape(urls[0] + '#' + this.makeid()).split('%').pop().join('')
                     });
                 }
             });
