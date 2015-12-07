@@ -37,7 +37,6 @@ module.exports = {
                 });
             }
 
-
             let client = new MetaInspector('https://www.google.ro/search?q=' + input.split(' ').join('+') + '&tbm=isch', {
                 timeout: 5000
             });
@@ -56,14 +55,12 @@ module.exports = {
                         type: 'channel',
                         message: _.unescape(urls[Math.floor(Math.random() * 4) + 1] + '#' + this.makeid())
                     });
-                    resolve();
                 } else if (urls.length !== 0) {
                     resolve({
                         type: 'channel',
                         message: _.unescape(urls[0] + '#' + this.makeid())
                     });
                 }
-
             });
 
             client.on("error", reject);

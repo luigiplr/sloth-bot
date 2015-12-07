@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import cluster from 'cluster'
-
+import cluster from 'cluster';
 
 module.exports = {
     commands: [{

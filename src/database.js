@@ -1,8 +1,7 @@
-import path from 'path'
+import path from 'path';
 import fs from 'fs';
 import Promise from 'bluebird';
 import loki from 'lokijs';
-
 
 const fileExists = filePath => {
     try {
@@ -10,7 +9,7 @@ const fileExists = filePath => {
     } catch (err) {
         return false;
     }
-}
+};
 
 const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot');
 
@@ -19,7 +18,6 @@ if (!fs.existsSync(dbDir))
 
 if (!fileExists(path.join(dbDir, 'database.json')))
     fs.writeFileSync(path.join(dbDir, 'database.json'), '');
-
 
 class Database {
     constructor() {
@@ -61,6 +59,5 @@ class Database {
         });
     }
 }
-
 
 module.exports = new Database();

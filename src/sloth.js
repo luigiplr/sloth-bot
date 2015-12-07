@@ -1,6 +1,5 @@
 import Slack from 'slack-client';
-import needle from 'needle'
-import _ from 'lodash';
+import needle from 'needle';
 import {
     parse as parseMsg
 }
@@ -13,29 +12,25 @@ process.on('uncaughtException', err => {
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
 const config = require('./../config.json');
 
-
 const multiLine = (channel, input) => {
     return new Promise((resolve, reject) => {
         needle.post('https://magics.slack.com/api/chat.postMessage', {
             text: input,
             channel: channel,
-            username: 'sloth',
-            token: config.slackToken,
+            as_user: 'true',
+            token: config.slackAPIToken,
             parse: 'full'
         }, (err, resp) => {
 
             if (err || resp.body.error)
                 return reject('Error: ' + (resp.body.error || err));
 
-            if (resp.body && resp.body.ok === true)
-                console.log('sent');
+            if (resp.body && resp.body.ok === true) {}
             else
                 reject('Error: ' + resp.body.error);
         });
     });
-
-}
-
+};
 
 slackClient.on('open', () => {
     let unreads = slackClient.getUnreadCount();

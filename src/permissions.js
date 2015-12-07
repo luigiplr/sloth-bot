@@ -1,11 +1,9 @@
 import Promise from 'bluebird';
 import fs from 'fs';
 import path from 'path';
-import uuid from 'node-uuid';
 
 const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot');
 const permsFile = path.join(dbDir, 'permissions.json');
-
 
 const fileExists = filePath => {
     try {
@@ -13,8 +11,7 @@ const fileExists = filePath => {
     } catch (err) {
         return false;
     }
-}
-
+};
 
 if (!fs.existsSync(dbDir))
     fs.mkdirSync(dbDir);
@@ -24,7 +21,6 @@ if (!fileExists(permsFile))
         admins: [],
         superadmins: []
     }));
-
 
 const readJson = (jsonPath) => {
     return new Promise((resolve, reject) => {
@@ -44,17 +40,14 @@ const saveJson = (jsonPath, json) => {
     });
 };
 
-
 class Perms {
     constructor() {
-
         this.adminList = [];
         this.superadminList = [];
         this.ignoreList = [];
 
         this.refresh();
     }
-
 
     get superadmins() {
         return this.superadminList;
@@ -95,13 +88,11 @@ class Perms {
                     this.ignoreList.push(username);
                 }
                 return true;
-                break;
             case 'unignore':
                 if (this.ignoreList.indexOf(username) > -1) {
                     this.ignoreList.splice(this.ignoreList.indexOf(username), 1);
                 }
                 return true;
-                break;
             default:
                 return false;
         }
@@ -111,7 +102,6 @@ class Perms {
             admins: this.adminList,
             superadmins: this.superadminList
         });
-
     }
 
     refresh() {
@@ -119,14 +109,8 @@ class Perms {
             .then(json => {
                 this.adminList = json.admins;
                 this.superadminList = json.superadmins;
-            })
+            });
     }
-
-
 }
-
-
-
-
 
 module.exports = new Perms();

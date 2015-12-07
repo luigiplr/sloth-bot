@@ -1,15 +1,8 @@
 import _ from 'lodash';
-import needle from 'needle'
+import needle from 'needle';
 import Promise from 'bluebird';
-import moment from 'moment';
-import uuid from 'node-uuid';
-import database from '../../../database';
-
 
 var config = require('../../../../config.json');
-
-
-
 
 module.exports = {
     invite(input) {
@@ -35,8 +28,6 @@ module.exports = {
         user = input.split(' ')[0];
         let reason = input.split(' ')[1];
         channel = channel.id;
-
-        console.log(channel, user)
 
         return new Promise((resolve, reject) => {
             if (user === (config.botname)) {

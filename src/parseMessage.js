@@ -1,7 +1,5 @@
 import _ from 'lodash';
-import path from 'path';
 import Promise from 'bluebird';
-import database from './database';
 import permissions from './permissions';
 import {
     find as findPlugins
@@ -13,6 +11,8 @@ var plugins = [];
 findPlugins().forEach(plugin => {
     plugins.push(require('./plugins/' + plugin));
 });
+
+const config = require('./../config.json');
 
 const getUserlevel = user => {
     if ((permissions.superadmins.indexOf(user) > -1))
@@ -26,16 +26,11 @@ const getUserlevel = user => {
 module.exports = {
     parse(user, channel, text, slackClient) {
         return new Promise((resolve, reject) => {
-
             let username = user.name.toString().toLowerCase();
-
-
             let userLevel = getUserlevel(username);
 
-            if ((permissions.ignored.indexOf(username) > -1) && userLevel === 'user')
+            if (((permissions.ignored.indexOf(username) > -1) && userLevel === 'user') || user.name.toString().toLowerCase() === config.botname)
                 return resolve(false);
-
-
 
             let command = text.substr(1).split(' ')[0];
             let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
