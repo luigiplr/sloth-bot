@@ -51,16 +51,15 @@ module.exports = {
                 });
 
                 if (urls.length >= 4) {
-                    resolve({
-                        type: 'channel',
-                        message: _.unescape(urls[0] + '#' + this.makeid()).split('%').pop().join('')
-                    });
+                    var url = _.unescape(urls[0] + '#' + this.makeid())
+
                 } else if (urls.length !== 0) {
-                    resolve({
-                        type: 'channel',
-                        message: _.unescape(urls[0] + '#' + this.makeid()).split('%').pop().join('')
-                    });
+                    var url = _.unescape(urls[0] + '#' + this.makeid())
                 }
+                resolve({
+                    type: 'channel',
+                    message: url.split('%').pop().join('')
+                });
             });
 
             client.on("error", reject);
