@@ -29,6 +29,7 @@ module.exports = {
             let username = user.name.toString().toLowerCase();
             let userLevel = getUserlevel(username);
 
+            // If user is ignored and is not an admin (or if the user is the bot itself)
             if (((permissions.ignored.indexOf(username) > -1) && userLevel === 'user') || user.name.toString().toLowerCase() === config.botname)
                 return resolve(false);
 
@@ -53,7 +54,8 @@ module.exports = {
             if (!plugin)
                 return reject('Command not found');
 
-            if (cmdLevel && !(cmdLevel.indexOf(userLevel) > -1))
+            // If userLevel required and you don't match the required level or if you're an admin trying to pull shit on a superadmin
+            if (cmdLevel && (cmdLevel.indexOf(userLevel) === -1 || (userLevel === 'admin' && getUserlevel(context.split(' ')[0]) === 'superadmin')))
                 return resolve({
                     type: 'channel',
                     message: 'Insufficient Permissions'

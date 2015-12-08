@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import permissions from '../../permissions';
-const config = require('../../../config.json');
 
 module.exports = {
     commands: [{
@@ -44,7 +43,7 @@ module.exports = {
         return new Promise(resolve => {
             let username = input.split(' ')[0].toString().toLowerCase();
             if (username) {
-                permissions.add(username, 'unignore')
+                permissions.add(username, 'unignore');
                 resolve({
                     type: 'channel',
                     message: 'Unignore ' + username
@@ -60,7 +59,7 @@ module.exports = {
         return new Promise(resolve => {
             let username = input.split(' ')[0].toString().toLowerCase();
             if (username) {
-                permissions.add(username, 'ignore')
+                permissions.add(username, 'ignore');
                 resolve({
                     type: 'channel',
                     message: 'Ignoring ' + username
@@ -72,15 +71,15 @@ module.exports = {
                 });
         });
     },
-    set(user, channel, input, plugin, userlevel) {
+    set(user, channel, input, plugin, slackClient, userLevel) {
         return new Promise(resolve => {
 
             let username = input.split(' ')[0].toString().toLowerCase();
-            let level = input.split(' ')[1].toString().toLowerCase();
-            let levels = (userlevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin'];
+            let level = input.split(' ')[1].toString().toLowerCase().replace(/[s]$/, '');
+            let levels = (userLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin'];
 
-            if (username && (levels.indexOf(level) > -1)) {
-                permissions.add(username, level)
+            if (username && levels.indexOf(level) > -1) {
+                permissions.add(username, level);
                 resolve({
                     type: 'channel',
                     message: 'Set ' + username + ' to ' + level

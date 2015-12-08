@@ -30,6 +30,7 @@ module.exports = {
                 return resolve({
                     type: 'dm',
                     user: poopee,
+                    multiLine: true,
                     messages: p.concat(o, oo, pp, poop)
                 });
             } else {

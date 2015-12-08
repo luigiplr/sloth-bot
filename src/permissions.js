@@ -67,13 +67,17 @@ class Perms {
                 if (this.adminList.indexOf(username) > -1) {
                     this.adminList.splice(this.adminList.indexOf(username), 1);
                 }
-                this.superadminList.push(username);
+                if (this.superadminList.indexOf(username) === -1) {
+                    this.superadminList.push(username);
+                }
                 break;
             case 'admin':
                 if (this.superadminList.indexOf(username) > -1) {
                     this.superadminList.splice(this.superadminList.indexOf(username), 1);
                 }
-                this.adminList.push(username);
+                if (this.adminList.indexOf(username) === -1) {
+                    this.adminList.push(username);
+                }
                 break;
             case 'user':
                 if (this.adminList.indexOf(username) > -1) {
@@ -84,7 +88,7 @@ class Perms {
                 }
                 break;
             case 'ignore':
-                if (!(this.ignoreList.indexOf(username) > -1)) {
+                if (this.ignoreList.indexOf(username) === -1) {
                     this.ignoreList.push(username);
                 }
                 return true;

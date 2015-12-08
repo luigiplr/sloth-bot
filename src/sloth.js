@@ -25,8 +25,7 @@ const multiLine = (channel, input) => {
             if (err || resp.body.error)
                 return reject('Error: ' + (resp.body.error || err));
 
-            if (resp.body && resp.body.ok === true) {}
-            else
+            if (!resp.body && resp.body.ok !== true)
                 reject('Error: ' + resp.body.error);
         });
     });
@@ -45,7 +44,7 @@ slackClient.on('message', message => {
     let channel = slackClient.getChannelGroupOrDMByID(message.channel);
     let text = message.text;
 
-    if (message.type === 'message' && text != null && channel != null) {
+    if (message.type === 'message' && text && channel) {
         if (text.charAt(0) !== config.prefix) return false;
         parseMsg(user, channel, text, slackClient)
             .then(response => {
@@ -55,7 +54,14 @@ slackClient.on('message', message => {
                     case 'dm':
                         slackClient.openDM(response.user ? response.user.id : message.user, dm => {
                             if (dm.ok) {
-                                response.message ? multiLine(dm.channel.id, response.message) : multiLine(dm.channel.id, response.messages.join('\n'))
+                                if (!response.multiLine)
+                                    response.message ? multiLine(dm.channel.id, response.message) : multiLine(dm.channel.id, response.messages.join('\n'));
+                                else {
+                                    let userChannel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
+                                    response.message ? userChannel.send(response.message) : response.messages.forEach(message => {
+                                        userChannel.send(message);
+                                    });
+                                }
                             }
                         });
                         break;
@@ -65,13 +71,12 @@ slackClient.on('message', message => {
                     case 'remote-channel':
                         break;
                 }
-            })
-            .catch(err => {
+            }).catch(err => {
                 if (err) {
                     if (typeof(err) === 'string')
-                        console.error(err);
+                        console.error('Error:', err);
                     else
-                        console.error(JSON.stringify(err));
+                        console.error('Error:', JSON.stringify(err));
                 }
             });
     }
