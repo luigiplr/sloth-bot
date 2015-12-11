@@ -56,7 +56,7 @@ slackClient.on('message', message => {
                         slackClient.openDM(response.user ? response.user.id : message.user, dm => {
                             if (dm.ok) {
                                 if (!response.multiLine)
-                                    response.message ? multiLine(dm.channel.id, response.message) : multiLine(dm.channel.id, response.messages.join('\n'));
+                                    response.message ? channel.send(response.message) : multiLine(dm.channel.id, response.messages.join('\n'));
                                 else {
                                     let userChannel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                     response.message ? userChannel.send(response.message) : response.messages.forEach(message => {
