@@ -1,4 +1,5 @@
 import Slack from 'slack-client';
+import Promise from 'bluebird';
 import needle from 'needle';
 import {
     parse as parseMsg
