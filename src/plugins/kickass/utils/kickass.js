@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import request from 'request';
-var URI = require('URIjs');
+var URI = require('urijs');
 
 var url = URI('https://kat.cr'),
     mirror = URI('http://kickassunblock.net');
