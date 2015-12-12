@@ -115,7 +115,7 @@ module.exports = Steam = (() => {
 		return new Promise((resolve, reject) => {
 			appList = require('./../../../../steamGames.json').applist.apps;
 			let apps = appList.filter(function(game) {
-				if (game.name.toUpperCase().replace('-',' ').indexOf(SteamID.toUpperCase().replace('-',' ')) >= 0)
+				if (game.name.toUpperCase().replace('-',' ').replace('™', '').replace('©', '').replace('®', '').indexOf(SteamID.toUpperCase().replace('-',' ').replace('™', '').replace('©', '').replace('®', '')) >= 0)
 					return game;
 			});
 			if (apps[0] && apps.length > 0) {
