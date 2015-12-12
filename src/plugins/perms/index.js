@@ -10,32 +10,46 @@ module.exports = {
         alias: ['ignore'],
         userLevel: ['admin', 'superadmin'],
         command: 'ignore'
+    },  {
+        alias: ['unignore'],
+        userLevel: ['admin', 'superadmin'],
+        command: 'unignore'
     }, {
         alias: ['admins'],
         command: 'admins'
     }, {
-        alias: ['unignore'],
-        userLevel: ['admin', 'superadmin'],
-        command: 'unignore'
+        alias: ['ignored'],
+        command: 'ignored'
     }],
     help: [{
-        command: ['admins'],
-        usage: 'admins - lists admins'
+        command: ['set'],
+        usage: 'set <username> <level> - set users permissions level'
+    }, {
+        command: ['ignore'],
+        usage: 'ignore <username> - have bot ignore all commands from a user'
     }, {
         command: ['unignore'],
         usage: 'unignore <username> - unignores a user'
     }, {
-        command: ['ignore'],
-        usage: 'ignore <username> - have sloth ignore all commands from a user'
+        command: ['admins'],
+        usage: 'admins - lists admins'
     }, {
-        command: ['set'],
-        usage: 'set <username> <level> - set users permissions level'
+        command: ['ignored'],
+        usage: 'ignored - lists ignored users'
     }],
     admins() {
         return new Promise(resolve => {
             resolve({
                 type: 'channel',
                 message: 'Admins: ' + permissions.admins.concat(permissions.superadmins).join(', ')
+            });
+        });
+    },
+    ignored() {
+        return new Promise(resolve => {
+            resolve({
+                type: 'channel',
+                message: permissions.ignored[0] ? 'Currently ignored: ' + permissions.ignored.join(', ') : 'No ignored users'
             });
         });
     },
@@ -46,7 +60,7 @@ module.exports = {
                 permissions.add(username, 'unignore');
                 resolve({
                     type: 'channel',
-                    message: 'Unignore ' + username
+                    message: 'Unignoreing ' + username
                 });
             } else
                 resolve({

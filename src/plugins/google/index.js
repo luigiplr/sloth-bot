@@ -32,7 +32,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             if (!input) {
                 return resolve({
-                    type: 'channel',
+                    type: 'dm',
                     message: 'Usage: googleimage <query> - Returns any of the first 4 images returned for query'
                 });
             }
