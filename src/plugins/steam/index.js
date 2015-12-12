@@ -195,6 +195,7 @@ var generateAppDetailsResponse = (app => {
                 app.price_overview ? '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) : '*Cost:* No price set');
         out.push(
             app.release_date.coming_soon ? '*Release Date:* ' + app.release_date.date : '*Released:* ' + app.release_date.date,
+            app.metacritic ? '*Metacritic Score:* ' + app.metacritic.score : '',
             app.player_count ? '*Current Players:* ' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
             '<http://store.steampowered.com/app/' + app.steam_appid + '/>');
         return(out);
