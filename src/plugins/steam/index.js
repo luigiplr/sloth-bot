@@ -190,15 +190,15 @@ var generateAppDetailsResponse = (app => {
         else if (app.price_overview && app.price_overview.discount_percent > 0)
             out.push(
                 '*Cost:* ~$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) +  '~ *$' + formatCurrency(app.price_overview.final/100, app.price_overview.currency) + '* ' + app.price_overview.discount_percent + '% OFF!!! :eyes::scream:');
-        else
+        else if (app.price_overview)
             out.push(
-                app.price_overview ? '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) : '*Cost:* No price set');
+                '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency));
         out.push(
             app.release_date.coming_soon ? '*Release Date:* ' + app.release_date.date : '*Released:* ' + app.release_date.date,
             app.metacritic ? '*Metacritic Score:* ' + app.metacritic.score : '',
             app.player_count ? '*Current Players:* ' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
             '<http://store.steampowered.com/app/' + app.steam_appid + '/>');
-        return(out);
+        return(out.filter(Boolean));
     } else {
         return ["Error: App: _" + app.name + "_ isn't a valid game or dlc"];
     }
