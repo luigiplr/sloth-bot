@@ -4,6 +4,10 @@ import google from 'google';
 import YouTube from 'youtube-node';
 import MetaInspector from 'node-metainspector';
 
+const stringStartsWith = ((string, prefix) => {
+    return string.slice(0, prefix.length) == prefix;
+});
+
 const youTube = new YouTube();
 youTube.setKey(require('./../../../config.json').googleToken);
 
@@ -43,7 +47,7 @@ module.exports = {
             let urls = [];
             client.on("fetch", () => {
                 client.links.relative.forEach(el => {
-                    if (el.startsWith('/imgres?imgurl=')) {
+                    if (stringStartsWith(el, '/imgres?imgurl=')) {
                         let url = el.replace('/imgres?imgurl=', '');
                         url = url.substr(0, url.indexOf('&'));
                         urls.push(url);
