@@ -68,6 +68,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', ['newer:babel', 'concurrent:run']);
 
+    grunt.registerTask('install', ['newer:copy:dev', 'newer:babel']);
+
     grunt.registerTask('deps', ['newer:copy:dev']);
 
     grunt.registerTask('run', ['concurrent:run']);
