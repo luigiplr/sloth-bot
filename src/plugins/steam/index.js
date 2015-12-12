@@ -187,15 +187,15 @@ var generateAppDetailsResponse = (app => {
         if (app.is_free)
             out.push(
                 '*Cost:* This game is Free 2 Play, yay :)');
-        else if (app.price_overview.discount_percent > 0)
+        else if (app.price_overview && app.price_overview.discount_percent > 0)
             out.push(
                 '*Cost:* ~$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) +  '~ *$' + formatCurrency(app.price_overview.final/100, app.price_overview.currency) + '* ' + app.price_overview.discount_percent + '% OFF!!! :eyes::scream:');
         else
             out.push(
-                '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency));
+                app.price_overview ? '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) : '*Cost:* No price set');
         out.push(
-            app.player_count ? '*Current Players:* ' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '');
-        out.push(
+            app.release_date.coming_soon ? '*Release Date:* ' + app.release_date.date : '*Released:* ' + app.release_date.date,
+            app.player_count ? '*Current Players:* ' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
             '<http://store.steampowered.com/app/' + app.steam_appid + '/>');
         return(out);
     } else {

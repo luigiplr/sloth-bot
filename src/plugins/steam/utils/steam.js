@@ -8,7 +8,7 @@ const endpoints = {
 	profileSummary: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + token + '&steamids=%id%',
 	miniProfile: 'http://steamcommunity.com/miniprofile/%id%',
 	gameSummary: 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=' + token + '&steamid=%id%&include_played_free_games=1',
-	appDetails: 'http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic,price_overview',
+	appDetails: 'http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic,price_overview,release_date,metacritic',
 	numPlayers: 'http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%id%'
 };
 
@@ -151,7 +151,7 @@ module.exports = Steam = (() => {
 	Steam.prototype.getAppInfo = function(id) {
 		return new Promise((resolve, reject) => {
 			Promise.join(this.getAppDetails(id ? id : SteamID), this.getNumberOfCurrentPlayers(id ? id : SteamID), (info, players) => {
-				if (info && players) {
+				if (info) {
 					info.player_count = players.player_count;
 					resolve(info);
 				}
