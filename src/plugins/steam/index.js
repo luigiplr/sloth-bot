@@ -135,7 +135,6 @@ module.exports = {
                 new Steam(input).getAppInfo().then(game => {
                     resolve({
                         type: 'channel',
-                        parse: 'none',
                         messages: generateAppDetailsResponse(game)
                     });
                 }).catch(reject);
@@ -148,14 +147,12 @@ module.exports = {
                                 steam.getAppInfo(apps[1].appid).then(secondgame => {
                                     resolve({
                                         type: 'channel',
-                                        parse: 'none',
                                         messages: generateAppDetailsResponse(secondgame)
                                     });
                                 }).catch(reject);
                             } else {
                                 resolve({
                                     type: 'channel',
-                                    parse: 'none',
                                     messages: generateAppDetailsResponse(game)
                                 });
                             }
