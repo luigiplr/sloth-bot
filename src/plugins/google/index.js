@@ -37,7 +37,7 @@ module.exports = {
             if (!input) {
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: googleimage <query> - Returns any of the first 4 images returned for query'
+                    message: 'Usage: googleimage <query> - Returns any of the first 3 images returned for query'
                 });
             }
 
@@ -54,8 +54,8 @@ module.exports = {
                     }
                 });
 
-                if (urls.length >= 4) {
-                    var url = _.unescape(urls[0] + '#' + this.makeid()).split('%');
+                if (urls.length >= 3) {
+                    var url = _.unescape(urls[Math.floor(Math.random() * 3)] + '#' + this.makeid()).split('%');
 
                 } else if (urls.length !== 0) {
                     var url = _.unescape(urls[0] + '#' + this.makeid()).split('%');
