@@ -167,7 +167,8 @@ module.exports = {
 var generateProfileResponse = (profile => {
     if (profile && profile.communityvisibilitystate !== 1) {
         return [
-            profile.realname ? ('*Profile Name:* ' + profile.personaname + ' ('+ profile.realname + ')') : ('Profile Name: ' + profile.personaname),
+            '*Profile Name:* ' + profile.personaname + (profile.realname ? ' ('+ profile.realname + ')' : ''),
+            '*Level:* ' + profile.user_level,
             profile.gameextrainfo ? ('*Status:* In Game ' + profile.gameextrainfo + ' _(' + profile.gameid + ')_') : '*Status:* ' + getPersonaState(profile.personastate),
             '*Date Created:* ' + new Date(profile.timecreated * 1000).toGMTString(),
             '*Total Games:* ' + profile.totalgames + ' | *Most Played:* ' + profile.mostplayed.name + ' w/ ' + formatPlaytime(profile.mostplayed.playtime_forever)

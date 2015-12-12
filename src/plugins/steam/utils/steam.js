@@ -1,10 +1,12 @@
 import Promise from 'bluebird';
 import needle from 'needle';
+import cheerio from 'cheerio';
 
 const token = require('./../../../../config.json').steamAPIToken;
 const endpoints = {
 	profile: 'http://steamcommunity.com/id/%id%/?xml=1',
 	profileSummary: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + token + '&steamids=%id%',
+	miniProfile: 'http://steamcommunity.com/miniprofile/%id%',
 	gameSummary: 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=' + token + '&steamid=%id%&include_played_free_games=1',
 	appDetails: 'http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic,price_overview',
 	numPlayers: 'http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%id%'
@@ -45,6 +47,9 @@ module.exports = Steam = (() => {
 			needle.get(getUrl('profileSummary', SteamID), (err, resp, body) => {
 				if (!err && body) {
 					let profile = body.response.players[0];
+					this.getUserLevel().then(level => {
+						profile.user_level = level;
+					});
 					return this.getProfileGameInfo().then(games => {
 						let sortedGames = games.games.sort((a, b) => {
 							return b.playtime_forever - a.playtime_forever;
@@ -60,6 +65,22 @@ module.exports = Steam = (() => {
 					}).catch(reject);
 				} else {
 					return reject('Error retrieving profile info');
+				}
+			});
+		});
+	};
+
+	Steam.prototype.getUserLevel = function() {
+		return new Promise((resolve, reject) => {
+			// Hacky way to get the AccountID from ID64
+			let accountID = SteamID.substr(3) - 61197960265728;
+			needle.get(getUrl('miniProfile', accountID), (err, resp, body) => {
+				if (!err) {
+					let $ = cheerio.load(body);
+					let level = $('.friendPlayerLevelNum').text();
+					resolve(level);
+				} else {
+					resolve(0);
 				}
 			});
 		});
