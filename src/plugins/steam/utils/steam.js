@@ -98,8 +98,10 @@ module.exports = Steam = (() => {
 					if (!err && body)
 						if (typeof body.response.player_count != 'undefined')
 							resolve(body.response);
+						else if (id)
+							resolve(0);
 						else
-							reject('Unable to view player counts for this app');
+							resolve('Unable to view player counts for this app');
 					else
 						reject('Error retrieving player counts');
 				});

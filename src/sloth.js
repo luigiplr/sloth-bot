@@ -74,10 +74,13 @@ slackClient.on('message', message => {
                 }
             }).catch(err => {
                 if (err) {
-                    if (typeof(err) === 'string')
+                    if (typeof(err) === 'string') {
                         console.error('Error:', err);
-                    else
+                        channel.send(err);
+                    } else {
                         console.error('Error:', JSON.stringify(err));
+                        channel.send(JSON.stringify(err));
+                    }
                 }
             });
     }
