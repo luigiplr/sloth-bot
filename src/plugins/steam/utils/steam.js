@@ -9,7 +9,8 @@ const endpoints = {
 	miniProfile: 'http://steamcommunity.com/miniprofile/%id%',
 	gameSummary: 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=' + token + '&steamid=%id%&include_played_free_games=1',
 	appDetails: 'http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic,price_overview,release_date,metacritic',
-	numPlayers: 'http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%id%'
+	numPlayers: 'http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%id%',
+	userBans: 'http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=' + token + '&steamids=%id%'
 };
 
 var Steam, appList;
@@ -50,6 +51,9 @@ module.exports = Steam = (() => {
 					this.getUserLevel().then(level => {
 						profile.user_level = level;
 					});
+					this.getUserBans().then(bans => {
+						profile.bans = bans;
+					});
 					return this.getProfileGameInfo().then(games => {
 						let sortedGames = games.games.sort((a, b) => {
 							return b.playtime_forever - a.playtime_forever;
@@ -79,6 +83,18 @@ module.exports = Steam = (() => {
 					let $ = cheerio.load(body);
 					let level = $('.friendPlayerLevelNum').text();
 					resolve(level);
+				} else {
+					resolve(0);
+				}
+			});
+		});
+	};
+
+	Steam.prototype.getUserBans = function() {
+		return new Promise((resolve, reject) => {
+			needle.get(getUrl('userBans', SteamID), (err, resp, body) => {
+				if (!err && body.players[0]) {
+					resolve(body.players[0]);
 				} else {
 					resolve(0);
 				}
