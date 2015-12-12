@@ -135,6 +135,7 @@ module.exports = {
                 new Steam(input).getAppInfo().then(game => {
                     resolve({
                         type: 'channel',
+                        parse: 'none',
                         messages: generateAppDetailsResponse(game)
                     });
                 }).catch(reject);
@@ -147,12 +148,14 @@ module.exports = {
                                 steam.getAppInfo(apps[1].appid).then(secondgame => {
                                     resolve({
                                         type: 'channel',
+                                        parse: 'none',
                                         messages: generateAppDetailsResponse(secondgame)
                                     });
                                 }).catch(reject);
                             } else {
                                 resolve({
                                     type: 'channel',
+                                    parse: 'none',
                                     messages: generateAppDetailsResponse(game)
                                 });
                             }
@@ -195,6 +198,8 @@ var generateAppDetailsResponse = (app => {
                 '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency));
         out.push(
             app.player_count ? '*Current Players:* ' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '');
+        out.push(
+            '<http://store.steampowered.com/app/' + app.steam_appid + '/>');
         return(out);
     } else {
         return ["Error: App: _" + app.name + "_ isn't a valid game or dlc"];

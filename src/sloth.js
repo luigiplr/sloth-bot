@@ -13,14 +13,14 @@ process.on('uncaughtException', err => {
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
 const config = require('./../config.json');
 
-const multiLine = (channel, input) => {
+const multiLine = (channel, input, parse) => {
     return new Promise((resolve, reject) => {
         needle.post('https://magics.slack.com/api/chat.postMessage', {
             text: input,
             channel: channel,
             as_user: 'true',
             token: config.slackAPIToken,
-            parse: 'full'
+            parse: parse ? parse : 'full'
         }, (err, resp) => {
 
             if (err || resp.body.error)
@@ -57,7 +57,7 @@ slackClient.on('message', message => {
                             if (dm.ok) {
                                 let userChannel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                 if (!response.multiLine)
-                                    response.message ? userChannel.send(response.message) : multiLine(dm.channel.id, response.messages.join('\n'));
+                                    response.message ? userChannel.send(response.message) : multiLine(dm.channel.id, response.messages.join('\n'), response.parse);
                                 else {
                                     response.message ? userChannel.send(response.message) : response.messages.forEach(message => {
                                         userChannel.send(message);
@@ -67,7 +67,7 @@ slackClient.on('message', message => {
                         });
                         break;
                     case 'channel':
-                        response.message ? channel.send(response.message) : multiLine(message.channel, response.messages.join('\n'))
+                        response.message ? channel.send(response.message) : multiLine(message.channel, response.messages.join('\n'), response.parse)
                         break;
                     case 'remote-channel':
                         break;
