@@ -5,11 +5,8 @@ import moment from 'moment';
 import uuid from 'node-uuid';
 import database from '../../../database';
 
-
 var config = require('../../../../config.json');
 var prefix = config.prefix;
-
-
 
 module.exports = {
     quote(user, quotenum = 0) {

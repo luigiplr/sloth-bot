@@ -15,7 +15,7 @@ const endpoints = {
 
 var Steam, appList;
 
-var getUrl = function(type, id) {
+const getUrl = function(type, id) {
     return endpoints[type].replace('%id%', id);
 };
 

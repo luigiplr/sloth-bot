@@ -37,7 +37,7 @@ module.exports = {
             if (!input) {
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: googleimage <query> - Returns any of the first 3 images returned for query'
+                    message: 'Usage: googleimage <query> - Returns any of the first 4 images returned for query'
                 });
             }
 
@@ -50,22 +50,22 @@ module.exports = {
                     if (stringStartsWith(el, '/imgres?imgurl=')) {
                         let url = el.replace('/imgres?imgurl=', '');
                         url = url.substr(0, url.indexOf('&'));
-                        urls.push(url);
+                        if (url.match(/\.(jpeg|jpg|gif|png)(\/)?$/)) {
+                            urls.push(url);
+                        }
                     }
                 });
 
-                if (urls.length >= 3) {
-                    var url = _.unescape(urls[Math.floor(Math.random() * 3)] + '#' + this.makeid()).split('%');
-
-                } else if (urls.length !== 0) {
-                    var url = _.unescape(urls[0] + '#' + this.makeid()).split('%');
-                }
-                if (url.length > 1)
-                    url.pop();
+                let url;
+                if (urls.length >= 4)
+                    url = _.unescape(urls[Math.floor(Math.random() * 4)] + '#' + this.makeid());
+                else if (urls.length !== 0)
+                    url = _.unescape(urls[0] + '#' + this.makeid());
+                console.log(url);
 
                 resolve({
                     type: 'channel',
-                    message: url.join('')
+                    message: url
                 });
             });
 
