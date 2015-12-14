@@ -37,7 +37,6 @@ slackClient.on('open', () => {
     console.log('Welcome to Slack. You are @', slackClient.self.name, 'of', slackClient.team.name);
     return console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
 });
-        console.log(user.name + ':', text);
 
 slackClient.on('message', message => {
     let user = slackClient.getUserByID(message.user);
@@ -46,6 +45,7 @@ slackClient.on('message', message => {
 
     if (message.type === 'message' && text && channel) {
         if (text.charAt(0) !== config.prefix) return false;
+        console.log(user.name + ':', text);
         parseMsg(user, channel, text, slackClient)
             .then(response => {
                 if (!response)
