@@ -27,7 +27,7 @@ module.exports = {
                 let oo = new Array(amount).fill(':hankey: o :hankey:');
                 let pp = new Array(amount).fill(':hankey: p :hankey:');
                 let poop = [':hankey: poop :hankey:'];
-                return resolve({
+                resolve({
                     type: 'dm',
                     user: poopee,
                     multiLine: true,
