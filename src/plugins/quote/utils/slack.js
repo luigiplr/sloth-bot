@@ -50,8 +50,6 @@ module.exports = {
                     .pluck('text')
                     .value()[0];
 
-                console.log(uID);
-
                 database.save('quotes', {
                     user: grabee.toString().toLowerCase(),
                     quote: uID.toString().toString(),
