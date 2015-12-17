@@ -12,6 +12,8 @@ const fileExists = filePath => {
 };
 
 const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot');
+const dbFile = path.join(dbDir, 'database.json');
+
 
 if (!fs.existsSync(dbDir))
     fs.mkdirSync(dbDir);
@@ -21,7 +23,7 @@ if (!fileExists(path.join(dbDir, 'database.json')))
 
 class Database {
     constructor() {
-        this.db = new loki(path.normalize(path.join(dbDir, 'database.json')), {
+        this.db = new loki(dbFile, {
             autoload: true,
             autosave: true
         });

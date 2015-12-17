@@ -36,25 +36,29 @@ module.exports = {
             });
         });
     },
-    grabQuote(user, channel) {
+    grabQuote(grabee, channel, index = 0, grabber) {
         return new Promise((resolve, reject) => {
-            Promise.join(this.getHistory(channel.id), this.finduser(user), (history, users) => {
+            Promise.join(this.getHistory(channel.id), this.finduser(grabee), (history, users) => {
+                let i = 0;
                 var uID = _(history.messages)
                     .filter(message => {
-                        return message.user === users[0];
+                        if ((parseInt(index) == 0 || parseInt(index) == i) && ((grabber.id === users[0] && i > 0) || grabber.id !== users[0]))
+                            return message.user === users[0];
+                        else
+                            i++;
                     })
                     .pluck('text')
                     .value()[0];
-                if (uID.charAt(0) === prefix)
-                    return resolve("i could grab that command, buuuut... http://images-cdn.9gag.com/photo/aj0OWQ0_460s.jpg?" + this.generatechars());
+
+                console.log(uID);
 
                 database.save('quotes', {
-                    user: user.toString().toLowerCase(),
+                    user: grabee.toString().toLowerCase(),
                     quote: uID.toString().toString(),
                     date: moment(),
                     id: uuid.v1()
                 }).then(() => {
-                    resolve("Successfully grabed a quote for " + user);
+                    resolve("Successfully grabed a quote for " + grabee);
                 });
             });
         });

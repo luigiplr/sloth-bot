@@ -30,7 +30,9 @@ module.exports = {
                     type: 'dm',
                     message: 'Usage: grab <username> - grabs and saves a quote from the user'
                 });
-            slack.grabQuote(input, channel)
+            let grabee = input.split(' ')[0];
+            let index = input.split(' ')[1] ? input.split(' ')[1] : undefined;
+            slack.grabQuote(grabee, channel, index, user)
                 .then(res => {
                     resolve({
                         type: 'channel',
