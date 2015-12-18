@@ -40,11 +40,14 @@ module.exports = {
         return new Promise((resolve, reject) => {
             Promise.join(this.getHistory(channel.id), this.finduser(grabee), (history, users) => {
                 let i = 0;
-                var uID = _(history.messages)
+                if (grabber.id == users[0])
+                    index++;
+
+                let uID = _(history.messages)
                     .filter(message => {
-                        if ((parseInt(index) == 0 || parseInt(index) == i) && ((grabber.id === users[0] && i > 0) || grabber.id !== users[0]))
+                        if (parseInt(index) == i)
                             return message.user === users[0];
-                        else
+                        else if (message.user === users[0])
                             i++;
                     })
                     .pluck('text')
