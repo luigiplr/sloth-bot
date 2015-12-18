@@ -32,14 +32,16 @@ module.exports = {
                 });
             let grabee = input.split(' ')[0];
             let index = input.split(' ')[1] ? input.split(' ')[1] : undefined;
-            slack.grabQuote(grabee, channel, index, user)
-                .then(res => {
-                    resolve({
-                        type: 'channel',
-                        message: res
-                    });
-                })
-                .catch(reject);
+            if (!index || index < 4)
+                slack.grabQuote(grabee, channel, index, user)
+                    .then(res => {
+                        resolve({
+                            type: 'channel',
+                            message: res
+                        });
+                    }).catch(reject);
+            else
+                reject("Can't grab a quote that far back");
         });
     },
     quote(user, channel, input) {
