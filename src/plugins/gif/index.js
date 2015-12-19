@@ -25,14 +25,14 @@ module.exports = {
                 });
             giphy.search({
                 q: input.replace(' ', '+'),
-                limit: 1,
+                limit: 4,
                 rating: 'r',
                 fmt: 'json'
             }, (err, res) => {
                 if (res.pagination.count > 0) {
                     return resolve({
                         type: 'channel',
-                        message: res.data[0] ? res.data[0].images.original.url : 'Error selecting a gif'
+                        message: res.data[Math.floor(Math.random() * res.pagination.count)].images.downsized_medium.url
                     });
                 } else
                     resolve({
