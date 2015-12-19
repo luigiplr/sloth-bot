@@ -17,7 +17,7 @@ module.exports = {
                 new chuck(input).random((err, joke) => {
                     resolve({
                         type: 'channel',
-                        message: _.unescape(joke)
+                        message: _.unescape(joke.replace(/ +(?= )/g,''))
                     });
                 });
             } catch (e) {
