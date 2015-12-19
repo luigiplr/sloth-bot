@@ -7,4 +7,17 @@
  * ----------------------------------------------------------------------------
  */
 
-module.exports = require('./src/sloth.js');
+var cluster = require('cluster');
+
+if (cluster.isMaster) {
+	cluster.fork();
+
+	cluster.on("exit", function(worker, code) {
+        if (code != 0) {
+            console.log("Worker crashed or was rebooted! Spawning a replacement.");
+            cluster.fork();
+        }
+    });
+} else {
+	module.exports = require('./src/sloth.js');
+}

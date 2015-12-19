@@ -34,8 +34,7 @@ module.exports = {
                 type: 'channel',
                 message: 'Restarting in *3.. 2.. 1.*'
             });
-            cluster.fork();
-            _.delay(process.exit, 3000);
+            _.delay(process.exit(1), 3000);
         });
     }
 };
