@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import Steam from './utils/steam';
-import SteamID from 'steamid';
 
 module.exports = {
     commands: [{
@@ -32,45 +31,12 @@ module.exports = {
                     message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information'
                 });
             }
-            // 76561198035864385 or STEAM_0:1:37799328 or [U:1:75598657]
-            if (input.match(/^[0-9]+$/) || input.match(/^STEAM_([0-5]):([0-1]):([0-9]+)$/) || input.match(/^\[([a-zA-Z]):([0-5]):([0-9]+)(:[0-9]+)?\]$/)) {
-                let sid = new SteamID(input);
-                if (sid.isValid()) {
-                    new Steam(sid.getSteamID64()).getProfileInfo().then(info => {
-                        if (info) {
-                            return resolve({
-                                type: 'channel',
-                                messages: generateProfileResponse(info)
-                            });
-                        }
-                    }).catch(reject);
-                } else {
-                    return resolve({
-                        type: 'channel',
-                        message: 'Invalid ID'
-                    });
-                }
-            // VanityURL ID
-            } else {
-                let steam = new Steam(input);
-                steam.getIDFromProfile().then(newID => {
-                    if (newID.error) {
-                        return resolve({
-                            type: 'channel',
-                            message: _.unescape(newID.error)
-                        });
-                    } else {
-                        steam.getProfileInfo().then(info => {
-                            if (info) {
-                                return resolve({
-                                    type: 'channel',
-                                    messages: generateProfileResponse(info)
-                                });
-                            }
-                        }).catch(reject);
-                    }
+            Steam.getProfileInfo(input).then(resp => {
+                resolve({
+                    type: 'channel',
+                    messages: generateProfileResponse(resp)
                 });
-            }
+            }).catch(reject);
         });
     },
     players(user, channel, input) {
@@ -81,47 +47,13 @@ module.exports = {
                     message: 'Usage: players <appid> - Returns the current amount of players for the game'
                 });
             }
-            
-            if (input.match(/^\d+$/)) {
-                let steam = new Steam(input);
-                steam.getAppDetails().then(game => {
-                    steam.getNumberOfCurrentPlayers().then(players => {
-                        if (players) {
-                            return resolve({
-                                type: 'channel',
-                                message: generatePlayersResponse(game, players)
-                            });
-                        }
-                    }).catch(reject);
-                }).catch(reject);
-            } else {
-                let steam = new Steam(input);
-                steam.getAppIDByGameName().then(apps => {
-                    if (apps) {
-                        steam.getAppDetails().then(game => {
-                            if ((game.type != 'game' || game.type != 'dlc') && apps.length >= 2) {
-                                steam.getNumberOfCurrentPlayers(apps[1].appid).then(players => {
-                                    if (players) {
-                                        return resolve({
-                                            type: 'channel',
-                                            message: generatePlayersResponse(apps[1], players)
-                                        });
-                                    }
-                                }).catch(reject);
-                            } else {
-                                steam.getNumberOfCurrentPlayers(game.appid).then(players => {
-                                    if (players) {
-                                        return resolve({
-                                            type: 'channel',
-                                            message: generatePlayersResponse(game, players)
-                                        });
-                                    }
-                                }).catch(reject);
-                            }
-                        }).catch(reject);
-                    }
-                }).catch(reject);
-            }
+
+            Steam.getAppPlayers(input).then(resp => {
+                resolve({
+                    type: 'channel',
+                    message: generatePlayersResponse(resp)
+                });
+            }).catch(reject);
         });
     },
     app(user, channel, input) {
@@ -131,35 +63,12 @@ module.exports = {
                     type: 'dm',
                     message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
                 });
-            if (input.match(/^\d+$/)) {
-                new Steam(input).getAppInfo().then(game => {
-                    resolve({
-                        type: 'channel',
-                        messages: generateAppDetailsResponse(game)
-                    });
-                }).catch(reject);
-            } else {
-                let steam = new Steam(input);
-                steam.getAppIDByGameName().then(apps => {
-                    if (apps) {
-                        steam.getAppInfo().then(game => {
-                            if (game.type != 'game' && apps.length >= 2) {
-                                steam.getAppInfo(apps[1].appid).then(secondgame => {
-                                    resolve({
-                                        type: 'channel',
-                                        messages: generateAppDetailsResponse(secondgame)
-                                    });
-                                }).catch(reject);
-                            } else {
-                                resolve({
-                                    type: 'channel',
-                                    messages: generateAppDetailsResponse(game)
-                                });
-                            }
-                        }).catch(reject);
-                    }
-                }).catch(reject);
-            }
+            Steam.getAppInfo(input).then(resp => {
+                resolve({
+                    type: 'channel',
+                    messages: generateAppDetailsResponse(resp)
+                });
+            }).catch(reject);
         });
     }
 };
@@ -185,7 +94,7 @@ var generateProfileResponse = (profile => {
 });
 
 var generateAppDetailsResponse = (app => {
-    if (app && (app.type == 'game' || app.type == 'dlc')) {
+    if (app && app.type == 'game') {
         let out = [
             '*' + app.name + '* _(' + app.steam_appid + ')_'];
         if (app.is_free)
@@ -204,12 +113,12 @@ var generateAppDetailsResponse = (app => {
             '<http://store.steampowered.com/app/' + app.steam_appid + '/>');
         return(out.filter(Boolean));
     } else {
-        return ["Error: App: _" + app.name + "_ isn't a valid game or dlc"];
+        return ["Error: App: _" + app.name + "_ isn't a valid game"];
     }
 });
 
-var generatePlayersResponse = ((app, players) => {
-    return 'There are currently *' + players.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '* people playing _' + app.name + '_ right now';
+var generatePlayersResponse = (app => {
+    return 'There are currently *' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '* people playing _' + app.name + '_ right now';
 });
 
 var getPersonaState = (state => {
