@@ -240,7 +240,7 @@ module.exports = {
 				}).catch(reject);
 			} else {
 				getAppDetails(appid).then(app => {
-					getPlayersForApp(app.appid).then(players => {
+					getPlayersForApp(appid).then(players => {
 						app.player_count = players.player_count;
 						resolve(app);
 					}).catch(err => {
