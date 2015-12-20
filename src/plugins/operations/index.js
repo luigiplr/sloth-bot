@@ -8,7 +8,7 @@ module.exports = {
         command: 'shutdown'
     }, {
         alias: ['restart'],
-        userLevel: ['admin'],
+        userLevel: ['admin', 'superadmin'],
         command: 'restart'
     }],
     help: [{
