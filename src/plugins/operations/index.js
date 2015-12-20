@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import cluster from 'cluster';
 
 module.exports = {
     commands: [{
@@ -9,7 +8,7 @@ module.exports = {
         command: 'shutdown'
     }, {
         alias: ['restart'],
-        userLevel: ['superadmin'],
+        userLevel: ['admin'],
         command: 'restart'
     }],
     help: [{
@@ -34,7 +33,9 @@ module.exports = {
                 type: 'channel',
                 message: 'Restarting in *3.. 2.. 1.*'
             });
-            _.delay(process.exit(1), 3000);
+            setTimeout(function() {
+                process.exit(1);
+            }, 3000);
         });
     }
 };
