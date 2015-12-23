@@ -23,7 +23,7 @@ module.exports = {
             let decoded = morse.decode(input);
             resolve({
                 'type': 'channel',
-                'message': decoded
+                'message': "Translation: " + decoded
             });
         });
     }
