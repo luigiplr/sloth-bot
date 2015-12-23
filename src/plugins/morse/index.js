@@ -16,8 +16,8 @@ module.exports = {
         return new Promise((resolve, reject) => {
             if (!input)
                 return resolve({
-                    type: 'channel',
-                    message: 'Usage: Morse <morse code> - Translates text from morse to English. Words should be seperated by a /'
+                    type: 'dm',
+                    message: 'Usage: Morse <morse code> - Translates morse code into English. Words should be seperated by a /'
                 });
 
             let decoded = morse.decode(input);
