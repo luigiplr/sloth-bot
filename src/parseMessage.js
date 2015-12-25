@@ -51,8 +51,10 @@ module.exports = {
                 });
             });
 
-            if (!plugin)
-                return reject('Command not found');
+            if (!plugin) {
+                console.log('Command not found');
+                return; //reject('Command not found');
+            }
 
             // If userLevel required and you don't match the required level or if you're an admin trying to pull shit on a superadmin
             if (cmdLevel && (cmdLevel.indexOf(userLevel) === -1 || (userLevel === 'admin' && (context && getUserlevel(context.split(' ')[0]) === 'superadmin'))))

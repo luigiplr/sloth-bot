@@ -8,7 +8,7 @@ module.exports = {
         command: 'bonjourmadame'
     }],
     help: [{
-        command: ['bonjourmadame'],
+        command: ['hellolady'],
         usage: 'bonjourmadame [void, \'today\', <MM.DD.YYYY>]'
     }],
     bonjourmadame(user, channel, input) {
