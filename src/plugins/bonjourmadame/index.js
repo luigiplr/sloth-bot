@@ -9,7 +9,7 @@ module.exports = {
     }],
     help: [{
         command: ['hellolady'],
-        usage: 'bonjourmadame [void, \'today\', <MM.DD.YYYY>]'
+        usage: 'hellolady [void, \'today\', <MM.DD.YYYY>]'
     }],
     bonjourmadame(user, channel, input) {
         return new Promise((resolve, reject) => {
@@ -33,7 +33,7 @@ module.exports = {
                 } else {
                     return resolve({
                         type: 'dm',
-                        message: 'Usage: bonjourmadame [void, \'today\', <MM.DD.YYYY>]'
+                        message: 'Usage: hellolady [void, \'today\', <MM.DD.YYYY>]'
                     });
                 }
             } else {
