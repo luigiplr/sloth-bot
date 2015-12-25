@@ -33,7 +33,7 @@ module.exports = {
             if (((permissions.ignored.indexOf(username) > -1) && userLevel === 'user') || user.name.toString().toLowerCase() === config.botname)
                 return resolve(false);
 
-            let command = text.substr(1).split(' ')[0];
+            let command = text.substr(1).split(' ')[0].toLowerCase();
             let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined;
 
             let cmdLevel = false;
