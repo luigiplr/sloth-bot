@@ -49,18 +49,12 @@ module.exports = {
                         message: client.images[0]
                     });
                 } else {
-                    return resolve({
-                        type: 'channel',
-                        message: 'No picture found :('
-                    });
+                    return reject('No picture found');
                 }
             });
             
             client.on('error', function(err){
-                return resolve({
-                    type: 'channel',
-                    message: 'Oopsies, I am all broken :('
-                });
+                return reject('Error loading page');
             });
 
             client.fetch();
