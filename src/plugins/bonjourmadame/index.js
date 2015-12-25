@@ -4,11 +4,11 @@ import moment from 'moment';
 
 module.exports = {
     commands: [{
-        alias: ['hellolady'],
+        alias: ['hellolady', 'bonjourmadame'],
         command: 'bonjourmadame'
     }],
     help: [{
-        command: ['hellolady'],
+        command: ['hellolady', 'bonjourmadame'],
         usage: 'hellolady [void, \'today\', <MM.DD.YYYY>]'
     }],
     bonjourmadame(user, channel, input) {
