@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import _ from 'loadash';
+import _ from 'lodash';
 import needle from 'needle';
 import async from 'async';
 import database from '../../../database';
