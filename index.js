@@ -14,7 +14,7 @@ if (cluster.isMaster) {
 
 	cluster.on("exit", function(worker, code) {
         if (code != 0) {
-            console.log("Worker crashed or was rebooted! Spawning a replacement.");
+            console.error("Worker crashed or was rebooted! Spawning a replacement.");
             cluster.fork();
         }
     });
