@@ -1,3 +1,4 @@
+import Promise from 'bluebird';
 import database from '../../../database';
 import needle from 'needle';
 import async from 'async';
