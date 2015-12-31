@@ -1,7 +1,8 @@
 import Promise from 'bluebird';
-import database from '../../../database';
+import _ from 'loadash';
 import needle from 'needle';
 import async from 'async';
+import database from '../../../database';
 import slack from '../../../slack';
 
 const config = require('../../../../config.json');
