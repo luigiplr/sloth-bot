@@ -3,14 +3,14 @@ import Swears from './utils/swearTracker';
 
 module.exports = {
     commands: [{
-        alias: ['commits', 'naughtycommits'],
+        alias: ['nc', 'commits', 'naughtycommits'],
         command: 'swearCommit'
     }, {
         alias: ['fetchcommits'],
         command: 'fetchCommits'
     }],
     help: [{
-        command: ['commits', 'naughtycommits'],
+        command: ['nc', 'commits', 'naughtycommits'],
         usage: 'commits <user>'
     }, {
         command: ['fetchcommits'],
