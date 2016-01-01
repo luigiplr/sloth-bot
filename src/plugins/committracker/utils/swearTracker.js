@@ -28,7 +28,7 @@ const endpoints = {
 // Formats Endpoint URLs
 const getUrl = ((type, repo) => {
     let out = endpoints[type].replace(/%u/g, username);
-    console.log(out.replace('%r%', repo));
+    //console.log(out.replace('%r%', repo));
     return out.replace('%r%', repo);
 });
 
@@ -53,10 +53,12 @@ const getRepos = (() => {
 // Retrieves most recent commits for a repo
 const getCommitsForRepos = (repos => {
     return new Promise((resolve, reject) => {
+        //console.log("Getting commits for repos");
         let out = [];
         async.each(repos, (repo, cb) => {
+            //console.log("Getting commits for repo:", repo);
             needle.get(getUrl('commits', repo), githubAuthentication, (err, resp, body) => {
-                if (!err && body && body[0].commit) {
+                if (!err && body && body[0] && body[0].commit) {
                     out.push(body);
                     cb(); 
                 } else {
@@ -76,6 +78,7 @@ const getCommitsForRepos = (repos => {
 // Goes through all commits and searches for swears
 const findSwearsInCommits = (commits => {
     return new Promise((resolve, reject) => {
+        //console.log("Finding swears in", commits.length, "commits");
         let commitsWithSwears = [];
 
         async.each(commits, (commit, cb) => {
@@ -98,8 +101,10 @@ const findSwearsInCommits = (commits => {
                 return reject(err);
             } else {
                 if (commitsWithSwears[0]) {
+                    //console.log("Found", commitsWithSwears.length, "swears");
                     resolve(commitsWithSwears);
                 } else {
+                    console.log("User has no swears");
                     saveToDB(null);
                     reject('Found no swears in recent commits :/');
                 }
@@ -111,6 +116,7 @@ const findSwearsInCommits = (commits => {
 // Formats all the repos and just returns the names
 const formatRepos = (repos => {
     return new Promise(resolve => {
+        //console.log("Fomatting Repos");
         let out = [];
         async.each(repos, (repo, cb) => {
             if (repo.fork && !config.includeForks)
@@ -119,18 +125,15 @@ const formatRepos = (repos => {
             out.push(repo.name);
             cb();
         }, err => {
-            if (err)
-                return reject(err);
-            else {
+            if (!err)
                 resolve(out);
-            }
         });
     });
 });
 
 // Saves all commits with swears to the DB, dupe commits won't get added to the DB
 const saveToDB = (swears => {
-    console.log("Save to DB");
+    console.log("Save", swears.length, "swears to DB for user", username);
     if (swears)
         database.save('swearcommits', swears, {index: 'sha', ensureUnique: true}).catch(err => console.log("Commit already saved", err));
     database.save('swearusers', {
@@ -143,6 +146,7 @@ const saveToDB = (swears => {
 // Start da lulz
 const updateSwears = (() => {
     return new Promise((resolve, reject) => {
+        //console.log("Starting Update Swears chain");
         updating = true;
         return getRepos()
             .then(formatRepos)
@@ -150,7 +154,7 @@ const updateSwears = (() => {
             .then(commits => findSwearsInCommits(_.flatten(commits)))
             .then(saveToDB)
             .catch(err => {
-                console.log(err);
+                console.log("Caught an error! -", err);
                 updating = false;
                 reject(err);
             });
@@ -163,12 +167,15 @@ const fetchSwears = (() => {
             key: 'user',
             value: username
         }).then(commits => {
+            //console.log("Fetched", commits.length, "swear commits for", username);
             if (commits[0]) {
                 resolve(commits);
             } else {
+                //console.log("Found no swears");
                 reject("I don't have commits for this user, you can fetch some with " + config.prefix + "fetchcommits <user>");
             }
         }).catch(err => {
+            //console.log("Found no swears, no collection");
             reject("I don't have commits for this user, you can fetch some with " + config.prefix + "fetchcommits <user>");
         });
     });
@@ -176,23 +183,25 @@ const fetchSwears = (() => {
 
 const checkIfWeCanUpdate = (() => {
     return new Promise(resolve => {
-        console.log(username);
+        //console.log(username);
         database.get('swearusers', {
             key: 'user',
             value: username
         }).then(user => {
-            console.log(user);
             if (user[0]) {
+                //console.log("User in DB");
                 if (user[0].lastUpdated + (24 * 3600) < Math.round(new Date().getTime() / 1000)) {
                     resolve(true);
                 } else {
                     resolve(false);
                 }
             } else {
+                //console.log("User not in DB");
                 resolve(true);
             }
         }).catch(err => {
             if (err === 'NOCOLLECTION') {
+                //console.log("NO COLLECTION");
                 resolve(true);
             }
         });
@@ -210,16 +219,21 @@ module.exports = {
     },
     updateSwearCommits(user, channel, input) {
         return new Promise((resolve, reject) => {
-            console.log(input);
+            //console.log("Starting update process for:", input);
             username = input;
             checkIfWeCanUpdate().then(resp => {
                 if (resp) {
+                    //console.log("We can update commits");
                     if (!updating) {
-                        slack.sendMessage(channel.id, "User not in DB, attempting to fetch commits now, try again later, this may take some time :)");
+                        //console.log("Not updating");
+                        slack.sendMessage(channel.id, "Attempting to fetch commits now, this may take some time :)");
                         updateSwears().catch(reject);
-                    } else
+                    } else {
+                        //console.log("DB update already in process");
                         reject('DB update already in progress, try again laterz');
+                    }
                 } else {
+                    //console.log("User already updated in last 24 hours");
                     reject(username + "'s commits have already been updated in the last 24 hours, try again later :)");
                 }
             });
