@@ -2,7 +2,7 @@ module.exports = {
     findMatch(word) {
         var out = {};
         
-        let numbers = word.replace(',','.').match(/[0-9\.]/g),
+        let numbers = word.replace(',','.').match(/[0-9\.]+/g),
             letters = word.toLowerCase().match(/[a-z]/g);
 
         if (numbers) {
