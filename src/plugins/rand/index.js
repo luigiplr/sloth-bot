@@ -46,9 +46,9 @@ module.exports = {
             }
 
             // add some magic
-            if (Random.randFloat(1, 100) === 100) {
+            if (Random.randFloat(1, 100) == 100) {
                 random = 'Forty-two';
-            } else if (random === 42) {
+            } else if (random == 42) {
                 random = 'The Answer to the Ultimate Question of Life, the Universe, and Everything';
             }
 
