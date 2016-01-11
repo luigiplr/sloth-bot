@@ -1,5 +1,5 @@
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 import Promise from 'bluebird';
 import loki from 'lokijs';
 
@@ -21,6 +21,13 @@ if (!fs.existsSync(dbDir))
 if (!fileExists(path.join(dbDir, 'database.json')))
     fs.writeFileSync(path.join(dbDir, 'database.json'), '');
 
+const getFormattedDate = () => {
+    var date = new Date();
+    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "-" +  date.getHours() + "-" + date.getMinutes() + '-' + date.getSeconds();
+
+    return str;
+};
+
 class Database {
     constructor() {
         this.db = new loki(dbFile, {
@@ -34,6 +41,12 @@ class Database {
             let newCol = opts ? this.db.addCollection(Collection, {indices: [opts.index]}) : this.db.addCollection(Collection);
             if (opts && opts.ensureUnique)
                 newCol.ensureUniqueIndex(opts.index);
+        }
+
+        try {
+            fs.copySync(dbFile, path.join(dbDir, 'db-backup-' + getFormattedDate() + '.json'));
+        } catch (err) {
+            console.log(err);
         }
 
         Collection = this.db.getCollection(Collection);
