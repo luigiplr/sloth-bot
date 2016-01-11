@@ -21,7 +21,6 @@ const multiLine = (channel, input) => {
             as_user: 'true',
             token: config.slackAPIToken
         }, (err, resp) => {
-
             if (err || resp.body.error)
                 return reject('Error: ' + (resp.body.error || err));
 

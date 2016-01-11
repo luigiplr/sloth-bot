@@ -29,10 +29,12 @@ class Database {
         });
     }
 
-    save(Collection, data) {
-
-        if (this.db.getCollection(Collection) === null)
-            this.db.addCollection(Collection);
+    save(Collection, data, opts) {
+        if (this.db.getCollection(Collection) === null) {
+            let newCol = opts ? this.db.addCollection(Collection, {indices: [opts.index]}) : this.db.addCollection(Collection);
+            if (opts && opts.ensureUnique)
+                newCol.ensureUniqueIndex(opts.index);
+        }
 
         Collection = this.db.getCollection(Collection);
         return new Promise((resolve, reject) => {

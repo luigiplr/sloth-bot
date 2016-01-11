@@ -209,11 +209,19 @@ const checkIfWeCanUpdate = (() => {
 });
 
 module.exports = {
-    retrieveSwearCommits(input) {
+    retrieveSwearCommits(input, all) {
         return new Promise((resolve, reject) => {
             username = input;
-            fetchSwears().then(resp => {
-                return resolve(resp[Math.floor(Math.random() * resp.length)]);
+            fetchSwears().then(commits => {
+                if (!all)
+                    return resolve(commits[Math.floor(Math.random() * commits.length)]);
+                else {
+                    let total = ['<' + username + '> Commits (' + commits.length + ') :'];
+                    commits.forEach(commit => {
+                        total.push('(_' + commit.repo +  ')_: *' + commit.message + '*- (' + commit.url.slice(8, - 33) + ')');
+                    });
+                    return resolve(total);
+                }
             }).catch(reject);
         });
     },

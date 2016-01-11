@@ -8,6 +8,9 @@ module.exports = {
     }, {
         alias: ['fetchcommits'],
         command: 'fetchCommits'
+    }, {
+        alias: ['listcommits'],
+        command: 'listCommits'
     }],
     help: [{
         command: ['nc', 'commits', 'naughtycommits'],
@@ -15,6 +18,9 @@ module.exports = {
     }, {
         command: ['fetchcommits'],
         usage: 'fetchcommits <user>'
+    }, {
+        command: ['listcommits'],
+        usage: 'listcommits <user>'
     }],
     swearCommit(user, channel, input) {
         return new Promise((resolve, reject) => {
@@ -23,7 +29,7 @@ module.exports = {
                     type: 'dm',
                     message: 'Usage: commits <user> | Fetches a random naughty github commit made by user'
                 });
-            Swears.retrieveSwearCommits(input).then(resp => {
+            Swears.retrieveSwearCommits(input, false).then(resp => {
                 resolve({
                     type: 'channel',
                     message: generateCommitResponse(resp)
@@ -39,6 +45,21 @@ module.exports = {
                     message: 'Usage: fetchcommits <user> | Updates naughty commits for a user'
                 });
             Swears.updateSwearCommits(user, channel, input).then().catch(reject);
+        });
+    },
+    listCommits(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: listcommits <user> | Lists all saved naughty commits for a user'
+                });
+            Swears.retrieveSwearCommits(input, true).then(resp => {
+                resolve({
+                    type: 'channel',
+                    messages: resp
+                });
+            }).catch(reject);
         });
     }
 };
