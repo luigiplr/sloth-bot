@@ -33,6 +33,11 @@ module.exports = {
                             reject('No quotes found for ' + user + ', grab a quote via `' + prefix + 'grab <username>`');
                     }
                 }
+            }).catch(err => {
+                if (err === 'NOCOLLECTION')
+                    reject("Error: No Collection - DB doesn't exist!");
+                else
+                    reject(err);
             });
         });
     },
