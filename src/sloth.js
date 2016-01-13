@@ -44,7 +44,7 @@ slackClient.on('message', message => {
 
     if (message.type === 'message' && text && channel) {
         if (text.charAt(0) !== config.prefix) return false;
-        console.log(user.name + ':', text);
+        console.log("IN", user.name + ':', text);
         parseMsg(user, channel, text, slackClient)
             .then(response => {
                 if (!response)
@@ -53,7 +53,7 @@ slackClient.on('message', message => {
                     case 'dm':
                         slackClient.openDM(response.user ? response.user.id : message.user, dm => {
                             if (dm.ok) {
-                                console.log("DM:", (response.message ? response.message : response.messages));
+                                console.log("OUT DM:", (response.message ? response.message : response.messages));
                                 let userChannel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                 if (!response.multiLine)
                                     response.message ? userChannel.send(response.message) : multiLine(dm.channel.id, response.messages.join('\n'));
@@ -66,7 +66,7 @@ slackClient.on('message', message => {
                         });
                         break;
                     case 'channel':
-                        console.log(channel.name + ':', (response.message ? response.message : response.messages));
+                        console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages));
                         response.message ? channel.send(response.message) : multiLine(message.channel, response.messages.join('\n'))
                         break;
                     case 'remote-channel':

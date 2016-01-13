@@ -6,10 +6,16 @@ module.exports = {
     commands: [{
         alias: ['hellolady', 'bonjourmadame'],
         command: 'bonjourmadame'
+    }, {
+        alias: ['hellosir', 'bonjourmonsieur'],
+        command: 'bonjourmonsieur'
     }],
     help: [{
         command: ['hellolady', 'bonjourmadame'],
         usage: 'hellolady [void, \'today\', <MM.DD.YYYY>]'
+    }, {
+        command: ['hellosir', 'bonjourmonsieur'],
+        usage: 'hellosir [void, \'today\']'
     }],
     bonjourmadame(user, channel, input) {
         return new Promise((resolve, reject) => {
@@ -47,6 +53,36 @@ module.exports = {
                     return resolve({
                         type: 'channel',
                         message: client.images[0]
+                    });
+                } else {
+                    return reject('No picture found');
+                }
+            });
+            
+            client.on('error', function(err){
+                return reject('Error loading page');
+            });
+
+            client.fetch();
+        });
+    },
+    bonjourmonsieur(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            var url;
+
+            if (input === 'today')
+                url = 'http://www.bonjourmonsieur.fr/';
+            else
+                url = 'http://www.bonjourmonsieur.fr/monsieur/random.html';
+
+            var client = new MetaInspector(url, { timeout: 5000 });
+
+            client.on('fetch', function() {
+                console.log(client.images);
+                if (client.images && client.images[2].match(/uploads/i)) {
+                    return resolve({
+                        type: 'channel',
+                        message: client.images[2]
                     });
                 } else {
                     return reject('No picture found');
