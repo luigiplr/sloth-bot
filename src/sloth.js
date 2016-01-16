@@ -21,7 +21,7 @@ const postMessage = (channel, input) => {
                 return reject('Error: ' + (resp.body.error || err));
 
             if (!resp.body && resp.body.ok !== true)
-                reject('Error: ' + resp.body.error);
+                reject('Post Message Error: ' + resp.body.error);
         });
     });
 };
@@ -70,7 +70,7 @@ slackClient.on('message', message => {
                 }
             }).catch(err => {
                 if (err) {
-                    console.error('Error:', err);
+                    console.error('parseMsg Error:', err);
                     channel.send(err);
                 }
             });
@@ -108,7 +108,7 @@ const sendErrorToDebugChannel = ((type, error) => {
 });
 
 slackClient.on('error', err => {
-    sendErrorToDebugChannel(err);
+    sendErrorToDebugChannel('slackClientError', err);
 });
 
 process.on('uncaughtException', err => {
