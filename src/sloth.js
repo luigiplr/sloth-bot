@@ -71,7 +71,10 @@ slackClient.on('message', message => {
             }).catch(err => {
                 if (err) {
                     console.error('parseMsg Error:', err);
-                    channel.send(err);
+                    if (typeof err === 'string')
+                        channel.send(err);
+                    else 
+                        throw(err);
                 }
             });
     }
@@ -86,7 +89,7 @@ const sendErrorToDebugChannel = ((type, error) => {
 
         let i = 0;
         let stop = false;
-        let message = 'Caught! ' + type + ' ```' + error.message + '\n' + error.stack + '```';
+        let message = 'Caught ' + type + ' ```' + error.message + '\n' + error.stack + '```';
         
         if (i < 5 & !stop) {
             i++;
@@ -103,7 +106,7 @@ const sendErrorToDebugChannel = ((type, error) => {
     } else {
         console.error("Caught Error:", type, error);
         if (config.debugChannel)
-            postMessage(config.debugChannel, "Caught an error that can't be logged?");
+            postMessage(config.debugChannel, "ABNORMAL ERROR: Caught" + type + '```' + error + '```');
     }
 });
 
