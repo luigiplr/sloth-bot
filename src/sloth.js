@@ -83,7 +83,7 @@ const sendErrorToDebugChannel = ((type, error) => {
     let i = 0;
     let stop = false;
     if (error && error.message && error.stack && config.debugChannel) {
-        let message = 'Caught!' + type + '```' + error.message + '\n' + error.stack + '```';
+        let message = 'Caught! ' + type + ' ```' + error.message + '\n' + error.stack + '```';
         
         if (i < 5 & !stop) {
             i++;
