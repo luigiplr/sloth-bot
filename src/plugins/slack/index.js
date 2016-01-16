@@ -11,6 +11,12 @@ module.exports = {
         alias: ['invite'],
         userLevel: ['admin', 'superadmin'],
         command: 'invite'
+    }, {
+        alias: ['channelid', 'cid'],
+        command: 'channelid'
+    }, {
+        alias: ['userid', 'uid'],
+        command: 'userid'
     }],
     help: [{
         command: ['kick'],
@@ -18,6 +24,12 @@ module.exports = {
     }, {
         command: ['invite'],
         usage: 'invite <email>'
+    }, {
+        command: ['channelid'],
+        usage: 'channelid - returns ChannelID for current channel'
+    }, {
+        command: ['userid'],
+        usage: 'userid <user> - returns UserID for user'
     }],
     kick(user, channel, input = false) {
         return new Promise((resolve, reject) => {
@@ -53,5 +65,34 @@ module.exports = {
                 .catch(reject);
         });
     },
+    channelid(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (channel && channel.id)
+                return resolve({
+                    type: 'channel',
+                    message: channel.id
+                });
+            else
+                reject('Error?');
+        });
+    },
+    userid(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input || input === user.name)
+                return resolve({
+                        type: 'channel',
+                        message: 'Your UserID is ' + user.id
+                    });
 
+            slack.finduser(input).then(id => {
+                if (id[0])
+                    resolve({
+                        type: 'channel',
+                        message: input + "'s UserID is " + id[0]
+                    });
+                else
+                    reject("Found no user by that name");
+            }).catch(reject);
+        });
+    }
 };

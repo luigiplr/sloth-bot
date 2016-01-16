@@ -52,18 +52,27 @@ slackClient.on('message', message => {
                                 console.log("OUT DM:", (response.message ? response.message : response.messages));
                                 let userChannel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                 if (!response.multiLine)
-                                    response.message ? userChannel.send(response.message) : postMessage(dm.channel.id, response.messages.join('\n'));
+                                    if (response.message)
+                                        userChannel.send(response.message);
+                                    else if (response.messages)
+                                        postMessage(dm.channel.id, response.messages.join('\n'));
                                 else {
-                                    response.message ? userChannel.send(response.message) : response.messages.forEach(message => {
-                                        userChannel.send(message);
-                                    });
+                                    if (response.message)
+                                        userChannel.send(response.message);
+                                    else if (response.messages) 
+                                        response.messages.forEach(message => {
+                                            userChannel.send(message);
+                                        });
                                 }
                             }
                         });
                         break;
                     case 'channel':
                         console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages));
-                        response.message ? channel.send(response.message) : postMessage(message.channel, response.messages.join('\n'))
+                        if (response.message)
+                            channel.send(response.message);
+                        else if (response.messages) 
+                            postMessage(message.channel, response.messages.join('\n'));
                         break;
                     case 'remote-channel':
                         break;
@@ -106,7 +115,7 @@ const sendErrorToDebugChannel = ((type, error) => {
     } else {
         console.error("Caught Error:", type, error);
         if (config.debugChannel)
-            postMessage(config.debugChannel, "ABNORMAL ERROR: Caught" + type + '```' + error + '```');
+            postMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```');
     }
 });
 
