@@ -77,12 +77,15 @@ slackClient.on('message', message => {
     }
 });
 
-const sendErrorToDebugChannel = ((type, error) => {
-    console.error("Caught Error:", type, error.message, error.stack);
+const sendErrorToDebugChannel = ((type, error) => {   
+    if (error && error.message && error.stack) {
+        console.error("Caught Error:", type, error.message, error.stack);
 
-    let i = 0;
-    let stop = false;
-    if (error && error.message && error.stack && config.debugChannel) {
+        if (!config.debugChannel)
+            return;
+
+        let i = 0;
+        let stop = false;
         let message = 'Caught! ' + type + ' ```' + error.message + '\n' + error.stack + '```';
         
         if (i < 5 & !stop) {
@@ -97,6 +100,10 @@ const sendErrorToDebugChannel = ((type, error) => {
             stop = true;
             process.exit();
         }
+    } else {
+        console.error("Caught Error:", type, error);
+        if (config.debugChannel)
+            postMessage(config.debugChannel, "Caught an error that can't be logged?");
     }
 });
 
