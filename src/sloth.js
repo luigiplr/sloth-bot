@@ -6,14 +6,10 @@ import {
 }
 from './parseMessage';
 
-process.on('uncaughtException', err => {
-    console.log(err);
-});
-
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
 const config = require('./../config.json');
 
-const multiLine = (channel, input) => {
+const postMessage = (channel, input) => {
     return new Promise((resolve, reject) => {
         needle.post('https://magics.slack.com/api/chat.postMessage', {
             text: input,
@@ -56,7 +52,7 @@ slackClient.on('message', message => {
                                 console.log("OUT DM:", (response.message ? response.message : response.messages));
                                 let userChannel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
                                 if (!response.multiLine)
-                                    response.message ? userChannel.send(response.message) : multiLine(dm.channel.id, response.messages.join('\n'));
+                                    response.message ? userChannel.send(response.message) : postMessage(dm.channel.id, response.messages.join('\n'));
                                 else {
                                     response.message ? userChannel.send(response.message) : response.messages.forEach(message => {
                                         userChannel.send(message);
@@ -67,7 +63,7 @@ slackClient.on('message', message => {
                         break;
                     case 'channel':
                         console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages));
-                        response.message ? channel.send(response.message) : multiLine(message.channel, response.messages.join('\n'))
+                        response.message ? channel.send(response.message) : postMessage(message.channel, response.messages.join('\n'))
                         break;
                     case 'remote-channel':
                         break;
@@ -81,9 +77,46 @@ slackClient.on('message', message => {
     }
 });
 
-slackClient.on('error', error => {
-    if (error)
-        console.error("Error: " + error);
+const sendErrorToDebugChannel = (error => {
+    console.error("Error:", error.message, error.stack);
+
+    let i = 0;
+    let stop = false;
+    if (error && config.debugChannel) {
+        let msg = error.message ? error.message : error;
+        let stack = error.stack ? error.stack : 'No stack :(';
+        let message = 'Error! ```' + msg + '\n' + stack + '```';
+        
+        if (i < 5 & !stop) {
+            i++;
+            postMessage(config.debugChannel, message);
+            setTimeout(function() {
+                if (i > 0)
+                    i--;
+            }, 2000);
+        } else {
+            postMessage(config.debugChannel, "Warning! Error spam, stopping bot");
+            stop = true;
+            process.exit();
+        }
+    }
+});
+
+slackClient.on('error', err => {
+    sendErrorToDebugChannel(err);
+});
+
+process.on('uncaughtException', err => {
+    sendErrorToDebugChannel(err);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', err => {
+    sendErrorToDebugChannel(err);
+});
+
+process.on('rejectionHandled', err => {
+    sendErrorToDebugChannel(err);
 });
 
 slackClient.login();
