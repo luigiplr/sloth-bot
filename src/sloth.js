@@ -77,15 +77,13 @@ slackClient.on('message', message => {
     }
 });
 
-const sendErrorToDebugChannel = (error => {
-    console.error("Error:", error.message, error.stack);
+const sendErrorToDebugChannel = ((type, error) => {
+    console.error("Caught Error:", type, error.message, error.stack);
 
     let i = 0;
     let stop = false;
-    if (error && config.debugChannel) {
-        let msg = error.message ? error.message : error;
-        let stack = error.stack ? error.stack : 'No stack :(';
-        let message = 'Error! ```' + msg + '\n' + stack + '```';
+    if (error && error.message && error.stack && config.debugChannel) {
+        let message = 'Caught!' + type + '```' + error.message + '\n' + error.stack + '```';
         
         if (i < 5 & !stop) {
             i++;
@@ -107,16 +105,16 @@ slackClient.on('error', err => {
 });
 
 process.on('uncaughtException', err => {
-    sendErrorToDebugChannel(err);
+    sendErrorToDebugChannel('uncaughtException', err);
     process.exit(1);
 });
 
 process.on('unhandledRejection', err => {
-    sendErrorToDebugChannel(err);
+    sendErrorToDebugChannel('unhandledRejection', err);
 });
 
 process.on('rejectionHandled', err => {
-    sendErrorToDebugChannel(err);
+    sendErrorToDebugChannel('handledRejection', err);
 });
 
 slackClient.login();
