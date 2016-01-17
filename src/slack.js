@@ -1,5 +1,4 @@
 import needle from 'needle';
-
 const config = require('../config.json');
 
 module.exports = {
