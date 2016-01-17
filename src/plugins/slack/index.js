@@ -70,7 +70,7 @@ module.exports = {
             if (channel && channel.id)
                 return resolve({
                     type: 'channel',
-                    message: channel.id
+                    message: "This channel's ID is " + channel.id
                 });
             else
                 reject('Error?');
