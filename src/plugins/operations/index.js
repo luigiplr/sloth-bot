@@ -80,18 +80,15 @@ module.exports = {
             let updatecmd = 'git pull && grunt install';
 
             execCmd(updatecmd, {timeout:60000}, (error, stdout, stderr) => {
-                if (!stderr && !error && stdout) {
-                    console.log(stdout);
+                if (!error && stdout) {
                     if (config.debugChannel)
                         slack.sendMessage(config.debugChannel, 'test ```' + stdout + '```');
 
                     if (stdout.indexOf('Already up-to-date') > -1) {
-                        console.log("Repo already up to date");
                         return reject("Repo is already up-to-date");
                     }
 
                     if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Done, without errors.") > -1) {
-                        console.log("Repo has updated and installed");
                         if (input === 1) {
                             resolve({
                                 type: 'channel',
@@ -108,8 +105,7 @@ module.exports = {
                         reject("Possible error while fetching and installing new updates?");
                     }
                 } else {
-                    console.log("Error", stderr, error);
-                    reject("Error while fetching and installing updates```" + stdout + stderr + error + '```');
+                    reject("Error while fetching and installing updates ```" + stdout + stderr + error + '```');
                 }
             });
         });
