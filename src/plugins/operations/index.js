@@ -7,6 +7,8 @@ import {
 
 const config = require('../../../../config.json');
 
+var updating;
+
 module.exports = {
     commands: [{
         alias: ['shutdown'],
@@ -78,9 +80,14 @@ module.exports = {
     update(user, channel, input) {
         return new Promise((resolve, reject) => {
             let updatecmd = 'git pull && grunt install';
-            slack.sendMessage(config.debugChannel, 'Updating');
+            slack.sendMessage(channel.id, 'Updating...');
 
+            if (updating)
+                return reject('Update already in process');
+
+            updating = true;
             execCmd(updatecmd, {timeout:60000}, (error, stdout, stderr) => {
+                _.delay(updating = false, 2000);
                 if (!error && stdout) {
                     if (config.debugChannel)
                         slack.sendMessage(config.debugChannel, '```' + stdout + '```');
