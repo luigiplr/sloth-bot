@@ -82,7 +82,7 @@ module.exports = {
             execCmd(updatecmd, {timeout:60000}, (error, stdout, stderr) => {
                 if (!error && stdout) {
                     if (config.debugChannel)
-                        slack.sendMessage(config.debugChannel, 'test ```' + stdout + '```');
+                        slack.sendMessage(config.debugChannel, 'test2 ```' + stdout + '```');
 
                     if (stdout.indexOf('Already up-to-date') > -1) {
                         return reject("Repo is already up-to-date");
