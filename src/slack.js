@@ -1,5 +1,5 @@
 import needle from 'needle';
-const config = require('../config.json';
+const config = require('../config.json');
 
 module.exports = {
     sendMessage(channel, input) {

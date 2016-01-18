@@ -1,6 +1,11 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import moment from 'moment'
+import slack from '../../slack';
+import {
+    exec as execCmd
+} from 'child_process';
+
+const config = require('../../../../config.json');
 
 module.exports = {
     commands: [{
@@ -14,6 +19,10 @@ module.exports = {
     }, {
         alias: ['uptime'],
         command: 'uptime'
+    }, {
+        alias: ['update'],
+        userLevel: ['admin', 'superadmin'],
+        command: 'update'
     }],
     help: [{
         command: ['shutdown'],
@@ -24,6 +33,9 @@ module.exports = {
     }, {
         command: ['uptime'],
         usage: 'uptime - returns uptime of bot'
+    }, {
+        command: ['update'],
+        usage: 'update <optional restart 1/0> - updates the bot from github'
     }],
     shutdown() {
         return new Promise(resolve => {
@@ -60,6 +72,45 @@ module.exports = {
             resolve({
                 type: 'channel',
                 message: "I have been flyin' smooth for " + time
+            });
+        });
+    },
+    update(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            let updatecmd = 'git pull && grunt install';
+
+            execCmd(updatecmd, {timeout:60000}, (error, stdout, stderr) => {
+                if (!stderr && !error && stdout) {
+                    console.log(stdout);
+                    if (config.debugChannel)
+                        slack.sendMessage(config.debugChannel, '```' + stdout + '```');
+
+                    if (stdout.indexOf('Already up-to-date') > -1) {
+                        console.log("Repo already up to date");
+                        return reject("Repo is already up-to-date");
+                    }
+
+                    if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Done, without errors.") > -1) {
+                        console.log("Repo has updated and installed");
+                        if (input === 1) {
+                            resolve({
+                                type: 'channel',
+                                message: "Sucessfully fetched and installed new updates, restarting"
+                            });
+                            this.restart();
+                        } else {
+                           resolve({
+                                type: 'channel',
+                                message: "Sucessfully fetched and installed new updates"
+                            }); 
+                        }
+                    } else {
+                        reject("Possible error while fetching and installing new updates?");
+                    }
+                } else {
+                    console.log("Error", stderr, error);
+                    reject("Error while fetching and installing updates```" + stdout + stderr + error + '```');
+                }
             });
         });
     }
