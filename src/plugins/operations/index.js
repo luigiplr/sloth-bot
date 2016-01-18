@@ -83,7 +83,7 @@ module.exports = {
                 if (!stderr && !error && stdout) {
                     console.log(stdout);
                     if (config.debugChannel)
-                        slack.sendMessage(config.debugChannel, '```' + stdout + '```');
+                        slack.sendMessage(config.debugChannel, 'test ```' + stdout + '```');
 
                     if (stdout.indexOf('Already up-to-date') > -1) {
                         console.log("Repo already up to date");
