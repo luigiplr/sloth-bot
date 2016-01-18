@@ -87,7 +87,7 @@ module.exports = {
 
             updating = true;
             execCmd(updatecmd, {timeout:60000}, (error, stdout, stderr) => {
-                _.delay(updating = false, 2000);
+                updating = false;
                 if (!error && stdout) {
                     if (config.debugChannel)
                         slack.sendMessage(config.debugChannel, '```' + stdout + '```');
@@ -97,7 +97,7 @@ module.exports = {
                     }
 
                     if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Done, without errors.") > -1) {
-                        if (input === 1) {
+                        if (input == 1) {
                             resolve({
                                 type: 'channel',
                                 message: "Sucessfully fetched and installed new updates, restarting"
