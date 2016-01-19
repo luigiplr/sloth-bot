@@ -11487,7 +11487,7 @@
 			},
 			{
 				"appid": 32440,
-				"name": "Lego Star Wars Saga"
+				"name": "LEGO® Star Wars™: The Complete Saga"
 			},
 			{
 				"appid": 32450,
@@ -16727,11 +16727,11 @@
 			},
 			{
 				"appid": 57655,
-				"name": "Dungeons DLC Pack 1"
+				"name": "DUNGEONS DLC Pack 1"
 			},
 			{
 				"appid": 57656,
-				"name": "Dungeons: The Second DLC"
+				"name": "DUNGEONS The Second DLC"
 			},
 			{
 				"appid": 57680,
@@ -37351,7 +37351,7 @@
 			},
 			{
 				"appid": 230230,
-				"name": "Divinity: Original Sin"
+				"name": "Divinity: Original Sin (Classic)"
 			},
 			{
 				"appid": 230250,
@@ -38548,6 +38548,10 @@
 			{
 				"appid": 235980,
 				"name": "Tetrobot and Co."
+			},
+			{
+				"appid": 236010,
+				"name": "Bloxitivity"
 			},
 			{
 				"appid": 236090,
@@ -41388,6 +41392,10 @@
 			{
 				"appid": 251090,
 				"name": "Cube & Star: A Love Story Demo"
+			},
+			{
+				"appid": 251110,
+				"name": "INFRA"
 			},
 			{
 				"appid": 251130,
@@ -44562,6 +44570,10 @@
 				"name": "Zombie Grinder"
 			},
 			{
+				"appid": 263940,
+				"name": "Red Baron Pack"
+			},
+			{
 				"appid": 263960,
 				"name": "Wyv and Keep: The Temple of the Lost Idol"
 			},
@@ -44799,7 +44811,7 @@
 			},
 			{
 				"appid": 265000,
-				"name": "FORCED: Eternal Arenas"
+				"name": "FORCED SHOWDOWN"
 			},
 			{
 				"appid": 265020,
@@ -46638,6 +46650,10 @@
 				"name": "Just Cause 2 Owner"
 			},
 			{
+				"appid": 271760,
+				"name": "Dungeon Lords Steam Edition"
+			},
+			{
 				"appid": 271800,
 				"name": "Neverwinter: Hero of the North Pack"
 			},
@@ -46843,7 +46859,7 @@
 			},
 			{
 				"appid": 272860,
-				"name": "Next Car Game Sneak Peek 2.0"
+				"name": "Next Car Game Throw-A-Santa + Sneak Peek 2.0"
 			},
 			{
 				"appid": 272880,
@@ -48055,7 +48071,7 @@
 			},
 			{
 				"appid": 278590,
-				"name": "Heroes of Legionwood - Age of Darkness"
+				"name": "Heroes of Legionwood"
 			},
 			{
 				"appid": 278620,
@@ -48492,6 +48508,10 @@
 			{
 				"appid": 281150,
 				"name": "Shadow Warrior Demo"
+			},
+			{
+				"appid": 281200,
+				"name": "A Boy and His Blob"
 			},
 			{
 				"appid": 281220,
@@ -49674,6 +49694,10 @@
 				"name": "Shadow Ops: Red Mercury"
 			},
 			{
+				"appid": 286790,
+				"name": "Falcon A.T."
+			},
+			{
 				"appid": 286810,
 				"name": "Hard Truck: Apocalypse Rise Of Clans / Ex Machina: Meridian 113"
 			},
@@ -49943,7 +49967,7 @@
 			},
 			{
 				"appid": 287760,
-				"name": "Leadwerks Game Engine: Standard Edition"
+				"name": "Leadwerks Game Engine: Professional Edition"
 			},
 			{
 				"appid": 287770,
@@ -53180,6 +53204,10 @@
 			{
 				"appid": 298400,
 				"name": "Knightmare Tower"
+			},
+			{
+				"appid": 298420,
+				"name": "Dreii"
 			},
 			{
 				"appid": 298480,
@@ -56554,6 +56582,10 @@
 				"name": "Company of Heroes 2 Tools"
 			},
 			{
+				"appid": 313240,
+				"name": "Wilson Chronicles - Beta"
+			},
+			{
 				"appid": 313260,
 				"name": "The Incredible Adventures of Van Helsing II - OST"
 			},
@@ -56852,6 +56884,10 @@
 			{
 				"appid": 314360,
 				"name": "Aritana and the Harpy's Feather"
+			},
+			{
+				"appid": 314370,
+				"name": "boxlife"
 			},
 			{
 				"appid": 314380,
@@ -57692,6 +57728,10 @@
 			{
 				"appid": 317040,
 				"name": "Strife: Veteran Edition"
+			},
+			{
+				"appid": 317060,
+				"name": "Attractio"
 			},
 			{
 				"appid": 317080,
@@ -58556,6 +58596,10 @@
 			{
 				"appid": 319630,
 				"name": "Life Is Strange™"
+			},
+			{
+				"appid": 319730,
+				"name": "Granado Espada"
 			},
 			{
 				"appid": 319740,
@@ -60026,6 +60070,10 @@
 				"name": "The Shopkeeper"
 			},
 			{
+				"appid": 324650,
+				"name": "Gemini: Heroes Reborn"
+			},
+			{
 				"appid": 324680,
 				"name": "Impossible Creatures"
 			},
@@ -60442,6 +60490,10 @@
 				"name": "Train Simulator: Norfolk Southern Big 7s Loco Add-On"
 			},
 			{
+				"appid": 325965,
+				"name": "Train Simulator: BR Class 40 '40145' Loco Add-On"
+			},
+			{
 				"appid": 325968,
 				"name": "Train Simulator: NJT F40PH -2CAT Loco Add-On"
 			},
@@ -60482,8 +60534,20 @@
 				"name": "Train Simulator: BR Class 24 Loco Add-On"
 			},
 			{
+				"appid": 325981,
+				"name": "Train Simulator: Mosel Valley Koblenz -Trier Route Add-On "
+			},
+			{
 				"appid": 325982,
 				"name": "Castle Class (Double Chimney)"
+			},
+			{
+				"appid": 325987,
+				"name": "Train Simulator: DB BR 474.3 EMU Add-On"
+			},
+			{
+				"appid": 325988,
+				"name": "Train Simulator: Hamburg Lubeck Route Add-On"
 			},
 			{
 				"appid": 325989,
@@ -60592,6 +60656,14 @@
 			{
 				"appid": 326022,
 				"name": "TS2015 - DLC73"
+			},
+			{
+				"appid": 326024,
+				"name": "TS Marketplace: Southeastern Class 375 Dark Blue Livery Add-On"
+			},
+			{
+				"appid": 326025,
+				"name": "TS Marketplace: Renewable Energy Pack"
 			},
 			{
 				"appid": 326026,
@@ -61544,6 +61616,10 @@
 			{
 				"appid": 329270,
 				"name": "Warhammer Quest - Base Pack items"
+			},
+			{
+				"appid": 329280,
+				"name": "Avalon Lords: Dawn Rises"
 			},
 			{
 				"appid": 329310,
@@ -63350,6 +63426,10 @@
 				"name": "Project CARS - Japanese Car Pack"
 			},
 			{
+				"appid": 334791,
+				"name": "Project CARS - Renault Sport Car Pack"
+			},
+			{
 				"appid": 334810,
 				"name": "Battle of Empires : 1914-1918 - Editor"
 			},
@@ -64771,7 +64851,7 @@
 			},
 			{
 				"appid": 339530,
-				"name": "FACTIONS: Origins of Malu"
+				"name": "Origins of Malu"
 			},
 			{
 				"appid": 339540,
@@ -64788,6 +64868,10 @@
 			{
 				"appid": 339570,
 				"name": "Enemy"
+			},
+			{
+				"appid": 339590,
+				"name": "Crowman & Wolfboy"
 			},
 			{
 				"appid": 339600,
@@ -65100,6 +65184,10 @@
 			{
 				"appid": 340670,
 				"name": "Corruption Soundtrack"
+			},
+			{
+				"appid": 340680,
+				"name": "Bunny Bash"
 			},
 			{
 				"appid": 340700,
@@ -66158,6 +66246,10 @@
 				"name": "Cars Radiator Springs Adventures"
 			},
 			{
+				"appid": 343150,
+				"name": "Endica VII The Dream King"
+			},
+			{
 				"appid": 343170,
 				"name": "Cyberpunk 3776"
 			},
@@ -66612,6 +66704,10 @@
 			{
 				"appid": 344230,
 				"name": "Pixel Puzzles 2: Birds"
+			},
+			{
+				"appid": 344240,
+				"name": "Man O' War: Corsair"
 			},
 			{
 				"appid": 344250,
@@ -67147,7 +67243,7 @@
 			},
 			{
 				"appid": 345700,
-				"name": "Echo Tokyo"
+				"name": "Summer Fling"
 			},
 			{
 				"appid": 345710,
@@ -69170,6 +69266,10 @@
 				"name": "An Octave Higher"
 			},
 			{
+				"appid": 352790,
+				"name": "Futuridium EP Deluxe"
+			},
+			{
 				"appid": 352820,
 				"name": "Screencheat - Alienware Ragdoll"
 			},
@@ -69646,6 +69746,10 @@
 				"name": "Original Soundtrack, Art Book and Comic Book"
 			},
 			{
+				"appid": 354280,
+				"name": "ChaosTower"
+			},
+			{
 				"appid": 354290,
 				"name": "LoveBeat"
 			},
@@ -70022,6 +70126,10 @@
 				"name": "Leadwerks Game Launcher"
 			},
 			{
+				"appid": 355510,
+				"name": "Crazy Belts"
+			},
+			{
 				"appid": 355520,
 				"name": "The Albino Hunter"
 			},
@@ -70262,6 +70370,10 @@
 				"name": "Orbit HD"
 			},
 			{
+				"appid": 356390,
+				"name": "The Slaughter: Act One"
+			},
+			{
 				"appid": 356400,
 				"name": "Thumper"
 			},
@@ -70408,6 +70520,10 @@
 			{
 				"appid": 356970,
 				"name": "STARWHAL Official Soundtrack"
+			},
+			{
+				"appid": 357030,
+				"name": "Excubitor"
 			},
 			{
 				"appid": 357040,
@@ -70670,6 +70786,10 @@
 				"name": "Telepath Tactics"
 			},
 			{
+				"appid": 357970,
+				"name": "The Hole Story Soundtrack"
+			},
+			{
 				"appid": 357980,
 				"name": "Might & Magic: Duel of Champions - Starter Pack"
 			},
@@ -70850,6 +70970,10 @@
 				"name": "Dark Ages"
 			},
 			{
+				"appid": 358460,
+				"name": "Talisman: The Horus Heresy"
+			},
+			{
 				"appid": 358470,
 				"name": "The Talos Principle: Road To Gehenna"
 			},
@@ -70884,6 +71008,10 @@
 			{
 				"appid": 358770,
 				"name": "The Reject Demon: Toko Chapter 0 — Prelude"
+			},
+			{
+				"appid": 358780,
+				"name": "Pixel Survivors Demo"
 			},
 			{
 				"appid": 358800,
@@ -71142,6 +71270,10 @@
 				"name": "Uncanny Valley"
 			},
 			{
+				"appid": 359610,
+				"name": "Assassin’s Creed® Chronicles: India"
+			},
+			{
 				"appid": 359620,
 				"name": "Call of Cthulhu: Prisoner of Ice"
 			},
@@ -71266,6 +71398,10 @@
 				"name": "XLarn"
 			},
 			{
+				"appid": 360040,
+				"name": "Our Nation's Miner"
+			},
+			{
 				"appid": 360080,
 				"name": "FSX: Steam Edition - Piper J-3 Cub Add-On"
 			},
@@ -71368,6 +71504,10 @@
 			{
 				"appid": 360290,
 				"name": "Us and the Game Industry"
+			},
+			{
+				"appid": 360340,
+				"name": "J.U.L.I.A.:Among the Stars - Soundtrack + Hintbook"
 			},
 			{
 				"appid": 360350,
@@ -71624,6 +71764,10 @@
 			{
 				"appid": 361240,
 				"name": "KF2 - Full Game"
+			},
+			{
+				"appid": 361250,
+				"name": "Strange Space"
 			},
 			{
 				"appid": 361270,
@@ -71964,6 +72108,10 @@
 			{
 				"appid": 362140,
 				"name": "Ashes of Immortality II"
+			},
+			{
+				"appid": 362160,
+				"name": "Sydney's World"
 			},
 			{
 				"appid": 362170,
@@ -72571,7 +72719,7 @@
 			},
 			{
 				"appid": 364324,
-				"name": "FSX: Steam Edition -Embraer E-Jets v.2 Add-On"
+				"name": "FSX: Steam Edition - Embraer E-Jets v.2 Add-On"
 			},
 			{
 				"appid": 364325,
@@ -72807,7 +72955,7 @@
 			},
 			{
 				"appid": 365140,
-				"name": "new DREAMFLIGHT VR:For Oculus Rift"
+				"name": "DREAMFLIGHT VR"
 			},
 			{
 				"appid": 365150,
@@ -72912,6 +73060,10 @@
 			{
 				"appid": 365500,
 				"name": "quadrant"
+			},
+			{
+				"appid": 365510,
+				"name": "Flip"
 			},
 			{
 				"appid": 365520,
@@ -73430,6 +73582,10 @@
 				"name": "Batman™: Arkham Knight - Season Pass"
 			},
 			{
+				"appid": 367500,
+				"name": "Dragon's Dogma: Dark Arisen"
+			},
+			{
 				"appid": 367540,
 				"name": "Starbound - Unstable"
 			},
@@ -73727,7 +73883,7 @@
 			},
 			{
 				"appid": 368740,
-				"name": "Space Dust Racers"
+				"name": "Obliteracers"
 			},
 			{
 				"appid": 368750,
@@ -73760,6 +73916,10 @@
 			{
 				"appid": 368840,
 				"name": "Pinball FX2 - Portal ® Pinball"
+			},
+			{
+				"appid": 368860,
+				"name": "Garbage Day"
 			},
 			{
 				"appid": 368870,
@@ -73800,6 +73960,10 @@
 			{
 				"appid": 368970,
 				"name": "Haywire on Fuel Station Zeta"
+			},
+			{
+				"appid": 368980,
+				"name": "Force of Elements"
 			},
 			{
 				"appid": 368990,
@@ -73880,6 +74044,10 @@
 			{
 				"appid": 369210,
 				"name": "Crazy Steam Bros 2 OST"
+			},
+			{
+				"appid": 369230,
+				"name": "Kung Fu Panda Showdown of Legendary Legends"
 			},
 			{
 				"appid": 369270,
@@ -74710,6 +74878,10 @@
 				"name": "Making History: The Calm and the Storm Gold Edition"
 			},
 			{
+				"appid": 371200,
+				"name": "Halcyon 6: Starbase Commander"
+			},
+			{
 				"appid": 371210,
 				"name": "Gridberd"
 			},
@@ -74800,6 +74972,10 @@
 			{
 				"appid": 371450,
 				"name": "Awe"
+			},
+			{
+				"appid": 371460,
+				"name": "Gnumz: Masters of Defense"
 			},
 			{
 				"appid": 371470,
@@ -74982,6 +75158,10 @@
 				"name": "Locoland Demo"
 			},
 			{
+				"appid": 372190,
+				"name": "Astro Lords: Oort Cloud"
+			},
+			{
 				"appid": 372200,
 				"name": "Moonchild - Deluxe Contents"
 			},
@@ -75040,6 +75220,10 @@
 			{
 				"appid": 372410,
 				"name": "Dungeoncraft Demo"
+			},
+			{
+				"appid": 372430,
+				"name": "World Defense : A Fragmented Reality Game"
 			},
 			{
 				"appid": 372440,
@@ -75104,6 +75288,10 @@
 			{
 				"appid": 372670,
 				"name": "Realm of Perpetual Guilds"
+			},
+			{
+				"appid": 372690,
+				"name": "Chiptune Champion"
 			},
 			{
 				"appid": 372700,
@@ -75458,6 +75646,10 @@
 				"name": "Stairs"
 			},
 			{
+				"appid": 374080,
+				"name": "Falcon"
+			},
+			{
 				"appid": 374090,
 				"name": "Winter Sports Trilogy Super Pack"
 			},
@@ -75484,6 +75676,10 @@
 			{
 				"appid": 374160,
 				"name": "Stones of Sorrow - Soundtrack by Neoandertals"
+			},
+			{
+				"appid": 374170,
+				"name": "Sniper Tactical"
 			},
 			{
 				"appid": 374180,
@@ -76059,7 +76255,7 @@
 			},
 			{
 				"appid": 375980,
-				"name": "AKIBA'S TRIP: Undead ＆ Undressed Demo"
+				"name": "AKIBA'S TRIP: Undead ＆Undressed Demo"
 			},
 			{
 				"appid": 376010,
@@ -76120,6 +76316,10 @@
 			{
 				"appid": 376210,
 				"name": "The Isle"
+			},
+			{
+				"appid": 376230,
+				"name": "Taimumari — Soundtrack"
 			},
 			{
 				"appid": 376250,
@@ -76526,6 +76726,10 @@
 				"name": "Rack N Ruin"
 			},
 			{
+				"appid": 378090,
+				"name": "Rebel Wings"
+			},
+			{
 				"appid": 378100,
 				"name": "Nyctophobia"
 			},
@@ -76578,6 +76782,10 @@
 				"name": "Vapour: Part 1 (Demo)"
 			},
 			{
+				"appid": 378390,
+				"name": "Production Inc."
+			},
+			{
 				"appid": 378400,
 				"name": "Gaokao.Love.100Days - Original Soundtrack"
 			},
@@ -76588,6 +76796,10 @@
 			{
 				"appid": 378420,
 				"name": "Jurassic Island: The Dinosaur Zoo"
+			},
+			{
+				"appid": 378450,
+				"name": "Robot Tsunami"
 			},
 			{
 				"appid": 378470,
@@ -76720,6 +76932,10 @@
 			{
 				"appid": 378670,
 				"name": "Savage Lands Dedicated Server"
+			},
+			{
+				"appid": 378690,
+				"name": "Potions: A Curious Tale"
 			},
 			{
 				"appid": 378710,
@@ -76938,6 +77154,18 @@
 				"name": "FSX: Steam Edition - Discover Australia and New Zealand"
 			},
 			{
+				"appid": 379560,
+				"name": "FSX: Steam Edition - HD Airport Graphics Add-On"
+			},
+			{
+				"appid": 379561,
+				"name": "FSX: Steam Edition - Natural Tree Environment X Add-On"
+			},
+			{
+				"appid": 379562,
+				"name": "FSX: Steam Edition - World Environment 2012 Add-On"
+			},
+			{
 				"appid": 379563,
 				"name": "FSX: Steam Edition - Diamond DA20-100 Katana 4X"
 			},
@@ -76952,6 +77180,10 @@
 			{
 				"appid": 379568,
 				"name": "FSX: Steam Edition - Piper Aztec Add-On"
+			},
+			{
+				"appid": 379570,
+				"name": "FSX: Steam Edition - Extra 300S"
 			},
 			{
 				"appid": 379590,
@@ -77382,6 +77614,10 @@
 				"name": "Xenocide"
 			},
 			{
+				"appid": 381990,
+				"name": "Dragon Saga"
+			},
+			{
 				"appid": 382010,
 				"name": "Yargis - Space Melee - Level Editor"
 			},
@@ -77690,8 +77926,16 @@
 				"name": "Kings of Kung Fu OST"
 			},
 			{
+				"appid": 382970,
+				"name": "RISK - The Game of Global Domination"
+			},
+			{
 				"appid": 383010,
 				"name": "JamG"
+			},
+			{
+				"appid": 383020,
+				"name": "a Family of Grave Diggers"
 			},
 			{
 				"appid": 383030,
@@ -78007,7 +78251,7 @@
 			},
 			{
 				"appid": 384100,
-				"name": "FATAL ERROR"
+				"name": "Slybots: Frantic Zone"
 			},
 			{
 				"appid": 384110,
@@ -78302,6 +78546,10 @@
 				"name": "CF-9-01 Final Render - Turntable Light"
 			},
 			{
+				"appid": 384480,
+				"name": "Six Sides of the World"
+			},
+			{
 				"appid": 384500,
 				"name": "Zombie Party"
 			},
@@ -78423,7 +78671,7 @@
 			},
 			{
 				"appid": 385020,
-				"name": "Ancients of Fasaria: Chess Club"
+				"name": "AoF Chess Club"
 			},
 			{
 				"appid": 385060,
@@ -78834,6 +79082,10 @@
 				"name": "NBA 2K16 Pre-order Virtual Currency for 2K15"
 			},
 			{
+				"appid": 386740,
+				"name": "Puzzle Strike"
+			},
+			{
 				"appid": 386750,
 				"name": "Cashtronauts"
 			},
@@ -78994,6 +79246,10 @@
 				"name": "Shmup Love Boom - Soundtrack"
 			},
 			{
+				"appid": 387130,
+				"name": "Zombie Hunter, Inc."
+			},
+			{
 				"appid": 387140,
 				"name": "City Quest Demo"
 			},
@@ -79024,6 +79280,10 @@
 			{
 				"appid": 387280,
 				"name": "Inferno 2"
+			},
+			{
+				"appid": 387370,
+				"name": "Sol 0: Mars Colonization"
 			},
 			{
 				"appid": 387380,
@@ -79250,6 +79510,10 @@
 				"name": "Awesomenauts - Cosmic Captain Ksenia Skin"
 			},
 			{
+				"appid": 387990,
+				"name": "Scrap Mechanic"
+			},
+			{
 				"appid": 388010,
 				"name": "Tick: The Time Based Puzzle Game"
 			},
@@ -79458,6 +79722,10 @@
 				"name": "Stripped"
 			},
 			{
+				"appid": 389120,
+				"name": "10 Minute Barbarian"
+			},
+			{
 				"appid": 389150,
 				"name": "Hyperdimension Neptunia Re;Birth 3 Emergency Aid Plan"
 			},
@@ -79520,6 +79788,10 @@
 			{
 				"appid": 389420,
 				"name": "Panzer Corps: Sea Lion"
+			},
+			{
+				"appid": 389430,
+				"name": "Knight Online"
 			},
 			{
 				"appid": 389440,
@@ -79950,6 +80222,82 @@
 				"name": "Rocksmith 2014 - Mötley Crüe Song Pack"
 			},
 			{
+				"appid": 390412,
+				"name": "Rocksmith 2014 - Stone Temple Pilots - Plush"
+			},
+			{
+				"appid": 390413,
+				"name": "Rocksmith 2014 - Stone Temple Pilots - Interstate Love Song"
+			},
+			{
+				"appid": 390414,
+				"name": "Rocksmith 2014 - Stone Temple Pilots - Sex Type Thing"
+			},
+			{
+				"appid": 390415,
+				"name": "Rocksmith 2014 - Stone Temple Pilots - Creep"
+			},
+			{
+				"appid": 390416,
+				"name": "Rocksmith 2014 - Stone Temple Pilots - Wicked Garden"
+			},
+			{
+				"appid": 390417,
+				"name": "Rocksmith 2014 - Stone Temple Pilots - Big Empty"
+			},
+			{
+				"appid": 390418,
+				"name": "Rocksmith 2014 - Stone Temple Pilots Song Pack"
+			},
+			{
+				"appid": 390419,
+				"name": "Rocksmith 2014 - Wolfmother - Woman"
+			},
+			{
+				"appid": 390420,
+				"name": "Rocksmith 2014 - Semisonic - Closing Time"
+			},
+			{
+				"appid": 390421,
+				"name": "Rocksmith 2014 - Asia - Heat of the Moment"
+			},
+			{
+				"appid": 390422,
+				"name": "Rocksmith 2014 - Wild Cherry - Play That Funky Music"
+			},
+			{
+				"appid": 390423,
+				"name": "Rocksmith 2014 - Hit Singles Song Pack III"
+			},
+			{
+				"appid": 390424,
+				"name": "Rocksmith 2014 - Thirty Seconds to Mars - The Kill"
+			},
+			{
+				"appid": 390425,
+				"name": "Rocksmith 2014 - Thirty Seconds to Mars - From Yesterday"
+			},
+			{
+				"appid": 390426,
+				"name": "Rocksmith 2014 - Thirty Seconds to Mars - Kings and Queens"
+			},
+			{
+				"appid": 390427,
+				"name": "Rocksmith 2014 - Thirty Seconds to Mars - This Is War"
+			},
+			{
+				"appid": 390428,
+				"name": "Rocksmith 2014 - Thirty Seconds to Mars - Closer to the Edge"
+			},
+			{
+				"appid": 390429,
+				"name": "Rocksmith 2014 - Thirty Seconds to Mars Song Pack"
+			},
+			{
+				"appid": 390460,
+				"name": "Tyler"
+			},
+			{
 				"appid": 390470,
 				"name": "Divine Slice of Life - Soundtrack"
 			},
@@ -80092,6 +80440,10 @@
 			{
 				"appid": 390920,
 				"name": "Army of Pixels"
+			},
+			{
+				"appid": 390930,
+				"name": "AIPD - Artificial Intelligence Police Department"
 			},
 			{
 				"appid": 390940,
@@ -80558,6 +80910,10 @@
 				"name": "Nightside Demo"
 			},
 			{
+				"appid": 392970,
+				"name": "New York Mysteries: High Voltage"
+			},
+			{
 				"appid": 392980,
 				"name": "Show"
 			},
@@ -80664,6 +81020,10 @@
 			{
 				"appid": 393420,
 				"name": "Hurtworld"
+			},
+			{
+				"appid": 393460,
+				"name": "Crazy Pixel Streaker"
 			},
 			{
 				"appid": 393480,
@@ -80906,6 +81266,10 @@
 				"name": "GoldenRush - Assassin's Full Set of Artifacts"
 			},
 			{
+				"appid": 394430,
+				"name": "Dimension Drive"
+			},
+			{
 				"appid": 394450,
 				"name": "Warhammer 40,000: Deathwatch - Enhanced Edition"
 			},
@@ -81030,6 +81394,10 @@
 				"name": "The Facility"
 			},
 			{
+				"appid": 394970,
+				"name": "DEADBOLT"
+			},
+			{
 				"appid": 395020,
 				"name": "Master Spy OST"
 			},
@@ -81146,6 +81514,10 @@
 				"name": "Virtual Pool"
 			},
 			{
+				"appid": 395350,
+				"name": "Doors"
+			},
+			{
 				"appid": 395380,
 				"name": "ANKI"
 			},
@@ -81192,6 +81564,10 @@
 			{
 				"appid": 395530,
 				"name": "Missing Translation: Deluxe Edition"
+			},
+			{
+				"appid": 395550,
+				"name": "Operation Hardcore"
 			},
 			{
 				"appid": 395560,
@@ -81256,6 +81632,10 @@
 			{
 				"appid": 395990,
 				"name": "Galactic Civilizations III - Revenge of the Snathi DLC"
+			},
+			{
+				"appid": 396010,
+				"name": "The Rise of Chubtan"
 			},
 			{
 				"appid": 396030,
@@ -81334,6 +81714,10 @@
 				"name": "Barbie and Her Sisters Puppy Rescue"
 			},
 			{
+				"appid": 396400,
+				"name": "Monster High: New Ghoul in School"
+			},
+			{
 				"appid": 396440,
 				"name": "Battle of Empires: 1914-1918 - Battle of Cambrai"
 			},
@@ -81386,6 +81770,14 @@
 				"name": "Quantum Flux - Soundtrack"
 			},
 			{
+				"appid": 396631,
+				"name": "La Tale - Infinite Prestige Pack"
+			},
+			{
+				"appid": 396632,
+				"name": "La Tale - Infinite Potential Pack"
+			},
+			{
 				"appid": 396640,
 				"name": "TowerClimb"
 			},
@@ -81418,6 +81810,10 @@
 				"name": "Dracula's Legacy"
 			},
 			{
+				"appid": 396800,
+				"name": "12 Labours of Hercules IV: Mother Nature"
+			},
+			{
 				"appid": 396810,
 				"name": "The Black Watchmen - Season 2: Enduring Conflict"
 			},
@@ -81436,6 +81832,10 @@
 			{
 				"appid": 396860,
 				"name": "Over The Hills And Far Away"
+			},
+			{
+				"appid": 396890,
+				"name": "Gridworld"
 			},
 			{
 				"appid": 396910,
@@ -81730,6 +82130,10 @@
 				"name": "Colony Assault"
 			},
 			{
+				"appid": 398070,
+				"name": "Protoshift"
+			},
+			{
 				"appid": 398100,
 				"name": "Highschool Romance"
 			},
@@ -81740,6 +82144,10 @@
 			{
 				"appid": 398160,
 				"name": "Shapes of Gray"
+			},
+			{
+				"appid": 398170,
+				"name": "Evochron Legacy"
 			},
 			{
 				"appid": 398180,
@@ -81760,6 +82168,10 @@
 			{
 				"appid": 398290,
 				"name": "Mad Max: La route du chaos"
+			},
+			{
+				"appid": 398310,
+				"name": "Steel Ocean - Original SoundTrack Vol.1"
 			},
 			{
 				"appid": 398330,
@@ -82002,6 +82414,10 @@
 				"name": "Spheroid"
 			},
 			{
+				"appid": 399120,
+				"name": "Prospekt"
+			},
+			{
 				"appid": 399140,
 				"name": "Straima"
 			},
@@ -82206,12 +82622,20 @@
 				"name": "The Deer"
 			},
 			{
+				"appid": 400250,
+				"name": "Paradise Island - VR MMO"
+			},
+			{
 				"appid": 400320,
 				"name": "Heroes of a Broken Land Demo"
 			},
 			{
 				"appid": 400330,
 				"name": "rFactor 2 Demo"
+			},
+			{
+				"appid": 400360,
+				"name": "Adam's Venture Origins"
 			},
 			{
 				"appid": 400370,
@@ -82978,8 +83402,16 @@
 				"name": "Invisible Apartment 2"
 			},
 			{
+				"appid": 401210,
+				"name": "Puzzle Sages"
+			},
+			{
 				"appid": 401220,
 				"name": "Paint it Back Demo"
+			},
+			{
+				"appid": 401250,
+				"name": "Zulu Response"
 			},
 			{
 				"appid": 401270,
@@ -83008,6 +83440,10 @@
 			{
 				"appid": 401350,
 				"name": "Shift Happens Demo"
+			},
+			{
+				"appid": 401360,
+				"name": "The Aquatic Adventure of the Last Human"
 			},
 			{
 				"appid": 401380,
@@ -83086,12 +83522,24 @@
 				"name": "Block N Load - Partner Pack"
 			},
 			{
+				"appid": 401626,
+				"name": "Crime Fighter Challenge Pack #5"
+			},
+			{
+				"appid": 401635,
+				"name": "Season of Infamy: Most Wanted Expansion"
+			},
+			{
 				"appid": 401650,
 				"name": "PAYDAY 2: Gage Chivalry Pack"
 			},
 			{
 				"appid": 401670,
 				"name": "MODO indie 901: Assets and Samples"
+			},
+			{
+				"appid": 401690,
+				"name": "Life in Bunker"
 			},
 			{
 				"appid": 401700,
@@ -83140,6 +83588,10 @@
 			{
 				"appid": 402030,
 				"name": "Zenohell"
+			},
+			{
+				"appid": 402050,
+				"name": "Below Kryll Demo"
 			},
 			{
 				"appid": 402110,
@@ -83498,6 +83950,10 @@
 				"name": "The Ultimate Showdown"
 			},
 			{
+				"appid": 403020,
+				"name": "Dungeon Manager ZV Demo"
+			},
+			{
 				"appid": 403040,
 				"name": "Driver Booster 3 for STEAM"
 			},
@@ -83714,6 +84170,10 @@
 				"name": "Dexterity Ball 3D"
 			},
 			{
+				"appid": 403690,
+				"name": "Codename: Rogue Fleet"
+			},
+			{
 				"appid": 403700,
 				"name": "Zero Punctuation: Hatfall - Hatters Gonna Hat Edition"
 			},
@@ -83876,6 +84336,50 @@
 			{
 				"appid": 404190,
 				"name": "NA: Tenshouki - Face CG Set"
+			},
+			{
+				"appid": 404210,
+				"name": "TANE DLC: Chinese Electric SS4 Locomotive Pack"
+			},
+			{
+				"appid": 404211,
+				"name": "TANE DLC: Blue Comet"
+			},
+			{
+				"appid": 404212,
+				"name": "TANE DLC: Duchess"
+			},
+			{
+				"appid": 404213,
+				"name": "TANE DLC: LMS Coronation Scot"
+			},
+			{
+				"appid": 404214,
+				"name": "TANE DLC: BNSF Railway EMD SD70MAC Executive Patch"
+			},
+			{
+				"appid": 404215,
+				"name": "TANE DLC: Chicago & North Western GE C40-8"
+			},
+			{
+				"appid": 404216,
+				"name": "TANE DLC: CSX Transportation GE B30-7"
+			},
+			{
+				"appid": 404217,
+				"name": "TANE DLC: BNSF GE Dash-9 44CW Warbonnet"
+			},
+			{
+				"appid": 404218,
+				"name": "TANE DLC: CSX EMD SD60"
+			},
+			{
+				"appid": 404219,
+				"name": "TANE DLC: Union Pacific GE C40-8"
+			},
+			{
+				"appid": 404220,
+				"name": "TANE DLC: SNCF BB 75000"
 			},
 			{
 				"appid": 404230,
@@ -84090,6 +84594,10 @@
 				"name": "Escape from Puzzlegate"
 			},
 			{
+				"appid": 404820,
+				"name": "Ragdoll Runner"
+			},
+			{
 				"appid": 404840,
 				"name": "Fran Bow - Soundtrack"
 			},
@@ -84100,6 +84608,10 @@
 			{
 				"appid": 404860,
 				"name": "Inside Me"
+			},
+			{
+				"appid": 404890,
+				"name": "U-Boats"
 			},
 			{
 				"appid": 404910,
@@ -84114,6 +84626,14 @@
 				"name": "Official Guide - Epic Quest of the 4 Crystals"
 			},
 			{
+				"appid": 404981,
+				"name": "TANE DLC: Southern Pacific GE CW44-9"
+			},
+			{
+				"appid": 404982,
+				"name": "TANE DLC: Amtrak P42DC - Phase V"
+			},
+			{
 				"appid": 405000,
 				"name": "UTOPIA 9 - A Volatile Vacation"
 			},
@@ -84122,12 +84642,20 @@
 				"name": "Bitardia"
 			},
 			{
+				"appid": 405032,
+				"name": "Original Arkham Batmobile"
+			},
+			{
 				"appid": 405040,
 				"name": "Cold Dreams"
 			},
 			{
 				"appid": 405070,
 				"name": "The Worm"
+			},
+			{
+				"appid": 405080,
+				"name": "Assassin's Creed Syndicate - Jack The Ripper"
 			},
 			{
 				"appid": 405100,
@@ -84218,8 +84746,16 @@
 				"name": "Marvel Heroes 2015 - Magik Hero Pack"
 			},
 			{
+				"appid": 405514,
+				"name": "Marvel Heroes 2015 - Iron Fist Hero Pack"
+			},
+			{
 				"appid": 405520,
 				"name": "Warhammer 40,000: Armageddon - Ork Hunters"
+			},
+			{
+				"appid": 405550,
+				"name": "Jet Set Knights"
 			},
 			{
 				"appid": 405590,
@@ -84272,6 +84808,10 @@
 			{
 				"appid": 405840,
 				"name": "Stingray"
+			},
+			{
+				"appid": 405860,
+				"name": "Super Ubie Island REMIX"
 			},
 			{
 				"appid": 405920,
@@ -84384,6 +84924,10 @@
 			{
 				"appid": 406300,
 				"name": "Lighthockey"
+			},
+			{
+				"appid": 406310,
+				"name": "Stop Online - Battle of Words"
 			},
 			{
 				"appid": 406340,
@@ -84610,6 +85154,10 @@
 				"name": "The Last NightMary - A Lenda do Cabeça de Cuia"
 			},
 			{
+				"appid": 407340,
+				"name": "Strawberry Vinegar"
+			},
+			{
 				"appid": 407380,
 				"name": "Strania - The Stella Machina -"
 			},
@@ -84722,6 +85270,10 @@
 				"name": "Texturing a Sci-Fi Gun in Substance Painter - Part 3"
 			},
 			{
+				"appid": 407900,
+				"name": "Princess Remedy in a World of Hurt"
+			},
+			{
 				"appid": 407920,
 				"name": "Contagion OST"
 			},
@@ -84772,6 +85324,10 @@
 			{
 				"appid": 408102,
 				"name": "Dinosaur Hunt: Africa Contract - Dragon Hunter Expansion Pack"
+			},
+			{
+				"appid": 408110,
+				"name": "Planet R-12"
 			},
 			{
 				"appid": 408120,
@@ -84868,6 +85424,10 @@
 			{
 				"appid": 408510,
 				"name": "The Curious Expedition OST"
+			},
+			{
+				"appid": 408550,
+				"name": "Puzzle Strike - Shadows Characters"
 			},
 			{
 				"appid": 408560,
@@ -84994,6 +85554,10 @@
 				"name": "Dr. Langeskov, The Tiger, and The Terribly Cursed Emerald: A Whirlwind Heist"
 			},
 			{
+				"appid": 409170,
+				"name": "Contract"
+			},
+			{
 				"appid": 409180,
 				"name": "Girlfriend Rescue - Deluxe Contents"
 			},
@@ -85042,6 +85606,10 @@
 				"name": "Terraria: Official Soundtrack"
 			},
 			{
+				"appid": 409230,
+				"name": "Battle of Empires: 1914-1918 - OST"
+			},
+			{
 				"appid": 409240,
 				"name": "ePic Character Generator - Season #1: Modern Female"
 			},
@@ -85080,6 +85648,10 @@
 			{
 				"appid": 409257,
 				"name": "ePic Character Generator - Season #2: Male Sci-fi"
+			},
+			{
+				"appid": 409290,
+				"name": "Herding Dog"
 			},
 			{
 				"appid": 409310,
@@ -85186,6 +85758,10 @@
 				"name": "Pink Heaven"
 			},
 			{
+				"appid": 409730,
+				"name": "Death by Game Show"
+			},
+			{
 				"appid": 409920,
 				"name": "Brilliant Shadows - Part One of the Book of Gray Magic"
 			},
@@ -85262,6 +85838,10 @@
 				"name": "Liftoff"
 			},
 			{
+				"appid": 410410,
+				"name": "WFTO Santa Worker"
+			},
+			{
 				"appid": 410420,
 				"name": "Pinball FX2 - Balls of Glory Pinball"
 			},
@@ -85288,6 +85868,10 @@
 			{
 				"appid": 410480,
 				"name": "Sentinels of the Multiverse - Mini-Pack 2"
+			},
+			{
+				"appid": 410490,
+				"name": "Elements: Epic Heroes"
 			},
 			{
 				"appid": 410530,
@@ -85350,6 +85934,10 @@
 				"name": "All Work All Play"
 			},
 			{
+				"appid": 410670,
+				"name": "Suits: A Business RPG"
+			},
+			{
 				"appid": 410680,
 				"name": "Angels That Kill Demo"
 			},
@@ -85404,6 +85992,10 @@
 			{
 				"appid": 410950,
 				"name": "Hatred Editor"
+			},
+			{
+				"appid": 411000,
+				"name": "Sorcery! Parts 1 & 2"
 			},
 			{
 				"appid": 411010,
@@ -85514,6 +86106,14 @@
 				"name": "Getsuei Gakuen -kou-"
 			},
 			{
+				"appid": 411400,
+				"name": "Sora no Kakera - Sora Original Soundtrack"
+			},
+			{
+				"appid": 411401,
+				"name": "Celeste - Sora Extra Soundtrack"
+			},
+			{
 				"appid": 411410,
 				"name": "Metal Reaper Online - Special Reinforce Package"
 			},
@@ -85614,6 +86214,10 @@
 				"name": "City of Chains"
 			},
 			{
+				"appid": 412230,
+				"name": "InfiniTrap"
+			},
+			{
 				"appid": 412240,
 				"name": "MechWarrior Online - Light Bundle"
 			},
@@ -85662,6 +86266,10 @@
 				"name": "Legend"
 			},
 			{
+				"appid": 412390,
+				"name": "Lucadian Chronicles Demo"
+			},
+			{
 				"appid": 412400,
 				"name": "GASP"
 			},
@@ -85688,6 +86296,10 @@
 			{
 				"appid": 412520,
 				"name": "Evil Defenders"
+			},
+			{
+				"appid": 412540,
+				"name": "The Minotaur"
 			},
 			{
 				"appid": 412590,
@@ -85728,6 +86340,10 @@
 			{
 				"appid": 412870,
 				"name": "Miracle Fly Original Soundtrack"
+			},
+			{
+				"appid": 412880,
+				"name": "Drift Streets Japan"
 			},
 			{
 				"appid": 412900,
@@ -85842,6 +86458,10 @@
 				"name": "Launch Freebies"
 			},
 			{
+				"appid": 413410,
+				"name": "Danganronpa: Trigger Happy Havoc"
+			},
+			{
 				"appid": 413440,
 				"name": "8Bit Fiesta Demo"
 			},
@@ -85908,6 +86528,18 @@
 			{
 				"appid": 413790,
 				"name": "Adventure Time: Artifact Checking"
+			},
+			{
+				"appid": 413800,
+				"name": "Kung Fu Panda: Bao and Panda Vista"
+			},
+			{
+				"appid": 413810,
+				"name": "Kung Fu Panda: Master Chicken and Li"
+			},
+			{
+				"appid": 413811,
+				"name": "Kung Fu Panda: Kai and Master's Garden"
 			},
 			{
 				"appid": 413830,
@@ -86106,6 +86738,10 @@
 				"name": "The Living Dungeon: Unearthed"
 			},
 			{
+				"appid": 414050,
+				"name": "State of Extinction Demo"
+			},
+			{
 				"appid": 414060,
 				"name": "iso-Sphere"
 			},
@@ -86138,6 +86774,10 @@
 				"name": "Fall of the Titanic"
 			},
 			{
+				"appid": 414150,
+				"name": "Spooky's House of Jump Scares - Karamari Hospital"
+			},
+			{
 				"appid": 414180,
 				"name": "Depth - Corsair Pack"
 			},
@@ -86168,6 +86808,10 @@
 			{
 				"appid": 414360,
 				"name": "FLYING TIGERS: SHADOWS OVER CHINA - PARADISE ISLAND"
+			},
+			{
+				"appid": 414370,
+				"name": "Raining Blobs"
 			},
 			{
 				"appid": 414390,
@@ -86274,12 +86918,52 @@
 				"name": "Code Girl"
 			},
 			{
+				"appid": 414770,
+				"name": "Bionite: Origins"
+			},
+			{
 				"appid": 414780,
 				"name": "Knight Squad - Extra Chivalrous"
 			},
 			{
 				"appid": 414790,
 				"name": "Trick-or-Treat Pack"
+			},
+			{
+				"appid": 414830,
+				"name": "Robotpencil Presents: Illustration Basics Package"
+			},
+			{
+				"appid": 414831,
+				"name": "Robotpencil Presents: Illustration Basics Part 2"
+			},
+			{
+				"appid": 414832,
+				"name": "Robotpencil Presents: Illustration Basics Part 3"
+			},
+			{
+				"appid": 414840,
+				"name": "Robotpencil Presents: Lighting Tools and Tips"
+			},
+			{
+				"appid": 414841,
+				"name": "Robotpencil Presents: Lighting Tools and Tips - Part 1"
+			},
+			{
+				"appid": 414842,
+				"name": "Robotpencil Presents: Lighting Tools and Tips - Part 2"
+			},
+			{
+				"appid": 414843,
+				"name": "Robotpencil Presents: Lighting Tools and Tips - Part 3"
+			},
+			{
+				"appid": 414844,
+				"name": "Robotpencil Presents: Lighting Tools and Tips - Part 4"
+			},
+			{
+				"appid": 414845,
+				"name": "Robotpencil Presents: Lighting Tools and Tips - Part 5"
 			},
 			{
 				"appid": 414920,
@@ -86296,6 +86980,10 @@
 			{
 				"appid": 415040,
 				"name": "Nameless ~the one thing you must recall~ OST"
+			},
+			{
+				"appid": 415080,
+				"name": "Cyber Team Manager"
 			},
 			{
 				"appid": 415100,
@@ -86434,6 +87122,14 @@
 				"name": "Bit Shifter OST - Shift Into Cyberspace"
 			},
 			{
+				"appid": 415610,
+				"name": "Red Comrades Save the Galaxy: Reloaded"
+			},
+			{
+				"appid": 415670,
+				"name": "Highrise Heroes: Word Challenge"
+			},
+			{
 				"appid": 415680,
 				"name": "Europa Universalis IV: Sabaton Soundtrack"
 			},
@@ -86452,6 +87148,10 @@
 			{
 				"appid": 415730,
 				"name": "STAR-BOX: Dark Hack"
+			},
+			{
+				"appid": 415740,
+				"name": "OmniBus"
 			},
 			{
 				"appid": 415750,
@@ -86508,6 +87208,10 @@
 			{
 				"appid": 416030,
 				"name": "Your Quest"
+			},
+			{
+				"appid": 416070,
+				"name": "Mars 2030"
 			},
 			{
 				"appid": 416080,
@@ -86618,12 +87322,20 @@
 				"name": "Anno 2205 - Season Pass"
 			},
 			{
+				"appid": 416530,
+				"name": "Tacopocalypse"
+			},
+			{
 				"appid": 416550,
 				"name": "Rubber Ducky and the Rainbow Gun"
 			},
 			{
 				"appid": 416590,
 				"name": "Emily Wants To Play"
+			},
+			{
+				"appid": 416610,
+				"name": "The Growth Journey"
 			},
 			{
 				"appid": 416630,
@@ -86640,6 +87352,10 @@
 			{
 				"appid": 416670,
 				"name": "Gunslingers"
+			},
+			{
+				"appid": 416690,
+				"name": "Oh...Sir!"
 			},
 			{
 				"appid": 416710,
@@ -86742,6 +87458,10 @@
 				"name": "LeftWay Demo"
 			},
 			{
+				"appid": 417461,
+				"name": "Tom Clancy's Rainbow Six Siege - The Safari Bundle"
+			},
+			{
 				"appid": 417480,
 				"name": "Marcus Level"
 			},
@@ -86755,7 +87475,7 @@
 			},
 			{
 				"appid": 417730,
-				"name": "Shakedown Racing"
+				"name": "Shakedown Racing: One"
 			},
 			{
 				"appid": 417740,
@@ -86772,6 +87492,10 @@
 			{
 				"appid": 417890,
 				"name": "Apotheon Arena"
+			},
+			{
+				"appid": 417910,
+				"name": "Hooligan Fighters"
 			},
 			{
 				"appid": 417961,
@@ -86906,6 +87630,10 @@
 				"name": "Chronicles of a Dark Lord: Rhapsody Clash"
 			},
 			{
+				"appid": 418320,
+				"name": "Spriter: RPG Hereos Pack"
+			},
+			{
 				"appid": 418340,
 				"name": "RWBY: Grimm Eclipse"
 			},
@@ -86916,6 +87644,10 @@
 			{
 				"appid": 418360,
 				"name": "Gurgamoth Lives"
+			},
+			{
+				"appid": 418380,
+				"name": "The Color Out of Space"
 			},
 			{
 				"appid": 418430,
@@ -87022,12 +87754,20 @@
 				"name": "Robotpencil Presents: Character Design - Jubal - Files"
 			},
 			{
+				"appid": 419460,
+				"name": "That Dragon, Cancer"
+			},
+			{
 				"appid": 419490,
 				"name": "Vendetta - Curse of Raven's Cry Digital Deluxe Edition"
 			},
 			{
 				"appid": 419500,
 				"name": "Red Game Without A Great Name"
+			},
+			{
+				"appid": 419520,
+				"name": "Lifeless"
 			},
 			{
 				"appid": 419540,
@@ -87178,6 +87918,18 @@
 				"name": "Eden Star Dedicated Server"
 			},
 			{
+				"appid": 419820,
+				"name": "Robotpencil Presents: Illustration Basics Package - Files"
+			},
+			{
+				"appid": 419830,
+				"name": "Robotpencil Presents: Lighting Tools and Tips - Files"
+			},
+			{
+				"appid": 419890,
+				"name": "Wild Season - Rest of Episodes"
+			},
+			{
 				"appid": 419910,
 				"name": "TI5 - CDEC's Journey to The Majors"
 			},
@@ -87226,6 +87978,10 @@
 				"name": "Into the Void"
 			},
 			{
+				"appid": 420300,
+				"name": "The Admin"
+			},
+			{
 				"appid": 420310,
 				"name": "Office Battle - Brutal Mode"
 			},
@@ -87242,6 +87998,10 @@
 				"name": "South West Europe Scenery Collection"
 			},
 			{
+				"appid": 420380,
+				"name": "The Strike"
+			},
+			{
 				"appid": 420390,
 				"name": "EverQuest : The Broken Mirror"
 			},
@@ -87256,6 +88016,10 @@
 			{
 				"appid": 420630,
 				"name": "MAGIX Music Maker 2016 Premium"
+			},
+			{
+				"appid": 420640,
+				"name": "Knights of Pen and Paper 2 - Here Be Dragons"
 			},
 			{
 				"appid": 420650,
@@ -87302,6 +88066,10 @@
 				"name": "I must kill...: Fresh Meat"
 			},
 			{
+				"appid": 420890,
+				"name": "MX vs. ATV Supercross Encore - Supercross Track Pack 1"
+			},
+			{
 				"appid": 420910,
 				"name": "Store Manager: Cellular Edition"
 			},
@@ -87318,6 +88086,18 @@
 				"name": "RoBoRumble"
 			},
 			{
+				"appid": 421010,
+				"name": "Soldiers: Arena"
+			},
+			{
+				"appid": 421040,
+				"name": "Plantera"
+			},
+			{
+				"appid": 421060,
+				"name": "Age of Steel: Recharge"
+			},
+			{
 				"appid": 421100,
 				"name": "Heroes of Normandie: US Rangers"
 			},
@@ -87332,6 +88112,34 @@
 			{
 				"appid": 421131,
 				"name": "Gryphon Knight Epic - Shadow Squire"
+			},
+			{
+				"appid": 421160,
+				"name": "MX vs. ATV Supercross Encore - Supercross Track Pack 2"
+			},
+			{
+				"appid": 421161,
+				"name": "MX vs. ATV Supercross Encore - Supercross Track Pack 3"
+			},
+			{
+				"appid": 421162,
+				"name": "MX vs. ATV Supercross Encore - Supercross Track Pack 4"
+			},
+			{
+				"appid": 421163,
+				"name": "MX vs. ATV Supercross Encore - The Stewart Compound"
+			},
+			{
+				"appid": 421164,
+				"name": "MX vs. ATV Supercross Encore - Copper Canyon Open World"
+			},
+			{
+				"appid": 421165,
+				"name": "MX vs. ATV Supercross Encore - Rhythm Racing Pack"
+			},
+			{
+				"appid": 421166,
+				"name": "MX vs. ATV Supercross Encore - 2 Stroke 4 Pack"
 			},
 			{
 				"appid": 421180,
@@ -87410,6 +88218,10 @@
 				"name": "Shadowrun Chronicles: INFECTED Director's Cut"
 			},
 			{
+				"appid": 421910,
+				"name": "PANOPTES"
+			},
+			{
 				"appid": 421920,
 				"name": "Message Quest: Original Soundtrack"
 			},
@@ -87420,6 +88232,10 @@
 			{
 				"appid": 421950,
 				"name": "Detective Grimoire Soundtrack"
+			},
+			{
+				"appid": 422020,
+				"name": "Dark Days"
 			},
 			{
 				"appid": 422030,
@@ -87450,6 +88266,14 @@
 				"name": "Rise of Keepers"
 			},
 			{
+				"appid": 422220,
+				"name": "Dragon's Dogma: Dark Arisen Masterworks Collection"
+			},
+			{
+				"appid": 422230,
+				"name": "Dragon's Dogma Official Design Works"
+			},
+			{
 				"appid": 422250,
 				"name": "ShipLord"
 			},
@@ -87468,6 +88292,26 @@
 			{
 				"appid": 422400,
 				"name": "PAYDAY 2: The Point Break Heists"
+			},
+			{
+				"appid": 422470,
+				"name": "Holiday Spirit Fun Pack"
+			},
+			{
+				"appid": 422471,
+				"name": "Fireshark Epic Rockets"
+			},
+			{
+				"appid": 422472,
+				"name": "HellFish Arsonist Kit"
+			},
+			{
+				"appid": 422473,
+				"name": "Party Animal Pyro Pack"
+			},
+			{
+				"appid": 422474,
+				"name": "Squid-pro-Quo Blaster Pack"
 			},
 			{
 				"appid": 422530,
@@ -87500,6 +88344,14 @@
 			{
 				"appid": 422691,
 				"name": "FIVE: Guardians of David Art Book"
+			},
+			{
+				"appid": 422940,
+				"name": "Divergence: Online"
+			},
+			{
+				"appid": 422960,
+				"name": "Squad - Special Service Perk"
 			},
 			{
 				"appid": 423010,
@@ -87778,6 +88630,10 @@
 				"name": "A.I. Space Corps"
 			},
 			{
+				"appid": 423240,
+				"name": "Energy Cycle Soundtrack"
+			},
+			{
 				"appid": 423310,
 				"name": "Dragomon Hunter - Welcome Gift"
 			},
@@ -87788,6 +88644,10 @@
 			{
 				"appid": 423330,
 				"name": "Pendragon Rising Demo"
+			},
+			{
+				"appid": 423360,
+				"name": "Christmas Vacation Pack"
 			},
 			{
 				"appid": 423370,
@@ -87804,6 +88664,10 @@
 			{
 				"appid": 423600,
 				"name": "Adelantado Trilogy. Book one"
+			},
+			{
+				"appid": 423620,
+				"name": "Hero Defense - Haunted Island"
 			},
 			{
 				"appid": 423630,
@@ -87854,8 +88718,16 @@
 				"name": "Carpe Diem"
 			},
 			{
+				"appid": 423900,
+				"name": "Dinocide"
+			},
+			{
 				"appid": 424000,
 				"name": "Project Pulsation"
+			},
+			{
+				"appid": 424010,
+				"name": "Crudelis"
 			},
 			{
 				"appid": 424050,
@@ -87879,7 +88751,7 @@
 			},
 			{
 				"appid": 424170,
-				"name": "The Fall of Gods Chapter 1 & 2"
+				"name": "The fall of gods"
 			},
 			{
 				"appid": 424210,
@@ -87898,8 +88770,16 @@
 				"name": "Balrum"
 			},
 			{
+				"appid": 424280,
+				"name": "Iron Snout"
+			},
+			{
 				"appid": 424310,
 				"name": "Blessed Ones: The Magic Wolves"
+			},
+			{
+				"appid": 424320,
+				"name": "Anomaly 1729"
 			},
 			{
 				"appid": 424690,
@@ -87908,6 +88788,10 @@
 			{
 				"appid": 424750,
 				"name": "The BoX"
+			},
+			{
+				"appid": 424760,
+				"name": "Bladestar"
 			},
 			{
 				"appid": 424800,
@@ -87986,6 +88870,10 @@
 				"name": "100% Orange Juice - Sham & Sherry Character Pack"
 			},
 			{
+				"appid": 425410,
+				"name": "Road to Ballhalla"
+			},
+			{
 				"appid": 425420,
 				"name": "Arena Starter Pack"
 			},
@@ -88008,6 +88896,10 @@
 			{
 				"appid": 425620,
 				"name": "DC Universe Online™ - Episode 19 : Deep Desires / The Demon's Plan"
+			},
+			{
+				"appid": 425650,
+				"name": "Halloween Forever"
 			},
 			{
 				"appid": 425680,
@@ -88078,6 +88970,10 @@
 				"name": "Dragonpath"
 			},
 			{
+				"appid": 425840,
+				"name": "Goat Simulator: PAYDAY"
+			},
+			{
 				"appid": 425860,
 				"name": "Vector Assault"
 			},
@@ -88124,6 +89020,14 @@
 			{
 				"appid": 426100,
 				"name": "RPG Maker MV - Season Pass"
+			},
+			{
+				"appid": 426120,
+				"name": "Energy Cycle Collector's Edition Content"
+			},
+			{
+				"appid": 426170,
+				"name": "Defragmented"
 			},
 			{
 				"appid": 426180,
@@ -88190,6 +89094,22 @@
 				"name": "Call of Duty: Black Ops III - CODE Warriors Personalization Pack"
 			},
 			{
+				"appid": 426740,
+				"name": "RTK Maker - Face CG Koei SLG Set"
+			},
+			{
+				"appid": 426741,
+				"name": "RTK Maker - Face CG Taiko Risshiden V Set"
+			},
+			{
+				"appid": 426742,
+				"name": "RTK Maker - Face CG Warriors Set"
+			},
+			{
+				"appid": 426743,
+				"name": "RTK Maker - Face CG Nobunyaga Set"
+			},
+			{
 				"appid": 426810,
 				"name": "Devilian: Immortal Pack"
 			},
@@ -88226,12 +89146,48 @@
 				"name": "Dungeon Defenders II - The Awakening Costume Pack"
 			},
 			{
+				"appid": 427601,
+				"name": "Tom Clancy's Rainbow Six Siege - The Safari Bundle - Uplay Activation"
+			},
+			{
 				"appid": 427640,
 				"name": "The Ables: Freepoint High"
 			},
 			{
+				"appid": 427650,
+				"name": "Aviary Attorney Soundtrack"
+			},
+			{
+				"appid": 427720,
+				"name": "GOCCO OF WAR Demo"
+			},
+			{
+				"appid": 427730,
+				"name": "Who's Your Daddy"
+			},
+			{
+				"appid": 427750,
+				"name": "Tick Tock Isle Soundtrack"
+			},
+			{
+				"appid": 427780,
+				"name": "PERFECT ANGLE: The puzzle game based on optical illusions"
+			},
+			{
+				"appid": 427810,
+				"name": "CALENDULA"
+			},
+			{
+				"appid": 427860,
+				"name": "The Next World"
+			},
+			{
 				"appid": 427950,
 				"name": "The Withering"
+			},
+			{
+				"appid": 428010,
+				"name": "Pony Island - Soundtrack"
 			},
 			{
 				"appid": 428020,
@@ -88242,8 +89198,32 @@
 				"name": "The ORPHEUS Ruse Demo"
 			},
 			{
+				"appid": 428040,
+				"name": "Sixth Grade Detective"
+			},
+			{
+				"appid": 428050,
+				"name": "Sixth Grade Detective Demo"
+			},
+			{
+				"appid": 428060,
+				"name": "Millia -The ending-"
+			},
+			{
 				"appid": 428090,
 				"name": "Dragonpath Demo"
+			},
+			{
+				"appid": 428100,
+				"name": "Beyond Reality"
+			},
+			{
+				"appid": 428130,
+				"name": "Walk The Light"
+			},
+			{
+				"appid": 428190,
+				"name": "MadOut Open City"
 			},
 			{
 				"appid": 428240,
@@ -88266,6 +89246,14 @@
 				"name": "Mystery of Unicorn Castle: The Beastmaster"
 			},
 			{
+				"appid": 428350,
+				"name": "Fear Equation"
+			},
+			{
+				"appid": 428370,
+				"name": "Windlands"
+			},
+			{
 				"appid": 428400,
 				"name": "Nuclear Throne - Original Soundtrack by Jukio Kallio"
 			},
@@ -88274,8 +89262,28 @@
 				"name": "Endorlight"
 			},
 			{
+				"appid": 428460,
+				"name": "Kings of Israel"
+			},
+			{
+				"appid": 428510,
+				"name": "Solitaire Christmas. Match 2 Cards"
+			},
+			{
 				"appid": 428520,
 				"name": "Fantasy Grounds - Baldur's Gate Enhanced Item Pack"
+			},
+			{
+				"appid": 428740,
+				"name": "Nordenfelt"
+			},
+			{
+				"appid": 428760,
+				"name": "Hatch and Slay"
+			},
+			{
+				"appid": 428780,
+				"name": "The Secret World: Issue 13 - Trail of Shadows - Collector's Edition"
 			},
 			{
 				"appid": 428800,
@@ -88286,6 +89294,30 @@
 				"name": "VRMark Preview"
 			},
 			{
+				"appid": 428860,
+				"name": "Red Haze"
+			},
+			{
+				"appid": 428870,
+				"name": "Take the Dream IX"
+			},
+			{
+				"appid": 428880,
+				"name": "The Quest"
+			},
+			{
+				"appid": 428890,
+				"name": "The Secret World: Issue 12 - To The Dark Tower Below - Collector's Edition"
+			},
+			{
+				"appid": 428900,
+				"name": "Linea, the Game"
+			},
+			{
+				"appid": 428950,
+				"name": "Kivi, Toilet and Shotgun"
+			},
+			{
 				"appid": 429020,
 				"name": "Lost World Zero"
 			},
@@ -88294,8 +89326,84 @@
 				"name": "Furfly"
 			},
 			{
+				"appid": 429050,
+				"name": "Feed and Grow: Fish"
+			},
+			{
+				"appid": 429060,
+				"name": "Zombie Wars: Invasion"
+			},
+			{
+				"appid": 429220,
+				"name": "FullBlast"
+			},
+			{
+				"appid": 429260,
+				"name": "Super Intergalactic Gang"
+			},
+			{
+				"appid": 429300,
+				"name": "Sepia Tears"
+			},
+			{
 				"appid": 429400,
 				"name": "Warhammer 40,000: Dark Nexus Arena Dedicated Server"
+			},
+			{
+				"appid": 429450,
+				"name": "Counter-Strike Nexon: Zombies - Rivals DLC"
+			},
+			{
+				"appid": 429470,
+				"name": "Space Pilgrim Episode One: Alpha Centauri"
+			},
+			{
+				"appid": 429490,
+				"name": "Resilience: Wave Survival"
+			},
+			{
+				"appid": 429520,
+				"name": "Falcon Gold"
+			},
+			{
+				"appid": 429530,
+				"name": "Falcon 4.0"
+			},
+			{
+				"appid": 429580,
+				"name": "A Wild Catgirl Appears!"
+			},
+			{
+				"appid": 429590,
+				"name": "RTK Maker - Face CG Historical Fantasy Set"
+			},
+			{
+				"appid": 429600,
+				"name": "Fairy Tale Mysteries: The Puppet Thief"
+			},
+			{
+				"appid": 429620,
+				"name": "Dungeon Rushers"
+			},
+			{
+				"appid": 429700,
+				"name": "Squirbs"
+			},
+			{
+				"appid": 429710,
+				"name": "MX vs. ATV Supercross Encore - 2015 KTM 125 SX MX"
+			},
+			{
+				"appid": 429711,
+				"name": "MX vs. ATV Supercross Encore - 2015 KTM 250 SX MX"
+			},
+			{
+				"appid": 429730,
+				"name": "PlanetSide 2 Essential Pack"
+			},
+			{
+				"appid": 429760,
+				"name": "Welcome to Boon Hill - OST"
 			},
 			{
 				"appid": 429880,
@@ -88306,8 +89414,436 @@
 				"name": "Unturned - Gold Beret"
 			},
 			{
+				"appid": 429890,
+				"name": "MX vs. ATV Supercross Encore - 2015 KTM 250 SX-F MX"
+			},
+			{
+				"appid": 429900,
+				"name": "MX vs. ATV Supercross Encore - 2015 KTM 350 SX-F MX"
+			},
+			{
+				"appid": 429901,
+				"name": "MX vs. ATV Supercross Encore - 2015 KTM 450 SX-F MX"
+			},
+			{
+				"appid": 429902,
+				"name": "MX vs. ATV Supercross Encore - KTM 450 SX ATV"
+			},
+			{
+				"appid": 429903,
+				"name": "MX vs. ATV Supercross Encore - 2015 Husqvarna FC 250 MX"
+			},
+			{
+				"appid": 429904,
+				"name": "MX vs. ATV Supercross Encore - 2015 Husqvarna FC 350 MX"
+			},
+			{
+				"appid": 429905,
+				"name": "MX vs. ATV Supercross Encore - 2015 Husqvarna TC 125 MX"
+			},
+			{
+				"appid": 429906,
+				"name": "MX vs. ATV Supercross Encore - 2015 Husqvarna TC 250 MX"
+			},
+			{
+				"appid": 429907,
+				"name": "MX vs. ATV Supercross Encore - 2015 Husqvarna FC 450 MX"
+			},
+			{
+				"appid": 429940,
+				"name": "The Sad Story of Emmeline Burns"
+			},
+			{
+				"appid": 429950,
+				"name": "ABO MANDO"
+			},
+			{
 				"appid": 429990,
 				"name": "The Room of Black & White Soundtracks"
+			},
+			{
+				"appid": 430000,
+				"name": "Cardinal Quest 2 Soundtrack"
+			},
+			{
+				"appid": 430020,
+				"name": "Dance of Death"
+			},
+			{
+				"appid": 430040,
+				"name": "Proton Pulse Demo"
+			},
+			{
+				"appid": 430060,
+				"name": "Nature Model Pack"
+			},
+			{
+				"appid": 430080,
+				"name": "Elysium: Blood Games"
+			},
+			{
+				"appid": 430110,
+				"name": "Steel Ocean - Repulse Package"
+			},
+			{
+				"appid": 430180,
+				"name": "TANE DLC: PRR T1"
+			},
+			{
+				"appid": 430181,
+				"name": "TANE DLC: Aerotrain"
+			},
+			{
+				"appid": 430182,
+				"name": "TANE DLC: BR Class 14"
+			},
+			{
+				"appid": 430200,
+				"name": "Nameless ~Black & White Christmas~"
+			},
+			{
+				"appid": 430220,
+				"name": "TANE DLC: SNCF - AGC Languedoc"
+			},
+			{
+				"appid": 430260,
+				"name": "Trove: Creator's Pack"
+			},
+			{
+				"appid": 430261,
+				"name": "Trove: Collector's Pack"
+			},
+			{
+				"appid": 430280,
+				"name": "Nature Defenders"
+			},
+			{
+				"appid": 430430,
+				"name": "New York Mysteries: High Voltage Demo"
+			},
+			{
+				"appid": 430940,
+				"name": "Game Soundtrack"
+			},
+			{
+				"appid": 431000,
+				"name": "DEFENDERS"
+			},
+			{
+				"appid": 431050,
+				"name": "Aстролорды: Опытный строитель"
+			},
+			{
+				"appid": 431060,
+				"name": "Астролорды: Оружие Пришельцев"
+			},
+			{
+				"appid": 431240,
+				"name": "Golf With Friends"
+			},
+			{
+				"appid": 431270,
+				"name": "GooCubelets: The Algoorithm"
+			},
+			{
+				"appid": 431330,
+				"name": "Dungeons Are Random"
+			},
+			{
+				"appid": 431350,
+				"name": "DARIUSBURST Chronicle Saviours - Darius Odyssey Digital Guidebook"
+			},
+			{
+				"appid": 431420,
+				"name": "Sickness Demo"
+			},
+			{
+				"appid": 431460,
+				"name": "Midnight"
+			},
+			{
+				"appid": 431470,
+				"name": "Inside The Code"
+			},
+			{
+				"appid": 431490,
+				"name": "Soundtrack and Artbook DLC"
+			},
+			{
+				"appid": 431540,
+				"name": "Frosty Kiss"
+			},
+			{
+				"appid": 431610,
+				"name": "Hubert's Island Adventure: Mouse o' War"
+			},
+			{
+				"appid": 431710,
+				"name": "Space Pilgrim Episode Two: Epsilon Indi"
+			},
+			{
+				"appid": 431740,
+				"name": "Chowderchu"
+			},
+			{
+				"appid": 431770,
+				"name": "Rivalry"
+			},
+			{
+				"appid": 431820,
+				"name": "The Growth Journey - Soundtrack"
+			},
+			{
+				"appid": 431840,
+				"name": "3DRPG"
+			},
+			{
+				"appid": 431910,
+				"name": "Psychocat: The Answer"
+			},
+			{
+				"appid": 431980,
+				"name": "One Manga Day - Russian Voiceover"
+			},
+			{
+				"appid": 431990,
+				"name": "Locked-in syndrome"
+			},
+			{
+				"appid": 432010,
+				"name": "World's Dawn"
+			},
+			{
+				"appid": 432020,
+				"name": "What's under your blanket !?"
+			},
+			{
+				"appid": 432080,
+				"name": "AfterShock"
+			},
+			{
+				"appid": 432150,
+				"name": "They Came From The Moon"
+			},
+			{
+				"appid": 432170,
+				"name": "Silver Knight"
+			},
+			{
+				"appid": 432190,
+				"name": "Chef Solitaire: USA"
+			},
+			{
+				"appid": 432450,
+				"name": "INFRA - Original Soundtrack"
+			},
+			{
+				"appid": 432500,
+				"name": "Evertown"
+			},
+			{
+				"appid": 432510,
+				"name": "Strawberry Vinegar Original Soundtrack"
+			},
+			{
+				"appid": 432530,
+				"name": "Volvox Demo"
+			},
+			{
+				"appid": 432630,
+				"name": "Protoshift - Offical Soundtrack"
+			},
+			{
+				"appid": 432650,
+				"name": "Miko Gakkou: Second Year Original Soundtrack"
+			},
+			{
+				"appid": 432710,
+				"name": "American Truck Simulator - Steampunk Paint Jobs Pack"
+			},
+			{
+				"appid": 432770,
+				"name": "Small Town Terrors: Livingston"
+			},
+			{
+				"appid": 432840,
+				"name": "Galagan's Island Repyrmian Rising: Holiday 2015 Skin"
+			},
+			{
+				"appid": 432870,
+				"name": "[STO] Special Tactics Online"
+			},
+			{
+				"appid": 432970,
+				"name": "Super Lemonade Factory Demo"
+			},
+			{
+				"appid": 432980,
+				"name": "INVERSUS"
+			},
+			{
+				"appid": 433020,
+				"name": "Echoes Of Aetheria: Soundtrack"
+			},
+			{
+				"appid": 433021,
+				"name": "Echoes Of Aetheria: Strategy Guide"
+			},
+			{
+				"appid": 433040,
+				"name": "Pinball FX2 - Star Wars™ Pinball: The Force Awakens™ Pack"
+			},
+			{
+				"appid": 433100,
+				"name": "The Town Of Light"
+			},
+			{
+				"appid": 433130,
+				"name": "WarBirds Dogfights"
+			},
+			{
+				"appid": 433340,
+				"name": "Slime Rancher"
+			},
+			{
+				"appid": 433390,
+				"name": "Walk The Light - Soundtrack"
+			},
+			{
+				"appid": 433430,
+				"name": "Oxenfree - OST"
+			},
+			{
+				"appid": 433520,
+				"name": "Tabletop Simulator - Darkest Night"
+			},
+			{
+				"appid": 433560,
+				"name": "Dragon's Dogma: Dark Arisen Masterworks Collection (FLAC)"
+			},
+			{
+				"appid": 433710,
+				"name": "Futuridium EP Deluxe Original Sound Track"
+			},
+			{
+				"appid": 433730,
+				"name": "PAYDAY 2: The Goat Simulator Heist"
+			},
+			{
+				"appid": 433790,
+				"name": "Wooden Floor 2 - Resurrection"
+			},
+			{
+				"appid": 433830,
+				"name": "Rescue From Goblin Deep"
+			},
+			{
+				"appid": 433920,
+				"name": "Aveyond 4: Shadow Of The Mist"
+			},
+			{
+				"appid": 433950,
+				"name": "Bit Blaster XL"
+			},
+			{
+				"appid": 434150,
+				"name": "Dark Night"
+			},
+			{
+				"appid": 434250,
+				"name": "Masked Shooters 2"
+			},
+			{
+				"appid": 434380,
+				"name": "Pixel Survival - Craft Game"
+			},
+			{
+				"appid": 434500,
+				"name": "BATTLE PIXELS"
+			},
+			{
+				"appid": 434610,
+				"name": "Forbidden planet"
+			},
+			{
+				"appid": 434760,
+				"name": "Masked Shooters 2 Demo"
+			},
+			{
+				"appid": 434800,
+				"name": "The Great Escape"
+			},
+			{
+				"appid": 434890,
+				"name": "Eight Mini Racers"
+			},
+			{
+				"appid": 434940,
+				"name": "Dinosaur Hunt: Africa Contract - Medieval Knights Hunter Expansion Pack"
+			},
+			{
+				"appid": 435070,
+				"name": "Elansar"
+			},
+			{
+				"appid": 435080,
+				"name": "Philia : the Sequel to Elansar"
+			},
+			{
+				"appid": 435090,
+				"name": "Akuatica Demo"
+			},
+			{
+				"appid": 435110,
+				"name": "Dying Light: Outfit and Livery 1"
+			},
+			{
+				"appid": 435111,
+				"name": "Dying Light: Outfit and Livery 2"
+			},
+			{
+				"appid": 435130,
+				"name": "Ground Breakers Demo"
+			},
+			{
+				"appid": 435140,
+				"name": "Rush for gold: Alaska"
+			},
+			{
+				"appid": 435240,
+				"name": "Deathstate Soundtrack"
+			},
+			{
+				"appid": 435250,
+				"name": "Deadhunt"
+			},
+			{
+				"appid": 435450,
+				"name": "The Fall of the Dungeon Guardians OST"
+			},
+			{
+				"appid": 435500,
+				"name": "Inside My Radio Digital Deluxe Edition"
+			},
+			{
+				"appid": 435530,
+				"name": "The Final Station"
+			},
+			{
+				"appid": 435550,
+				"name": "DC Universe Online™ - Episode 20 : Blackest Night / Wasteland Wonderland"
+			},
+			{
+				"appid": 436000,
+				"name": "Lovely Planet Arcade"
+			},
+			{
+				"appid": 436250,
+				"name": "Fantasy Grounds - D&D Legacy of the Crystal Shard"
+			},
+			{
+				"appid": 436251,
+				"name": "Fantasy Grounds - Call of Cthulhu: The House of R'lyeh"
 			}
 		]
 		
