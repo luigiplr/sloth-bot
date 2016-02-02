@@ -22,7 +22,7 @@ module.exports = {
                     let newCount = originalSubCount - subCount;
                     resolve({
                         type: 'channel',
-                        message: '*TheFineFags have lost about ' + newCount.toLocaleString() + ' subscribers since their fuckup*'
+                        message: '*TheFineFags have lost about ' + newCount.toLocaleString('en-US') + ' subscribers since their fuckup*'
                     });
                 } else {
                     reject(err);
