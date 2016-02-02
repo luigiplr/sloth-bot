@@ -22,7 +22,7 @@ module.exports = {
                     let newCount = originalSubCount - subCount;
                     resolve({
                         type: 'channel',
-                        message: '*TheFineFags have lost about ' + newCount.toLocaleString('en-US') + ' subscribers since their fuckup*'
+                        message: '*TheFineFags have lost about ' + addStupidCommas(newCount) + ' subscribers since their fuckup*'
                     });
                 } else {
                     reject(err);
@@ -31,3 +31,8 @@ module.exports = {
         });
     }
 };
+
+// Better source this shit before i get sued http://stackoverflow.com/a/2901298
+function addStupidCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
