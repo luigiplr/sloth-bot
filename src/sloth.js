@@ -17,11 +17,8 @@ const postMessage = (channel, input) => {
             as_user: 'true',
             token: config.slackAPIToken
         }, (err, resp) => {
-            if (err || resp.body.error)
-                return reject('Error: ' + (resp.body.error || err));
-
-            if (!resp.body && resp.body.ok !== true)
-                reject('Post Message Error: ' + resp.body.error);
+            if (err || (resp.body && (resp.body.error || resp.body.ok !== true)))
+                return reject('Post Message Error: ' + (resp.body.error || err));
         });
     });
 };
