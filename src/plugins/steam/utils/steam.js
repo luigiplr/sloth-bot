@@ -15,12 +15,12 @@ const endpoints = {
 	appDetails: 'http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic,price_overview,release_date,metacritic',
 	numPlayers: 'http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%id%',
 	userBans: 'http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=' + token + '&steamids=%id%',
-	appList: 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/', // Unused
+	appList: 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/',
 	userLevel: 'https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=' + token + '&steamid=%id%',
 	resolveVanity: 'https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=' + token + '&vanityurl=%id%'
 };
 
-var appList;
+var appList, lastUpdated;
 
 const getUrl = ((type, id) => {
     return endpoints[type].replace('%id%', id);
@@ -34,7 +34,6 @@ const getIDFromProfile = (id => {
 					resolve(body.response.steamid);
 				else
 					reject("Invalid Vanity ID");
-
 			} else {
 				reject('Error retrieving profile ID');
 			}
@@ -59,11 +58,10 @@ const formatProfileID = (id => {
 const getUserLevel = (id => {
 	return new Promise(resolve => {
 		needle.get(getUrl('userLevel', id), (err, resp, body) => {
-			if (!err && body) {
+			if (!err && body)
 				resolve(body.response.player_level);
-			} else {
+			else
 				resolve(0);
-			}
 		});
 	});
 });
@@ -71,11 +69,10 @@ const getUserLevel = (id => {
 const getUserBans = (id => {
 	return new Promise(resolve => {
 		needle.get(getUrl('userBans', id), (err, resp, body) => {
-			if (!err && body.players[0]) {
+			if (!err && body.players[0])
 				resolve(body.players[0]);
-			} else {
+			else
 				resolve(0);
-			}
 		});
 	});
 });
@@ -83,9 +80,9 @@ const getUserBans = (id => {
 const getUserGames = (id => {
 	return new Promise((resolve, reject) => {
 		needle.get(getUrl('gameSummary', id), (err, resp, body) => {
-			if (!err && body && body.response) {
+			if (!err && body && body.response)
 				resolve(body.response);
-			} else
+			else
 				reject('Error retrieving user games');
 		});
 	});
@@ -105,19 +102,43 @@ const getAppDetails = ((appid, basic) => {
 	});
 });
 
+const updateAppList = () => {
+	return new Promise((resolve, reject) => {
+		// Update the list every 4 hours
+		if (!lastUpdated || lastUpdated + (4 * 3600) < Math.round(new Date().getTime() / 1000)) {
+			needle.get(getUrl('appList'), (err, resp, body) => {
+				if (!err && body) {
+					appList = body.applist;
+					lastUpdated = Math.round(new Date().getTime() / 1000);
+					resolve();
+				} else {
+					console.error("Error updating applist");
+					resolve();
+				}
+			});
+		} else {
+			console.log("Already updated");
+			resolve();
+		}
+	});
+};
+
 const getAppsByName = (appName => {
 	return new Promise((resolve, reject) => {
-		appList = require('./../../../../steamGames.json').applist.apps;
-		let apps = appList.filter(function(game) {
-			if (game.name.toUpperCase().replace('-',' ').replace('™', '').replace('©', '').replace('®', '').indexOf(appName.toUpperCase().replace('-',' ').replace('™', '').replace('©', '').replace('®', '')) >= 0)
-				return game;
+		updateAppList().then(() => {
+			if (!appList || !appList.apps)
+				return reject("Error, we don't have an applist!");
+			let apps = appList.apps.filter(function(game) {
+				if (game.name.toUpperCase().replace('-',' ').replace('™', '').replace('©', '').replace('®', '').indexOf(appName.toUpperCase().replace('-',' ').replace('™', '').replace('©', '').replace('®', '')) >= 0)
+					return game;
+			});
+			if (apps[0] && apps.length >= 3)
+				resolve(apps.slice(0, 3));
+			else if (apps[0])
+				resolve([apps[0]]);
+			else
+				reject("Couldn't find a game with that name");
 		});
-		if (apps[0] && apps.length >= 3)
-			resolve(apps.slice(0, 3));
-		else if (apps[0])
-			resolve([apps[0]]);
-		else
-			reject("Couldn't find a game with that name");
 	});
 });
 
