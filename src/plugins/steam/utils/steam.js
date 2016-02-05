@@ -7,15 +7,17 @@ import SteamID from 'steamid';
 
 const token = require('./../../../../config.json').steamAPIToken;
 const endpoints = {
-	profile: 'http://steamcommunity.com/id/%id%/?xml=1',
+	profile: 'http://steamcommunity.com/id/%id%/?xml=1', // Unused
 	profileSummary: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + token + '&steamids=%id%',
-	miniProfile: 'http://steamcommunity.com/miniprofile/%id%',
+	miniProfile: 'http://steamcommunity.com/miniprofile/%id%', // Unused
 	gameSummary: 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=' + token + '&steamid=%id%&include_played_free_games=1',
 	appDetailsBasic: 'http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic',
 	appDetails: 'http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic,price_overview,release_date,metacritic',
 	numPlayers: 'http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%id%',
 	userBans: 'http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=' + token + '&steamids=%id%',
-	appList: 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/'
+	appList: 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/', // Unused
+	userLevel: 'https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=' + token + '&steamid=%id%',
+	resolveVanity: 'https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=' + token + '&vanityurl=%id%'
 };
 
 var appList;
@@ -26,13 +28,13 @@ const getUrl = ((type, id) => {
 
 const getIDFromProfile = (id => {
 	return new Promise((resolve, reject) => {
-		needle.get(getUrl('profile', id), (err, resp, body) => {
+		needle.get(getUrl('resolveVanity', id), (err, resp, body) => {
 			if (!err && body) {
-				if (body.profile) {//body.profile will be returned if valid profile
-					resolve(body.profile.steamID64);
-				} else { //if invalid pofile body.response will contain a .error
-					resolve(body.response);
-				}
+				if (body.response.success == 1)
+					resolve(body.response.steamid);
+				else
+					reject("Invalid Vanity ID");
+
 			} else {
 				reject('Error retrieving profile ID');
 			}
@@ -49,25 +51,16 @@ const formatProfileID = (id => {
 			else
 				reject('Invalid ID');
 		} else {
-			getIDFromProfile(id).then(newID => {
-				if (newID.error)
-					reject(newID.error);
-				else
-					resolve(newID);
-			}).catch(reject);
+			getIDFromProfile(id).then(resolve).catch(reject);
 		}
 	});
 });
 
 const getUserLevel = (id => {
 	return new Promise(resolve => {
-		// Hacky way to get the AccountID from ID64
-		let accountID = id.substr(3) - 61197960265728;
-		needle.get(getUrl('miniProfile', accountID), (err, resp, body) => {
-			if (!err) {
-				let $ = cheerio.load(body);
-				let level = $('.friendPlayerLevelNum').text();
-				resolve(level);
+		needle.get(getUrl('userLevel', id), (err, resp, body) => {
+			if (!err && body) {
+				resolve(body.response.player_level);
 			} else {
 				resolve(0);
 			}
@@ -190,7 +183,7 @@ module.exports = {
 							});
 							profile.totalgames = games.game_count;
 							profile.mostplayed = sortedGames[0];
-							getAppDetails(sortedGames[0].appid).then(game => {
+							getAppDetails(sortedGames[0].appid, true).then(game => {
 								if (game) {
 									profile.mostplayed.name = game.name;
 									resolve(profile);
