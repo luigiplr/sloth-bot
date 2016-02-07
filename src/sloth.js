@@ -9,25 +9,32 @@ from './parseMessage';
 const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
 const config = require('./../config.json');
 
-const postMessage = (channel, input) => {
-    return new Promise((resolve, reject) => {
-        needle.post('https://magics.slack.com/api/chat.postMessage', {
-            text: input,
-            channel: channel,
-            as_user: 'true',
-            token: config.slackAPIToken
-        }, (err, resp) => {
-            if (err || (resp.body && (resp.body.error || resp.body.ok !== true)))
-                return reject('Post Message Error: ' + (resp.body.error || err));
-        });
-    });
-};
-
 slackClient.on('open', () => {
     let unreads = slackClient.getUnreadCount();
 
     console.log('Welcome to Slack. You are @', slackClient.self.name, 'of', slackClient.team.name);
     return console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
+});
+
+const getParams = (input => {
+    return {
+        text: input,
+        as_user: true,
+        token: config.slackAPIToken
+    };
+});
+
+const checkIfDM = ((type, user) => {
+    return new Promise(resolve => {
+        if (type == 'dm') {
+            slackClient.openDM(user, dm => {
+                let channel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
+                resolve(channel);
+            });
+        } else {
+            resolve(0);
+        }
+    });
 });
 
 slackClient.on('message', message => {
@@ -42,38 +49,30 @@ slackClient.on('message', message => {
             .then(response => {
                 if (!response)
                     return false;
-                switch (response.type) {
-                    case 'dm':
-                        slackClient.openDM(response.user ? response.user.id : message.user, dm => {
-                            if (dm.ok) {
-                                console.log("OUT DM:", (response.message ? response.message : response.messages));
-                                let userChannel = slackClient.getChannelGroupOrDMByID(dm.channel.id);
-                                if (!response.multiLine)
-                                    if (response.message)
-                                        userChannel.send(response.message);
-                                    else if (response.messages)
-                                        postMessage(dm.channel.id, response.messages.join('\n'));
-                                else {
-                                    if (response.message)
-                                        userChannel.send(response.message);
-                                    else if (response.messages) 
-                                        response.messages.forEach(message => {
-                                            userChannel.send(message);
-                                        });
-                                }
-                            }
-                        });
-                        break;
-                    case 'channel':
-                        console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages));
+
+                if (!response.type == 'dm' || !response.type == 'channel')
+                    return console.error("Invalid message response type, must be channel or dm");
+                
+                checkIfDM(response.type, response.user ? response.user.id : message.user).then(DM => {
+                    if (DM)
+                        channel = DM;
+                    console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages));
+                    if (response.attachments) {
+
+                    } else if (!response.multiLine) {
                         if (response.message)
                             channel.send(response.message);
-                        else if (response.messages) 
-                            postMessage(message.channel, response.messages.join('\n'));
-                        break;
-                    case 'remote-channel':
-                        break;
-                }
+                        else if (response.messages)
+                            channel.postMessage(getParams(response.messages.join('\n')));
+                    } else {
+                        if (response.messages && response.messages[1])
+                            response.messages.forEach(message => {
+                                channel.send(message);
+                            });
+                        else
+                            return console.error("Invalid Multiline format, your array must contain more than 1 message and use the 'messages' response type");
+                    }
+                });
             }).catch(err => {
                 if (err) {
                     console.error('parseMsg Error:', err);
