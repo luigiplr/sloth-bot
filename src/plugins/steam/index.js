@@ -66,7 +66,7 @@ module.exports = {
             Steam.getAppInfo(input).then(resp => {
                 resolve({
                     type: 'channel',
-                    messages: generateAppDetailsResponse(resp)
+                    message: generateAppDetailsResponse(resp)
                 });
             }).catch(reject);
         });
@@ -95,25 +95,42 @@ var generateProfileResponse = (profile => {
 
 var generateAppDetailsResponse = (app => {
     if (app && app.type == 'game') {
-        let out = [
-            '*' + app.name + '* _(' + app.steam_appid + ')_'];
+        let price;
         if (app.is_free)
-            out.push(
-                '*Cost:* This game is Free 2 Play, yay :)');
+            price = ('This game is Free 2 Play, yay :)');
         else if (app.price_overview && app.price_overview.discount_percent > 0)
-            out.push(
-                '*Cost:* ~$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) +  '~ *$' + formatCurrency(app.price_overview.final/100, app.price_overview.currency) + '* ' + app.price_overview.discount_percent + '% OFF!!! :eyes::scream:');
+            price = ('~$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) +  '~ *$' + formatCurrency(app.price_overview.final/100, app.price_overview.currency) + '* ' + app.price_overview.discount_percent + '% OFF!!! :eyes::scream:');
         else if (app.price_overview)
-            out.push(
-                '*Cost:* $' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency));
-        out.push(
-            app.release_date.coming_soon ? '*Release Date:* ' + app.release_date.date : '*Released:* ' + app.release_date.date,
-            app.metacritic ? '*Metacritic Score:* ' + app.metacritic.score : '',
-            app.player_count ? '*Current Players:* ' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
-            '<http://store.steampowered.com/app/' + app.steam_appid + '/>');
-        return(out.filter(Boolean));
+            price = ('$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency));
+
+        let out = {
+            msg: '<http://store.steampowered.com/app/' + app.steam_appid + '|' + app.name + '>' + ' (' + app.steam_appid + ')',
+            attachments: [{
+                "fallback": app.name + '(' + app.steam_appid + ')',
+                "image_url": app.header_image,
+                "fields": [{
+                    "title": "Cost",
+                    "value": price,
+                    "short": true
+                }, {
+                    "title": app.release_date.coming_soon ? "Release Date" : "Released",
+                    "value": app.release_date.date,
+                    "short": true
+                }, {
+                    "title": "Metacritic",
+                    "value": app.metacritic.score ? app.metacritic.score : 'Unknown',
+                    "short": true
+                }, {
+                    "title": "Current Players",
+                    "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 'Unknown',
+                    "short": true
+                }],
+                "color": "#14578b"
+            }]
+        };
+        return out;
     } else {
-        return ["Error: App: _" + app.name + "_ isn't a valid game"];
+        return "Error: App: _" + app.name + "_ isn't a valid game";
     }
 });
 

@@ -16,11 +16,12 @@ slackClient.on('open', () => {
     return console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
 });
 
-const getParams = (input => {
+const getParams = ((text, attach = null) => {
     return {
-        text: input,
+        text: text,
         as_user: true,
-        token: config.slackAPIToken
+        token: config.slackAPIToken,
+        attachments: attach
     };
 });
 
@@ -57,8 +58,8 @@ slackClient.on('message', message => {
                     if (DM)
                         channel = DM;
                     console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages));
-                    if (response.attachments) {
-
+                    if (response.message && response.message.attachments) {
+                        channel.postMessage(getParams(response.message.msg, response.message.attachments));
                     } else if (!response.multiLine) {
                         if (response.message)
                             channel.send(response.message);
