@@ -158,6 +158,11 @@ const findValidAppInApps = (apps => {
 		                process.nextTick(next);
 		            else
 		                CheckQueue.kill();
+		        }).catch(err => {
+		        	if (!valid && next)
+		                process.nextTick(next);
+		            else
+		                CheckQueue.kill();
 		        });
 		});
 
