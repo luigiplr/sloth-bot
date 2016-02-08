@@ -118,7 +118,7 @@ var generateAppDetailsResponse = (app => {
                     "short": true
                 }, {
                     "title": "Metacritic",
-                    "value": app.metacritic.score ? app.metacritic.score : 'Unknown',
+                    "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : 'Unknown',
                     "short": true
                 }, {
                     "title": "Current Players",

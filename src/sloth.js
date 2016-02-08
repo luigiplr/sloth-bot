@@ -2,6 +2,9 @@ import Slack from 'slack-client';
 import Promise from 'bluebird';
 import needle from 'needle';
 import {
+    sendMessage as postMessage
+} from './slack';
+import {
     parse as parseMsg
 }
 from './parseMessage';
@@ -122,7 +125,10 @@ slackClient.on('error', err => {
 
 process.on('uncaughtException', err => {
     sendErrorToDebugChannel('uncaughtException', err);
-    process.exit(1);
+    setTimeout(function() {
+        process.exit(1);
+    }, 500);
+    
 });
 
 process.on('unhandledRejection', err => {
