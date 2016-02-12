@@ -108,6 +108,8 @@ var generateAppDetailsResponse = (app => {
             attachments: [{
                 "fallback": app.name + '(' + app.steam_appid + ')',
                 "image_url": app.header_image,
+                "mrkdwn_in": ["text", "pretext", "fields"],
+                "color": "#14578b",
                 "fields": [{
                     "title": "Cost",
                     "value": price,
@@ -124,8 +126,7 @@ var generateAppDetailsResponse = (app => {
                     "title": "Current Players",
                     "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 'Unknown',
                     "short": true
-                }],
-                "color": "#14578b"
+                }]
             }]
         };
         return out;
