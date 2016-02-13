@@ -121,6 +121,9 @@ const sendErrorToDebugChannel = ((type, error) => {
 
 slackClient.on('error', err => {
     sendErrorToDebugChannel('slackClientError', err);
+    setTimeout(function() {
+        process.exit(1);
+    }, 500);
 });
 
 process.on('uncaughtException', err => {
@@ -128,7 +131,6 @@ process.on('uncaughtException', err => {
     setTimeout(function() {
         process.exit(1);
     }, 500);
-    
 });
 
 process.on('unhandledRejection', err => {
