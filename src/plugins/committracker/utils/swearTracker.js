@@ -133,7 +133,7 @@ const formatRepos = (repos => {
 
 // Saves all commits with swears to the DB, dupe commits won't get added to the DB
 const saveToDB = (swears => {
-    console.log("Save", swears.length, "swears to DB for user", username);
+    console.log("Save", (swears ? swears.length : 'unknown'), "swears to DB for user", username);
     if (swears)
         database.save('swearcommits', swears, {index: 'sha', ensureUnique: true}).catch(err => console.log("Commit already saved", err));
     database.save('swearusers', {
