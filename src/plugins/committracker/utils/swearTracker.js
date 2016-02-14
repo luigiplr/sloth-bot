@@ -211,7 +211,7 @@ const checkIfWeCanUpdate = (() => {
 module.exports = {
     retrieveSwearCommits(input, all) {
         return new Promise((resolve, reject) => {
-            username = input;
+            username = input.toLowerCase();
             fetchSwears().then(commits => {
                 if (!all)
                     return resolve(commits[Math.floor(Math.random() * commits.length)]);
@@ -228,7 +228,7 @@ module.exports = {
     updateSwearCommits(user, channel, input) {
         return new Promise((resolve, reject) => {
             //console.log("Starting update process for:", input);
-            username = input;
+            username = input.toLowerCase();
             checkIfWeCanUpdate().then(resp => {
                 if (resp) {
                     //console.log("We can update commits");
