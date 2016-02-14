@@ -41,7 +41,7 @@ module.exports = {
                 });
             }
 
-            let client = new MetaInspector('https://www.google.ro/search?q=' + input.split(' ').join('+') + '&tbm=isch', {
+            let client = new MetaInspector('https://www.google.com/search?q=' + input.split(' ').join('+') + '&tbm=isch', {
                 timeout: 5000
             });
             let urls = [];
@@ -91,11 +91,15 @@ module.exports = {
                 });
             }
             try {
-                google(input, (err, next, link) => {
-                    return resolve({
-                        type: 'channel',
-                        message: !err ? link[0].href + ' - ' + link[0].title + ' - ' + link[0].description : err
-                    });
+                google(input, (err, next, links) => {
+                    if (links && !err) {
+                        return resolve({
+                            type: 'channel',
+                            message: links[0].href + ' - ' + links[0].title + ' - ' + links[0].description
+                        });
+                    } else {
+                        return reject("Didn't find anything?? " + err);
+                    }
                 });
             } catch (e) {
                 reject(e);
