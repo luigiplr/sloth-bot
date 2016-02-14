@@ -17,7 +17,7 @@ module.exports = {
         usage: 'commits <user>'
     }, {
         command: ['fetchcommits'],
-        usage: 'fetchcommits <user>'
+        usage: 'fetchcommits <user> <optional other user repos to search>'
     }, {
         command: ['listcommits'],
         usage: 'listcommits <user>'
@@ -42,7 +42,7 @@ module.exports = {
             if (!input)
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: fetchcommits <user> | Updates naughty commits for a user'
+                    message: 'Usage: fetchcommits <user> <optional user to search> | Updates naughty commits for a user, if a second user is specified, it will search for commits for the user in the other users repos'
                 });
             Swears.updateSwearCommits(user, channel, input).then().catch(reject);
         });

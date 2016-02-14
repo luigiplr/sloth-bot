@@ -29,11 +29,11 @@ const endpoints = {
 const getUrl = ((type, repo) => {
     if (userToLook) {
         let out = endpoints[type].replace(/%u/, userToLook).replace(/%u/, username);
-        console.log(out.replace('%r%', repo));
+        //console.log(out.replace('%r%', repo));
         return out.replace('%r%', repo);
     } else {
         let out = endpoints[type].replace(/%u/g, (userToLook ? userToLook : username));
-        console.log(out.replace('%r%', repo));
+        //console.log(out.replace('%r%', repo));
         return out.replace('%r%', repo);
     }
 });
@@ -142,10 +142,10 @@ const saveToDB = (swears => {
     console.log("Save", (swears ? swears.length : 'unknown'), "swears to DB for user", username);
     if (swears)
         database.save('swearcommits', swears, {index: 'sha', ensureUnique: true}).catch(err => console.log("Commit already saved", err));
-    //database.save('swearusers', {
-    //    user: username,
-     //   lastUpdated: Math.round(new Date().getTime() / 1000)
-    //});
+    database.save('swearusers', {
+        user: username,
+        lastUpdated: Math.round(new Date().getTime() / 1000)
+    });
     updating = false;
 });
 
@@ -243,7 +243,7 @@ module.exports = {
                     //console.log("We can update commits");
                     if (!updating) {
                         //console.log("Not updating");
-                        slack.sendMessage(channel.id, "Attempting to fetch commits now, this may take some time :)");
+                        slack.sendMessage(channel.id, "Attempting to fetch commits now");
                         updateSwears().catch(reject);
                     } else {
                         //console.log("DB update already in process");
