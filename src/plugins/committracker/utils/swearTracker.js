@@ -8,7 +8,7 @@ import slack from '../../../slack';
 const config = require('../../../../config.json');
 const word_list = ["fuck", "bitch", "shit", "tits", "asshole", "arsehole", "cocksucker", "cunt", "hell", "douche", "testicle", "twat", "bastard", "sperm", "shit", "dildo", "wanker", "prick", "penis", "vagina", "whore", "boner"];
 
-var username, updating;
+var username, userToLook, updating;
 
 // Attempt to use a Github Authorization token
 var githubAuthentication = {headers: {}};
@@ -27,9 +27,15 @@ const endpoints = {
 
 // Formats Endpoint URLs
 const getUrl = ((type, repo) => {
-    let out = endpoints[type].replace(/%u/g, username);
-    //console.log(out.replace('%r%', repo));
-    return out.replace('%r%', repo);
+    if (userToLook) {
+        let out = endpoints[type].replace(/%u/, userToLook).replace(/%u/, username);
+        console.log(out.replace('%r%', repo));
+        return out.replace('%r%', repo);
+    } else {
+        let out = endpoints[type].replace(/%u/g, (userToLook ? userToLook : username));
+        console.log(out.replace('%r%', repo));
+        return out.replace('%r%', repo);
+    }
 });
 
 // Retrieves all users repositories
@@ -136,10 +142,10 @@ const saveToDB = (swears => {
     console.log("Save", (swears ? swears.length : 'unknown'), "swears to DB for user", username);
     if (swears)
         database.save('swearcommits', swears, {index: 'sha', ensureUnique: true}).catch(err => console.log("Commit already saved", err));
-    database.save('swearusers', {
-        user: username,
-        lastUpdated: Math.round(new Date().getTime() / 1000)
-    });
+    //database.save('swearusers', {
+    //    user: username,
+     //   lastUpdated: Math.round(new Date().getTime() / 1000)
+    //});
     updating = false;
 });
 
@@ -228,7 +234,10 @@ module.exports = {
     updateSwearCommits(user, channel, input) {
         return new Promise((resolve, reject) => {
             //console.log("Starting update process for:", input);
-            username = input.toLowerCase();
+
+            username = input.split(' ')[0].toLowerCase();
+            userToLook = input.split(' ')[1] ? input.split(' ')[1].toLowerCase() : undefined;
+
             checkIfWeCanUpdate().then(resp => {
                 if (resp) {
                     //console.log("We can update commits");
