@@ -32,7 +32,7 @@ module.exports = {
                 });
             let grabee = input.split(' ')[0];
             let index = input.split(' ')[1] ? input.split(' ')[1] : 0;
-            if (!index || (index < 4 && index => 0))
+            if (!index || (index < 4 && index >= 0))
                 slack.grabQuote(grabee, channel, index, user)
                     .then(res => {
                         resolve({
