@@ -58,9 +58,12 @@ module.exports = {
                     .pluck('text')
                     .value()[0];
 
+                if (!uID)
+                    return reject("Something went wrong");
+
                 database.save('quotes', {
                     user: grabee.toString().toLowerCase(),
-                    quote: uID.toString().toString(),
+                    quote: uID.toString(),
                     date: moment(),
                     id: uuid.v1()
                 }).then(() => {

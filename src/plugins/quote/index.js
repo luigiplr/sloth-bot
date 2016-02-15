@@ -28,11 +28,11 @@ module.exports = {
             if (!input)
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: grab <username> - grabs and saves a quote from the user'
+                    message: 'Usage: grab <username> <optional index> - grabs and saves a quote from the user, index can be up to 3 quotes where the last message a user name is 0'
                 });
             let grabee = input.split(' ')[0];
-            let index = input.split(' ')[1] ? input.split(' ')[1] : undefined;
-            if (!index || index < 4)
+            let index = input.split(' ')[1] ? input.split(' ')[1] : 0;
+            if (!index || (index < 4 && index => 0))
                 slack.grabQuote(grabee, channel, index, user)
                     .then(res => {
                         resolve({
