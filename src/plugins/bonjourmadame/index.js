@@ -78,7 +78,6 @@ module.exports = {
             var client = new MetaInspector(url, { timeout: 5000 });
 
             client.on('fetch', function() {
-                console.log(client.images);
                 if (client.images && client.images[2].match(/uploads/i)) {
                     return resolve({
                         type: 'channel',
