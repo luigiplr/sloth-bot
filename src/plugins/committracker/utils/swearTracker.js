@@ -6,9 +6,9 @@ import database from '../../../database';
 import slack from '../../../slack';
 
 const config = require('../../../../config.json');
-const word_list = ["fuck", "bitch", "shit", "tits", "asshole", "arsehole", "cocksucker", "cunt", "hell", "douche", "testicle", "twat", "bastard", "sperm", "shit", "dildo", "wanker", "prick", "penis", "vagina", "whore", "boner"];
+const word_list = ["fuk", "fuck", "bitch", "shit", "tits", "asshole", "arsehole", "cocksucker", "cunt", "douche", "testicle", "twat", "bastard", "sperm", "shit", "dildo", "wanker", "prick", "penis", "vagina", "whore", "boner"];
 
-var username, userToLook, updating;
+var username, userToLook, updating, channelID;
 
 // Attempt to use a Github Authorization token
 var githubAuthentication = {headers: {}};
@@ -89,17 +89,17 @@ const findSwearsInCommits = (commits => {
 
         async.each(commits, (commit, cb) => {
             _.some(word_list, word => {
-                if (commit.commit.message.indexOf(word) >= 0) {
+                if (commit.commit.message.toLowerCase().indexOf(word) >= 0) {
                     let out = {
                         message: commit.commit.message,
-                        url: commit.html_url,
+                        url: commit.html_url.toLowerCase(),
                         sha: commit.sha,
                         user: username,
                         repo: commit.html_url.split('/')[4]
                     };
                     commitsWithSwears.push(out);
                     return true;
-                }
+                } else return false;
             });
             cb();
         }, err => {
@@ -140,6 +140,7 @@ const formatRepos = (repos => {
 // Saves all commits with swears to the DB, dupe commits won't get added to the DB
 const saveToDB = (swears => {
     console.log("Save", (swears ? swears.length : 'unknown'), "swears to DB for user", username);
+    slack.sendMessage(channelID, "Found" + (swears ? swears.length : 'unknown') + "swears to DB for user", username);
     if (swears)
         database.save('swearcommits', swears, {index: 'sha', ensureUnique: true}).catch(err => console.log("Commit already saved", err));
     database.save('swearusers', {
@@ -196,7 +197,7 @@ const checkIfWeCanUpdate = (() => {
         }).then(user => {
             if (user[0]) {
                 //console.log("User in DB");
-                if (user[0].lastUpdated + (24 * 3600) < Math.round(new Date().getTime() / 1000)) {
+                if (user[0].lastUpdated + (6 * 3600) < Math.round(new Date().getTime() / 1000)) {
                     resolve(true);
                 } else {
                     resolve(false);
@@ -224,7 +225,7 @@ module.exports = {
                 else {
                     let total = ['<' + username + '> Commits (' + commits.length + ') :'];
                     commits.forEach(commit => {
-                        total.push('(_' + commit.repo +  ')_: *' + commit.message + '*- (' + commit.url.slice(8, - 33) + ')');
+                        total.push('(_' + commit.repo +  ')_: *' + commit.message + '* - (' + commit.url.slice(8, - 33) + ')');
                     });
                     return resolve(total);
                 }
@@ -234,7 +235,7 @@ module.exports = {
     updateSwearCommits(user, channel, input) {
         return new Promise((resolve, reject) => {
             //console.log("Starting update process for:", input);
-
+            channelID = channel.id;
             username = input.split(' ')[0].toLowerCase();
             userToLook = input.split(' ')[1] ? input.split(' ')[1].toLowerCase() : undefined;
 
@@ -250,8 +251,8 @@ module.exports = {
                         reject('DB update already in progress, try again laterz');
                     }
                 } else {
-                    //console.log("User already updated in last 24 hours");
-                    reject(username + "'s commits have already been updated in the last 24 hours, try again later :)");
+                    //console.log("User already updated in last 6 hours");
+                    reject(username + "'s commits have already been updated in the last 6 hours, try again later :)");
                 }
             });
         });
