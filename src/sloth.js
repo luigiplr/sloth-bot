@@ -119,6 +119,13 @@ const sendErrorToDebugChannel = ((type, error) => {
     }
 });
 
+slackClient.on('close', err => {
+    sendErrorToDebugChannel('slackClientError', "Websocket Connection Terminated, Restarting - " + err);
+    setTimeout(function() {
+        process.exit(1);
+    }, 500);
+});
+
 slackClient.on('error', err => {
     sendErrorToDebugChannel('slackClientError', err);
     setTimeout(function() {
