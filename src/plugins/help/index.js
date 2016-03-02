@@ -10,7 +10,7 @@ module.exports = {
         command: ['help', 'h'],
         usage: 'shows help for commands'
     }],
-    default (user, channel, context, slackClient, plugins) {
+    default (user, channel, context, ts, plugins) {
         return new Promise(resolve => {
             let commands = [];
 

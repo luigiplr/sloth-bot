@@ -17,6 +17,10 @@ module.exports = {
     }, {
         alias: ['userid', 'uid'],
         command: 'userid'
+    }, {
+        alias: ['dellast', 'deletelastmessage'],
+        userLevel: ['admin', 'superadmin'],
+        command: 'deleteLastMessage'
     }],
     help: [{
         command: ['kick'],
@@ -30,6 +34,9 @@ module.exports = {
     }, {
         command: ['userid'],
         usage: 'userid <user> - returns UserID for user'
+    }, {
+        command: ['dellast', 'deletelastmessage'],
+        usage: 'dellast - deletes the last message from the bot'
     }],
     kick(user, channel, input = false) {
         return new Promise((resolve, reject) => {
@@ -92,6 +99,13 @@ module.exports = {
                     });
                 else
                     reject("Found no user by that name");
+            }).catch(reject);
+        });
+    },
+    deleteLastMessage(user, channel, input, ts) {
+        return new Promise((resolve, reject) => {
+            slack.deleteLastMessage(channel.id, ts).then(resp => {
+                resolve();
             }).catch(reject);
         });
     }

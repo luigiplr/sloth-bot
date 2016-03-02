@@ -45,11 +45,12 @@ slackClient.on('message', message => {
     let user = slackClient.getUserByID(message.user);
     let channel = slackClient.getChannelGroupOrDMByID(message.channel);
     let text = message.text;
+    let ts = message.ts;
 
     if (message.type === 'message' && text && channel) {
         if (text.charAt(0) !== config.prefix) return false;
         console.log("IN", user.name + ':', text);
-        parseMsg(user, channel, text, slackClient)
+        parseMsg(user, channel, text, ts)
             .then(response => {
                 if (!response)
                     return false;

@@ -1,4 +1,4 @@
-import Promise from 'bluebird';
+/*import Promise from 'bluebird';
 
 module.exports = {
     commands: [{
@@ -9,7 +9,7 @@ module.exports = {
         command: ['poopbomb'],
         usage: 'poopbomb <username> <amount || 4>'
     }],
-    poopbomb(user, channel, input, slackClient) {
+    poopbomb(user, channel, input) {
         return new Promise((resolve, reject) => {
             if (!input)
                 return resolve({
@@ -17,7 +17,7 @@ module.exports = {
                     message: 'Usage: poopbomb <username> <amount || 4> - Poop bombs the user :))))'
                 });
         
-            let poopee = slackClient.getUserByName(input.split(' ')[0]);
+            //let poopee = SOMETHING getUserByName(input.split(' ')[0]);
             let amount = parseInt(input.split(' ')[1]) || 4;
             if (poopee) {
                 if (amount > 10)
@@ -38,4 +38,4 @@ module.exports = {
             }
         });
     }
-};
+};*/

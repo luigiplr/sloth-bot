@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import needle from 'needle';
 import Promise from 'bluebird';
+import slackTools from '../../../slack.js';
 
 var config = require('../../../../config.json');
 
@@ -61,6 +62,27 @@ module.exports = {
                     .value();
                 resolve(uID);
             });
+        });
+    },
+    deleteLastMessage(channel, messagets) {
+        return new Promise((resolve, reject) => {
+            if (!config.botid)
+                return reject("You need to specify your Bots ID in the config to use this command");
+            slackTools.deleteMessage(channel, messagets);     
+            slackTools.getHistory(channel, 17).then(history => {
+                let ts = _(history.messages)
+                    .filter(message => {
+                        return message.user === config.botid;
+                    })
+                    .pluck('ts')
+                    .value()[0];
+
+                if (!ts)
+                    return resolve(false);
+
+                slackTools.deleteMessage(channel, ts);
+                resolve(ts);
+            }).catch(reject);
         });
     }
 };

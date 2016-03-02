@@ -24,7 +24,7 @@ const getUserlevel = user => {
 };
 
 module.exports = {
-    parse(user, channel, text, slackClient) {
+    parse(user, channel, text, ts) {
         return new Promise((resolve, reject) => {
             let username = user.name.toString().toLowerCase();
             let userLevel = getUserlevel(username);
@@ -63,7 +63,7 @@ module.exports = {
                     message: 'Insufficient Permissions'
                 });
 
-            plugin[call](user, channel, context, slackClient, plugins, userLevel)
+            plugin[call](user, channel, context, ts, plugins, userLevel)
                 .then(resolve)
                 .catch(reject);
         });

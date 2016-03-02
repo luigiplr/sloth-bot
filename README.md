@@ -15,6 +15,7 @@ config.json should resemble:
 ```
 {
 	"botname":			"sloth", 	// name of the bot in slack
+	"botid":			"xxxxx"		// slack id of your bot, you can find it by using the ```userid <name>``` command
 	"prefix":			"!", 		// prefix to use bot commands
 	"slackToken":		"xxxxx", 	// your account token (for evelated commands) or the bots own token
 	"slackAPIToken":	"xxxxx",	// the bots token for connecting to slack

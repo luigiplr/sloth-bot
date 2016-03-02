@@ -85,7 +85,7 @@ module.exports = {
                 });
         });
     },
-    set(user, channel, input, plugin, slackClient, userLevel) {
+    set(user, channel, input, ts, plugin, userLevel) {
         return new Promise(resolve => {
 
             let username = input.split(' ')[0].toString().toLowerCase();
