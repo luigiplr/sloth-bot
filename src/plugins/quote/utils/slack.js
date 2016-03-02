@@ -44,7 +44,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             Promise.join(slackTools.getHistory(channel.id), slackTools.findUser(grabee), (history, user) => {
                 let i = 0;
-                if (grabber.id == users[0])
+                if (grabber.id == user)
                     index++;
 
                 let uID = _(history.messages)

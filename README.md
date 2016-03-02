@@ -14,14 +14,15 @@ Slack bot full of fun commands
 config.json should resemble:
 ```
 {
+	"teamName":			"teamname",	// this is the name of your slack channel (the first part of the url (teamname.slack.com))
 	"botname":			"sloth", 	// name of the bot in slack
-	"botid":			"xxxxx"		// slack id of your bot, you can find it by using the ```userid <name>``` command
+	"botid":			"xxxxx",	// slack id of your bot, you can find it by using the ```userid <name>``` command
 	"prefix":			"!", 		// prefix to use bot commands
 	"slackToken":		"xxxxx", 	// your account token (for evelated commands) or the bots own token
 	"slackAPIToken":	"xxxxx",	// the bots token for connecting to slack
-	"googleToken":		"xxxxx" 	// youtube token
-	"steamAPIToken":	"xxxxx"		// steam api token
-	"githubToken":		"xxxxx"		// github api token, format 'USERNAME:TOKEN'
+	"googleToken":		"xxxxx", 	// youtube token
+	"steamAPIToken":	"xxxxx",	// steam api token
+	"githubToken":		"xxxxx",	// github api token, format 'USERNAME:TOKEN'
 	"includeForks":		false		// toggle to include forks for github function
 }
 
