@@ -1,12 +1,11 @@
 import _ from 'lodash';
-import needle from 'needle'
 import Promise from 'bluebird';
 import moment from 'moment';
 import uuid from 'node-uuid';
+import slackTools from '../../../slack.js';
 import database from '../../../database';
 
 var config = require('../../../../config.json');
-var prefix = config.prefix;
 
 module.exports = {
     quote(user, quotenum = 0) {
@@ -30,7 +29,7 @@ module.exports = {
                         if (quotes.length > 0)
                             reject("I don't have quotes that far back for " + user);
                         else
-                            reject('No quotes found for ' + user + ', grab a quote via `' + prefix + 'grab <username>`');
+                            reject('No quotes found for ' + user + ', grab a quote via `' + config.prefix + 'grab <username>`');
                     }
                 }
             }).catch(err => {
@@ -43,7 +42,7 @@ module.exports = {
     },
     grabQuote(grabee, channel, index = 0, grabber) {
         return new Promise((resolve, reject) => {
-            Promise.join(this.getHistory(channel.id), this.finduser(grabee), (history, users) => {
+            Promise.join(slackTools.getHistory(channel.id), slackTools.findUser(grabee), (history, user) => {
                 let i = 0;
                 if (grabber.id == users[0])
                     index++;
@@ -51,15 +50,15 @@ module.exports = {
                 let uID = _(history.messages)
                     .filter(message => {
                         if (parseInt(index) == i)
-                            return message.user === users[0];
-                        else if (message.user === users[0])
+                            return message.user === user;
+                        else if (message.user === user)
                             i++;
                     })
                     .pluck('text')
                     .value()[0];
 
                 if (!uID)
-                    return reject("Something went wrong");
+                    return reject("ABC Something went wrong");
 
                 database.save('quotes', {
                     user: grabee.toString().toLowerCase(),
@@ -69,36 +68,7 @@ module.exports = {
                 }).then(() => {
                     resolve("Successfully grabed a quote for " + grabee);
                 });
-            });
-        });
-    },
-    getHistory(channel) {
-        return new Promise((resolve, reject) => {
-            needle.post('https://magics.slack.com/api/channels.history', {
-                channel: channel,
-                token: config.slackToken
-            }, (err, resp) => {
-                if (err || resp.body.error)
-                    return reject((resp.body.error || err));
-                resolve(resp.body);
-            });
-        });
-    },
-    finduser(user) {
-        return new Promise((resolve, reject) => {
-            needle.post('https://magics.slack.com/api/users.list', {
-                token: config.slackToken
-            }, (err, resp) => {
-                if (err || resp.body.error)
-                    return reject(err || resp.body.error);
-                var uID = _(resp.body.members)
-                    .filter(person => {
-                        return person.name === user;
-                    })
-                    .pluck('id')
-                    .value();
-                resolve(uID);
-            });
+            }).catch(reject);
         });
     },
     urlify(text) {
