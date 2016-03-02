@@ -1,4 +1,5 @@
 import needle from 'needle';
+import Promise from 'bluebird';
 const config = require('../config.json');
 
 module.exports = {
