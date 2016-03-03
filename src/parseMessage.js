@@ -30,7 +30,7 @@ module.exports = {
             let userLevel = getUserlevel(username);
 
             // If user is ignored and is not an admin (or if the user is the bot itself)
-            if (((permissions.ignored.indexOf(username) > -1) && userLevel === 'user') || user.name.toString().toLowerCase() === config.botname)
+            if (((permissions.ignored.indexOf(username) > -1) && userLevel != 'superadmin') || user.name.toString().toLowerCase() === config.botname)
                 return resolve(false);
 
             let command = text.substr(1).split(' ')[0].toLowerCase();

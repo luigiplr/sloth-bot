@@ -43,20 +43,20 @@ module.exports = {
         return new Promise(resolve => {
             resolve({
                 type: 'channel',
-                message: 'Shutting down in *3.. 2.. 1.*'
+                message: 'Shutting down in *2.. 1.*'
             });
-            _.delay(process.exit, 3000);
+            _.delay(process.exit(0), 2000);
         });
     },
     restart() {
         return new Promise(resolve => {
             resolve({
                 type: 'channel',
-                message: 'Restarting in *3.. 2.. 1.*'
+                message: 'Restarting in *2.. 1.*'
             });
             setTimeout(function() {
                 process.exit(1);
-            }, 3000);
+            }, 2000);
         });
     },
     uptime() {

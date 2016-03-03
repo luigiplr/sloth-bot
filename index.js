@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------
  */
 
-/*var cluster = require('cluster');
+var cluster = require('cluster');
 
 if (cluster.isMaster) {
 	cluster.fork();
@@ -20,6 +20,4 @@ if (cluster.isMaster) {
     });
 } else {
 	module.exports = require('./src/sloth.js');
-}*/
-
-require('./src/sloth.js');
+}
