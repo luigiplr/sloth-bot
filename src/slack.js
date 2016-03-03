@@ -48,7 +48,6 @@ module.exports = {
                     .value()[0];
 
                 if (!uID) {
-                    console.log("Couldn't find a user by that name");
                     return reject("Couldn't find a user by that name");
                 }
                 resolve(uID);

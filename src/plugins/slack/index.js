@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import slack from './utils/slack';
+import slackTools from '../../slack.js';
 
 module.exports = {
     commands: [{
@@ -9,7 +10,6 @@ module.exports = {
         command: 'kick'
     }, {
         alias: ['invite'],
-        userLevel: ['admin', 'superadmin'],
         command: 'invite'
     }, {
         alias: ['channelid', 'cid'],
@@ -91,14 +91,11 @@ module.exports = {
                         message: 'Your UserID is ' + user.id
                     });
 
-            slack.finduser(input).then(id => {
-                if (id[0])
-                    resolve({
-                        type: 'channel',
-                        message: input + "'s UserID is " + id[0]
-                    });
-                else
-                    reject("Found no user by that name");
+            slackTools.findUser(input).then(id => {
+                resolve({
+                    type: 'channel',
+                    message: input + "'s UserID is " + id
+                });
             }).catch(reject);
         });
     },

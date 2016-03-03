@@ -58,7 +58,7 @@ module.exports = {
                     .value()[0];
 
                 if (!uID)
-                    return reject("ABC Something went wrong");
+                    return reject("Something went wrong");
 
                 database.save('quotes', {
                     user: grabee.toString().toLowerCase(),
