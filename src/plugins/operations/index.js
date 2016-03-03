@@ -45,7 +45,9 @@ module.exports = {
                 type: 'channel',
                 message: 'Shutting down in *2.. 1.*'
             });
-            _.delay(process.exit(0), 2000);
+            setTimeout(function() {
+                process.exit(0);
+            }, 2000);
         });
     },
     restart() {
