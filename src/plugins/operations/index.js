@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import Promise from 'bluebird';
-import slack from '../../slack';
+import slackTools from '../../slack';
 import {
     exec as execCmd
 } from 'child_process';
@@ -41,6 +40,8 @@ module.exports = {
     }],
     shutdown() {
         return new Promise(resolve => {
+            if (config.debugChannel)
+                slackTools.sendMessage(config.debugChannel, "Shutting bot down!");
             resolve({
                 type: 'channel',
                 message: 'Shutting down in *2.. 1.*'
@@ -52,6 +53,8 @@ module.exports = {
     },
     restart() {
         return new Promise(resolve => {
+            if (config.debugChannel)
+                slackTools.sendMessage(config.debugChannel, "Restarting bot");
             resolve({
                 type: 'channel',
                 message: 'Restarting in *2.. 1.*'
@@ -82,7 +85,7 @@ module.exports = {
     update(user, channel, input) {
         return new Promise((resolve, reject) => {
             let updatecmd = 'git pull && grunt install';
-            slack.sendMessage(channel.id, 'Updating...');
+            slackTools.sendMessage(channel.id, 'Updating...');
 
             if (updating)
                 return reject('Update already in process');
@@ -92,7 +95,7 @@ module.exports = {
                 updating = false;
                 if (!error && stdout) {
                     if (config.debugChannel)
-                        slack.sendMessage(config.debugChannel, '```' + stdout + '```');
+                        slackTools.sendMessage(config.debugChannel, '```' + stdout + '```');
 
                     if (stdout.indexOf('Already up-to-date') > -1) {
                         return reject("Repo is already up-to-date");
