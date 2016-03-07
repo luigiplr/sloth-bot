@@ -2,6 +2,15 @@ import Promise from 'bluebird';
 import permissions from '../../permissions';
 import config from '../../../config.json';
 
+const getUserLevel = user => {
+    if ((permissions.superadmins.indexOf(user) > -1))
+        return 'superadmin';
+    else if ((permissions.admins.indexOf(user) > -1))
+        return 'admin';
+    else
+        return 'user';
+};
+
 module.exports = {
     commands: [{
         alias: ['set'],
@@ -168,25 +177,30 @@ module.exports = {
                 });
         });
     },
-    set(user, channel, input, ts, plugin, userLevel) {
+    set(admin, channel, input, ts, plugin, adminLevel) {
         return new Promise((resolve, reject) => {
             if (!input)
                 return reject("Please specify a user");
-            let username = input.split(' ')[0].toString().toLowerCase();
-            let level = input.split(' ')[1].toString().toLowerCase().replace(/[s]$/, '');
-            let levels = (userLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin'];
 
-            if (username && levels.indexOf(level) > -1) {
-                permissions.add(username, level);
-                resolve({
-                    type: 'channel',
-                    message: 'Set ' + username + ' to ' + level
-                });
-            } else
-                resolve({
-                    type: 'channel',
-                    message: 'Invalid User Level'
-                });
+            let user = input.split(' ')[0].toString().toLowerCase();
+            let userLevel = getUserLevel(user);
+            let level = input.split(' ')[1] ? input.split(' ')[1].toString().toLowerCase().replace(/[s]$/, '') : 'user';
+            let levels = ((adminLevel === 'superadmin' && userLevel === 'superadmin')) ? -1 : 
+                (adminLevel === 'admin' && userLevel === 'admin') ? -1 :
+                (adminLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin'];
+
+            if (user) {
+                if (levels == -1)
+                    return reject("You cannot change the level of yourself or other admins");
+                else if (levels.indexOf(level) > -1) {
+                    permissions.add(user, level);
+                    return resolve({
+                        type: 'channel',
+                        message: 'Set ' + user + ' to ' + level
+                    });
+                } else
+                    return reject("Invalid User Level");
+            }
         });
     }
 };

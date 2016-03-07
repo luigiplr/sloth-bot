@@ -19,7 +19,7 @@ if (!fs.existsSync(dbDir))
 if (!fileExists(permsFile))
     fs.writeFileSync(permsFile, JSON.stringify({
         admins: [],
-        superadmins: [],
+        superadmins: []
     }));
 
 const readJson = (jsonPath) => {

@@ -30,7 +30,7 @@ module.exports = {
             let username = user.name.toString().toLowerCase();
             let userLevel = getUserlevel(username);
 
-            // If user is muted and is not an admin (or if the user is the bot itself)
+            // If user is muted and is not an admin
             if (permissions.muted.indexOf(username) > -1 && userLevel != 'superadmin') {
                 slackTools.deleteMessage(channel.id, ts);
                 return resolve(false);
