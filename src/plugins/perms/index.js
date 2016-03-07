@@ -26,11 +26,11 @@ module.exports = {
         command: 'unignore'
     }, {
         alias: ['mute'],
-        userLevel: ['admin', 'superadmin'],
+        userLevel: ['superadmin'],
         command: 'mute'
     }, {
         alias: ['unmute'],
-        userLevel: ['admin', 'superadmin'],
+        userLevel: ['superadmin'],
         command: 'unmute'
     }, {
         alias: ['admins'],
