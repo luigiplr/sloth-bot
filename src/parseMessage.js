@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import permissions from './permissions';
+import slackTools from './slack';
 import {
     find as findPlugins
 }
@@ -29,6 +30,16 @@ module.exports = {
             let username = user.name.toString().toLowerCase();
             let userLevel = getUserlevel(username);
 
+            // If user is muted and is not an admin (or if the user is the bot itself)
+            if (permissions.muted.indexOf(username) > -1 && userLevel != 'superadmin') {
+                slackTools.deleteMessage(channel.id, ts);
+                return resolve(false);
+            }
+
+            if (text.charAt(0) !== config.prefix)
+                return resolve(false);
+
+            console.log("IN", user.name + ':', text);
             // If user is ignored and is not an admin (or if the user is the bot itself)
             if (((permissions.ignored.indexOf(username) > -1) && userLevel != 'superadmin') || user.name.toString().toLowerCase() === config.botname)
                 return resolve(false);

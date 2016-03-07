@@ -1,23 +1,19 @@
 import Slack from 'slack-client';
 import Promise from 'bluebird';
-import needle from 'needle';
-import {
-    sendMessage as postMessage
-} from './slack';
+import slackTools from './slack';
+import config from '../config.json';
 import {
     parse as parseMsg
 }
 from './parseMessage';
 
-const slackClient = new Slack(require('./../config.json').slackAPIToken, true, true);
-const config = require('./../config.json');
+if (!config.teamName || !config.botname || !config.botid || !config.prefix || !config.slackToken || !config.slackAPIToken) {
+    console.error("Invalid config, please fill in the first 6 required config fields");
+    process.exit();
+}
 
-slackClient.on('open', () => {
-    let unreads = slackClient.getUnreadCount();
 
-    console.log('Welcome to Slack. You are @', slackClient.self.name, 'of', slackClient.team.name);
-    return console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
-});
+const slackClient = new Slack(config.slackAPIToken, true, true);
 
 const getParams = ((text, attach = null) => {
     return {
@@ -41,6 +37,13 @@ const checkIfDM = ((type, user) => {
     });
 });
 
+slackClient.on('open', () => {
+    let unreads = slackClient.getUnreadCount();
+
+    console.log('Welcome to Slack. You are @', slackClient.self.name, 'of', slackClient.team.name);
+    return console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
+});
+
 slackClient.on('message', message => {
     let user = slackClient.getUserByID(message.user);
     let channel = slackClient.getChannelGroupOrDMByID(message.channel);
@@ -48,8 +51,6 @@ slackClient.on('message', message => {
     let ts = message.ts;
 
     if (message.type === 'message' && text && channel) {
-        if (text.charAt(0) !== config.prefix) return false;
-        console.log("IN", user.name + ':', text);
         parseMsg(user, channel, text, ts)
             .then(response => {
                 if (!response)
@@ -103,20 +104,20 @@ const sendErrorToDebugChannel = ((type, error) => {
         
         if (i < 5 & !stop) {
             i++;
-            postMessage(config.debugChannel, message);
+            slackTools.sendMessage(config.debugChannel, message);
             setTimeout(function() {
                 if (i > 0)
                     i--;
             }, 2000);
         } else {
-            postMessage(config.debugChannel, "Warning! Error spam, stopping bot");
+            slackTools.sendMessage(config.debugChannel, "Warning! Error spam, stopping bot");
             stop = true;
             process.exit();
         }
     } else {
         console.error("Caught Error:", type, error);
         if (config.debugChannel)
-            postMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```');
+            slackTools.sendMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```');
     }
 });
 

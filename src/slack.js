@@ -1,24 +1,41 @@
 import needle from 'needle';
 import Promise from 'bluebird';
 import _ from 'lodash';
-const config = require('../config.json');
+import config from '../config.json';
 
 module.exports = {
     sendMessage(channel, input) {
-        needle.post(`https://${config.teamName}.slack.com/api/chat.postMessage`, {
-            text: input,
-            channel: channel,
-            as_user: 'true',
-            token: config.slackAPIToken
+        return new Promise((resolve, reject) => {
+            needle.post(`https://${config.teamName}.slack.com/api/chat.postMessage`, {
+                text: input,
+                channel: channel,
+                as_user: 'true',
+                token: config.slackAPIToken
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`sendMsgErr ${err || body.error}`);
+                    return reject(`sendMsgErr ${err || body.error}`);
+                }
+                resolve();
+            });
         });
     },
     deleteMessage(channel, ts) {
-    	needle.post(`https://${config.teamName}.slack.com/api/chat.delete`, {
-            channel: channel,
-            token: config.slackToken,
-            ts: ts
+        return new Promise((resolve, reject) => {
+            needle.post(`https://${config.teamName}.slack.com/api/chat.delete`, {
+                channel: channel,
+                token: config.slackToken,
+                ts: ts
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`DelMsgErr ${err || body.error}`);
+                    return reject(`DelMsgErr ${err || body.error}`);
+                }
+                console.info("Deleted message in", channel, "with TS of", ts);
+                resolve();             
+            });
+            
         });
-        console.info("Deleted message in", channel, "with TS of", ts);
     },
     getHistory(channel, limit = 100) {
         return new Promise((resolve, reject) => {
@@ -26,10 +43,12 @@ module.exports = {
                 channel: channel,
                 token: config.slackToken,
                 count: limit
-            }, (err, resp) => {
-                if (err || resp.body.error)
-                    return reject((resp.body.error || err));
-                resolve(resp.body);
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`getHistoryErr ${err || body.error}`);
+                    return reject(`getHistoryErr ${err || body.error}`);
+                }
+                resolve(body);
             });
         });
     },
@@ -37,10 +56,12 @@ module.exports = {
         return new Promise((resolve, reject) => {
             needle.post(`https://${config.teamName}.slack.com/api/users.list`, {
                 token: config.slackToken
-            }, (err, resp) => {
-                if (err || resp.body.error)
-                    return reject(err || resp.body.error);
-                let uID = _(resp.body.members)
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`findUserErr ${err || body.error}`);
+                    return reject(`findUserErr ${err || body.error}`);
+                }
+                let uID = _(body.members)
                     .filter(person => {
                         return person.name === user;
                     })

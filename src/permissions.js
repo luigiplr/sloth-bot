@@ -19,7 +19,7 @@ if (!fs.existsSync(dbDir))
 if (!fileExists(permsFile))
     fs.writeFileSync(permsFile, JSON.stringify({
         admins: [],
-        superadmins: []
+        superadmins: [],
     }));
 
 const readJson = (jsonPath) => {
@@ -45,6 +45,7 @@ class Perms {
         this.adminList = [];
         this.superadminList = [];
         this.ignoreList = [];
+        this.muteList = [];
 
         this.refresh();
     }
@@ -59,6 +60,10 @@ class Perms {
 
     get ignored() {
         return this.ignoreList;
+    }
+
+    get muted() {
+        return this.muteList;
     }
 
     add(username, mode) {
@@ -95,6 +100,16 @@ class Perms {
             case 'unignore':
                 if (this.ignoreList.indexOf(username) > -1) {
                     this.ignoreList.splice(this.ignoreList.indexOf(username), 1);
+                }
+                return true;
+            case 'mute':
+                if (this.muteList.indexOf(username) === -1) {
+                    this.muteList.push(username);
+                }
+                return true;
+            case 'unmute':
+                if (this.muteList.indexOf(username) > -1) {
+                    this.muteList.splice(this.muteList.indexOf(username), 1);
                 }
                 return true;
             default:
