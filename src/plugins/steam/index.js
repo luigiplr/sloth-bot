@@ -95,16 +95,10 @@ var generateProfileResponse = (profile => {
 
 var generateAppDetailsResponse = (app => {
     if (app && app.type == 'game') {
-        let price;
-        if (app.is_free)
-            price = ('This game is Free 2 Play, yay :)');
-        else if (app.price_overview && app.price_overview.discount_percent > 0)
-            price = ('~$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency) +  '~ *$' + formatCurrency(app.price_overview.final/100, app.price_overview.currency) + '* ' + app.price_overview.discount_percent + '% OFF!!! :eyes::scream:');
-        else if (app.price_overview)
-            price = ('$' + formatCurrency(app.price_overview.initial/100, app.price_overview.currency));
+        let price = getPriceForApp(app);
 
         let out = {
-            msg: '<http://store.steampowered.com/app/' + app.steam_appid + '|' + app.name + '>' + ' (' + app.steam_appid + ')',
+            msg: `<http://store.steampowered.com/app/${app.steam_appid}|${app.name}> (${app.steam_appid})`,
             attachments: [{
                 "fallback": app.name + '(' + app.steam_appid + ')',
                 "image_url": app.header_image,
@@ -120,11 +114,11 @@ var generateAppDetailsResponse = (app => {
                     "short": true
                 }, {
                     "title": "Metacritic",
-                    "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : 'Unknown',
+                    "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : '_Unknown_',
                     "short": true
                 }, {
                     "title": "Current Players",
-                    "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 'Unknown',
+                    "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '_Unknown_',
                     "short": true
                 }]
             }]
@@ -138,6 +132,18 @@ var generateAppDetailsResponse = (app => {
 var generatePlayersResponse = (app => {
     return 'There are currently *' + app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '* people playing _' + app.name + '_ right now';
 });
+
+var getPriceForApp = (app => {
+    if (app.is_free)
+        return 'This game is Free 2 Play, yay :)';
+    else if (app.price_overview && app.price_overview.discount_percent > 0)
+        return (`~$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final/100, app.price_overview.currency)}* ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`);
+    else if (app.price_overview)
+        return (`$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}`);
+    else
+        return '_Unknown_';
+});
+
 
 var getPersonaState = (state => {
     switch (state) {
