@@ -52,8 +52,8 @@ slackClient.on('message', message => {
     let channel = slackClient.getChannelGroupOrDMByID(message.channel);
     let text = message.text;
     let ts = message.ts;
-
-    if (message.type === 'message' && text && channel) {
+    
+    if (message.type === 'message' && text && channel && !message.subtype) {
         parseMsg(user, channel, text, ts)
             .then(response => {
                 if (!response)
