@@ -9,7 +9,7 @@ module.exports = {
     invite(input) {
         var email = input.substr(8).split('|')[0];
         return new Promise((resolve, reject) => {
-            needle.post(`https://${config.teamName}.slack.com/api/users.admin.invite`, {
+            needle.post('https://slack.com/api/users.admin.invite', {
                 email: email,
                 token: config.slackToken,
                 set_active: true
@@ -30,14 +30,14 @@ module.exports = {
             user = input.split(' ')[0];
             let reason = input.split(' ')[1];
             channel = channel.id;
-
+            
             if (user === config.botname || user.slice(2, -1) === config.botid) {
                 return reject('Error: Bitch. No.');
             }
 
             // Dirty cheat cause i cbf fixing
             if (user.slice(0,2) == "<@") {
-                needle.post(`https://${config.teamName}.slack.com/api/channels.kick`, {
+                needle.post('https://slack.com/api/channels.kick', {
                     channel: channel,
                     token: config.slackToken,
                     user: user.slice(2, -1)
@@ -48,7 +48,7 @@ module.exports = {
                 });
             } else {
                 slackTools.findUser(user).then(uID => {
-                    needle.post(`https://${config.teamName}.slack.com/api/channels.kick`, {
+                    needle.post('https://slack.com/api/channels.kick', {
                         channel: channel,
                         token: config.slackToken,
                         user: uID
@@ -64,7 +64,7 @@ module.exports = {
     deleteLastMessage(channel, messagets) {
         return new Promise((resolve, reject) => {
             if (!config.botid)
-                return reject("You need to specify your Bots ID in the config to use this command");
+                return reject("Error! Cannot find botID");
             slackTools.deleteMessage(channel, messagets);     
             slackTools.getHistory(channel, 17).then(history => {
                 let ts = _(history.messages)

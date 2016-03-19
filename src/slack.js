@@ -6,7 +6,7 @@ import config from '../config.json';
 module.exports = {
     sendMessage(channel, input) {
         return new Promise((resolve, reject) => {
-            needle.post(`https://${config.teamName}.slack.com/api/chat.postMessage`, {
+            needle.post('https://slack.com/api/chat.postMessage', {
                 text: input,
                 channel: channel,
                 as_user: 'true',
@@ -22,7 +22,7 @@ module.exports = {
     },
     deleteMessage(channel, ts) {
         return new Promise((resolve, reject) => {
-            needle.post(`https://${config.teamName}.slack.com/api/chat.delete`, {
+            needle.post('https://slack.com/api/chat.delete', {
                 channel: channel,
                 token: config.slackToken,
                 ts: ts
@@ -39,7 +39,7 @@ module.exports = {
     },
     getHistory(channel, limit = 100) {
         return new Promise((resolve, reject) => {
-            needle.post(`https://${config.teamName}.slack.com/api/channels.history`, {
+            needle.post('https://slack.com/api/channels.history', {
                 channel: channel,
                 token: config.slackToken,
                 count: limit
@@ -54,7 +54,7 @@ module.exports = {
     },
     findUser(user) {
         return new Promise((resolve, reject) => {
-            needle.post(`https://${config.teamName}.slack.com/api/users.list`, {
+            needle.post('https://slack.com/api/users.list', {
                 token: config.slackToken
             }, (err, resp, body) => {
                 if (err || body.error) {

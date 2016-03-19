@@ -46,7 +46,7 @@ module.exports = function(grunt) {
             },
             js: {
                 files: ['src/**/*.js'],
-                tasks: ['newer:babel']
+                tasks: ['newer:babel', 'concurrent:run']
             }
         },
         nodemon: {

@@ -7,11 +7,10 @@ import {
 }
 from './parseMessage';
 
-if (!config.teamName || !config.botname || !config.botid || !config.prefix || !config.slackToken || !config.slackAPIToken) {
-    console.error("Invalid config, please fill in the first 6 required config fields");
+if (!config.prefix || !config.slackToken || !config.slackAPIToken) {
+    console.error("Invalid config, please fill in the first 3 required config fields");
     process.exit();
 }
-
 
 const slackClient = new Slack(config.slackAPIToken, true, true);
 
@@ -40,8 +39,12 @@ const checkIfDM = ((type, user) => {
 slackClient.on('open', () => {
     let unreads = slackClient.getUnreadCount();
 
-    console.log('Welcome to Slack. You are @', slackClient.self.name, 'of', slackClient.team.name);
-    return console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
+    config.teamName = slackClient.team.domain;
+    config.botname = slackClient.self.name;
+    config.botid = slackClient.self.id;
+
+    console.log('Welcome to Slack. You are @' + slackClient.self.name, 'of', slackClient.team.name);
+    console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
 });
 
 slackClient.on('message', message => {
@@ -99,19 +102,17 @@ const sendErrorToDebugChannel = ((type, error) => {
             return;
 
         let i = 0;
-        let stop = false;
         let message = 'Caught ' + type + ' ```' + error.message + '\n' + error.stack + '```';
         
-        if (i < 5 & !stop) {
+        if (i < 4) {
             i++;
             slackTools.sendMessage(config.debugChannel, message);
             setTimeout(function() {
                 if (i > 0)
                     i--;
-            }, 2000);
+            }, 3000);
         } else {
             slackTools.sendMessage(config.debugChannel, "Warning! Error spam, stopping bot");
-            stop = true;
             process.exit();
         }
     } else {

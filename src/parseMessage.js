@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 import permissions from './permissions';
 import slackTools from './slack';
+import config from '../config.json';
 import {
     find as findPlugins
 }
@@ -13,7 +14,6 @@ findPlugins().forEach(plugin => {
     plugins.push(require('./plugins/' + plugin));
 });
 
-const config = require('./../config.json');
 
 const getUserlevel = user => {
     if ((permissions.superadmins.indexOf(user) > -1))
