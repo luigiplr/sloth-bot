@@ -28,7 +28,7 @@ module.exports = {
                 new urban(input).first((definition) => {
                     resolve({
                         type: 'channel',
-                        message: _.unescape('[' + definition.thumbs_up + ' :thumbsup: | ' + definition.thumbs_down + ' :thumbsdown: ] ' + definition.permalink)
+                        message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
                     });
                 });
             } catch (e) {
@@ -42,7 +42,7 @@ module.exports = {
                 new urban.random().first((definition) => {
                     resolve({
                         type: 'channel',
-                        message: _.unescape('[' + definition.thumbs_up + ' :thumbsup: | ' + definition.thumbs_down + ' :thumbsdown: ] ' + definition.permalink)
+                        message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
                     });
                 });
             } catch (e) {
