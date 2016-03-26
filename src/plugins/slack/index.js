@@ -21,6 +21,14 @@ module.exports = {
         alias: ['dellast', 'deletelastmessage'],
         userLevel: ['admin', 'superadmin'],
         command: 'deleteLastMessage'
+    }, {
+        alias: ['disableuser'],
+        userLevel: ['superadmin'],
+        command: 'disableUser'
+    }, {
+        alias: ['enableuser'],
+        userLevel: ['superadmin'],
+        command: 'enableUser'
     }],
     help: [{
         command: ['kick'],
@@ -37,6 +45,12 @@ module.exports = {
     }, {
         command: ['dellast', 'deletelastmessage'],
         usage: 'dellast - deletes the last message from the bot'
+    }, {
+        command: ['disableuser'],
+        usage: 'disableuser <user> - Disables the users slack account for the team'
+    }, {
+        command: ['enableuser'],
+        usage: 'enableuser <user> - Enables the users slack account if they have been disabled'
     }],
     kick(user, channel, input = false) {
         return new Promise((resolve, reject) => {
@@ -45,6 +59,7 @@ module.exports = {
                     type: 'dm',
                     message: 'Usage: kick <username> <reason (optional)> - removes user from channel'
                 });
+
             slack.kick(user, channel, input)
                 .then(res => {
                     resolve({
@@ -105,5 +120,37 @@ module.exports = {
                 resolve();
             }).catch(reject);
         });
+    },
+    disableUser(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            return reject("Function not implemented");
+            if (!input)
+                return reject("Please specify a user")
+
+            slackTools.findUser(input).then(id => {
+                slackTools.setInactive(id).then(resp => {
+                    resolve({
+                        type: 'channel',
+                        message: `Sucessfully disabled ${input}'s account`
+                    });
+                }).catch(reject);
+            }).catch(reject);  
+        })
+    },
+    enableUser(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            return reject("Function not implemented");
+            if (!input)
+                return reject("Please specify a user")
+
+            slackTools.findUser(input).then(id => {
+                slackTools.setRegular(id).then(resp => {
+                    resolve({
+                        type: 'channel',
+                        message: `Sucessfully enabled ${input}'s account`
+                    });
+                }).catch(reject);
+            }).catch(reject);  
+        })
     }
 };

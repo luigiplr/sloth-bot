@@ -28,7 +28,7 @@ module.exports = {
     kick(user, channel, input) {
         return new Promise((resolve, reject) => {
             user = input.split(' ')[0];
-            let reason = input.split(' ')[1];
+            let reason = _.slice(input.split(' '), 1).join(' ');
             channel = channel.id;
             
             if (user === config.botname || user.slice(2, -1) === config.botid) {
@@ -44,7 +44,7 @@ module.exports = {
                 }, (err, resp) => {
                     if (err || resp.body.error)
                         return reject('Error: ' + (resp.body.error || err));
-                    resolve('Kicked: ' + user + ' for ' + (reason ? reason : 'no reason.'));
+                    resolve('*Kicked: ' + user + '* for ' + (reason ? reason : 'no reason.'));
                 });
             } else {
                 slackTools.findUser(user).then(uID => {
@@ -55,7 +55,7 @@ module.exports = {
                     }, (err, resp) => {
                         if (err || resp.body.error)
                             return reject('Error: ' + (resp.body.error || err));
-                        resolve('Kicked: ' + user + ' for ' + (reason ? reason : 'no reason.'));
+                        resolve('*Kicked: ' + user + '* for ' + (reason ? reason : 'no reason.'));
                     });
                 });
             }

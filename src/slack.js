@@ -74,5 +74,37 @@ module.exports = {
                 resolve(uID);
             });
         });
+    },
+    setInactive(user) {
+        return new Promise((resolve, reject) => {
+            needle.post(`https://slack.com/api/users.admin.setInactive?t=${Math.round(Date.now() / 1e3)}`, {
+                token: config.slackToken,
+                user: user,
+                set_active: true,
+                _attempts: 1
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`setInactive ${err || body.error}`);
+                    return reject(`setInactive ${err || body.error}`);
+                }
+                body.ok ? resolve(true) : reject("Unknown error");
+            });
+        })
+    },
+    setRegular(user) {
+        return new Promise((resolve, reject) => {
+            needle.post(`https://slack.com/api/users.admin.setRegular?t=${Math.round(Date.now() / 1e3)}`, {
+                token: config.slackToken,
+                user: user,
+                set_active: true,
+                _attempts: 1
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`setRegular ${err || body.error}`);
+                    return reject(`setRegular ${err || body.error}`);
+                }
+                body.ok ? resolve(true) : reject("Unknown error");
+            });
+        })
     }
 };
