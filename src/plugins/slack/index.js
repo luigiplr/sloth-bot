@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Promise from 'bluebird';
 import slack from './utils/slack';
 import slackTools from '../../slack.js';
@@ -29,6 +28,12 @@ module.exports = {
         alias: ['enableuser'],
         userLevel: ['superadmin'],
         command: 'enableUser'
+    }, {
+        alias: ['alm', 'addloadingmessage'],
+        command: 'addLoadingMessage'
+    }, {
+        alias: ['rlm', 'removeloadingmessage'],
+        command: 'removeLoadingMessage'
     }],
     help: [{
         command: ['kick'],
@@ -51,6 +56,12 @@ module.exports = {
     }, {
         command: ['enableuser'],
         usage: 'enableuser <user> - Enables the users slack account if they have been disabled'
+    }, {
+        command: ['alm', 'addloadingmessage'],
+        usage: 'alm <message> - Adds a slack loading message to the team'
+    }, {
+        command: ['rlm', 'removeloadingmessage'],
+        usage: 'rlm <id> - Remove a slack loading message from the team'
     }],
     kick(user, channel, input = false) {
         return new Promise((resolve, reject) => {
@@ -87,7 +98,7 @@ module.exports = {
                 .catch(reject);
         });
     },
-    channelid(user, channel, input) {
+    channelid(user, channel) {
         return new Promise((resolve, reject) => {
             if (channel && channel.id)
                 return resolve({
@@ -116,19 +127,19 @@ module.exports = {
     },
     deleteLastMessage(user, channel, input, ts) {
         return new Promise((resolve, reject) => {
-            slack.deleteLastMessage(channel.id, ts).then(resp => {
+            slack.deleteLastMessage(channel.id, ts).then(() => {
                 resolve();
             }).catch(reject);
         });
     },
-    disableUser(user, channel, input) {
+    /*disableUser(user, channel, input) {
         return new Promise((resolve, reject) => {
-            return reject("Function not implemented");
-            if (!input)
+            if (!input) {
                 return reject("Please specify a user")
+            }
 
             slackTools.findUser(input).then(id => {
-                slackTools.setInactive(id).then(resp => {
+                slackTools.setInactive(id).then(() => {
                     resolve({
                         type: 'channel',
                         message: `Sucessfully disabled ${input}'s account`
@@ -139,7 +150,6 @@ module.exports = {
     },
     enableUser(user, channel, input) {
         return new Promise((resolve, reject) => {
-            return reject("Function not implemented");
             if (!input)
                 return reject("Please specify a user")
 
@@ -151,6 +161,38 @@ module.exports = {
                     });
                 }).catch(reject);
             }).catch(reject);  
+        })
+    },*/
+    addLoadingMessage(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: addloadingmessage <message> - Adds a loading message to the slack team'
+                });
+
+            slackTools.addLoadingMsg(input).then(resp => {
+                resolve({
+                    type: 'channel',
+                    message: `Successfully added message with id ${resp.id}`
+                });
+            }).catch(reject)
+        })
+    },
+    removeLoadingMessage(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: removeloadingmessage <id> - Remove a loading message from the team - ID is required and can only be viewed within the Slack Admin Page'
+                });
+
+            slackTools.deleteLoadingMsg(input).then(() => {
+                resolve({
+                    type: 'channel',
+                    message: `Successfully removed message with id ${input}`
+                });
+            }).catch(reject)
         })
     }
 };

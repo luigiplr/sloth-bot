@@ -106,5 +106,33 @@ module.exports = {
                 body.ok ? resolve(true) : reject("Unknown error");
             });
         })
+    },
+    addLoadingMsg(message) {
+        return new Promise((resolve, reject) => {
+            needle.post('https://slack.com/api/team.loading.addMsg', {
+                token: config.slackToken,
+                message: message
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`addLoadingMsg ${err || body.error}`);
+                    return reject(`addLoadingMsg ${err || body.error}`);
+                }
+                body.ok ? resolve(body) : reject("Unknown error");
+            })
+        })
+    },
+    deleteLoadingMsg(id) {
+        return new Promise((resolve, reject) => {
+            needle.post('https://slack.com/api/team.loading.deleteMsg', {
+                token: config.slackToken,
+                id: id
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`delLoadingMsg ${err || body.error}`);
+                    return reject(`delLoadingMsg ${err || body.error}`);
+                }
+                body.ok ? resolve(true) : reject("Unknown error");
+            })
+        })
     }
 };
