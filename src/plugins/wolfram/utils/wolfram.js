@@ -13,10 +13,13 @@ module.exports = {
             needle.get(url, (err, resp, body) => {
                 if (!err && body) {
                     if (body.queryresult['$'].success === 'true' && body.queryresult['$'].error === 'false') {
-                        return resolve(body.queryresult.pod[1].subpod.plaintext);
+                        if (body.queryresult.pod[1].subpod.plaintext)
+                            return resolve(body.queryresult.pod[1].subpod.plaintext)
+                        else
+                            return reject("No data found");
                     } else {
                         if (body.queryresult['$'].error === 'false')
-                            return reject("Error: No data found");
+                            return reject("No data found");
                         else
                             return reject(`WolframError: ${body.queryresult.error.msg}`)
                     }
