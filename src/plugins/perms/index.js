@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import permissions from '../../permissions';
-import config from '../../../config.json';
+import permsUtil from './utils/permUtil';
 
 const getUserLevel = user => {
     if ((permissions.superadmins.indexOf(user) > -1))
@@ -44,6 +44,9 @@ module.exports = {
     }, {
         alias: ['muted'],
         command: 'muted'
+    }, {
+        alias: ['permaignore'],
+        command: 'permaIgnore'
     }],
     help: [{
         command: ['set'],
@@ -72,6 +75,9 @@ module.exports = {
     }, {
         command: ['muted'],
         usage: 'muted - lists muted users'
+    }, {
+        command: ['permaignore'],
+        usage: 'permaignore <username> - have the bot permanently ignore all commands from user'
     }],
     admins() {
         return new Promise(resolve => {
@@ -91,9 +97,10 @@ module.exports = {
     },
     ignored() {
         return new Promise(resolve => {
+            let msg = permissions.allIgnored[0] ? (`Currently ignored: ${permissions.ignored[0] ? permissions.ignored.join(', ') + ',' : ''}${permissions.permaIgnored[0] ? ' *' + permissions.permaIgnored.join(', ') + '*' : ''}`) : null;
             resolve({
                 type: 'channel',
-                message: permissions.ignored[0] ? 'Currently ignored: ' + permissions.ignored.join(', ') : 'No ignored users'
+                message: msg || 'No ignored users'
             });
         });
     },
@@ -105,76 +112,54 @@ module.exports = {
             });
         });
     },
-    unignore(user, channel, input) {
+    unignore(user, channel, input, ts, plugin, adminLevel) {
         return new Promise((resolve, reject) => {
-            if (!input)
-                return reject("Please specify a user");
-            let username = input.split(' ')[0].toString().toLowerCase();
-            if (username) {
-                permissions.add(username, 'unignore');
+            permsUtil.doTheThing(input, 'unignore', adminLevel).then(resp => {
                 resolve({
                     type: 'channel',
-                    message: 'Unignoreing ' + username
+                    message: resp
                 });
-            } else
-                resolve({
-                    type: 'channel',
-                    message: 'Invalid User Name'
-                });
+            }).catch(reject);
         });
     },
-    ignore(user, channel, input) {
+    ignore(user, channel, input, ts, plugin, adminLevel) {
         return new Promise((resolve, reject) => {
-            if (!input)
-                return reject("Please specify a user");
-            let username = input.split(' ')[0].toString().toLowerCase();
-            if (username && username != config.botname) {
-                permissions.add(username, 'ignore');
+            permsUtil.doTheThing(input, 'ignore', adminLevel).then(resp => {
                 resolve({
                     type: 'channel',
-                    message: 'Ignoring ' + username
+                    message: resp
                 });
-            } else
-                resolve({
-                    type: 'channel',
-                    message: 'Invalid User Name'
-                });
+            }).catch(reject);
         });
     },
-    unmute(user, channel, input) {
+    unmute(user, channel, input, ts, plugin, adminLevel) {
         return new Promise((resolve, reject) => {
-            let username = input.split(' ')[0].toString().toLowerCase();
-            if (!input)
-                return reject("Please specify a user");
-            if (username) {
-                permissions.add(username, 'unmute');
+            permsUtil.doTheThing(input, 'unmute', adminLevel).then(resp => {
                 resolve({
                     type: 'channel',
-                    message: 'Unmuting ' + username
+                    message: resp
                 });
-            } else
-                resolve({
-                    type: 'channel',
-                    message: 'Invalid User Name'
-                });
+            }).catch(reject);
         });
     },
-    mute(user, channel, input) {
+    mute(user, channel, input, ts, plugin, adminLevel) {
         return new Promise((resolve, reject) => {
-            if (!input)
-                return reject("Please specify a user");
-            let username = input.split(' ')[0].toString().toLowerCase();
-            if (username && username != config.botname) {
-                permissions.add(username, 'mute');
+            permsUtil.doTheThing(input, 'mute', adminLevel).then(resp => {
                 resolve({
                     type: 'channel',
-                    message: 'Muting ' + username
+                    message: resp
                 });
-            } else
+            }).catch(reject);
+        });
+    },
+    permaIgnore(user, channel, input, ts, plugin, adminLevel) {
+        return new Promise((resolve, reject) => {
+            permsUtil.doTheThing(input, 'permaignore', adminLevel).then(resp => {
                 resolve({
                     type: 'channel',
-                    message: 'Invalid User Name'
+                    message: resp
                 });
+            }).catch(reject);
         });
     },
     set(admin, channel, input, ts, plugin, adminLevel) {

@@ -19,7 +19,8 @@ if (!fs.existsSync(dbDir))
 if (!fileExists(permsFile))
     fs.writeFileSync(permsFile, JSON.stringify({
         admins: [],
-        superadmins: []
+        superadmins: [],
+        ignored: []
     }));
 
 const readJson = (jsonPath) => {
@@ -46,6 +47,7 @@ class Perms {
         this.superadminList = [];
         this.ignoreList = [];
         this.muteList = [];
+        this.permaIgnoreList = [];
 
         this.refresh();
     }
@@ -64,6 +66,14 @@ class Perms {
 
     get muted() {
         return this.muteList;
+    }
+
+    get permaIgnored() {
+        return this.permaIgnoreList;
+    }
+
+    get allIgnored() {
+        return this.ignoreList.concat(this.permaIgnored);
     }
 
     add(username, mode) {
@@ -92,26 +102,34 @@ class Perms {
                     this.superadminList.splice(this.superadminList.indexOf(username), 1);
                 }
                 break;
+            case 'permaignore':
+                if (this.permaIgnoreList.indexOf(username) === -1) {
+                    this.permaIgnoreList.push(username);
+                }
+                break;
             case 'ignore':
                 if (this.ignoreList.indexOf(username) === -1) {
                     this.ignoreList.push(username);
                 }
-                return true;
+                break;
             case 'unignore':
                 if (this.ignoreList.indexOf(username) > -1) {
                     this.ignoreList.splice(this.ignoreList.indexOf(username), 1);
                 }
-                return true;
+                if (this.permaIgnoreList.indexOf(username) > -1) {
+                    this.permaIgnoreList.splice(this.permaIgnoreList.indexOf(username), 1);
+                }
+                break;
             case 'mute':
                 if (this.muteList.indexOf(username) === -1) {
                     this.muteList.push(username);
                 }
-                return true;
+                break;
             case 'unmute':
                 if (this.muteList.indexOf(username) > -1) {
                     this.muteList.splice(this.muteList.indexOf(username), 1);
                 }
-                return true;
+                break;
             default:
                 return false;
         }
@@ -119,7 +137,8 @@ class Perms {
 
         saveJson(permsFile, {
             admins: this.adminList,
-            superadmins: this.superadminList
+            superadmins: this.superadminList,
+            ignored: this.permaIgnoreList
         });
     }
 
@@ -128,6 +147,7 @@ class Perms {
             .then(json => {
                 this.adminList = json.admins;
                 this.superadminList = json.superadmins;
+                this.permaIgnoreList = json.ignored;
             });
     }
 }

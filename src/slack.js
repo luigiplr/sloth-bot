@@ -52,7 +52,7 @@ module.exports = {
             });
         });
     },
-    findUser(user) {
+    findUser(user, type) {
         return new Promise((resolve, reject) => {
             needle.post('https://slack.com/api/users.list', {
                 token: config.slackToken
@@ -61,17 +61,14 @@ module.exports = {
                     console.log(`findUserErr ${err || body.error}`);
                     return reject(`findUserErr ${err || body.error}`);
                 }
-                let uID = _(body.members)
-                    .filter(person => {
+                let member = _.find(body.members, person => {
                         return person.name === user;
                     })
-                    .pluck('id')
-                    .value()[0];
 
-                if (!uID) {
+                if (!member)
                     return reject("Couldn't find a user by that name");
-                }
-                resolve(uID);
+
+                type == 'name' ? resolve(member.name) : resolve(member.id);
             });
         });
     },
