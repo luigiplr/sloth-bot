@@ -57,7 +57,7 @@ module.exports = {
             if (type == 'permaignore' && permissions.permaIgnored[0] && _.includes(permissions.permaIgnored, username))
                 return reject("This user is already permanently ignored");
 
-            if (type == 'unignore' || 'unmute') {
+            if (type == 'unignore' || type == 'unmute') {
                 permissions.add(username, type);
                 return resolve(`${responses[type]} ${username}`);
             } else {

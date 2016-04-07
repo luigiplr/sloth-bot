@@ -61,9 +61,10 @@ module.exports = {
                     console.log(`findUserErr ${err || body.error}`);
                     return reject(`findUserErr ${err || body.error}`);
                 }
+                
                 let member = _.find(body.members, person => {
-                        return person.name === user;
-                    })
+                    return person.name === user;
+                })
 
                 if (!member)
                     return reject("Couldn't find a user by that name");
