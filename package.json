@@ -6,6 +6,9 @@
     "name": "Luigi Poole",
     "email": ""
   },
+  "scripts": {
+    "start": "forever start -a -o out.log -e err.log -m 1 build/index.js"
+  }
   "repository": {
     "type": "git",
     "url": ""
