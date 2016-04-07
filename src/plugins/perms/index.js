@@ -46,6 +46,7 @@ module.exports = {
         command: 'muted'
     }, {
         alias: ['permaignore'],
+        userLevel: ['superadmin'],
         command: 'permaIgnore'
     }],
     help: [{
