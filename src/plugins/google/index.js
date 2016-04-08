@@ -1,16 +1,17 @@
-import _ from 'lodash';
+//import _ from 'lodash';
 import Promise from 'bluebird';
 import google from 'google';
 import YouTube from 'youtube-node';
-import MetaInspector from 'node-metainspector';
+import needle from 'needle';
+import config from '../../../config.json'
+//import MetaInspector from 'node-metainspector';
 
-const stringStartsWith = ((string, prefix) => {
+/*const stringStartsWith = ((string, prefix) => {
     return string.slice(0, prefix.length) == prefix;
-});
+});*/
 
 const youTube = new YouTube();
-const apiKey = require('./../../../config.json').googleToken;
-youTube.setKey(apiKey);
+youTube.setKey(config.googleToken);
 
 module.exports = {
     commands: [{
@@ -38,11 +39,31 @@ module.exports = {
             if (!input) {
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: googleimage <query> - Returns any of the first 4 images returned for query'
-                });
+                    message: 'Usage: googleimage <query> - Returns any of the first 5 images returned for query'
+                })
             }
 
-            let client = new MetaInspector('https://www.google.com/search?q=' + input.split(' ').join('+') + '&tbm=isch', {
+            if (!config.googleToken || !config.cseToken)
+                return reject("Error: Google API Key and CSE Key are required to use this function")
+
+            let url = `https://www.googleapis.com/customsearch/v1?q=${input}&num=5&searchType=image&start=1&key=${config.googleToken}&cx=${config.cseToken}`
+
+            needle.get(url, (err, resp, body) => {
+                if (!err && body && !body.error) {
+                    if (body.items) {
+                        let chosen = body.items[Math.floor(Math.random() * body.queries.request[0].count)].link + `#${this.makeid()}`
+                        return resolve({
+                            type: 'channel',
+                            message: chosen
+                        });
+                    } else
+                        reject("No results found")
+                } else {
+                    console.error(`googleImgError: ${err || body.error.message}`)
+                }
+            })
+
+            /*let client = new MetaInspector('https://www.google.com/search?q=' + input.split(' ').join('+') + '&tbm=isch', {
                 timeout: 5000
             });
             let urls = [];
@@ -71,7 +92,7 @@ module.exports = {
             });
 
             client.on("error", reject);
-            client.fetch();
+            client.fetch();*/
         });
     },
     makeid() {
@@ -115,7 +136,7 @@ module.exports = {
                     message: 'Usage: youtube <query> | Returns the first video found for query'
                 });
             }
-            if (!apiKey)
+            if (!config.googleToken)
                 return reject("Error: Google APIKey required to use this function");
 
             youTube.search(input, 1, (error, result) => {
@@ -126,7 +147,7 @@ module.exports = {
                     });
 
                 var url = 'http://youtu.be/' + result.items[0].id.videoId,
-                    description = result.items[0].snippet.description,
+                    //description = result.items[0].snippet.description,
                     title = result.items[0].snippet.title;
 
                 youTube.getById(result.items[0].id.videoId, (error, singleresult) => {
@@ -136,7 +157,7 @@ module.exports = {
                         var views = singleresult.items[0].statistics.viewCount,
                             likes = singleresult.items[0].statistics.likeCount,
                             dislikes = singleresult.items[0].statistics.dislikeCount,
-                            quality = singleresult.items[0].contentDetails.definition,
+                            //quality = singleresult.items[0].contentDetails.definition,
                             percent = 0,
                             channel = singleresult.items[0].snippet.channelTitle,
                             length = singleresult.items[0].contentDetails.duration;
