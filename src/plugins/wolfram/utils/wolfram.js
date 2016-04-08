@@ -6,7 +6,7 @@ module.exports = {
     query(input) {
         return new Promise((resolve, reject) => {
             if (!config.wolframAppKey)
-                return reject("Application key not set in config")
+                return reject("Error: WolframAlpha API Key required to use this function")
 
             let url = `http://api.wolframalpha.com/v2/query?input=${input}&primary=true&appid=${config.wolframAppKey}`
 
