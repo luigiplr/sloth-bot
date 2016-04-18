@@ -52,7 +52,7 @@ module.exports = {
                 return reject("This user is already muted");
             if (type == 'unignore' && permissions.allIgnored[0] && !_.includes(permissions.allIgnored, username))
                 return reject("This user is not ignored");
-            if (type == 'unmute' && permissions.muted[0] && !_.includes(permissions.mute, username))
+            if (type == 'unmute' && permissions.muted[0] && !_.includes(permissions.muted, username))
                 return reject("This user is not muted");
             if (type == 'permaignore' && permissions.permaIgnored[0] && _.includes(permissions.permaIgnored, username))
                 return reject("This user is already permanently ignored");
