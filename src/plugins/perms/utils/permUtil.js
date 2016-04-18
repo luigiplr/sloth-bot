@@ -46,15 +46,15 @@ module.exports = {
             if (!canDoTheThing(username, adminLevel))
                 return reject("Error: lolno");
 
-            if (type == 'ignore' && permissions.allIgnored[0] && _.includes(permissions.allIgnored, username))
+            if (type == 'ignore' && _.includes(permissions.allIgnored, username))
                 return reject("This user is already ignored");
-            if (type == 'mute' && permissions.muted[0] && _.includes(permissions.muted, username))
+            if (type == 'mute' && _.includes(permissions.muted, username))
                 return reject("This user is already muted");
-            if (type == 'unignore' && permissions.allIgnored[0] && !_.includes(permissions.allIgnored, username))
+            if (type == 'unignore' && !_.includes(permissions.allIgnored, username))
                 return reject("This user is not ignored");
-            if (type == 'unmute' && permissions.muted[0] && !_.includes(permissions.muted, username))
+            if (type == 'unmute' && !_.includes(permissions.muted, username))
                 return reject("This user is not muted");
-            if (type == 'permaignore' && permissions.permaIgnored[0] && _.includes(permissions.permaIgnored, username))
+            if (type == 'permaignore' && _.includes(permissions.permaIgnored, username))
                 return reject("This user is already permanently ignored");
 
             if (type == 'unignore' || type == 'unmute') {
