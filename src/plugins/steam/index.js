@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Promise from 'bluebird';
 import Steam from './utils/steam';
 
@@ -75,17 +74,14 @@ module.exports = {
 
 var generateProfileResponse = (profile => {
     if (profile && profile.communityvisibilitystate !== 1) {
-        let out = [];
-        out.push(
-            '*Profile Name:* ' + profile.personaname + (profile.realname ? ' ('+ profile.realname + ')' : ''),
-            '*Level:* ' + profile.user_level,
-            profile.gameextrainfo ? ('*Status:* In Game ' + profile.gameextrainfo + ' _(' + profile.gameid + ')_') : '*Status:* ' + getPersonaState(profile.personastate),
-            '*Date Created:* ' + new Date(profile.timecreated * 1000).toGMTString(),
-            '*Total Games:* ' + profile.totalgames + ' | *Most Played:* ' + profile.mostplayed.name + ' w/ ' + formatPlaytime(profile.mostplayed.playtime_forever),
-            profile.bans ? profile.bans.VACBanned ? '*This user has ' + profile.bans.NumberOfVACBans + ' VAC ban/s on record!*' : '' : '' 
-        );
-        if (profile.ban) {}
-        return(out.filter(Boolean));
+        let msg = [
+            `*Profile Name:* ${profile.personaname} ${profile.realname ? `(${profile.realname})` : ''}`,
+            `*Level:* ${profile.user_level} | *Status:* ${profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)}`,
+            `*Joined Steam:* ${new Date(profile.timecreated * 1000).toGMTString()}`,
+            `*Total Games:* ${profile.totalgames} | *Most Played:* ${profile.mostplayed.name} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
+            profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : `` : ``
+        ];
+        return(msg.filter(Boolean));
     } else if (profile && profile.communityvisibilitystate == 1) {
         return [profile.personaname + ' appears to be a private profile'];
     } else {
