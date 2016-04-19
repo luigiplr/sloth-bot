@@ -48,7 +48,7 @@ module.exports = {
                         return reject(`kickUserErr ${err || body.error}`);
                     }
                     resolve(`*Kicked: ${kickee.name}* for ${reason || 'no reason.'}`);
-                    slackTools.sendPrivateMessageAsSlackbot(kickee.name, `You were kicked from ${channel.name} for ${reason || 'no reason'}`)
+                    slackTools.sendPrivateMessageAsSlackbot(kickee.name, `You were kicked from #${channel.name} for ${reason || 'no reason'}`)
                 });
             }).catch(reject);
         });
