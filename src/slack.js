@@ -41,7 +41,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             needle.post('https://slack.com/api/channels.history', {
                 channel: channel,
-                token: config.slackToken,
+                token: config.slackAPIToken,
                 count: limit
             }, (err, resp, body) => {
                 if (err || body.error) {
@@ -55,7 +55,7 @@ module.exports = {
     findUser(user, type) {
         return new Promise((resolve, reject) => {
             needle.post('https://slack.com/api/users.list', {
-                token: config.slackToken
+                token: config.slackAPIToken
             }, (err, resp, body) => {
                 if (err || body.error) {
                     console.log(`findUserErr ${err || body.error}`);
