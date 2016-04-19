@@ -3,6 +3,7 @@ import babel from 'gulp-babel'
 import rimraf from 'gulp-rimraf'
 import plumber from 'gulp-plumber'
 import server from 'gulp-develop-server'
+import gutil from 'gulp-util'
 import runSequence from 'run-sequence'
 
 /* Build Tasks */
