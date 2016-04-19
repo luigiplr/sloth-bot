@@ -11,7 +11,7 @@ module.exports = {
         usage: 'devexcuse'
     }],
     devexcuse(user, channel, input) {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             devexcuses((err, excuse) => {
                 return resolve({
                     type: 'channel',

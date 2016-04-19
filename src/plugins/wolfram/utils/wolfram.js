@@ -11,21 +11,19 @@ module.exports = {
             let url = `http://api.wolframalpha.com/v2/query?input=${input}&primary=true&appid=${config.wolframAppKey}`
 
             needle.get(url, (err, resp, body) => {
-                if (!err && body) {
-                    if (body.queryresult['$'].success === 'true' && body.queryresult['$'].error === 'false') {
+                if (!err && body)
+                    if (body.queryresult['$'].success === 'true' && body.queryresult['$'].error === 'false')
                         if (body.queryresult.pod[1].subpod.plaintext)
                             return resolve(body.queryresult.pod[1].subpod.plaintext)
                         else
                             return reject("No data found");
-                    } else {
+                    else
                         if (body.queryresult['$'].error === 'false')
                             return reject("No data found");
                         else
                             return reject(`WolframError: ${body.queryresult.error.msg}`)
-                    }
-                } else {
+                else
                     return resolve(err);
-                }
             });
         })
     }

@@ -5,6 +5,8 @@ import slackTools from '../../../slack.js';
 
 var config = require('../../../../config.json');
 
+const getUserInfo = user => (user.slice(0, 2) == "<@") ? slackTools.findUserByID(user.slice(0, 2), 'both') : slackTools.findUser(user, 'both');
+
 module.exports = {
     invite(input) {
         var email = input.substr(8).split('|')[0];
@@ -27,38 +29,28 @@ module.exports = {
     },
     kick(user, channel, input) {
         return new Promise((resolve, reject) => {
-            user = input.split(' ')[0];
+            let user = input.split(' ')[0];
             let reason = _.slice(input.split(' '), 1).join(' ');
-            channel = channel.id;
             
             if (user === config.botname || user.slice(2, -1) === config.botid) {
                 return reject('Error: Bitch. No.');
             }
+            console.log(input);
 
-            // Dirty cheat cause i cbf fixing
-            if (user.slice(0,2) == "<@") {
+            getUserInfo(user).then(kickee => {
                 needle.post('https://slack.com/api/channels.kick', {
-                    channel: channel,
+                    channel: channel.id,
                     token: config.slackToken,
-                    user: user.slice(2, -1)
-                }, (err, resp) => {
-                    if (err || resp.body.error)
-                        return reject('Error: ' + (resp.body.error || err));
-                    resolve('*Kicked: ' + user + '* for ' + (reason ? reason : 'no reason.'));
+                    user: kickee.id
+                }, (err, resp, body) => {
+                    if (err || body.error) {
+                        console.log(`kickUserErr ${err || body.error}`);
+                        return reject(`kickUserErr ${err || body.error}`);
+                    }
+                    resolve(`*Kicked: ${kickee.name}* for ${reason || 'no reason.'}`);
+                    slackTools.sendPrivateMessageAsSlackbot(kickee.name, `You were kicked from #${channel.name} for ${reason || 'no reason'}`)
                 });
-            } else {
-                slackTools.findUser(user).then(uID => {
-                    needle.post('https://slack.com/api/channels.kick', {
-                        channel: channel,
-                        token: config.slackToken,
-                        user: uID
-                    }, (err, resp) => {
-                        if (err || resp.body.error)
-                            return reject('Error: ' + (resp.body.error || err));
-                        resolve('*Kicked: ' + user + '* for ' + (reason ? reason : 'no reason.'));
-                    });
-                });
-            }
+            }).catch(reject);
         });
     },
     deleteLastMessage(channel, messagets) {

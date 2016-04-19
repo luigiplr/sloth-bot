@@ -10,9 +10,7 @@
         "browser": true,
         "es6": true
     },
-    "plugins": [
-        "react"
-    ],
+    "plugins": [],
     "extends": "eslint:recommended",
     "rules": {
         "no-console": "off"
