@@ -105,12 +105,7 @@ class slackClient extends Slack {
 
   _getParams = (text = '', attachments = null) => ({ text, attachments, as_user: true, token: config.slackAPIToken })
 
-  _checkIfDM = (type, user) => new Promise(resolve => {
-    if (type == 'dm')
-      this.openDM(user, ({ channel }) => resolve(this.getChannelGroupOrDMByID(channel.id)))
-    else
-      resolve(0)
-  })
+  _checkIfDM = (type, user) => new Promise(resolve => (type == 'dm') ? this.openDM(user, ({ channel }) => resolve(this.getChannelGroupOrDMByID(channel.id))) : resolve(0))
 }
 
 process.on('uncaughtException', err => {
