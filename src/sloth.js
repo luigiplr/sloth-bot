@@ -42,6 +42,7 @@ slackClient.on('open', () => {
     config.teamName = slackClient.team.domain;
     config.botname = slackClient.self.name;
     config.botid = slackClient.self.id;
+    config.imageURL = slackClient.users[config.botid].profile.image_72;
 
     console.log('Welcome to Slack. You are @' + slackClient.self.name, 'of', slackClient.team.name);
     console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
@@ -62,7 +63,7 @@ slackClient.on('message', message => {
                 if (!response.type == 'dm' || !response.type == 'channel')
                     return console.error("Invalid message response type, must be channel or dm");
                 
-                checkIfDM(response.type, response.user ? response.user.id : message.user).then(DM => {
+                checkIfDM(response.type, response.user ? response.user : message.user).then(DM => {
                     if (DM)
                         channel = DM;
                     console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages));

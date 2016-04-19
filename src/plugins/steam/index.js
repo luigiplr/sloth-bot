@@ -83,7 +83,7 @@ var generateProfileResponse = (profile => {
         ];
         return(msg.filter(Boolean));
     } else if (profile && profile.communityvisibilitystate == 1) {
-        return [profile.personaname + ' appears to be a private profile'];
+        return [`${profile.personaname} appears to be a private profile`];
     } else {
         return ['Error fetching profile info'];
     }
@@ -121,7 +121,7 @@ var generateAppDetailsResponse = (app => {
         };
         return out;
     } else {
-        return "Error: App: _" + app.name + "_ isn't a valid game";
+        return `Error: App: _${app.name}_ isn't a valid game`;
     }
 });
 

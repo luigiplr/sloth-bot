@@ -1,4 +1,6 @@
-/*import Promise from 'bluebird';
+import Promise from 'bluebird';
+import _ from 'lodash';
+import slackTools from '../../slack.js';
 
 module.exports = {
     commands: [{
@@ -7,25 +9,25 @@ module.exports = {
     }],
     help: [{
         command: ['poopbomb'],
-        usage: 'poopbomb <username> <amount || 4>'
+        usage: 'poopbomb <username> <amount || 1>'
     }],
     poopbomb(user, channel, input) {
         return new Promise((resolve, reject) => {
             if (!input)
                 return resolve({
                     type: 'dm',
-                    message: 'Usage: poopbomb <username> <amount || 4> - Poop bombs the user :))))'
+                    message: 'Usage: poopbomb <username> <amount || 1> - Poop bombs the user :)))'
                 });
+
+            let amount = parseInt(input.split(' ')[1]) || 1;
+            if (amount > 3)
+                return reject('Too much poop :|');
         
-            //let poopee = SOMETHING getUserByName(input.split(' ')[0]);
-            let amount = parseInt(input.split(' ')[1]) || 4;
-            if (poopee) {
-                if (amount > 10)
-                    reject('Too much poop :|');
-                let p = new Array(amount).fill(':hankey: p :hankey:');
-                let o = new Array(amount).fill(':hankey: o :hankey:');
-                let oo = new Array(amount).fill(':hankey: o :hankey:');
-                let pp = new Array(amount).fill(':hankey: p :hankey:');
+            slackTools.findUser(input.split(' ')[0]).then(poopee => {
+                let p = _.fill(Array(amount), ':hankey: p :hankey:');
+                let o = _.fill(Array(amount), ':hankey: o :hankey:');
+                let oo = _.fill(Array(2), ':hankey: o :hankey:');
+                let pp = _.fill(Array(amount), ':hankey: p :hankey:');
                 let poop = [':hankey: poop :hankey:'];
                 resolve({
                     type: 'dm',
@@ -33,9 +35,7 @@ module.exports = {
                     multiLine: true,
                     messages: p.concat(o, oo, pp, poop)
                 });
-            } else {
-                reject('Enter a valid username');
-            }
+            }).catch(reject);
         });
     }
-};*/
+};

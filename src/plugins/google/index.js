@@ -4,11 +4,6 @@ import google from 'google';
 import YouTube from 'youtube-node';
 import needle from 'needle';
 import config from '../../../config.json'
-//import MetaInspector from 'node-metainspector';
-
-/*const stringStartsWith = ((string, prefix) => {
-    return string.slice(0, prefix.length) == prefix;
-});*/
 
 const youTube = new YouTube();
 youTube.setKey(config.googleToken);
@@ -62,37 +57,6 @@ module.exports = {
                     console.error(`googleImgError: ${err || body.error.message}`)
                 }
             })
-
-            /*let client = new MetaInspector('https://www.google.com/search?q=' + input.split(' ').join('+') + '&tbm=isch', {
-                timeout: 5000
-            });
-            let urls = [];
-            client.on("fetch", () => {
-                client.links.relative.forEach(el => {
-                    if (stringStartsWith(el, '/imgres?imgurl=')) {
-                        let url = el.replace('/imgres?imgurl=', '');
-                        url = url.substr(0, url.indexOf('&'));
-                        if (url.match(/\.(jpeg|jpg|gif|png)(\/)?$/)) {
-                            urls.push(url);
-                        }
-                    }
-                });
-
-                let url;
-                if (urls.length >= 4)
-                    url = _.unescape(urls[Math.floor(Math.random() * 4)] + '#' + this.makeid());
-                else if (urls.length !== 0)
-                    url = _.unescape(urls[0] + '#' + this.makeid());
-                console.log(url);
-
-                resolve({
-                    type: 'channel',
-                    message: url
-                });
-            });
-
-            client.on("error", reject);
-            client.fetch();*/
         });
     },
     makeid() {

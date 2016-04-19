@@ -10,11 +10,29 @@ module.exports = {
                 text: input,
                 channel: channel,
                 as_user: 'true',
-                token: config.slackAPIToken
+                token: config.slackAPIToken,
+                icon_url: config.imageURL
             }, (err, resp, body) => {
                 if (err || body.error) {
                     console.log(`sendMsgErr ${err || body.error}`);
                     return reject(`sendMsgErr ${err || body.error}`);
+                }
+                resolve();
+            });
+        });
+    },
+    sendPrivateMessageAsSlackbot(channel, input) {
+        return new Promise((resolve, reject) => {
+            needle.post('https://slack.com/api/chat.postMessage', {
+                text: input,
+                channel: `@${channel}`,
+                token: config.slackAPIToken,
+                username: config.botname,
+                icon_url: config.imageURL
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`sendPMSbErr ${err || body.error}`);
+                    return reject(`sendPMSbErr ${err || body.error}`);
                 }
                 resolve();
             });
@@ -69,7 +87,28 @@ module.exports = {
                 if (!member)
                     return reject("Couldn't find a user by that name");
 
-                type == 'name' ? resolve(member.name) : resolve(member.id);
+                type == 'both' ? resolve({name: member.name, id: member.id}) : (type == 'name' ? resolve(member.name) : resolve(member.id));
+            });
+        });
+    },
+    findUserByID(userid, type) {
+        return new Promise((resolve, reject) => {
+            needle.post('https://slack.com/api/users.list', {
+                token: config.slackAPIToken
+            }, (err, resp, body) => {
+                if (err || body.error) {
+                    console.log(`findUserIDErr ${err || body.error}`);
+                    return reject(`findUserIDErr ${err || body.error}`);
+                }
+                
+                let member = _.find(body.members, person => {
+                    return person.id === userid;
+                })
+
+                if (!member)
+                    return reject("Couldn't find a user with that ID");
+
+                type == 'both' ? resolve({name: member.name, id: member.id}) : (type == 'name' ? resolve(member.name) : resolve(member.id));
             });
         });
     },
