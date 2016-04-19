@@ -69,7 +69,7 @@ module.exports = {
     return new Promise(resolve => {
       const time = moment.duration(parseInt(process.uptime(), 10), 'seconds')
       const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
-      const getUpTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds}` : seconds
+      const getUpTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds || '0 seconds'}` : seconds
 
       resolve({
         type: 'channel',
