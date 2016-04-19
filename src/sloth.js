@@ -18,13 +18,13 @@ class slackClient extends Slack {
 
   _registerEvents() {
     this.once('open', () => {
-      let unreads = slackClient.getUnreadCount();
+      let unreads = this.getUnreadCount()
 
-      config.teamName = slackClient.team.domain;
-      config.botname = slackClient.self.name;
-      config.botid = slackClient.self.id;
+      config.teamName = this.team.domain
+      config.botname = this.self.name
+      config.botid = this.self.id
 
-      console.log('Welcome to Slack. You are @' + slackClient.self.name, 'of', slackClient.team.name);
+      console.log('Welcome to Slack. You are @' + this.self.name, 'of', this.team.name);
       console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
     })
     this.on('message', ::this._onNewMessage)
