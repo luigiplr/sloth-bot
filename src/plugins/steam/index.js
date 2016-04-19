@@ -11,6 +11,9 @@ module.exports = {
     }, {
         alias: ['app', 'game', 'steamgame'],
         command: 'app'
+    }, {
+        alias: ['fullapp'],
+        command: 'fullapp'
     }],
     help: [{
         command: ['sp', 'profile', 'steamprofile'],
@@ -21,6 +24,9 @@ module.exports = {
     }, {
         command: ['app', 'game', 'steamgame'],
         usage: 'game <appid or game name>'
+    }, {
+        command: ['fullapp'],
+        usage: 'game name'
     }],
     steamProfile(user, channel, input) {
         return new Promise((resolve, reject) => {
@@ -63,6 +69,21 @@ module.exports = {
                     message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
                 });
             Steam.getAppInfo(input).then(resp => {
+                resolve({
+                    type: 'channel',
+                    message: generateAppDetailsResponse(resp)
+                });
+            }).catch(reject);
+        });
+    },
+    fullapp(user, channel, input) {
+        return new Promise((resolve, reject) => {
+            if (!input)
+                return resolve({
+                    type: 'dm',
+                    message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
+                  });
+            Steam.getAppInfo(input, true).then(resp => {
                 resolve({
                     type: 'channel',
                     message: generateAppDetailsResponse(resp)
