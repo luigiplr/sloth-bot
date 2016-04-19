@@ -27,8 +27,8 @@ class slackClient extends Slack {
       console.log('Welcome to Slack. You are @' + this.self.name, 'of', this.team.name);
       console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
     })
-    this.on('message', ::this._onNewMessage)
 
+    this.on('message', ::this._onNewMessage)
 
     this.on('close', err => {
       sendErrorToDebugChannel('slackClientError', `Websocket Connection Terminated, Restarting - ${err}`)
