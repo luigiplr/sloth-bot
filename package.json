@@ -7,13 +7,17 @@
     "email": ""
   },
   "scripts": {
-    "start": "forever start -a -o out.log -e err.log -m 1 build/index.js"
+    "babel": "babel src -d build",
+    "forever": "forever start -a -o out.log -e err.log -m 1 build/index.js"
   },
   "repository": {
     "type": "git",
     "url": ""
   },
-  "main": "index.js",
+  "engines": {
+    "node": ">= 5.10.x"
+  },
+  "main": "build/sloth.js",
   "license": "GPL-3.0",
   "dependencies": {
     "async": "^1.5.0",
@@ -47,18 +51,17 @@
     "youtube-node": "^1.3.0"
   },
   "devDependencies": {
-    "babel": "^6.1.18",
-    "babel-plugin-transform-minify-booleans": "^6.1.18",
-    "babel-preset-es2015": "^6.1.18",
-    "grunt": "^0.4.5",
-    "grunt-babel": "^6.0.0",
-    "grunt-cli": "^0.1.13",
-    "grunt-concurrent": "^2.1.0",
-    "grunt-contrib-clean": "^0.7.0",
-    "grunt-contrib-copy": "^0.8.2",
-    "grunt-contrib-watch-chokidar": "^1.0.0",
-    "grunt-newer": "^1.1.1",
-    "grunt-nodemon": "^0.4.0",
-    "load-grunt-tasks": "^3.3.0"
+    "babel-cli": "^6.7.5",
+    "babel-preset-node5": "^11.0.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.7.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-develop-server": "^0.5.1",
+    "gulp-nodemon": "^2.0.6",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rimraf": "^0.2.0",
+    "rimraf": "^2.5.2",
+    "run-sequence": "^1.1.5"
   }
 }
