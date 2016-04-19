@@ -23,7 +23,6 @@ gulp.task('watch-build', () => gulp.watch('src/**/*.js', ['build', server.restar
 
 gulp.task('sloth:start', () => server.listen({ path: './build/sloth.js' }))
 
-
 /* Watch Tasks */
 
 gulp.task('start-dev', callback => runSequence('clean-build', 'build', 'watch-build', 'sloth:start', callback))
