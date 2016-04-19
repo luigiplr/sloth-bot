@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import slackTools from '../../slack';
+import moment from 'moment'
 import {
   exec as execCmd
 } from 'child_process';
@@ -66,21 +67,15 @@ module.exports = {
   },
   uptime() {
     return new Promise(resolve => {
-      let sec_num = parseInt(process.uptime(), 10),
-        hours = Math.floor(sec_num / 3600),
-        minutes = Math.floor((sec_num - (hours * 3600)) / 60),
-        seconds = sec_num - (hours * 3600) - (minutes * 60);
+      const time = moment.duration(parseInt(process.uptime(), 10), 'seconds')
+      const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
+      const getUpTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds}` : seconds
 
-      hours != 0 ? hours = hours + (hours == 1 ? ' hour, ' : ' hours, ') : hours = '';
-      minutes != 0 ? minutes = minutes + (minutes == 1 ? ' minute' : ' minutes') + ' and ' : '';
-      seconds = seconds + (seconds == 1 ? ' second' : ' seconds');
-
-      let time = hours + minutes + seconds;
       resolve({
         type: 'channel',
-        message: "I have been flyin' smooth for " + time
-      });
-    });
+        message: `I have been flyin' smooth for ${getUpTime(['days', 'hours', 'minutes'].map(duration).filter(Boolean).join(', '), duration('seconds'))}`
+      })
+    })
   },
   update(user, channel, input) {
     return new Promise((resolve, reject) => {
