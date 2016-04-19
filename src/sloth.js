@@ -23,6 +23,7 @@ class slackClient extends Slack {
       config.teamName = this.team.domain
       config.botname = this.self.name
       config.botid = this.self.id
+      config.imageURL = this.users[config.botid].profile.image_72
 
       console.log('Welcome to Slack. You are @' + this.self.name, 'of', this.team.name);
       console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
@@ -31,12 +32,12 @@ class slackClient extends Slack {
     this.on('message', ::this._onNewMessage)
 
     this.on('close', err => {
-      sendErrorToDebugChannel('slackClientError', `Websocket Connection Terminated, Restarting - ${err}`)
+      this._sendErrorToDebugChannel('slackClientError', `Websocket Connection Terminated, Restarting - ${err}`)
       setTimeout(() => process.exit(1), 500)
     })
 
     this.on('error', err => {
-      sendErrorToDebugChannel('slackClientError', err);
+      this._sendErrorToDebugChannel('slackClientError', err);
       setTimeout(() => process.exit(1), 500)
     })
   }
@@ -53,7 +54,7 @@ class slackClient extends Slack {
 
           if (!response.type == 'dm' || !response.type == 'channel') return console.error("Invalid message response type, must be channel or dm");
 
-          this._checkIfDM(response.type, response.user ? response.user.id : user)
+          this._checkIfDM(response.type, response.user ? response.user : user)
             .then(DM => {
               if (DM) channel = DM;
               console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages))
