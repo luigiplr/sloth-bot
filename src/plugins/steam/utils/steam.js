@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import needle from 'needle';
 import async from 'async';
 import SteamID from 'steamid';
+import lunr from 'lunr'
 
 const token = require('./../../../../config.json').steamAPIToken;
 const endpoints = {
@@ -19,7 +20,7 @@ const endpoints = {
     resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%id%`
 };
 
-var appList, lastUpdated;
+var appList, lastUpdated, fullTextAppList;
 
 const getUrl = ((type, id) => {
     return endpoints[type].replace('%id%', id);
@@ -108,6 +109,10 @@ const updateAppList = (hasApplist => {
             needle.get(getUrl('appList'), (err, resp, body) => {
                 if (!err && body) {
                     appList = body.applist;
+                    fullTextAppList = new lunr.Index();
+                    fullTextAppList.ref('appid');
+                    fullTextAppList.field('name', { boost: 10});
+                    appList.apps.forEach((app) => { fullTextAppList.add(app) });
                     lastUpdated = Math.round(new Date().getTime() / 1000);
                     resolve();
                 } else {
@@ -120,6 +125,23 @@ const updateAppList = (hasApplist => {
         } else {
             resolve();
         }
+    });
+});
+
+const getAppsByFullText = (appName => {
+    return new Promise((resolve, reject) => {
+        let hasApplist = (!!appList && !!appList.apps && !!fullTextAppList);
+        updateAppList(hasApplist).then(() => {
+            let matchedAppIds = fullTextAppList.search(appName).slice(0,3).map((app) => app.ref);
+            console.log(matchedAppIds);
+            let apps = appList.apps.filter(function(game) {
+                return _.contains(matchedAppIds, game.appid);
+            });
+            if (apps.length)
+                resolve(apps.length > 1 ? apps : apps[0]);
+            else
+                reject("Couldn't find a game with that name");
+        }).catch(reject);
     });
 });
 
@@ -152,7 +174,7 @@ const findValidAppInApps = (apps => {
                         valid = true;
                         resolve(app);
                     }
-                    
+
                     if (!valid && next)
                         process.nextTick(next);
                     else
@@ -241,10 +263,11 @@ module.exports = {
             }
         });
     },
-    getAppInfo (appid) {
+    getAppInfo (appid, useFullText) {
         return new Promise((resolve, reject) => {
             if (!appid.match(/^\d+$/)) {
-                getAppsByName(appid).then(apps => {
+                let appsByName = useFullText ? getAppsByFullText(appid) : getAppsByName(appid);
+                appsByName.then(apps => {
                     findValidAppInApps(apps).then(app => {
                         getPlayersForApp(app.steam_appid).then(players => {
                             app.player_count = players.player_count;
