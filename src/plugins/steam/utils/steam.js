@@ -185,7 +185,7 @@ const findValidAppInApps = (apps => {
     });
 
     CheckQueue.drain = () => {
-      reject("Couldn't find a valid game with that name");
+      reject("Couldn't find a valid game with that name, try refining your search");
     };
 
     _.forEach(apps, app => {
