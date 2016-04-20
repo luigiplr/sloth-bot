@@ -1,3 +1,4 @@
+import Promise from 'bluebird'
 import Slack from 'slack-client'
 import slackTools from './slack'
 import config from '../config.json'
@@ -54,7 +55,7 @@ class slackClient extends Slack {
 
           if (!response.type == 'dm' || !response.type == 'channel') return console.error("Invalid message response type, must be channel or dm");
 
-          this._checkIfDM(response.type, response.user ? response.user : user)
+          this._checkIfDM(response.type, response.user ? response.user : user.id)
             .then(DM => {
               if (DM) channel = DM;
               console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages))

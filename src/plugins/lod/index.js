@@ -1,14 +1,12 @@
 import Promise from 'bluebird';
 
+export const plugin_info = [{
+  alias: ['lod'],
+  command: 'lod',
+  usage: 'lod <person>'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['lod'],
-    command: 'lod'
-  }],
-  help: [{
-    command: ['lod'],
-    usage: 'lod <person>'
-  }],
   lod(user, channel, input = '') {
     return new Promise(resolve => {
       return resolve({

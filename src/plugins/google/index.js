@@ -7,27 +7,21 @@ import config from '../../../config.json'
 const youTube = new YouTube();
 youTube.setKey(config.googleToken);
 
+export const plugin_info = [{
+  alias: ['g', 'google'],
+  command: 'googleSearch',
+  usage: 'google <query>'
+}, {
+  alias: ['yt', 'youtube'],
+  command: 'youtubeSearch',
+  usage: 'youtube <query>'
+}, {
+  alias: ['gi', 'googleimage'],
+  command: 'googleImage',
+  usage: 'googleimage <query>'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['g', 'google'],
-    command: 'googleSearch'
-  }, {
-    alias: ['yt', 'youtube'],
-    command: 'youtubeSearch'
-  }, {
-    alias: ['gi', 'googleimage'],
-    command: 'googleImage'
-  }],
-  help: [{
-    command: ['g', 'google'],
-    usage: 'google <query>'
-  }, {
-    command: ['yt', 'youtube'],
-    usage: 'youtube <query>'
-  }, {
-    command: ['gi', 'googleimage'],
-    usage: 'googleimage <query>'
-  }],
   googleImage(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input)

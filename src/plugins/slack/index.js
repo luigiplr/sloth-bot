@@ -2,66 +2,38 @@ import Promise from 'bluebird';
 import slack from './utils/slack';
 import slackTools from '../../slack.js';
 
+export const plugin_info = [{
+  alias: ['kick'],
+  command: 'kick',
+  usage: 'kick <username> <reason (optional)>',
+  userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['invite'],
+  command: 'invite',
+  usage: 'invite <email> - invites a user to group'
+}, {
+  alias: ['channelid'],
+  command: 'channelid',
+  usage: 'channelid - returns ChannelID for current channel'
+}, {
+  alias: ['userid'],
+  command: 'userid',
+  usage: 'userid <user> - returns UserID for user'
+}, {
+  alias: ['dellast', 'deletelastmessage'],
+  command: 'deleteLastMessage',
+  usage: 'dellast - deletes the last message from the bot'
+}, {
+  alias: ['alm', 'addloadingmessage'],
+  command: 'addLoadingMessage',
+  usage: 'alm <message> - Adds a slack loading message to the team'
+}, {
+  alias: ['rlm', 'removeloadingmessage'],
+  command: 'removeLoadingMessage',
+  usage: 'rlm <id> - Remove a slack loading message from the team'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['kick'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'kick'
-  }, {
-    alias: ['invite'],
-    command: 'invite'
-  }, {
-    alias: ['channelid', 'cid'],
-    command: 'channelid'
-  }, {
-    alias: ['userid', 'uid'],
-    command: 'userid'
-  }, {
-    alias: ['dellast', 'deletelastmessage'],
-    command: 'deleteLastMessage'
-  }, {
-    alias: ['disableuser'],
-    userLevel: ['superadmin'],
-    command: 'disableUser'
-  }, {
-    alias: ['enableuser'],
-    userLevel: ['superadmin'],
-    command: 'enableUser'
-  }, {
-    alias: ['alm', 'addloadingmessage'],
-    command: 'addLoadingMessage'
-  }, {
-    alias: ['rlm', 'removeloadingmessage'],
-    command: 'removeLoadingMessage'
-  }],
-  help: [{
-    command: ['kick'],
-    usage: 'kick <username> <reason (optional)>'
-  }, {
-    command: ['invite'],
-    usage: 'invite <email>'
-  }, {
-    command: ['channelid'],
-    usage: 'channelid - returns ChannelID for current channel'
-  }, {
-    command: ['userid'],
-    usage: 'userid <user> - returns UserID for user'
-  }, {
-    command: ['dellast', 'deletelastmessage'],
-    usage: 'dellast - deletes the last message from the bot'
-  }, {
-    command: ['disableuser'],
-    usage: 'disableuser <user> - Disables the users slack account for the team'
-  }, {
-    command: ['enableuser'],
-    usage: 'enableuser <user> - Enables the users slack account if they have been disabled'
-  }, {
-    command: ['alm', 'addloadingmessage'],
-    usage: 'alm <message> - Adds a slack loading message to the team'
-  }, {
-    command: ['rlm', 'removeloadingmessage'],
-    usage: 'rlm <id> - Remove a slack loading message from the team'
-  }],
   kick(user, channel, input = false) {
     return new Promise((resolve, reject) => {
       if (!input)

@@ -9,15 +9,13 @@ const messages = [
   'I propose: '
 ];
 
+export const plugin_info = [{
+  alias: ['rand', 'random', 'randomize'],
+  command: 'rand',
+  usage: 'rand <A-B> - A and B can be chars, integers or floats separated by any character'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['rand', 'random', 'randomize'],
-    command: 'rand'
-  }],
-  help: [{
-    command: ['rand', 'random', 'randomize'],
-    usage: 'rand <A-B> - A and B can be chars, integers or floats separated by any character'
-  }],
   rand(user, channel, input) {
     return new Promise(resolve => {
       var random, match;

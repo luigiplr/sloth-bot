@@ -1,27 +1,21 @@
 import Promise from 'bluebird';
 import slack from './utils/slack';
 
+export const plugin_info = [{
+  alias: ['grab'],
+  command: 'grab',
+  usage: 'grab <username> - grabs a users message'
+}, {
+  alias: ['quote'],
+  command: 'quote',
+  usage: 'quote <username> <quotenumber (optional)>'
+}, {
+  alias: ['quotes'],
+  command: 'quotes',
+  usage: 'quotes <username> - lists a users quotes'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['grab'],
-    command: 'grab'
-  }, {
-    alias: ['quote'],
-    command: 'quote'
-  }, {
-    alias: ['quotes'],
-    command: 'quotes'
-  }],
-  help: [{
-    command: ['quote'],
-    usage: 'quote <username> <quotenumber (optional)>'
-  }, {
-    command: ['quotes'],
-    usage: 'quotes <username>'
-  }, {
-    command: ['grab'],
-    usage: 'grab <username>'
-  }],
   grab(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input)

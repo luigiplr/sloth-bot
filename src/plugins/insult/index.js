@@ -2,21 +2,17 @@ import Promise from 'bluebird';
 import spinsult from 'shakespeare-insult';
 import normalinsult from 'insultgenerator';
 
+export const plugin_info = [{
+  alias: ['insult'],
+  command: 'insult',
+  usage: 'insult <person>'
+}, {
+  alias: ['sinsult', 'shakespeareinsult'],
+  command: 'oldinsult',
+  usage: 'sinsult <person>'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['insult'],
-    command: 'insult'
-  }, {
-    alias: ['sinsult', 'oldinsult', 'shakespeareinsult'],
-    command: 'oldinsult'
-  }],
-  help: [{
-    command: ['insult'],
-    usage: 'insult <person>'
-  }, {
-    command: ['sinsult', 'oldinsult', 'shakespeareinsult'],
-    usage: 'sinsult <person>'
-  }],
   insult(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input)

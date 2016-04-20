@@ -9,36 +9,28 @@ const config = require('../../../config.json');
 
 var updating;
 
+export const plugin_info = [{
+  alias: ['shutdown'],
+  command: 'shutdown',
+  usage: 'shutdown',
+  userLevel: ['superadmin']
+}, {
+  alias: ['restart'],
+  command: 'restart',
+  usage: 'restart',
+  userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['uptime'],
+  command: 'uptime',
+  usage: 'uptime - returns uptime of bot'
+}, {
+  alias: ['update'],
+  command: 'update',
+  usage: 'update <optional restart 1/0> - updates the bot from github',
+  userLevel: ['superadmin']
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['shutdown'],
-    userLevel: ['superadmin'],
-    command: 'shutdown'
-  }, {
-    alias: ['restart'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'restart'
-  }, {
-    alias: ['uptime'],
-    command: 'uptime'
-  }, {
-    alias: ['update'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'update'
-  }],
-  help: [{
-    command: ['shutdown'],
-    usage: 'shutdown'
-  }, {
-    command: ['restart'],
-    usage: 'restart'
-  }, {
-    command: ['uptime'],
-    usage: 'uptime - returns uptime of bot'
-  }, {
-    command: ['update'],
-    usage: 'update <optional restart 1/0> - updates the bot from github'
-  }],
   shutdown() {
     return new Promise(resolve => {
       if (config.debugChannel)
@@ -119,3 +111,4 @@ module.exports = {
     });
   }
 };
+

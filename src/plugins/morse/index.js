@@ -3,15 +3,13 @@ import nodeMorse from 'morse-node';
 
 var morse = nodeMorse.create('ITU');
 
+export const plugin_info = [{
+  alias: ['morse'],
+  command: 'morse',
+  usage: 'morse <text>'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['morse'],
-    command: 'morse'
-  }],
-  help: [{
-    command: ['morse'],
-    usage: 'morse <text>'
-  }],
   morse(user, channel, input) {
     return new Promise(resolve => {
       if (!input)

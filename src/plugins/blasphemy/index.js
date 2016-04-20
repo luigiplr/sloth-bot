@@ -1,22 +1,15 @@
-import blasphemer from 'blasphemy';
-import Promise from 'bluebird';
+import Promise from 'bluebird'
+import blasphemer from 'blasphemy'
 
-module.exports = {
-  commands: [{
-    alias: ['blasphemy'],
-    command: 'blasphemy'
-  }],
-  help: [{
-    command: ['blasphemy'],
-    usage: 'blasphemy'
-  }],
-  blasphemy() {
-    return new Promise(resolve => {
-      return resolve({
-        type: 'channel',
-        message: blasphemer.blaspheme()
-      });
-    });
-  }
-};
+export const plugin_info = [{
+  alias: ['blasphemy'],
+  command: 'blasphemy',
+  usage: 'blasphemy'
+}]
+
+export function blasphemy() {
+  return new Promise(resolve => {
+    return resolve({ type: 'channel', message: blasphemer.blaspheme() });
+  })
+}
 

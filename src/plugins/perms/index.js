@@ -11,75 +11,55 @@ const getUserLevel = user => {
     return 'user';
 };
 
+export const plugin_info = [{
+  alias: ['set'],
+  command: 'set',
+  usage: 'set <username> <level> - set users permissions level',
+  userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['permaignore'],
+  command: 'permaignore',
+  usage: 'permaignore <username> - have the bot permanently ignore all commands from user',
+  userLevel: ['superadmin']
+}, {
+  alias: ['ignore'],
+  command: 'ignore',
+  usage: 'ignore <username> - have bot ignore all commands from a user',
+  userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['unignore'],
+  command: 'unignore',
+  usage: 'unignore <username> - unignores a user',
+  userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['mute'],
+  command: 'mute',
+  usage: 'mute - attempts to prevent the user from posting any messages',
+  userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['unmute'],
+  command: 'unmute',
+  usage: 'unmute - unmutes a user',
+  userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['admins'],
+  command: 'admins',
+  usage: 'admins - lists admins'
+}, {
+  alias: ['owners'],
+  command: 'owners',
+  usage: 'owners - lists owners (super admins)'
+}, {
+  alias: ['ignored'],
+  command: 'ignored',
+  usage: 'ignored - lists ignored users'
+}, {
+  alias: ['muted'],
+  command: 'muted',
+  usage: 'muted - lists muted users'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['set'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'set'
-  }, {
-    alias: ['ignore'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'ignore'
-  }, {
-    alias: ['unignore'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'unignore'
-  }, {
-    alias: ['mute'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'mute'
-  }, {
-    alias: ['unmute'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'unmute'
-  }, {
-    alias: ['admins'],
-    command: 'admins'
-  }, {
-    alias: ['owners'],
-    command: 'owners'
-  }, {
-    alias: ['ignored'],
-    command: 'ignored'
-  }, {
-    alias: ['muted'],
-    command: 'muted'
-  }, {
-    alias: ['permaignore'],
-    userLevel: ['superadmin'],
-    command: 'permaIgnore'
-  }],
-  help: [{
-    command: ['set'],
-    usage: 'set <username> <level> - set users permissions level'
-  }, {
-    command: ['ignore'],
-    usage: 'ignore <username> - have bot ignore all commands from a user'
-  }, {
-    command: ['unignore'],
-    usage: 'unignore <username> - unignores a user'
-  }, {
-    command: ['ignore'],
-    usage: 'ignore <username> - have bot ignore all commands from a user'
-  }, {
-    command: ['unignore'],
-    usage: 'unignore <username> - unignores a user'
-  }, {
-    command: ['admins'],
-    usage: 'admins - lists admins'
-  }, {
-    command: ['owners'],
-    usage: 'owners - lists owners (super admins)'
-  }, {
-    command: ['ignored'],
-    usage: 'ignored - lists ignored users'
-  }, {
-    command: ['muted'],
-    usage: 'muted - lists muted users'
-  }, {
-    command: ['permaignore'],
-    usage: 'permaignore <username> - have the bot permanently ignore all commands from user'
-  }],
   admins() {
     return new Promise(resolve => {
       resolve({

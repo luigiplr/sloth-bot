@@ -1,14 +1,12 @@
 import Promise from 'bluebird';
 
+export const plugin_info = [{
+  alias: ['pf', 'pitchfork'],
+  command: 'pitchfork',
+  usage: 'pitchfork <person>'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['pf', 'pitchfork'],
-    command: 'pitchfork'
-  }],
-  help: [{
-    command: ['pf', 'pitchfork'],
-    usage: 'pitchfork <person>'
-  }],
   pitchfork(user, channel, input = 'OP') {
     return new Promise(resolve => {
       return resolve({

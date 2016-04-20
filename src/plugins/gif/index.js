@@ -3,15 +3,13 @@ import Giphy from 'giphy'
 
 const giphy = new Giphy('dc6zaTOxFJmzC');
 
+export const plugin_info = [{
+  alias: ['gif'],
+  command: 'gif',
+  usage: 'gif <query>'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['gif'],
-    command: 'gif'
-  }],
-  help: [{
-    command: ['gif'],
-    usage: 'gif <query>'
-  }],
   gif(user, channel, input = false) {
     return new Promise((resolve, reject) => {
       if (!input)

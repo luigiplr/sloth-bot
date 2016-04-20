@@ -1,22 +1,18 @@
+import Promise from 'bluebird';
 import _ from 'lodash';
 import urban from 'urban';
-import Promise from 'bluebird';
+
+export const plugin_info = [{
+  alias: ['urban'],
+  command: 'urbandictionary',
+  usage: 'urban <word> - returns urban definition for word'
+}, {
+  alias: ['ru', 'randomurban'],
+  command: 'randomurban',
+  usage: 'randomurban - returns random definition from urban dictionary'
+}]
 
 module.exports = {
-  commands: [{
-    alias: ['urban'],
-    command: 'urbandictionary'
-  }, {
-    alias: ['ru', 'randomurban'],
-    command: 'randomurban'
-  }],
-  help: [{
-    command: ['urban'],
-    usage: 'urban <word>'
-  }, {
-    command: ['ru', 'randomurban'],
-    usage: 'randomurban'
-  }],
   urbandictionary(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input)

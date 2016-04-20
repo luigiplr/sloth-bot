@@ -50,7 +50,7 @@ module.exports = {
       let cmdLevel = false;
       let call = false;
       let plugin = _.find(plugins, plugin => {
-        return _.find(plugin.commands, cmd => {
+        return _.find(plugin.plugin_info, cmd => {
           if (cmd.alias.indexOf(command) > -1) {
             if (cmd.userLevel)
               cmdLevel = cmd.userLevel;
@@ -62,10 +62,8 @@ module.exports = {
         });
       });
 
-      if (!plugin) {
-        console.log('Command not found');
+      if (!plugin)
         return; //reject('Command not found');
-      }
 
       // If userLevel required and you don't match the required level or if you're an admin trying to pull shit on a superadmin
       if (cmdLevel && (cmdLevel.indexOf(userLevel) === -1 || (userLevel === 'admin' && (context && getUserlevel(context.split(' ')[0]) === 'superadmin'))))

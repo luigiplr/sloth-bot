@@ -1,27 +1,21 @@
 import Promise from 'bluebird';
 import Swears from './utils/swearTracker';
 
+export const plugin_info = [{
+  alias: ['nc', 'commits', 'naughtycommits'],
+  command: 'swearCommit',
+  usage: 'commits <user>'
+}, {
+  alias: ['fetchcommits'],
+  command: 'fetchCommits',
+  usage: 'fetchcommits <user> <optional other user repos to search>'
+}, {
+  alias: ['listcommits'],
+  command: 'listCommits',
+  usage: 'listcommits <user>'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['nc', 'commits', 'naughtycommits'],
-    command: 'swearCommit'
-  }, {
-    alias: ['fetchcommits'],
-    command: 'fetchCommits'
-  }, {
-    alias: ['listcommits'],
-    command: 'listCommits'
-  }],
-  help: [{
-    command: ['nc', 'commits', 'naughtycommits'],
-    usage: 'commits <user>'
-  }, {
-    command: ['fetchcommits'],
-    usage: 'fetchcommits <user> <optional other user repos to search>'
-  }, {
-    command: ['listcommits'],
-    usage: 'listcommits <user>'
-  }],
   swearCommit(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input)

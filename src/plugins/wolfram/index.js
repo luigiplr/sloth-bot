@@ -1,15 +1,13 @@
 import Promise from 'bluebird';
 import wolfram from './utils/wolfram';
 
+export const plugin_info = [{
+  alias: ['calc', 'wolfram'],
+  command: 'wolfram',
+  usage: 'wolfram <query> - returns wolfram calculation for query'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['calc', 'wolfram'],
-    command: 'wolfram'
-  }],
-  help: [{
-    command: ['calc', 'wolfram'],
-    usage: 'wolfram <query>'
-  }],
   wolfram(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input)

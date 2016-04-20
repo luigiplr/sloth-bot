@@ -1,39 +1,30 @@
-import Promise from 'bluebird';
-const config = require('../../../config.json');
+const config = require('../../../config.json')
 
-module.exports = {
-  commands: [{
-    alias: ['help', 'h'],
-    command: 'default'
-  }],
-  help: [{
-    command: ['help', 'h'],
-    usage: 'shows help for commands'
-  }],
-  default (user, channel, context, ts, plugins) {
-    return new Promise(resolve => {
-      let commands = [];
+export const plugin_info = [{
+  alias: ['help', 'h'],
+  command: 'help',
+  usage: 'shows help for commands'
+}]
 
-      plugins.forEach(plugin => {
-        if (plugin.help && Array.isArray(plugin.help)) {
-          plugin.help.forEach(help => {
-            if (!help.command || !help.usage)
-              return;
+export function help(user, channel, context, ts, plugins, userLevel) {
+  return new Promise(resolve => {
+    let commands = ['```']
 
-            let cmdalias = '';
-            help.command.forEach(cmd => {
-              cmdalias += config.prefix + cmd + ' ';
-            });
-            commands.push(cmdalias + '| ' + help.usage);
-          });
-        }
-      });
+    plugins.forEach(plugin => {
+      if (plugin.plugin_info && Array.isArray(plugin.plugin_info)) {
+        plugin.plugin_info.forEach(help => {
+          if (!help.command || !help.usage || (help.userLevel && help.userLevel.indexOf(userLevel) === -1)) return
 
-      resolve({
-        type: 'dm',
-        messages: commands
-      });
-    });
-  }
-};
+          let cmdalias = ''
+          help.alias.forEach(cmd => {
+            cmdalias += config.prefix + cmd + ' ';
+          })
+          return commands.push(cmdalias + ' | ' + help.usage)
+        })
+      }
+    })
+    commands.push('```');
+    return resolve({ type: 'dm', messages: commands })
+  })
+}
 

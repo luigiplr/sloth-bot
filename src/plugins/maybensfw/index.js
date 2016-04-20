@@ -1,15 +1,13 @@
 import MetaInspector from 'node-metainspector';
 import Promise from 'bluebird';
 
+export const plugin_info = [{
+  alias: ['maybensfw', 'ita'],
+  command: 'maybensfw',
+  usage: 'maybensfw'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['maybensfw', 'ita'],
-    command: 'maybensfw'
-  }],
-  help: [{
-    command: ['maybensfw', 'ita'],
-    usage: 'maybensfw - no arguments accepted'
-  }],
   maybensfw() {
     return new Promise((resolve, reject) => {
       let url = 'http://www.imposetonanonymat.com/random';

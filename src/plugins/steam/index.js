@@ -2,27 +2,21 @@ import Promise from 'bluebird';
 import Steam from './utils/steam';
 import moment from 'moment';
 
+export const plugin_info = [{
+  alias: ['sp', 'profile', 'steamprofile'],
+  command: 'steamProfile',
+  usage: 'steamprofile <steamid/vanityid> - returns info for users profile'
+}, {
+  alias: ['players'],
+  command: 'players',
+  usage: 'players <appid> - returns players for app'
+}, {
+  alias: ['app', 'game'],
+  command: 'app',
+  usage: 'game <appid or game name> - returns game info'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['sp', 'profile', 'steamprofile'],
-    command: 'steamProfile'
-  }, {
-    alias: ['players'],
-    command: 'players'
-  }, {
-    alias: ['app', 'game', 'fullapp'],
-    command: 'app'
-  }],
-  help: [{
-    command: ['sp', 'profile', 'steamprofile'],
-    usage: 'steamprofile <steamid/vanityid>'
-  }, {
-    command: ['players'],
-    usage: 'players <appid>'
-  }, {
-    command: ['app', 'game', 'steamgame'],
-    usage: 'game <appid or game name>'
-  }],
   steamProfile(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input) {

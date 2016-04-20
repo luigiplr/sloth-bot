@@ -6,15 +6,13 @@ const subscriberUrl = `https://www.googleapis.com/youtube/v3/channels?part=stati
 const originalSubCount = 14080108;
 var lastCheck;
 
+export const plugin_info = [{
+  alias: ['howmanysubshavethefinebroslost'],
+  command: 'topkek',
+  usage: 'howmanysubshavethefinebroslost'
+}]
+
 module.exports = {
-  commands: [{
-    alias: ['howmanysubshavethefinebroslost'],
-    command: 'topkek'
-  }],
-  help: [{
-    command: ['howmanysubshavethefinebroslost'],
-    usage: 'howmanysubshavethefinebroslost'
-  }],
   topkek() {
     return new Promise((resolve, reject) => {
       if (!apiKey)
