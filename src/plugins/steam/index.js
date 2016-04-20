@@ -2,99 +2,99 @@ import Promise from 'bluebird';
 import Steam from './utils/steam';
 
 module.exports = {
-    commands: [{
-        alias: ['sp', 'profile', 'steamprofile'],
-        command: 'steamProfile'
-    }, {
-        alias: ['players'],
-        command: 'players'
-    }, {
-        alias: ['app', 'game', 'steamgame'],
-        command: 'app'
-    }, {
-        alias: ['fullapp'],
-        command: 'fullapp'
-    }],
-    help: [{
-        command: ['sp', 'profile', 'steamprofile'],
-        usage: 'steamprofile <steamid/vanityid>'
-    }, {
-        command: ['players'],
-        usage: 'players <appid>'
-    }, {
-        command: ['app', 'game', 'steamgame'],
-        usage: 'game <appid or game name>'
-    }, {
-        command: ['fullapp'],
-        usage: 'game name'
-    }],
-    steamProfile(user, channel, input) {
-        return new Promise((resolve, reject) => {
-            if (!input) {
-                return resolve({
-                    type: 'dm',
-                    message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information'
-                });
-            }
-            Steam.getProfileInfo(input).then(resp => {
-                resolve({
-                    type: 'channel',
-                    messages: generateProfileResponse(resp)
-                });
-            }).catch(reject);
+  commands: [{
+    alias: ['sp', 'profile', 'steamprofile'],
+    command: 'steamProfile'
+  }, {
+    alias: ['players'],
+    command: 'players'
+  }, {
+    alias: ['app', 'game', 'steamgame'],
+    command: 'app'
+  }, {
+    alias: ['fullapp'],
+    command: 'fullapp'
+  }],
+  help: [{
+    command: ['sp', 'profile', 'steamprofile'],
+    usage: 'steamprofile <steamid/vanityid>'
+  }, {
+    command: ['players'],
+    usage: 'players <appid>'
+  }, {
+    command: ['app', 'game', 'steamgame'],
+    usage: 'game <appid or game name>'
+  }, {
+    command: ['fullapp'],
+    usage: 'game name'
+  }],
+  steamProfile(user, channel, input) {
+    return new Promise((resolve, reject) => {
+      if (!input) {
+        return resolve({
+          type: 'dm',
+          message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information'
         });
-    },
-    players(user, channel, input) {
-        return new Promise((resolve, reject) => {
-            if (!input) {
-                return resolve({
-                    type: 'dm',
-                    message: 'Usage: players <appid> - Returns the current amount of players for the game'
-                });
-            }
+      }
+      Steam.getProfileInfo(input).then(resp => {
+        resolve({
+          type: 'channel',
+          messages: generateProfileResponse(resp)
+        });
+      }).catch(reject);
+    });
+  },
+  players(user, channel, input) {
+    return new Promise((resolve, reject) => {
+      if (!input) {
+        return resolve({
+          type: 'dm',
+          message: 'Usage: players <appid> - Returns the current amount of players for the game'
+        });
+      }
 
-            Steam.getAppPlayers(input).then(resp => {
-                resolve({
-                    type: 'channel',
-                    message: generatePlayersResponse(resp)
-                });
-            }).catch(reject);
+      Steam.getAppPlayers(input).then(resp => {
+        resolve({
+          type: 'channel',
+          message: generatePlayersResponse(resp)
         });
-    },
-    app(user, channel, input) {
-        return new Promise((resolve, reject) => {
-            if (!input)
-                return resolve({
-                    type: 'dm',
-                    message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
-                });
-            Steam.getAppInfo(input).then(resp => {
-                resolve({
-                    type: 'channel',
-                    message: generateAppDetailsResponse(resp)
-                });
-            }).catch(reject);
+      }).catch(reject);
+    });
+  },
+  app(user, channel, input) {
+    return new Promise((resolve, reject) => {
+      if (!input)
+        return resolve({
+          type: 'dm',
+          message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
         });
-    },
-    fullapp(user, channel, input) {
-        return new Promise((resolve, reject) => {
-            if (!input)
-                return resolve({
-                    type: 'dm',
-                    message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
-                  });
-            Steam.getAppInfo(input, true).then(resp => {
-                resolve({
-                    type: 'channel',
-                    message: generateAppDetailsResponse(resp)
-                });
-            }).catch(reject);
+      Steam.getAppInfo(input).then(resp => {
+        resolve({
+          type: 'channel',
+          message: generateAppDetailsResponse(resp)
         });
-    }
+      }).catch(reject);
+    });
+  },
+  fullapp(user, channel, input) {
+    return new Promise((resolve, reject) => {
+      if (!input)
+        return resolve({
+          type: 'dm',
+          message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
+        });
+      Steam.getAppInfo(input, true).then(resp => {
+        resolve({
+          type: 'channel',
+          message: generateAppDetailsResponse(resp)
+        });
+      }).catch(reject);
+    });
+  }
 };
 
 var generateProfileResponse = (profile => {
-    if (profile && profile.communityvisibilitystate !== 1) {
+      if (profile && profile.communityvisibilitystate !== 1) {
         let msg = [
             `*Profile Name:* ${profile.personaname} ${profile.realname ? `(${profile.realname})` : ''}`,
             `*Level:* ${profile.user_level} | *Status:* ${profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)}`,
@@ -186,3 +186,4 @@ var formatPlaytime = (time => {
     else
         return Math.floor(time / 60) + ' hours';
 });
+
