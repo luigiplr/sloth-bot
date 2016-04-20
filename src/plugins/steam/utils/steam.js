@@ -3,40 +3,40 @@ import Promise from 'bluebird';
 import needle from 'needle';
 import async from 'async';
 import SteamID from 'steamid';
-import lunr from 'lunr'
+import lunr from 'lunr';
 
 const token = require('./../../../../config.json').steamAPIToken;
 const endpoints = {
-  profile: `http://steamcommunity.com/id/%id%/?xml=1`, // Unused
-  profileSummary: `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${token}&steamids=%id%`,
-  miniProfile: `http://steamcommunity.com/miniprofile/%id%`, // Unused
-  gameSummary: `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${token}&steamid=%id%&include_played_free_games=1`,
-  appDetailsBasic: `http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic`,
-  appDetails: `http://store.steampowered.com/api/appdetails?appids=%id%&filters=basic,price_overview,release_date,metacritic`,
-  numPlayers: `http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%id%`,
-  userBans: `http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=${token}&steamids=%id%`,
+  profile: `http://steamcommunity.com/id/%q%/?xml=1`, // Unused
+  profileSummary: `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${token}&steamids=%q%`,
+  miniProfile: `http://steamcommunity.com/miniprofile/%q%`, // Unused
+  gameSummary: `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${token}&steamid=%q%&include_played_free_games=1`,
+  appDetailsBasic: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic`,
+  appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic,price_overview,release_date,metacritic`,
+  searchApps: `http://steamcommunity.com/actions/SearchApps/%q%`, // Unused
+  numPlayers: `http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%q%`,
+  userBans: `http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=${token}&steamids=%q%`,
   appList: `http://api.steampowered.com/ISteamApps/GetAppList/v0002/`,
-  userLevel: `https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${token}&steamid=%id%`,
-  resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%id%`
+  userLevel: `https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${token}&steamid=%q%`,
+  resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`
 };
 
 var appList, lastUpdated, fullTextAppList;
 
-const getUrl = ((type, id) => {
-  return endpoints[type].replace('%id%', id);
+const getUrl = ((type, param) => {
+  return endpoints[type].replace('%q%', param);
 });
 
 const getIDFromProfile = (id => {
   return new Promise((resolve, reject) => {
     needle.get(getUrl('resolveVanity', id), (err, resp, body) => {
-      if (!err && body) {
+      if (!err && body)
         if (body.response.success == 1)
           resolve(body.response.steamid);
         else
           reject("Invalid Vanity ID");
-      } else {
+      else
         reject('Error retrieving profile ID');
-      }
     });
   });
 });
@@ -49,9 +49,8 @@ const formatProfileID = (id => {
         resolve(sID.getSteamID64());
       else
         reject('Invalid ID');
-    } else {
+    } else
       getIDFromProfile(id).then(resolve).catch(reject);
-    }
   });
 });
 
@@ -91,12 +90,12 @@ const getUserGames = (id => {
 const getAppDetails = ((appid, basic) => {
   return new Promise((resolve, reject) => {
     needle.get(getUrl(basic ? 'appDetailsBasic' : 'appDetails', appid), (err, resp, body) => {
-      if (!err && body) {
+      if (!err && body)
         if (body[appid].success)
           resolve(body[appid].data);
         else
           reject(`Couldn't fetch app details for that AppID, invalid? ${appid}`);
-      } else
+      else
         reject('Error retrieving game details');
     });
   });
@@ -122,9 +121,8 @@ const updateAppList = (hasApplist => {
             reject("Error fetching appList");
         }
       });
-    } else {
+    } else
       resolve();
-    }
   });
 });
 
@@ -132,8 +130,7 @@ const getAppsByFullText = (appName => {
   return new Promise((resolve, reject) => {
     let hasApplist = (!!appList && !!appList.apps && !!fullTextAppList);
     updateAppList(hasApplist).then(() => {
-      let matchedAppIds = fullTextAppList.search(appName).slice(0, 3).map((app) => app.ref);
-      console.log(matchedAppIds);
+      let matchedAppIds = fullTextAppList.search(appName).slice(0, 4).map((app) => app.ref);
       let apps = appList.apps.filter(function(game) {
         return _.contains(matchedAppIds, game.appid);
       });
@@ -169,7 +166,7 @@ const findValidAppInApps = (apps => {
     const CheckQueue = async.queue((appID, next) => {
       getAppDetails(appID.appid)
         .then(app => {
-          console.log(app.type, app.name);
+          //console.log(app.type, app.name);
           if (app.type === 'game') {
             valid = true;
             resolve(app);
@@ -263,10 +260,10 @@ module.exports = {
       }
     });
   },
-  getAppInfo(appid, useFullText) {
+  getAppInfo(appid) {
     return new Promise((resolve, reject) => {
       if (!appid.match(/^\d+$/)) {
-        let appsByName = useFullText ? getAppsByFullText(appid) : getAppsByName(appid);
+        let appsByName = getAppsByFullText(appid);
         appsByName.then(apps => {
           findValidAppInApps(apps).then(app => {
             getPlayersForApp(app.steam_appid).then(players => {
