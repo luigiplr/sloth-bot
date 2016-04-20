@@ -5,7 +5,7 @@ import slackTools from '../../../slack.js';
 
 var config = require('../../../../config.json');
 
-const getUserInfo = user => (user.slice(0, 2) == "<@") ? slackTools.findUserByID(user.slice(0, 2), 'both') : slackTools.findUser(user, 'both');
+const getUserInfo = user => (user.slice(0, 2) == "<@") ? slackTools.findUserByID(user.slice(2, user.length - 1), 'both') : slackTools.findUser(user, 'both');
 
 module.exports = {
   invite(input) {
@@ -35,7 +35,6 @@ module.exports = {
       if (user === config.botname || user.slice(2, -1) === config.botid) {
         return reject('Error: Bitch. No.');
       }
-      console.log(input);
 
       getUserInfo(user).then(kickee => {
         needle.post('https://slack.com/api/channels.kick', {
@@ -55,10 +54,8 @@ module.exports = {
   },
   deleteLastMessage(channel, messagets) {
     return new Promise((resolve, reject) => {
-      if (!config.botid)
-        return reject("Error! Cannot find botID");
       slackTools.deleteMessage(channel, messagets);
-      slackTools.getHistory(channel, 17).then(history => {
+      slackTools.getHistory(channel, 16).then(history => {
         let ts = _(history.messages)
           .filter(message => {
             return message.user === config.botid;

@@ -18,7 +18,6 @@ module.exports = {
     command: 'userid'
   }, {
     alias: ['dellast', 'deletelastmessage'],
-    userLevel: ['admin', 'superadmin'],
     command: 'deleteLastMessage'
   }, {
     alias: ['disableuser'],
