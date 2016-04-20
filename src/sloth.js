@@ -119,3 +119,4 @@ process.on('unhandledRejection', err => slackInstance._sendErrorToDebugChannel('
 process.on('rejectionHandled', err => slackInstance._sendErrorToDebugChannel('handledRejection', err))
 
 const slackInstance = new slackClient()
+
