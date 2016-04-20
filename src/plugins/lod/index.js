@@ -6,14 +6,12 @@ export const plugin_info = [{
   usage: 'lod <person>'
 }]
 
-module.exports = {
-  lod(user, channel, input = '') {
-    return new Promise(resolve => {
-      return resolve({
-        type: 'channel',
-        message: 'ಠ_ಠ ' + input
-      });
+export function lod(user, channel, input = '') {
+  return new Promise(resolve => {
+    return resolve({
+      type: 'channel',
+      message: 'ಠ_ಠ ' + input
     });
-  }
-};
+  });
+}
 

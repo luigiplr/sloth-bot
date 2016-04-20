@@ -59,115 +59,113 @@ export const plugin_info = [{
   usage: 'muted - lists muted users'
 }]
 
-module.exports = {
-  admins() {
-    return new Promise(resolve => {
+export function admins() {
+  return new Promise(resolve => {
+    resolve({
+      type: 'channel',
+      message: 'Admins: ' + permissions.admins.concat(permissions.superadmins).join(', ')
+    });
+  });
+}
+export function owners() {
+  return new Promise(resolve => {
+    resolve({
+      type: 'channel',
+      message: 'Owners: ' + permissions.superadmins.join(', ')
+    });
+  });
+}
+export function ignored() {
+  return new Promise(resolve => {
+    let msg = permissions.allIgnored[0] ? (`Currently ignored: ${permissions.ignored[0] ? permissions.ignored.join(', ') + ',' : ''}${permissions.permaIgnored[0] ? ' *' + permissions.permaIgnored.join(', ') + '*' : ''}`) : null;
+    resolve({
+      type: 'channel',
+      message: msg || 'No ignored users'
+    });
+  });
+}
+export function muted() {
+  return new Promise(resolve => {
+    resolve({
+      type: 'channel',
+      message: permissions.muted[0] ? 'Currently muted: ' + permissions.muted.join(', ') : 'No muted users'
+    });
+  });
+}
+export function unignore(user, channel, input, ts, plugin, adminLevel) {
+  return new Promise((resolve, reject) => {
+    permsUtil.doTheThing(input, 'unignore', adminLevel).then(resp => {
       resolve({
         type: 'channel',
-        message: 'Admins: ' + permissions.admins.concat(permissions.superadmins).join(', ')
+        message: resp
       });
-    });
-  },
-  owners() {
-    return new Promise(resolve => {
+    }).catch(reject);
+  });
+}
+export function ignore(user, channel, input, ts, plugin, adminLevel) {
+  return new Promise((resolve, reject) => {
+    permsUtil.doTheThing(input, 'ignore', adminLevel).then(resp => {
       resolve({
         type: 'channel',
-        message: 'Owners: ' + permissions.superadmins.join(', ')
+        message: resp
       });
-    });
-  },
-  ignored() {
-    return new Promise(resolve => {
-      let msg = permissions.allIgnored[0] ? (`Currently ignored: ${permissions.ignored[0] ? permissions.ignored.join(', ') + ',' : ''}${permissions.permaIgnored[0] ? ' *' + permissions.permaIgnored.join(', ') + '*' : ''}`) : null;
+    }).catch(reject);
+  });
+}
+export function unmute(user, channel, input, ts, plugin, adminLevel) {
+  return new Promise((resolve, reject) => {
+    permsUtil.doTheThing(input, 'unmute', adminLevel).then(resp => {
       resolve({
         type: 'channel',
-        message: msg || 'No ignored users'
+        message: resp
       });
-    });
-  },
-  muted() {
-    return new Promise(resolve => {
+    }).catch(reject);
+  });
+}
+export function mute(user, channel, input, ts, plugin, adminLevel) {
+  return new Promise((resolve, reject) => {
+    permsUtil.doTheThing(input, 'mute', adminLevel).then(resp => {
       resolve({
         type: 'channel',
-        message: permissions.muted[0] ? 'Currently muted: ' + permissions.muted.join(', ') : 'No muted users'
+        message: resp
       });
-    });
-  },
-  unignore(user, channel, input, ts, plugin, adminLevel) {
-    return new Promise((resolve, reject) => {
-      permsUtil.doTheThing(input, 'unignore', adminLevel).then(resp => {
-        resolve({
-          type: 'channel',
-          message: resp
-        });
-      }).catch(reject);
-    });
-  },
-  ignore(user, channel, input, ts, plugin, adminLevel) {
-    return new Promise((resolve, reject) => {
-      permsUtil.doTheThing(input, 'ignore', adminLevel).then(resp => {
-        resolve({
-          type: 'channel',
-          message: resp
-        });
-      }).catch(reject);
-    });
-  },
-  unmute(user, channel, input, ts, plugin, adminLevel) {
-    return new Promise((resolve, reject) => {
-      permsUtil.doTheThing(input, 'unmute', adminLevel).then(resp => {
-        resolve({
-          type: 'channel',
-          message: resp
-        });
-      }).catch(reject);
-    });
-  },
-  mute(user, channel, input, ts, plugin, adminLevel) {
-    return new Promise((resolve, reject) => {
-      permsUtil.doTheThing(input, 'mute', adminLevel).then(resp => {
-        resolve({
-          type: 'channel',
-          message: resp
-        });
-      }).catch(reject);
-    });
-  },
-  permaIgnore(user, channel, input, ts, plugin, adminLevel) {
-    return new Promise((resolve, reject) => {
-      permsUtil.doTheThing(input, 'permaignore', adminLevel).then(resp => {
-        resolve({
-          type: 'channel',
-          message: resp
-        });
-      }).catch(reject);
-    });
-  },
-  set(admin, channel, input, ts, plugin, adminLevel) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return reject("Please specify a user");
+    }).catch(reject);
+  });
+}
+export function permaIgnore(user, channel, input, ts, plugin, adminLevel) {
+  return new Promise((resolve, reject) => {
+    permsUtil.doTheThing(input, 'permaignore', adminLevel).then(resp => {
+      resolve({
+        type: 'channel',
+        message: resp
+      });
+    }).catch(reject);
+  });
+}
+export function set(admin, channel, input, ts, plugin, adminLevel) {
+  return new Promise((resolve, reject) => {
+    if (!input)
+      return reject("Please specify a user");
 
-      let user = input.split(' ')[0].toString().toLowerCase();
-      let userLevel = getUserLevel(user);
-      let level = input.split(' ')[1] ? input.split(' ')[1].toString().toLowerCase().replace(/[s]$/, '') : 'user';
-      let levels = ((adminLevel === 'superadmin' && userLevel === 'superadmin')) ? -1 :
-        (adminLevel === 'admin' && userLevel === 'admin') ? -1 :
-        (adminLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin'];
+    let user = input.split(' ')[0].toString().toLowerCase();
+    let userLevel = getUserLevel(user);
+    let level = input.split(' ')[1] ? input.split(' ')[1].toString().toLowerCase().replace(/[s]$/, '') : 'user';
+    let levels = ((adminLevel === 'superadmin' && userLevel === 'superadmin')) ? -1 :
+      (adminLevel === 'admin' && userLevel === 'admin') ? -1 :
+      (adminLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin'];
 
-      if (user) {
-        if (levels == -1)
-          return reject("You cannot change the level of yourself or other admins");
-        else if (levels.indexOf(level) > -1) {
-          permissions.add(user, level);
-          return resolve({
-            type: 'channel',
-            message: 'Set ' + user + ' to ' + level
-          });
-        } else
-          return reject("Invalid User Level");
-      }
-    });
-  }
-};
+    if (user) {
+      if (levels == -1)
+        return reject("You cannot change the level of yourself or other admins");
+      else if (levels.indexOf(level) > -1) {
+        permissions.add(user, level);
+        return resolve({
+          type: 'channel',
+          message: 'Set ' + user + ' to ' + level
+        });
+      } else
+        return reject("Invalid User Level");
+    }
+  });
+}
 

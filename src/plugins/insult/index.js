@@ -12,44 +12,43 @@ export const plugin_info = [{
   usage: 'sinsult <person>'
 }]
 
-module.exports = {
-  insult(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return resolve({
-          type: 'channel',
-          message: 'Who am I insulting?'
-        });
 
-      try {
-        new normalinsult((meanMessage) => {
-          resolve({
-            type: 'channel',
-            message: input + ': ' + meanMessage
-          });
-        });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  },
-  oldinsult(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return resolve({
-          type: 'channel',
-          message: 'Who am I insulting?'
-        });
+export function insult(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input)
+      return resolve({
+        type: 'channel',
+        message: 'Who am I insulting?'
+      });
 
-      try {
+    try {
+      new normalinsult((meanMessage) => {
         resolve({
           type: 'channel',
-          message: '_' + input + " you're a " + spinsult.random() + '_'
+          message: input + ': ' + meanMessage
         });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-};
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+export function oldinsult(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input)
+      return resolve({
+        type: 'channel',
+        message: 'Who am I insulting?'
+      });
+
+    try {
+      resolve({
+        type: 'channel',
+        message: '_' + input + " you're a " + spinsult.random() + '_'
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
 

@@ -16,57 +16,56 @@ export const plugin_info = [{
   usage: 'game <appid or game name> - returns game info'
 }]
 
-module.exports = {
-  steamProfile(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input) {
-        return resolve({
-          type: 'dm',
-          message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information'
-        });
-      }
-      Steam.getProfileInfo(input).then(resp => {
-        resolve({
-          type: 'channel',
-          messages: generateProfileResponse(resp)
-        });
-      }).catch(reject);
-    });
-  },
-  players(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input) {
-        return resolve({
-          type: 'dm',
-          message: 'Usage: players <appid> - Returns the current amount of players for the game'
-        });
-      }
+export function steamProfile(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) {
+      return resolve({
+        type: 'dm',
+        message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information'
+      });
+    }
+    Steam.getProfileInfo(input).then(resp => {
+      resolve({
+        type: 'channel',
+        messages: generateProfileResponse(resp)
+      });
+    }).catch(reject);
+  });
+}
+export function players(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) {
+      return resolve({
+        type: 'dm',
+        message: 'Usage: players <appid> - Returns the current amount of players for the game'
+      });
+    }
 
-      Steam.getAppPlayers(input).then(resp => {
-        resolve({
-          type: 'channel',
-          message: generatePlayersResponse(resp)
-        });
-      }).catch(reject);
-    });
-  },
-  app(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return resolve({
-          type: 'dm',
-          message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
-        });
+    Steam.getAppPlayers(input).then(resp => {
+      resolve({
+        type: 'channel',
+        message: generatePlayersResponse(resp)
+      });
+    }).catch(reject);
+  });
+}
+export function app(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input)
+      return resolve({
+        type: 'dm',
+        message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
+      });
 
-      Steam.getAppInfo(input).then(resp => {
-        resolve({
-          type: 'channel',
-          message: generateAppDetailsResponse(resp)
-        });
-      }).catch(reject);
-    });
-  }
-};
+    Steam.getAppInfo(input).then(resp => {
+      resolve({
+        type: 'channel',
+        message: generateAppDetailsResponse(resp)
+      });
+    }).catch(reject);
+  });
+}
+
 
 var generateProfileResponse = (profile => {
       if (profile && profile.communityvisibilitystate !== 1) {

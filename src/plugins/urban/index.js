@@ -12,39 +12,37 @@ export const plugin_info = [{
   usage: 'randomurban - returns random definition from urban dictionary'
 }]
 
-module.exports = {
-  urbandictionary(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return resolve({
+export function urbandictionary(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input)
+      return resolve({
+        type: 'channel',
+        message: 'Specify a word pls'
+      });
+    try {
+      new urban(input).first((definition) => {
+        resolve({
           type: 'channel',
-          message: 'Specify a word pls'
+          message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
         });
-      try {
-        new urban(input).first((definition) => {
-          resolve({
-            type: 'channel',
-            message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
-          });
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+export function randomurban() {
+  return new Promise((resolve, reject) => {
+    try {
+      new urban.random().first((definition) => {
+        resolve({
+          type: 'channel',
+          message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
         });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  },
-  randomurban() {
-    return new Promise((resolve, reject) => {
-      try {
-        new urban.random().first((definition) => {
-          resolve({
-            type: 'channel',
-            message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
-          });
-        });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-};
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
 

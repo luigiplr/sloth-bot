@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import wolfram from './utils/wolfram';
+import wolframUtil from './utils/wolfram';
 
 export const plugin_info = [{
   alias: ['calc', 'wolfram'],
@@ -7,22 +7,20 @@ export const plugin_info = [{
   usage: 'wolfram <query> - returns wolfram calculation for query'
 }]
 
-module.exports = {
-  wolfram(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return resolve({
-          type: 'dm',
-          message: 'Usage: wolfram <query> - Computes <query> using Wolfram Alpha.'
-        });
+export function wolfram(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input)
+      return resolve({
+        type: 'dm',
+        message: 'Usage: wolfram <query> - Computes <query> using Wolfram Alpha.'
+      });
 
-      wolfram.query(input).then(resp => {
-        return resolve({
-          type: 'channel',
-          message: `*Result*: ${resp}`
-        });
-      }).catch(reject);
-    });
-  }
-};
+    wolframUtil.query(input).then(resp => {
+      return resolve({
+        type: 'channel',
+        message: `*Result*: ${resp}`
+      });
+    }).catch(reject);
+  });
+}
 
