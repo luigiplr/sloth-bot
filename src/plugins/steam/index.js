@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import Steam from './utils/steam';
+import moment from 'moment';
 
 module.exports = {
   commands: [{
@@ -78,7 +79,7 @@ var generateProfileResponse = (profile => {
         let msg = [
             `*Profile Name:* ${profile.personaname} ${profile.realname ? `(${profile.realname})` : ''}`,
             `*Level:* ${profile.user_level} | *Status:* ${profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)}`,
-            `*Joined Steam:* ${new Date(profile.timecreated * 1000).toGMTString()}`,
+            `*Joined Steam:* ${moment(profile.timecreated * 1000).format("dddd, Do MMM YYYY")}`,
             `*Total Games:* ${profile.totalgames} | *Most Played:* ${profile.mostplayed.name} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
             profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : `` : ``
         ];
