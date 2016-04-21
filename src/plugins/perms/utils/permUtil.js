@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
 import permissions from '../../../permissions';
-import slackTools from '../../../slack';
+import { findUser } from '../../../slack';
 import config from '../../../../config.json';
 
 const getUserLevel = user => {
@@ -61,7 +61,7 @@ module.exports = {
         permissions.add(username, type);
         return resolve(`${responses[type]} ${username}`);
       } else {
-        slackTools.findUser(username, 'name').then(user => {
+        findUser(username, 'name').then(user => {
           permissions.add(user, type);
           return resolve(`${responses[type]} ${user}`)
         }).catch(reject);

@@ -2,6 +2,7 @@ import Promise from 'bluebird'
 import _ from 'lodash'
 import needle from 'needle'
 import config from '../config.json'
+import { queue } from 'async'
 
 export function sendMessage(channel, input) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/chat.postMessage', {
@@ -26,17 +27,6 @@ export function sendPMThroughSlackbot(channel, input) {
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('sendPMSbErr', err || error))
     resolve()
-  }))
-}
-
-export function deleteMessage(channel, ts) {
-  return new Promise((resolve, reject) => needle.post('https://slack.com/api/chat.delete', {
-    channel: channel,
-    token: config.slackToken,
-    ts: ts
-  }, (err, resp, { error }) => {
-    if (err || error) return reject(_logErr('DelMsgErr', err || error))
-    resolve();
   }))
 }
 
@@ -122,6 +112,21 @@ export function invite(email) {
     resolve(`${email} invited successfully`)
   }))
 }
+
+export function deleteMessage(channel, ts) {
+  deleteQueue.push({ channel, ts })
+}
+
+const deleteQueue = queue((task, cb) => {
+  needle.post('https://slack.com/api/chat.delete', {
+    channel: task.channel,
+    token: config.slackToken,
+    ts: task.ts
+  }, (err, resp, { error }) => {
+    if (err || error) console.error(`Error deleting message ${err || error}`)
+    _.delay(() => { cb() }, 800)
+  })
+}, 4)
 
 const _logErr = (type, err) => {
   console.error(type, ':', err)

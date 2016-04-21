@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import permissions from './permissions';
-import slackTools from './slack';
+import { deleteMessage } from './slack';
 import config from '../config.json';
 import {
   find as findPlugins
@@ -32,7 +32,7 @@ module.exports = {
 
       // If user is muted and is not an admin
       if (permissions.muted.indexOf(username) > -1 && userLevel != 'superadmin') {
-        slackTools.deleteMessage(channel.id, ts);
+        deleteMessage(channel.id, ts);
         return resolve(false);
       }
 
