@@ -55,15 +55,15 @@ module.exports = {
             if (cmd.userLevel)
               cmdLevel = cmd.userLevel;
 
-            call = cmd.command;
+            call = cmd;
             return true;
           } else
             return false;
         });
       });
 
-      if (!plugin)
-        return; //reject('Command not found');
+      if ((plugin && call.disabled) || !plugin)
+        return reject();
 
       // If userLevel required and you don't match the required level or if you're an admin trying to pull shit on a superadmin
       if (cmdLevel && (cmdLevel.indexOf(userLevel) === -1 || (userLevel === 'admin' && (context && getUserlevel(context.split(' ')[0]) === 'superadmin'))))
@@ -72,7 +72,7 @@ module.exports = {
           message: 'Insufficient Permissions'
         });
 
-      plugin[call](user, channel, context, ts, plugins, userLevel)
+      plugin[call.command](user, channel, context, ts, plugins, userLevel)
         .then(resolve)
         .catch(reject);
     });
