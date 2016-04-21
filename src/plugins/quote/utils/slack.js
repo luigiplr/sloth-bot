@@ -42,12 +42,12 @@ module.exports = {
   },
   grabQuote(grabee, channel, index = 0, grabber) {
     return new Promise((resolve, reject) => {
-      Promise.join(slackTools.getHistory(channel.id), slackTools.findUser(grabee), (history, user) => {
+      Promise.join(slackTools.getHistory(channel.id), slackTools.findUser(grabee), (messages, user) => {
         let i = 0;
         if (grabber.id == user)
           index++;
 
-        let uID = _(history.messages)
+        let uID = _(messages)
           .filter(message => {
             if (parseInt(index) == i)
               return message.user === user;

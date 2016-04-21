@@ -1,47 +1,43 @@
 import Promise from 'bluebird';
-import slack from './utils/slack';
-import slackTools from '../../slack.js';
+import { kick, deleteLastMessage } from './utils/slack';
+import { invite, findUser, addLoadingMsg, deleteLoadingMsg } from '../../slack.js';
 
 export const plugin_info = [{
   alias: ['kick'],
-  command: 'kick',
+  command: 'kickUser',
   usage: 'kick <username> <reason (optional)>',
   userLevel: ['admin', 'superadmin']
 }, {
   alias: ['invite'],
-  command: 'invite',
+  command: 'inviteUser',
   usage: 'invite <email> - invites a user to group'
 }, {
-  alias: ['channelid'],
+  alias: ['channelid', 'cid'],
   command: 'channelid',
   usage: 'channelid - returns ChannelID for current channel'
 }, {
-  alias: ['userid'],
+  alias: ['userid', 'uid'],
   command: 'userid',
   usage: 'userid <user> - returns UserID for user'
 }, {
   alias: ['dellast', 'deletelastmessage'],
-  command: 'deleteLastMessage',
+  command: 'delLast',
   usage: 'dellast - deletes the last message from the bot'
 }, {
   alias: ['alm', 'addloadingmessage'],
-  command: 'addLoadingMessage',
+  command: 'addLoadMessage',
   usage: 'alm <message> - Adds a slack loading message to the team'
 }, {
   alias: ['rlm', 'removeloadingmessage'],
-  command: 'removeLoadingMessage',
+  command: 'delLoadMessage',
   usage: 'rlm <id> - Remove a slack loading message from the team'
 }]
 
-export function kick(user, channel, input = false) {
+export function kickUser(user, channel, input = false) {
   return new Promise((resolve, reject) => {
-    if (!input)
-      return resolve({
-        type: 'dm',
-        message: 'Usage: kick <username> <reason (optional)> - removes user from channel'
-      });
+    if (!input) return resolve({ type: 'dm', message: 'Usage: kick <username> <reason (optional)> - removes user from channel' });
 
-    slack.kick(user, channel, input)
+    kick(user, channel, input)
       .then(res => {
         resolve({
           type: 'channel',
@@ -51,53 +47,30 @@ export function kick(user, channel, input = false) {
       .catch(reject);
   });
 }
-export function invite(user, channel, input) {
+export function inviteUser(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input)
-      return resolve({
-        type: 'dm',
-        message: 'Usage: invite <email> - invites a person to the slack channel'
-      });
-    slack.invite(input)
-      .then(res => {
-        resolve({
-          type: 'channel',
-          message: res
-        });
-      })
-      .catch(reject);
-  });
+    if (!input) return resolve({ type: 'dm', message: 'Usage: invite <email> - invites a person to the slack channel' })
+    let email = input.substr(8).split('|')[0]
+    return invite(email).then(resolve).catch(reject)
+  })
 }
 export function channelid(user, channel) {
   return new Promise((resolve, reject) => {
-    if (channel && channel.id)
-      return resolve({
-        type: 'channel',
-        message: "This channel's ID is " + channel.id
-      });
-    else
-      reject('Error?');
-  });
+    if (channel && channel.id) return resolve({ type: 'channel', message: "This channel's ID is " + channel.id })
+    else return reject('Error?');
+  })
 }
 export function userid(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input || input === user.name)
-      return resolve({
-        type: 'channel',
-        message: 'Your UserID is ' + user.id
-      });
-
-    slackTools.findUser(input).then(id => {
-      resolve({
-        type: 'channel',
-        message: input + "'s UserID is " + id
-      });
-    }).catch(reject);
-  });
+    if (!input || input === user.name) return resolve({ type: 'channel', message: 'Your UserID is ' + user.id })
+    findUser(input).then(id => {
+      resolve({ type: 'channel', message: input + "'s UserID is " + id })
+    }).catch(reject)
+  })
 }
-export function deleteLastMessage(user, channel, input, ts) {
+export function delLast(user, channel, input, ts) {
   return new Promise((resolve, reject) => {
-    slack.deleteLastMessage(channel.id, ts).then(() => {
+    deleteLastMessage(channel.id, ts).then(() => {
       resolve();
     }).catch(reject);
   });
@@ -133,7 +106,7 @@ export function enableUser(user, channel, input) {
         }).catch(reject);  
     })
 },*/
-export function addLoadingMessage(user, channel, input) {
+export function addLoadMessage(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input)
       return resolve({
@@ -141,7 +114,7 @@ export function addLoadingMessage(user, channel, input) {
         message: 'Usage: addloadingmessage <message> - Adds a loading message to the slack team'
       });
 
-    slackTools.addLoadingMsg(input).then(resp => {
+    addLoadingMsg(input).then(resp => {
       resolve({
         type: 'channel',
         message: `Successfully added message with id ${resp.id}`
@@ -149,7 +122,7 @@ export function addLoadingMessage(user, channel, input) {
     }).catch(reject)
   })
 }
-export function removeLoadingMessage(user, channel, input) {
+export function delLoadMessage(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input)
       return resolve({
@@ -157,7 +130,7 @@ export function removeLoadingMessage(user, channel, input) {
         message: 'Usage: removeloadingmessage <id> - Remove a loading message from the team - ID is required and can only be viewed within the Slack Admin Page'
       });
 
-    slackTools.deleteLoadingMsg(input).then(() => {
+    deleteLoadingMsg(input).then(() => {
       resolve({
         type: 'channel',
         message: `Successfully removed message with id ${input}`
