@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import Slack from 'slack-client'
-import slackTools from './slack'
+import { sendMessage } from './slack'
 import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
 
@@ -62,11 +62,12 @@ class slackClient extends Slack {
               if (response.message && response.message.attachments) {
                 channel.postMessage(this._getParams(response.message.msg, response.message.attachments))
               } else if (!response.multiLine) {
-                if (response.message) channel.send(response.message)
-                else if (response.messages) channel.postMessage(this._getParams(response.messages.join('\n')))
+                if (response.message && !Array.isArray(response.message)) channel.send(response.message)
+                else if (response.messages && Array.isArray(response.messages)) channel.postMessage(this._getParams(response.messages.join('\n')))
+                else return this._sendErrorToDebugChannel('sendMsg', "Invalid messages format, your array must contain more than 1 message and use the 'messages' response type");
               } else {
-                if (response.messages && response.messages[1]) response.messages.forEach(message => channel.send(message))
-                else return console.error("Invalid Multiline format, your array must contain more than 1 message and use the 'messages' response type");
+                if (response.messages && Array.isArray(response.messages)) response.messages.forEach(message => channel.send(message))
+                else return this._sendErrorToDebugChannel('sendMsg', "Invalid Multiline format, your array must contain more than 1 message and use the 'messages' response type");
               }
             })
         })
@@ -91,17 +92,17 @@ class slackClient extends Slack {
 
       if (i < 4) {
         i++
-        slackTools.sendMessage(config.debugChannel, message)
+        sendMessage(config.debugChannel, message)
         setTimeout(() => {
           if (i > 0) i--
         }, 3000)
       } else {
-        slackTools.sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
+        sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
         process.exit()
       }
     } else {
       console.error("Caught Error:", type, error);
-      if (config.debugChannel) slackTools.sendMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```');
+      if (config.debugChannel) sendMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```');
     }
   }
 
