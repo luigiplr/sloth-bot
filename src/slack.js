@@ -11,7 +11,7 @@ export function sendMessage(channel, input) {
     token: config.slackAPIToken,
     icon_url: config.imageURL
   }, (err, resp, { error }) => {
-    if (err || error) return reject(_logErr(`sendMsgErr ${err || error}`))
+    if (err || error) return reject(_logErr('sendMsgErr', err || error))
     resolve()
   }))
 }
@@ -24,7 +24,7 @@ export function sendPMThroughSlackbot(channel, input) {
     username: config.botname,
     icon_url: config.imageURL
   }, (err, resp, { error }) => {
-    if (err || error) return reject(_logErr(`sendPMSbErr ${err || error}`))
+    if (err || error) return reject(_logErr('sendPMSbErr', err || error))
     resolve()
   }))
 }
@@ -35,7 +35,7 @@ export function deleteMessage(channel, ts) {
     token: config.slackToken,
     ts: ts
   }, (err, resp, { error }) => {
-    if (err || error) return reject(_logErr(`DelMsgErr ${err || error}`))
+    if (err || error) return reject(_logErr('DelMsgErr', err || error))
     resolve();
   }))
 }
@@ -46,7 +46,7 @@ export function getHistory(channel, limit = 100) {
     token: config.slackAPIToken,
     count: limit
   }, (err, resp, { error, messages }) => {
-    if (err || error) return reject(_logErr(`getHistoryErr ${err || error}`))
+    if (err || error) return reject(_logErr('getHistoryErr', err || error))
     resolve(messages);
   }))
 }
@@ -55,7 +55,7 @@ export function findUser(user, type) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.list', {
     token: config.slackAPIToken
   }, (err, resp, { error, members }) => {
-    if (err || error) return reject(_logErr(`findUserErr ${err || error}`))
+    if (err || error) return reject(_logErr('findUserErr', err || error))
 
     let isID = user.slice(0, 2) == "<@"
     let member = _.find(members, ({ name, id }) => {
@@ -75,7 +75,7 @@ export function setInactive(user) {
     set_active: true,
     _attempts: 1
   }, (err, resp, { error }) => {
-    if (err || error) return reject(_logErr(`setInactiveErr ${err || error}`))
+    if (err || error) return reject(_logErr('setInactiveErr', err || error))
     resolve()
   }))
 }
@@ -87,7 +87,7 @@ export function setRegular(user) {
     set_active: true,
     _attempts: 1
   }, (err, resp, { error }) => {
-    if (err || error) return reject(_logErr(`setRegularErr ${err || error}`))
+    if (err || error) return reject(_logErr('setRegularErr', err || error))
     resolve()
   }))
 }
@@ -97,7 +97,7 @@ export function addLoadingMsg(message) {
     token: config.slackToken,
     message: message
   }, (err, resp, { error, id }) => {
-    if (err || error) return reject(_logErr(`addLoadingMsgErr ${err || error}`))
+    if (err || error) return reject(_logErr('addLoadingMsgErr', err || error))
     resolve(id)
   }))
 }
@@ -106,8 +106,8 @@ export function deleteLoadingMsg(id) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/team.loading.deleteMsg', {
     token: config.slackToken,
     id: id
-  }, (err, resp, body) => {
-    if (err || body.error) return reject(_logErr(`delLoadingMsgErr ${err || body.error}`))
+  }, (err, resp, { error }) => {
+    if (err || error) return reject(_logErr('delLoadingMsgErr', err || error))
     resolve()
   }))
 }
@@ -118,13 +118,13 @@ export function invite(email) {
     token: config.slackToken,
     set_active: true
   }, (err, resp, { error }) => {
-    if (err || error) return reject(_logErr(`inviteErr ${err || error}`))
+    if (err || error) return reject(_logErr('inviteErr', err || error))
     resolve(`${email} invited successfully`)
   }))
 }
 
 const _logErr = (type, err) => {
-  console.error(type, err)
-  return `${type} ${err}`
+  console.error(type, ':', err)
+  return `${type}: ${err}`
 }
 
