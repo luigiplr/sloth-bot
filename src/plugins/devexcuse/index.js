@@ -8,8 +8,5 @@ export const plugin_info = [{
 }]
 
 export function devexcuse() {
-  return new Promise(resolve => {
-    devexcuses((err, excuse) => resolve({ type: 'channel', message: !err ? excuse : err }))
-  })
+  return new Promise(resolve => devexcuses((err, excuse) => resolve({ type: 'channel', message: !err ? excuse : err })))
 }
-
