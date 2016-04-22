@@ -2,6 +2,7 @@ import needle from 'needle';
 import Promise from 'bluebird';
 import _ from 'lodash';
 import config from '../config.json';
+import { queue } from 'async';
 
 module.exports = {
   sendMessage(channel, input) {
@@ -36,23 +37,6 @@ module.exports = {
         }
         resolve();
       });
-    });
-  },
-  deleteMessage(channel, ts) {
-    return new Promise((resolve, reject) => {
-      needle.post('https://slack.com/api/chat.delete', {
-        channel: channel,
-        token: config.slackToken,
-        ts: ts
-      }, (err, resp, body) => {
-        if (err || body.error) {
-          console.log(`DelMsgErr ${err || body.error}`);
-          return reject(`DelMsgErr ${err || body.error}`);
-        }
-        console.info("Deleted message in", channel, "with TS of", ts);
-        resolve();
-      });
-
     });
   },
   getHistory(channel, limit = 100) {
@@ -171,6 +155,19 @@ module.exports = {
         body.ok ? resolve(true) : reject("Unknown error");
       })
     })
+  },
+  deleteMessage(channel, ts) {
+    deleteQueue.push({ channel, ts });
   }
 };
 
+const deleteQueue = queue((task, cb) => {
+  needle.post('https://slack.com/api/chat.delete', {
+    channel: task.channel,
+    token: config.slackToken,
+    ts: task.ts
+  }, (err, resp, { error }) => {
+    if (err || error) console.error(`Error deleting message ${err || error}`);
+    _.delay(() => { cb() }, 800);
+  });
+}, 4);
