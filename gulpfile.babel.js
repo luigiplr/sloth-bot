@@ -21,11 +21,10 @@ gulp.task('clean-build', () => gulp.src('build', { read: false }).pipe(rimraf())
 
 gulp.task('watch-build', () => gulp.watch('src/**/*.js', ['build', server.restart]))
 
-gulp.task('sloth:start', () => server.listen({ path: './build/sloth.js', env: { BLUEBIRD_WARNINGS: 0 } }))
+gulp.task('sloth:start', () => server.listen({ path: './index.js', env: { BLUEBIRD_WARNINGS: 0 } }))
 
 /* Watch Tasks */
 
 gulp.task('start-dev', callback => runSequence('clean-build', 'build', 'watch-build', 'sloth:start', callback))
 
 gulp.task('start', callback => runSequence('clean-build', 'build', 'sloth:start', callback))
-
