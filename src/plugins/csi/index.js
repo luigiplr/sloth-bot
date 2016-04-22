@@ -16,6 +16,8 @@ module.exports = {
   }
 };
 
+// Credit to http://mcpubba.net/techgen.html & https://github.com/DoctorMcKay/steam-irc-bot for this amazing code
+
 function _getFunny(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -24,7 +26,6 @@ function _genMessage() {
   return _getFunny(start) + _getFunny(verb) + _getFunny(noun) + _getFunny(preposition) + _getFunny(noun) + '.';
 }
 
-// Credit to http://mcpubba.net/techgen.html for this amazing code
 const start = [
   'The first thing we need to do is ',
   'To fix your problem, we have to ',
