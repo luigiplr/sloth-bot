@@ -1,0 +1,8 @@
+extends main
+
+block subheader
+  if user
+    h2#loggedin Logged in as #{user.name}
+  else
+    h2
+      a#loginBtn(href='/login') Login 

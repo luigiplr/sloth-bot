@@ -1,0 +1,40 @@
+extends main
+
+block subheader
+  if message
+    h2 #{message}
+
+block content
+  .information
+    form(method="POST", action="/login")#join-form.form
+      input(type="text", name="username", placeholder="Username")#username.field
+      input(type="password", name="password", placeholder="Password")#password.field
+      input(type="submit", value="Submit").submit
+      script.
+        var form = document.getElementById('join-form');
+        var username = document.getElementById('username');
+        var password = document.getElementById('password');
+        var shake = function(what) {
+          if (what.className.length < 15) {
+            var oldClassName = what.className;
+            what.className = what.className + ' animated shake';
+            setTimeout(function() {
+              what.className = oldClassName;
+            }, 850);
+          }
+        }
+        form.addEventListener('submit', function(evt) {
+          if (!username.value) {
+            evt.preventDefault();
+            shake(username);
+          }
+          if (!password.value) {
+            evt.preventDefault();
+            shake(password);
+          }
+        });
+        particlesJS.load('particles-js', 'particlesjs-config.json');
+
+block breadcrumbs
+  a(href='/login') Login
+  span /
