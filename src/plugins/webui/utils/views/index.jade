@@ -6,3 +6,7 @@ block subheader
   else
     h2
       a#loginBtn(href='/login') Login 
+      
+block content
+  for route in routes
+    a.plugin(href=route.url) #{route.name}

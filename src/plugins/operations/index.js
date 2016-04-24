@@ -36,6 +36,7 @@ export const plugin_info = [{
 export const pages = [{
   url: '/operations',
   access: ['admin', 'superadmin'],
+  index: true,
   func: (req, res) => res.render('operations')
 }]
 

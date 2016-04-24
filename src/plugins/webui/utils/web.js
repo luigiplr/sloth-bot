@@ -19,7 +19,7 @@ const test = {
   id: 34543634532543543,
   name: 'js41637',
   slackID: 'U0D4UA5TJ',
-  access: 'user',
+  access: 'superadmin',
   password: 'sha1$73995179$1$e687fb6d9460b2d2b15ff2e75d25d8337de05704'
 }
 
@@ -82,7 +82,6 @@ const server = app.listen(port)
 server.on('error', onError)
 server.on('listening', () => console.log('Listening on port ' + server.address().port))
 
-app.get('/', (req, res) => res.render('index', { name: _.capitalize(config.botname), user: req.user }))
 app.get('/login', (req, res) => res.render('login', { name: _.capitalize(config.botname), user: req.user }))
 
 app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login' }))
@@ -92,7 +91,17 @@ getPlugins().then(daPlugins => {
   _.forEach(daPlugins.pages, page => {
     app.get(page.url, hasAccess, page.func)
   })
+  onLoad();
 })
+
+const onLoad = () => {
+  console.log(plugins.routes)
+  app.get('/', (req, res) => res.render('index', {
+    name: _.capitalize(config.botname),
+    user: req.user,
+    routes: plugins.routes
+  }))
+}
 
 const hasAccess = (req, res, next) => {
   if (!req.isAuthenticated()) return res.render('login', { name: _.capitalize(config.botname), 'message': 'You need to log in to access this page.' })
