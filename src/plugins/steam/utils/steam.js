@@ -194,20 +194,20 @@ const checkRegex = apps => {
     let matched = _.find(apps, app => {
       return app.name.match(match) ? true : false
     })
-    matched ? resolve(apps.promote(matched.appid, 'appid')) : resolve(apps)
+    matched ? resolve(promote(apps, matched.appid, 'appid')) : resolve(apps)
   })
 }
 
 // Function for moving an element in an array to front
-Array.prototype.promote = function(param, param2) {
-  for (let i = 0; i < this.length; i++) {
-    if (this[i][param2] === param) {
-      let a = this.splice(i, 1);
-      this.unshift(a[0]);
-      return this;
+const promote = function(array, param, param2) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][param2] === param) {
+      let a = array.splice(i, 1);
+      array.unshift(a[0]);
+      return array;
     }
   }
-  return this;
+  return array;
 }
 
 const getPlayersForApp = (appid => {
