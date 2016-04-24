@@ -4,24 +4,30 @@ import moment from 'moment';
 
 module.exports = {
   commands: [{
-    alias: ['sp', 'profile', 'steamprofile'],
+    alias: ['sp', 'steamprofile'],
     command: 'steamProfile'
   }, {
     alias: ['players'],
     command: 'players'
   }, {
-    alias: ['app', 'game', 'fullapp'],
+    alias: ['game'],
+    command: 'game'
+  }, {
+    alias: ['app'],
     command: 'app'
   }],
   help: [{
-    command: ['sp', 'profile', 'steamprofile'],
-    usage: 'steamprofile <steamid/vanityid>'
+    command: ['sp', 'steamprofile'],
+    usage: 'steamprofile <steamid/vanityid> - returns user steam profile'
   }, {
     command: ['players'],
-    usage: 'players <appid>'
+    usage: 'players <appid or game name> - returns players for steam app'
   }, {
-    command: ['app', 'game', 'steamgame'],
-    usage: 'game <appid or game name>'
+    command: ['game'],
+    usage: 'game <appid or game name> - returns steam game info'
+  }, {
+    command: ['app'],
+    usage: 'app <appid or game name> - returns steam app info'
   }],
   steamProfile(user, channel, input) {
     return new Promise((resolve, reject) => {
@@ -56,12 +62,28 @@ module.exports = {
       }).catch(reject);
     });
   },
+  game(user, channel, input) {
+    return new Promise((resolve, reject) => {
+      if (!input)
+        return resolve({
+          type: 'dm',
+          message: 'Usage: game <appid or game name> - Returns basic game info'
+        });
+
+      Steam.getAppInfo(input, 1).then(resp => {
+        resolve({
+          type: 'channel',
+          message: generateAppDetailsResponse(resp, 1)
+        });
+      }).catch(reject);
+    });
+  },
   app(user, channel, input) {
     return new Promise((resolve, reject) => {
       if (!input)
         return resolve({
           type: 'dm',
-          message: 'Usage: game <appid or game name> - Returns basic app info such as price and name'
+          message: 'Usage: app <appid or game name> - Returns basic info for any valid app'
         });
 
       Steam.getAppInfo(input).then(resp => {
@@ -91,8 +113,8 @@ var generateProfileResponse = (profile => {
     }
 });
 
-var generateAppDetailsResponse = (app => {
-    if (app && app.type == 'game') {
+var generateAppDetailsResponse = ((app, gamesOnly) => {
+    if (app && !gamesOnly || (gamesOnly && app.type == 'game')) {
         let price = getPriceForApp(app);
 
         let out = {
@@ -123,7 +145,7 @@ var generateAppDetailsResponse = (app => {
         };
         return out;
     } else {
-        return `Error: App: _${app.name}_ isn't a valid game`;
+        return `Error: App: _${app.name}_ _(${app.steam_appid})_ isn't a valid game`;
     }
 });
 
@@ -167,4 +189,3 @@ var formatPlaytime = (time => {
     else
         return Math.floor(time / 60) + ' hours';
 });
-
