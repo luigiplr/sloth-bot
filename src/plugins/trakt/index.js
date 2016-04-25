@@ -4,9 +4,13 @@ import Trakt from 'trakt.tv'
 import config from '../../../config.json';
 import moment from 'moment';
 
-const trakt = new Trakt({
-  client_id: config.traktApiKey
-})
+var trakt;
+if (config.traktApiKey) {
+  trakt = new Trakt({
+    client_id: config.traktApiKey
+  })
+} else console.error("Error: Trakt Plugin requires traktApiKey")
+
 
 module.exports = {
   commands: [{
@@ -28,6 +32,7 @@ module.exports = {
   }],
   searchMovies(user, channel, input) {
     return new Promise((resolve, reject) => {
+      if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
       if (!input)
         return resolve({
           type: 'dm',
@@ -39,6 +44,7 @@ module.exports = {
   },
   searchShows(user, channel, input) {
     return new Promise((resolve, reject) => {
+      if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
       if (!input)
         return resolve({
           type: 'dm',
