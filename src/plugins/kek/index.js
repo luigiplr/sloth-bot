@@ -8,12 +8,12 @@ var lastCheck;
 
 module.exports = {
   commands: [{
-    alias: ['howmanysubshavethefinebroslost'],
+    alias: ['finebros', 'howmanysubshavethefinebroslost'],
     command: 'topkek'
   }],
   help: [{
-    command: ['howmanysubshavethefinebroslost'],
-    usage: 'howmanysubshavethefinebroslost'
+    command: ['finebros'],
+    usage: "finebros - returns how many subs they've lost"
   }],
   topkek() {
     return new Promise((resolve, reject) => {
@@ -41,4 +41,3 @@ module.exports = {
 function addStupidCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-

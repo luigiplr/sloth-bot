@@ -11,10 +11,10 @@ module.exports = {
     command: 'bonjourmonsieur'
   }],
   help: [{
-    command: ['hellolady', 'bonjourmadame'],
+    command: ['hellolady'],
     usage: 'hellolady [void, \'today\', <MM.DD.YYYY>]'
   }, {
-    command: ['hellosir', 'bonjourmonsieur'],
+    command: ['hellosir'],
     usage: 'hellosir [void, \'today\']'
   }],
   bonjourmadame(user, channel, input) {
@@ -96,4 +96,3 @@ module.exports = {
     });
   }
 };
-

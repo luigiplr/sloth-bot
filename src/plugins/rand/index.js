@@ -11,12 +11,12 @@ const messages = [
 
 module.exports = {
   commands: [{
-    alias: ['rand', 'random', 'randomize'],
+    alias: ['rand', 'random'],
     command: 'rand'
   }],
   help: [{
-    command: ['rand', 'random', 'randomize'],
-    usage: 'rand <A-B> - A and B can be chars, integers or floats separated by any character'
+    command: ['rand', 'random'],
+    usage: 'rand <A-B> - AB can be chars, ints or floats separated by any character'
   }],
   rand(user, channel, input) {
     return new Promise(resolve => {
@@ -59,4 +59,3 @@ module.exports = {
     });
   }
 };
-

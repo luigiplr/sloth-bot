@@ -13,7 +13,7 @@ module.exports = {
     command: 'listCommits'
   }],
   help: [{
-    command: ['nc', 'commits', 'naughtycommits'],
+    command: ['nc', 'commits'],
     usage: 'commits <user>'
   }, {
     command: ['fetchcommits'],
@@ -67,4 +67,3 @@ module.exports = {
 var generateCommitResponse = (commit => {
   return ('(_' + commit.repo + ')_: *' + commit.message + '* - (' + commit.url.slice(8, -33) + ')');
 });
-

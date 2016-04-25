@@ -153,4 +153,3 @@ process.on('rejectionHandled', err => {
 });
 
 slackClient.login();
-

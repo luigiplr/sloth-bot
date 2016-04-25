@@ -53,11 +53,11 @@ module.exports = {
     command: ['set'],
     usage: 'set <username> <level> - set users permissions level'
   }, {
-    command: ['ignore'],
-    usage: 'ignore <username> - have bot ignore all commands from a user'
+    command: ['mute'],
+    usage: 'mute <username> - prevents the user from sending messages'
   }, {
-    command: ['unignore'],
-    usage: 'unignore <username> - unignores a user'
+    command: ['unmute'],
+    usage: 'unmute <username> - unmutes a user'
   }, {
     command: ['ignore'],
     usage: 'ignore <username> - have bot ignore all commands from a user'
@@ -78,7 +78,7 @@ module.exports = {
     usage: 'muted - lists muted users'
   }, {
     command: ['permaignore'],
-    usage: 'permaignore <username> - have the bot permanently ignore all commands from user'
+    usage: 'permaignore <username> - have the bot perma ignore all commands from user'
   }],
   admins() {
     return new Promise(resolve => {
@@ -190,4 +190,3 @@ module.exports = {
     });
   }
 };
-

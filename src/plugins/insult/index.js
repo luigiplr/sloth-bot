@@ -7,14 +7,14 @@ module.exports = {
     alias: ['insult'],
     command: 'insult'
   }, {
-    alias: ['sinsult', 'oldinsult', 'shakespeareinsult'],
+    alias: ['sinsult', 'shakespeareinsult'],
     command: 'oldinsult'
   }],
   help: [{
     command: ['insult'],
     usage: 'insult <person>'
   }, {
-    command: ['sinsult', 'oldinsult', 'shakespeareinsult'],
+    command: ['shakespeareinsult'],
     usage: 'sinsult <person>'
   }],
   insult(user, channel, input) {
@@ -56,4 +56,3 @@ module.exports = {
     });
   }
 };
-

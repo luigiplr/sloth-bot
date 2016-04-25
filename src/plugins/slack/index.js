@@ -4,64 +4,70 @@ import slackTools from '../../slack.js';
 
 module.exports = {
   commands: [{
-    alias: ['kick'],
-    userLevel: ['admin', 'superadmin'],
-    command: 'kick'
-  }, {
-    alias: ['invite'],
-    command: 'invite'
-  }, {
-    alias: ['channelid', 'cid'],
-    command: 'channelid'
-  }, {
-    alias: ['userid', 'uid'],
-    command: 'userid'
-  }, {
-    alias: ['dellast', 'deletelastmessage'],
-    command: 'deleteLastMessage'
-  }, {
-    alias: ['disableuser'],
-    userLevel: ['superadmin'],
-    command: 'disableUser'
-  }, {
-    alias: ['enableuser'],
-    userLevel: ['superadmin'],
-    command: 'enableUser'
-  }, {
-    alias: ['alm', 'addloadingmessage'],
-    command: 'addLoadingMessage'
-  }, {
-    alias: ['rlm', 'removeloadingmessage'],
-    command: 'removeLoadingMessage'
-  }],
+      alias: ['kick'],
+      userLevel: ['admin', 'superadmin'],
+      command: 'kick'
+    }, {
+      alias: ['invite'],
+      command: 'invite'
+    }, {
+      alias: ['channelid', 'cid'],
+      command: 'channelid'
+    }, {
+      alias: ['userid', 'uid'],
+      command: 'userid'
+    }, {
+      alias: ['dellast'],
+      command: 'deleteLastMessage'
+    }
+    /*, {
+        alias: ['disableuser'],
+        userLevel: ['superadmin'],
+        command: 'disableUser'
+      }, {
+        alias: ['enableuser'],
+        userLevel: ['superadmin'],
+        command: 'enableUser'
+      }*/
+    , {
+      alias: ['alm', 'addloadingmessage'],
+      command: 'addLoadingMessage'
+    }, {
+      alias: ['rlm', 'removeloadingmessage'],
+      command: 'removeLoadingMessage'
+    }
+  ],
   help: [{
-    command: ['kick'],
-    usage: 'kick <username> <reason (optional)>'
-  }, {
-    command: ['invite'],
-    usage: 'invite <email>'
-  }, {
-    command: ['channelid'],
-    usage: 'channelid - returns ChannelID for current channel'
-  }, {
-    command: ['userid'],
-    usage: 'userid <user> - returns UserID for user'
-  }, {
-    command: ['dellast', 'deletelastmessage'],
-    usage: 'dellast - deletes the last message from the bot'
-  }, {
-    command: ['disableuser'],
-    usage: 'disableuser <user> - Disables the users slack account for the team'
-  }, {
-    command: ['enableuser'],
-    usage: 'enableuser <user> - Enables the users slack account if they have been disabled'
-  }, {
-    command: ['alm', 'addloadingmessage'],
-    usage: 'alm <message> - Adds a slack loading message to the team'
-  }, {
-    command: ['rlm', 'removeloadingmessage'],
-    usage: 'rlm <id> - Remove a slack loading message from the team'
-  }],
+      command: ['kick'],
+      usage: 'kick <username> <reason (optional)>'
+    }, {
+      command: ['invite'],
+      usage: 'invite <email>'
+    }, {
+      command: ['channelid'],
+      usage: 'channelid - returns ChannelID for current channel'
+    }, {
+      command: ['userid'],
+      usage: 'userid <user> - returns UserID for user'
+    }, {
+      command: ['dellast'],
+      usage: 'dellast - deletes the last message from the bot'
+    }
+    /*, {
+        command: ['disableuser'],
+        usage: 'disableuser <user> - disables a users slack account'
+      }, {
+        command: ['enableuser'],
+        usage: 'enableuser <user> - enables a disabled slack account'
+      }*/
+    , {
+      command: ['addloadingmessage'],
+      usage: 'alm <message> - Adds a slack loading message to the team'
+    }, {
+      command: ['removeloadingmessage'],
+      usage: 'rlm <id> - Remove a slack loading message from the team'
+    }
+  ],
   kick(user, channel, input = false) {
     return new Promise((resolve, reject) => {
       if (!input)
@@ -144,7 +150,7 @@ module.exports = {
                       message: `Sucessfully disabled ${input}'s account`
                   });
               }).catch(reject);
-          }).catch(reject);  
+          }).catch(reject);
       })
   },
   enableUser(user, channel, input) {
@@ -159,7 +165,7 @@ module.exports = {
                       message: `Sucessfully enabled ${input}'s account`
                   });
               }).catch(reject);
-          }).catch(reject);  
+          }).catch(reject);
       })
   },*/
   addLoadingMessage(user, channel, input) {
@@ -195,4 +201,3 @@ module.exports = {
     })
   }
 };
-
