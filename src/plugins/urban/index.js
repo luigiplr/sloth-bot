@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import urban from 'urban';
+import Urban from 'urban';
 import Promise from 'bluebird';
 
 module.exports = {
@@ -12,10 +12,10 @@ module.exports = {
   }],
   help: [{
     command: ['urban'],
-    usage: 'urban <word>'
+    usage: 'urban <word> - returns urban definition for word'
   }, {
     command: ['ru', 'randomurban'],
-    usage: 'randomurban'
+    usage: 'randomurban - returns random urban'
   }],
   urbandictionary(user, channel, input) {
     return new Promise((resolve, reject) => {
@@ -24,31 +24,24 @@ module.exports = {
           type: 'channel',
           message: 'Specify a word pls'
         });
-      try {
-        new urban(input).first((definition) => {
-          resolve({
-            type: 'channel',
-            message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
-          });
+      new Urban(input).first((definition) => {
+        if (!definition)
+          return reject("No results")
+        resolve({
+          type: 'channel',
+          message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
         });
-      } catch (e) {
-        reject(e);
-      }
+      });
     });
   },
   randomurban() {
-    return new Promise((resolve, reject) => {
-      try {
-        new urban.random().first((definition) => {
-          resolve({
-            type: 'channel',
-            message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
-          });
+    return new Promise(resolve => {
+      new Urban.random().first((definition) => {
+        resolve({
+          type: 'channel',
+          message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
         });
-      } catch (e) {
-        reject(e);
-      }
+      });
     });
   }
 };
-
