@@ -15,6 +15,9 @@ module.exports = {
   }, {
     alias: ['app'],
     command: 'app'
+  }, {
+    alias: ['sid', 'steamid'],
+    command: 'steamid'
   }],
   help: [{
     command: ['sp', 'steamprofile'],
@@ -28,6 +31,9 @@ module.exports = {
   }, {
     command: ['app'],
     usage: 'app <appid or game name> - returns steam app info'
+  }, {
+    command: ['sid', 'steamid'],
+    usage: 'steamid <steamid> - returns steamid info'
   }],
   steamProfile(user, channel, input) {
     return new Promise((resolve, reject) => {
@@ -93,6 +99,16 @@ module.exports = {
         });
       }).catch(reject);
     });
+  },
+  steamid(user, channel, input) {
+    return new Promise((resolve, reject) => {
+      Steam.getSteamIDInfo(input).then(res => {
+        return resolve({
+          type: 'channel',
+          message: res
+        })
+      }).catch(reject)
+    })
   }
 };
 

@@ -294,5 +294,33 @@ module.exports = {
         }).catch(reject);
       }
     });
+  },
+  getSteamIDInfo(id) {
+    return new Promise((resolve, reject) => {
+      formatProfileID(id).then(newID => {
+        let sid = new SteamID(newID);
+        let i, details = [];
+        for (i in SteamID.Universe) {
+          if (sid.universe == SteamID.Universe[i]) {
+            details.push(`*Universe:* ${_.capitalize(i.toLowerCase())} (${sid.universe})`);
+            break;
+          }
+        }
+        for (i in SteamID.Type) {
+          if (sid.type == SteamID.Type[i]) {
+            details.push(`*Type:* ${i.split('_').map(j => _.capitalize(j.toLowerCase())).join(' ')} (${sid.type})`);
+            break;
+          }
+        }
+        for (i in SteamID.Instance) {
+          if (sid.instance == SteamID.Instance[i]) {
+            details.push(`*Instance:* ${_.capitalize(i.toLowerCase())} (${sid.instance})`);
+            break;
+          }
+        }
+        let msg = `${sid.getSteam3RenderedID()} ${sid.type == SteamID.Type.INDIVIDUAL ? '/' + sid.getSteam2RenderedID() : ''} / ${sid.getSteamID64()} \n *Valid:* ${sid.isValid() ? 'True' : 'False'}, ${details.join(', ')}, *AccountID* ${sid.accountid}`;
+        return resolve(msg)
+      }).catch(reject)
+    });
   }
 };
