@@ -1,11 +1,16 @@
 import Promise from 'bluebird';
 import google from 'google';
-import YouTube from 'youtube-node';
+import ytSearch from 'youtube-search';
 import needle from 'needle';
 import config from '../../../config.json'
 
-const youTube = new YouTube();
-youTube.setKey(config.googleToken);
+const ytOpts = {
+  maxResults: 1,
+  key: config.googleToken,
+  type: 'video',
+  videoEmbeddable: true,
+  safeSearch: 'none'
+}
 
 module.exports = {
   commands: [{
@@ -101,36 +106,15 @@ module.exports = {
       if (!config.googleToken)
         return reject("Error: Google APIKey required to use this function");
 
-      youTube.search(input, 1, (error, result) => {
-        if (error || !result.items[0].snippet)
+      ytSearch(input, ytOpts, (err, resp) => {
+        if (err) return reject(err)
+        if (resp.length) {
           return resolve({
             type: 'channel',
-            message: 'No results found'
-          });
-
-        var url = 'http://youtu.be/' + result.items[0].id.videoId,
-          //description = result.items[0].snippet.description,
-          title = result.items[0].snippet.title;
-
-        youTube.getById(result.items[0].id.videoId, (error, singleresult) => {
-          if (error) {
-            resolve(error);
-          } else {
-            var views = singleresult.items[0].statistics.viewCount,
-              likes = singleresult.items[0].statistics.likeCount,
-              dislikes = singleresult.items[0].statistics.dislikeCount,
-              //quality = singleresult.items[0].contentDetails.definition,
-              percent = 0,
-              channel = singleresult.items[0].snippet.channelTitle,
-              length = singleresult.items[0].contentDetails.duration;
-            return resolve({
-              type: 'channel',
-              message: error ? error : title + ' - length: ' + length + ' - ' + likes + ' like(s),' + dislikes + ' dislike(s) ' + percent + ' - ' + views + ' view(s) ' + channel + ' - ' + url
-            });
-          }
-        }).catch(reject);
-      }).catch(reject);
+            message: `https://youtu.be/${resp[0].id}`
+          })
+        } else return reject("No results found")
+      })
     });
   }
 };
-
