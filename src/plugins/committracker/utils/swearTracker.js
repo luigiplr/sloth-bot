@@ -115,7 +115,7 @@ const saveToDB = (swears => {
       if (swears)
         return resolve(`Found ${swears.length} swears`);
       else
-        return reject("Found no swears _.assign(in recen, :/");
+        return reject("Found no swears in recent commits :/");
     })
   });
 })
