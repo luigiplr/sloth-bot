@@ -28,7 +28,7 @@ module.exports = {
     usage: 'movie <name> - fetches info for a movie'
   }, {
     command: ['show', 'tvshow'],
-    usage: 'players <appid or game name> - returns players for steam app'
+    usage: 'show <name> - fetches info for a show'
   }],
   searchMovies(user, channel, input) {
     return new Promise((resolve, reject) => {
