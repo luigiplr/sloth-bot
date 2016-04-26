@@ -49,7 +49,7 @@ module.exports = {
             else if (message.user === user)
               i++;
           })
-          .pluck('text')
+          .map('text')
           .value()[0];
 
         if (!uID)

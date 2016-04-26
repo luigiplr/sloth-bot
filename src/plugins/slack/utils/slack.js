@@ -37,7 +37,7 @@ export function deleteLastMessage(channel, messagets) {
         .filter(message => {
           return message.user === config.botid;
         })
-        .pluck('ts')
+        .map('ts')
         .value()[0]
 
       if (!ts) return resolve(false);
@@ -47,4 +47,3 @@ export function deleteLastMessage(channel, messagets) {
     }).catch(reject);
   })
 }
-

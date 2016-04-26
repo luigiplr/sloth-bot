@@ -15,7 +15,7 @@ const retrievePlugins = () => {
       })
       if (plugin.pages)
         _.forEach(plugin.pages, page => {
-          let newPage = _.extend(page, ({ dir }))
+          let newPage = _.assignIn(page, ({ dir }))
           pages[page.url] = newPage
           if (page.index)
             routes[page.url] = {

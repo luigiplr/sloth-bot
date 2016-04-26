@@ -132,7 +132,7 @@ const getAppsByFullText = (appName => {
     updateAppList(hasApplist).then(() => {
       let matchedAppIds = fullTextAppList.search(appName).slice(0, 4).map((app) => app.ref);
       let apps = appList.apps.filter(function(game) {
-        return _.contains(matchedAppIds, game.appid);
+        return _.includes(matchedAppIds, game.appid);
       });
       if (apps.length)
         resolve(apps.length > 1 ? apps : apps[0]);
@@ -291,4 +291,3 @@ module.exports = {
     });
   }
 };
-
