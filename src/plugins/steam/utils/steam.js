@@ -135,8 +135,6 @@ const getAppsByFullText = (appName => {
     if (appName.charAt(appName.length - 1) == '$') type = type + 2;
     let input = type == 0 ? appName : (type == 1 ? appName.slice(1) : (type == 2 ? appName.slice(0, -1) : appName.slice(1, -1)))
 
-    console.log(appName, input, type)
-
     let hasApplist = (!!appList && !!appList.apps && !!fullTextAppList);
     updateAppList(hasApplist).then(() => {
       let matchedAppIds = fullTextAppList.search(input).slice(0, 4).map((app) => app.ref);
@@ -144,7 +142,7 @@ const getAppsByFullText = (appName => {
         return _.contains(matchedAppIds, game.appid);
       });
       if (apps.length)
-        resolve(apps.length > 1 ? apps : apps[0]);
+        resolve(apps.length > 1 ? apps : [apps[0]]);
       else
         reject("Couldn't find a game with that name");
     }).catch(reject);
@@ -158,7 +156,7 @@ const findValidAppInApps = ((apps, gamesOnly) => {
       getAppDetails(appID.appid)
         .then(app => {
           //console.log(app.type, app.name);
-          if (!gamesOnly || (gamesOnly && app.type === 'game')) {
+          if (!gamesOnly || (gamesOnly && app.type == 'game')) {
             valid = true;
             resolve(app);
           }
@@ -179,11 +177,7 @@ const findValidAppInApps = ((apps, gamesOnly) => {
       reject("Couldn't find a valid game with that name, try refining your search");
     };
 
-    checkRegex(apps).then(nApps => {
-      _.forEach(nApps, app => {
-        CheckQueue.push(app);
-      });
-    })
+    checkRegex(apps).then(nApps => _.forEach(nApps, app => CheckQueue.push(app)))
   });
 });
 
