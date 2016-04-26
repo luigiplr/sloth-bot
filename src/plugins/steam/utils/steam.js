@@ -142,7 +142,7 @@ const getAppsByFullText = (appName => {
         return _.contains(matchedAppIds, game.appid);
       });
       if (apps.length)
-        resolve(apps.length > 1 ? apps : [apps[0]]);
+        resolve(apps);
       else
         reject("Couldn't find a game with that name");
     }).catch(reject);
