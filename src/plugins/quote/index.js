@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import slack from './utils/slack';
+import slack from './utils/quote';
 
 export const plugin_info = [{
   alias: ['grab'],
@@ -72,4 +72,3 @@ export function quotes(user, channel, input) {
       .catch(reject);
   });
 }
-

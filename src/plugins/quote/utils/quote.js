@@ -3,27 +3,25 @@ import Promise from 'bluebird';
 import moment from 'moment';
 import uuid from 'node-uuid';
 import slackTools from '../../../slack.js';
-import database from '../../../database';
-
+import { Quotes } from '../../../database';
 var config = require('../../../../config.json');
+import { getHistory, findUser } from '../../../slack.js'
 
 module.exports = {
   quote(user, quotenum = 0) {
     return new Promise((resolve, reject) => {
-      database.get('quotes', {
-        key: 'user',
-        value: user
-      }).then(quotes => {
+      Quotes.findByQuotedUser(user).then(quotes => {
+        console.log(quotes);
         if (quotenum === 'all') {
           var total = ['<' + user + '> Quotes (' + quotes.length + ') :'];
           quotes.forEach((quotenums, i) => {
-            total.push(this.urlify('[' + i + '] (' + moment(quotenums.date).format("DD-MM-YYYY") + ') ' + quotenums.quote));
+            total.push(this.urlify('[' + i + '] (' + moment(quotenums.date).format("DD-MM-YYYY") + ') ' + quotenums.message));
           });
           return resolve(total);
         } else {
           let quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum);
           if (quotes[quoteindex]) {
-            let returnstuff = '<' + user + '> ' + quotes[quoteindex].quote;
+            let returnstuff = '<' + user + '> ' + quotes[quoteindex].message;
             return resolve(this.urlify(returnstuff));
           } else {
             if (quotes.length > 0)
@@ -33,16 +31,13 @@ module.exports = {
           }
         }
       }).catch(err => {
-        if (err === 'NOCOLLECTION')
-          reject("Error: No Collection - DB doesn't exist!");
-        else
           reject(err);
       });
     });
   },
   grabQuote(grabee, channel, index = 0, grabber) {
     return new Promise((resolve, reject) => {
-      Promise.join(slackTools.getHistory(channel.id), slackTools.findUser(grabee), (messages, user) => {
+      Promise.join(getHistory(channel.id), findUser(grabee), (messages, user) => {
         let i = 0;
         if (grabber.id == user)
           index++;
@@ -60,12 +55,12 @@ module.exports = {
         if (!uID)
           return reject("Something went wrong");
 
-        database.save('quotes', {
-          user: grabee.toString().toLowerCase(),
-          quote: uID.toString(),
-          date: moment(),
-          id: uuid.v1()
-        }).then(() => {
+        var dbQuote = new Quotes();
+        dbQuote.quotedUser = grabee.toString().toLowerCase();
+        dbQuote.message = uID.toString();
+        dbQuote.grabUser = grabber.name;
+        dbQuote.date = moment().utc().format();
+        dbQuote.Persist().then(() => {
           resolve("Successfully grabed a quote for " + grabee);
         });
       }).catch(reject);
@@ -88,4 +83,3 @@ module.exports = {
     return retVal;
   }
 };
-

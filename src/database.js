@@ -1,8 +1,9 @@
 import path from 'path';
 import fs from 'fs-extra';
 import Promise from 'bluebird';
-import loki from 'lokijs';
+import CRUD from 'createreadupdatedelete.js';
 
+const dbname = 'database.sqlite'
 const fileExists = filePath => {
   try {
     return fs.statSync(filePath).isFile();
@@ -12,70 +13,59 @@ const fileExists = filePath => {
 };
 
 const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot');
-const dbFile = path.join(dbDir, 'database.json');
-
+const dbFile = path.join(dbDir, 'database.sqlite');
 
 if (!fs.existsSync(dbDir))
   fs.mkdirSync(dbDir);
 
-if (!fileExists(path.join(dbDir, 'database.json')))
-  fs.writeFileSync(path.join(dbDir, 'database.json'), '');
-
-const getFormattedDate = () => {
-  var date = new Date();
-  var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "-" + date.getHours() + "-" + date.getMinutes() + '-' + date.getSeconds();
-
-  return str;
-};
-
-class Database {
-  constructor() {
-    this.db = new loki(dbFile, {
-      autoload: true,
-      autosave: true
-    });
-  }
-
-  save(Collection, data, opts) {
-    if (this.db.getCollection(Collection) === null) {
-      let newCol = opts ? this.db.addCollection(Collection, { indices: [opts.index] }) : this.db.addCollection(Collection);
-      if (opts && opts.ensureUnique)
-        newCol.ensureUniqueIndex(opts.index);
-    }
-
-    try {
-      fs.copySync(dbFile, path.join(dbDir, 'db-backup-' + getFormattedDate() + '.json'));
-    } catch (err) {
-      console.log(err);
-    }
-
-    Collection = this.db.getCollection(Collection);
-    return new Promise((resolve, reject) => {
-      try {
-        Collection.insert(data);
-        this.db.saveDatabase();
-        resolve(true);
-      } catch (e) {
-        reject(e);
-      }
-
-    });
-  }
-
-  get(Collection, data) {
-    Collection = this.db.getCollection(Collection);
-    return new Promise((resolve, reject) => {
-      if (Collection === null)
-        return reject('NOCOLLECTION');
-
-      let result = Collection.where(obj => {
-        return data.value === obj[data.key];
-      });
-
-      resolve(result);
-    });
-  }
+function SwearUsers() {
+  CRUD.Entity.call(this);
 }
 
-module.exports = new Database();
+CRUD.define(SwearUsers, {
+  table: 'SwearUser',
+  primary: 'swearUserId',
+  fields: ['swearUserId', 'user', 'lastUpdated'],
+  createStatement: 'CREATE TABLE SwearUser (swearUserId INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) NOT NULL, lastUpdated DATETIME)'
+});
 
+function SwearCommits() {
+    CRUD.Entity.call(this);
+}
+
+CRUD.define(SwearCommits, {
+  table: 'SwearCommit',
+  primary: 'swearCommitId',
+  fields: [
+    'swearCommitId',
+    'message',
+    'url',
+    'sha',
+    'user',
+    'repo'
+  ],
+  createStatement: 'CREATE TABLE SwearCommit (swearCommitId INTEGER PRIMARY KEY NOT NULL, message VARCHAR(1024) NOT NULL, url VARCHAR(512) NOT NULL, sha VARCHAR(128), user VARCHAR(256) NOT NULL, repo VARCHAR(256) NOT NULL)',
+});
+
+function Quotes() {
+  CRUD.Entity.call(this);
+}
+
+CRUD.define(Quotes, {
+  table: 'Quote', // Database table this entity is bound to
+  primary: 'quoteId', // Primary key. Make sure to use uniquely named keys, don't use 'id' on every table and refer to 'id_something'
+  fields: [ // List all individual properties including primary key. Accessors will be auto-created (but can be overwritten)
+    'quoteId',
+    'quotedUser',
+    'message',
+    'grabUser',
+    'date'
+  ],
+  createStatement: 'CREATE TABLE Quote (quoteId INTEGER PRIMARY KEY NOT NULL, quotedUser VARCHAR(128) NOT NULL, message VARCHAR(4000) NOT NULL, grabUser VARCHAR(128), date DATETIME)',
+});
+
+CRUD.setAdapter(new CRUD.SQLiteAdapter(dbFile, {
+  estimatedSize: 25 * 1024 * 1024
+}));
+
+module.exports = { Quotes, SwearCommits, SwearUsers };

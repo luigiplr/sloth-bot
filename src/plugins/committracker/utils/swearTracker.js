@@ -2,9 +2,8 @@ import Promise from 'bluebird'
 import _ from 'lodash'
 import needle from 'needle'
 import async from 'async'
-import database from '../../../database'
+import { SwearCommits, SwearUsers } from '../../../database'
 import config from '../../../../config.json'
-
 const word_list = ["fuk", "fuck", "bitch", "shit", "tits", "asshole", "arsehole", "cocksucker", "cunt", "douche", "testicle", "twat", "bastard", "sperm", "shit", "dildo", "wanker", "prick", "penis", "vagina", "whore", "boner"]
 const githubAuthentication = { headers: { 'Authorization': 'Basic ' + new Buffer(config.githubToken).toString('base64') } }
 
@@ -100,12 +99,25 @@ const formatRepos = (repos => {
 const saveToDB = (swears => {
   return new Promise((resolve, reject) => {
     updating = false
-    database.save('swearusers', { user: username, lastUpdated: Math.round(new Date().getTime() / 1000) });
+    var swearUser = new SwearUsers();
+    swearUser.user = username;
+    swearUser.lastUpdated = Math.round(new Date().getTime() / 1000);
+    let promises = [];
+    promises.push(swearUser.Persist());
     if (swears) {
-      database.save('swearcommits', swears, { index: 'sha', ensureUnique: true }).catch(err => console.log("Commit already saved", err));
-      return resolve(`Found ${swears.length} swears`)
-    } else return reject("Found no swears in recent commits :/")
-  })
+      promises.push.apply(promises, swears.map(swear => {
+        var commit = new SwearCommits();
+        _.assign(commit, swear);
+        return commit.Persist();
+      }));
+    }
+    return Promise.all(promises).then(() => {
+      if (swears)
+        return resolve(`Found ${swears.length} swears`);
+      else
+        return reject("Found no swears _.assign(in recen, :/");
+    })
+  });
 })
 
 // Start da lulz
@@ -126,7 +138,7 @@ const updateSwears = (() => {
 })
 
 const fetchSwears = (() => {
-  return new Promise((resolve, reject) => database.get('swearcommits', { key: 'user', value: username }).then(commits => {
+  return new Promise((resolve, reject) => SwearCommits.findByUser(username).then(commits => {
     if (commits[0]) resolve(commits)
     else reject("I don't have commits for this user, you can fetch some with " + config.prefix + "fetchcommits <user>")
   }).catch(() => {
@@ -135,7 +147,7 @@ const fetchSwears = (() => {
 })
 
 const checkIfWeCanUpdate = (() => {
-  return new Promise(resolve => database.get('swearusers', { key: 'user', value: username }).then(user => {
+  return new Promise(resolve => SwearUsers.findByUser(username).then(user => {
     if (user[0])
       if (user[0].lastUpdated + -1 < Math.round(new Date().getTime() / 1000)) resolve(true)
       else resolve(false)
@@ -173,4 +185,3 @@ export function updateSwearCommits(user, channel, input) {
     })
   })
 }
-
