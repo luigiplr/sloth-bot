@@ -10,6 +10,7 @@ const getUserLevel = user => {
   else
     return 'user'
 }
+
 const setPermission = (user, channel, input, ts, plugin, adminLevel, action) => {
   return new Promise((resolve, reject) => permsUtil.doTheThing(input, action, adminLevel)
     .then(resp => resolve({ type: 'channel', message: resp }))
