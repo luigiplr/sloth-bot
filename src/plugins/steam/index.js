@@ -115,11 +115,11 @@ module.exports = {
 var generateProfileResponse = (profile => {
       if (profile && profile.communityvisibilitystate !== 1) {
         let msg = [
-            `*Profile Name:* ${profile.personaname} ${profile.realname ? `(${profile.realname})` : ''}`,
-            `*Level:* ${profile.user_level} | *Status:* ${profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)}`,
-            `*Joined Steam:* ${moment(profile.timecreated * 1000).format("dddd, Do MMM YYYY")}`,
+            `*Profile Name:* ${profile.personaname} ${profile.realname ? `_(${profile.realname})_` : ''}`,
+            `*Level:* ${profile.user_level} | *Status:* ${profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} _(${profile.gameid})_` : getPersonaState(profile.personastate)}`,
+            `*Joined Steam:* ${moment(profile.timecreated * 1000).format("dddd, Do MMMM, YYYY")}`,
             `*Total Games:* ${profile.totalgames} | *Most Played:* ${profile.mostplayed.name} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
-            profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : `` : ``
+            profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ${profile.bans.NumberOfVACBans > 1 ? 'bans' : 'ban'} on record!*` : `` : ``
         ];
         return(msg.filter(Boolean));
     } else if (profile && profile.communityvisibilitystate == 1) {
@@ -134,7 +134,7 @@ var generateAppDetailsResponse = ((app, gamesOnly) => {
         let price = getPriceForApp(app);
 
         let out = {
-            msg: `<http://store.steampowered.com/app/${app.steam_appid}|${app.name}> (${app.steam_appid})`,
+            msg: `<http://store.steampowered.com/app/${app.steam_appid}|${app.name}> _(${app.steam_appid})_`,
             attachments: [{
                 "fallback": app.name + '(' + app.steam_appid + ')',
                 "image_url": app.header_image,
@@ -161,7 +161,7 @@ var generateAppDetailsResponse = ((app, gamesOnly) => {
         };
         return out;
     } else {
-        return `Error: App: _${app.name}_ _(${app.steam_appid})_ isn't a valid game`;
+        return `Error: App: ${app.name} _(${app.steam_appid})_ isn't a valid game`;
     }
 });
 
