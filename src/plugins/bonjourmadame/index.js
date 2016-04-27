@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
-import MetaInspector from 'node-metainspector';
-import moment from 'moment';
+import MetaInspector from 'node-metainspector'
+import moment from 'moment'
 
 export const plugin_info = [{
   alias: ['hellolady', 'bonjourmadame'],
@@ -32,7 +32,7 @@ export function bonjourmadame(user, channel, input) {
     else
       url = 'http://ditesbonjouralamadame.tumblr.com/random'
 
-    let client = new MetaInspector(url, { timeout: 5000 });
+    let client = new MetaInspector(url, { timeout: 5000 })
 
     client.on('fetch', () => (client.images && !client.images[0].match(/logo|avatar/i)) ?
       resolve({ type: 'channel', message: client.images[0] }) : reject('No picture found'))
@@ -48,19 +48,17 @@ export function bonjourmadame(user, channel, input) {
   });
 }
 
-
 export function bonjourmonsieur(user, channel, input) {
   return new Promise((resolve, reject) => {
     let url = (input == 'today') ? 'http://www.bonjourmonsieur.fr/' : 'http://www.bonjourmonsieur.fr/monsieur/random.html'
 
-    let client = new MetaInspector(url, { timeout: 5000 });
+    let client = new MetaInspector(url, { timeout: 5000 })
 
     client.on('fetch', () => (client.images && client.images[2].match(/uploads/i)) ?
       resolve({ type: 'channel', message: client.images[2] }) : reject('No picture found'))
 
     client.on('error', () => reject('Error loading page'))
 
-    client.fetch();
+    client.fetch()
   })
 }
-

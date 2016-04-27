@@ -1,40 +1,36 @@
-import Promise from 'bluebird';
-import needle from 'needle';
+import Promise from 'bluebird'
+import needle from 'needle'
+import config from '../../../config.json'
 
-const apiKey = require('./../../../config.json').googleToken;
-const subscriberUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=TheFineBros&fields=items/statistics/subscriberCount&key=${apiKey}`;
-const originalSubCount = 14080108;
-var lastCheck;
+const subscriberUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=TheFineBros&fields=items/statistics/subscriberCount&key=${config.googleToken}`
+const originalSubCount = 14080108
+var lastCheck
 
 export const plugin_info = [{
-  alias: ['howmanysubshavethefinebroslost'],
+  alias: ['finebros'],
   command: 'topkek',
-  usage: 'howmanysubshavethefinebroslost'
+  usage: 'finebros - shows how many subs the finebros have lost'
 }]
 
 export function topkek() {
   return new Promise((resolve, reject) => {
-    if (!apiKey)
-      return reject("Error: Google APIKey required to use this function");
+    if (!config.googleToken) return reject("Error: Google APIKey required to use this function")
 
     needle.get(subscriberUrl, (err, resp, body) => {
       if (!err && body) {
-        let subCount = body.items[0].statistics.subscriberCount;
-        let newCount = originalSubCount - subCount;
+        let subCount = body.items[0].statistics.subscriberCount
+        let newCount = originalSubCount - subCount
         resolve({
-          type: 'channel',
+          type: 'channel', // Sue me
           message: 'TheFineFags have lost about *' + addStupidCommas(newCount) + '* subscribers in total since their fuckup' + (newCount > lastCheck ? (' and have lost *' + addStupidCommas((newCount - lastCheck)) + '* more subscribers since I last checked') : newCount < lastCheck ? (' but have gained *' + addStupidCommas((lastCheck - newCount)) + '* since I last checked') : '')
         });
-        lastCheck = newCount;
-      } else {
-        reject(err);
-      }
-    });
-  });
+        lastCheck = newCount
+      } else return reject(err)
+    })
+  })
 }
 
 // Better source this shit before i get sued http://stackoverflow.com/a/2901298
-function addStupidCommas(x) {
+const addStupidCommas = x => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-

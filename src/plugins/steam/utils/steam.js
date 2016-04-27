@@ -21,7 +21,7 @@ const endpoints = {
   resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`
 };
 
-var appList, lastUpdated, fullTextAppList;
+var appList, lastUpdated, fullTextAppList, query, type;
 
 const getUrl = ((type, param) => {
   return endpoints[type].replace('%q%', param);
@@ -128,46 +128,35 @@ const updateAppList = (hasApplist => {
 
 const getAppsByFullText = (appName => {
   return new Promise((resolve, reject) => {
+    // Regex Stuff
+    query = appName;
+    type = 0;
+    if (appName.charAt(0) == '^') type++;
+    if (appName.charAt(appName.length - 1) == '$') type = type + 2;
+    let input = type == 0 ? appName : (type == 1 ? appName.slice(1) : (type == 2 ? appName.slice(0, -1) : appName.slice(1, -1)))
+
     let hasApplist = (!!appList && !!appList.apps && !!fullTextAppList);
     updateAppList(hasApplist).then(() => {
-      let matchedAppIds = fullTextAppList.search(appName).slice(0, 4).map((app) => app.ref);
+      let matchedAppIds = fullTextAppList.search(input).slice(0, 4).map((app) => app.ref);
       let apps = appList.apps.filter(function(game) {
         return _.includes(matchedAppIds, game.appid);
       });
       if (apps.length)
-        resolve(apps.length > 1 ? apps : apps[0]);
+        resolve(apps);
       else
         reject("Couldn't find a game with that name");
     }).catch(reject);
   });
 });
 
-const getAppsByName = (appName => {
-  return new Promise((resolve, reject) => {
-    let hasApplist = (!!appList && !!appList.apps);
-    updateAppList(hasApplist).then(() => {
-      let apps = appList.apps.filter(function(game) {
-        if (game.name.toUpperCase().replace('-', ' ').replace('™', '').replace('©', '').replace('®', '').indexOf(appName.toUpperCase().replace('-', ' ').replace('™', '').replace('©', '').replace('®', '')) >= 0)
-          return game;
-      });
-      if (apps[0] && apps.length >= 3)
-        resolve(apps.slice(0, 3));
-      else if (apps[0])
-        resolve([apps[0]]);
-      else
-        reject("Couldn't find a game with that name");
-    }).catch(reject);
-  });
-});
-
-const findValidAppInApps = (apps => {
+const findValidAppInApps = ((apps, gamesOnly) => {
   return new Promise((resolve, reject) => {
     let valid = false;
     const CheckQueue = async.queue((appID, next) => {
       getAppDetails(appID.appid)
         .then(app => {
           //console.log(app.type, app.name);
-          if (app.type === 'game') {
+          if (!gamesOnly || (gamesOnly && app.type == 'game')) {
             valid = true;
             resolve(app);
           }
@@ -188,11 +177,32 @@ const findValidAppInApps = (apps => {
       reject("Couldn't find a valid game with that name, try refining your search");
     };
 
-    _.forEach(apps, app => {
-      CheckQueue.push(app);
-    });
+    checkRegex(apps).then(nApps => _.forEach(nApps, app => CheckQueue.push(app)))
   });
 });
+
+const checkRegex = apps => {
+  return new Promise(resolve => {
+    if (!type) return resolve(apps)
+    let match = new RegExp(query, 'gi')
+    let matched = _.find(apps, app => {
+      return app.name.match(match) ? true : false
+    })
+    matched ? resolve(promote(apps, matched.appid, 'appid')) : resolve(apps)
+  })
+}
+
+// Function for moving an element in an array to front
+const promote = function(array, param, param2) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][param2] === param) {
+      let a = array.splice(i, 1);
+      array.unshift(a[0]);
+      return array;
+    }
+  }
+  return array;
+}
 
 const getPlayersForApp = (appid => {
   return new Promise((resolve, reject) => {
@@ -215,13 +225,9 @@ module.exports = {
         needle.get(getUrl('profileSummary', newID), (err, resp, body) => {
           if (!err && body) {
             let profile = body.response.players[0];
-            getUserLevel(newID).then(level => {
+            Promise.join(getUserLevel(newID), getUserBans(newID), getUserGames(newID), (level, bans, games) => {
               profile.user_level = level;
-            });
-            getUserBans(newID).then(bans => {
               profile.bans = bans;
-            });
-            getUserGames(newID).then(games => {
               let sortedGames = games.games.sort((a, b) => {
                 return b.playtime_forever - a.playtime_forever;
               });
@@ -244,7 +250,7 @@ module.exports = {
   getAppPlayers(appid) {
     return new Promise((resolve, reject) => {
       if (!appid.match(/^\d+$/)) {
-        getAppsByName(appid).then(apps => {
+        getAppsByFullText(appid).then(apps => {
           findValidAppInApps(apps).then(app => {
             getPlayersForApp(app.steam_appid).then(players => {
               players.name = app.name;
@@ -260,34 +266,63 @@ module.exports = {
       }
     });
   },
-  getAppInfo(appid) {
+  getAppInfo(appid, gamesOnly) {
     return new Promise((resolve, reject) => {
-      if (!appid.match(/^\d+$/)) {
-        let appsByName = getAppsByFullText(appid);
-        appsByName.then(apps => {
-          findValidAppInApps(apps).then(app => {
+      if (!appid.match(/^\d+$/)) { // Not an appid
+        getAppsByFullText(appid).then(apps => {
+          findValidAppInApps(apps, gamesOnly).then(app => {
             getPlayersForApp(app.steam_appid).then(players => {
               app.player_count = players.player_count;
               resolve(app);
             }).catch(err => {
               // If we can't fetch player counts just return anyway
-              console.log(err);
+              console.error(err);
               resolve(app);
             });
           }).catch(reject);
         }).catch(reject);
-      } else {
+      } else { //appid
         getAppDetails(appid).then(app => {
           getPlayersForApp(appid).then(players => {
             app.player_count = players.player_count;
             resolve(app);
           }).catch(err => {
             // If we can't fetch player counts just return anyway
-            console.log(err);
+            console.error(err);
             resolve(app);
           });
         }).catch(reject);
       }
+    });
+  },
+  getSteamIDInfo(id) {
+    // Credit to DoctorMcKays original code this is based off
+    // https://github.com/DoctorMcKay/steam-irc-bot/blob/master/irc-commands/steamid.js
+    return new Promise((resolve, reject) => {
+      formatProfileID(id).then(newID => {
+        let sid = new SteamID(newID);
+        let i, details = [];
+        for (i in SteamID.Universe) {
+          if (sid.universe == SteamID.Universe[i]) {
+            details.push(`*Universe:* ${_.capitalize(i.toLowerCase())} (${sid.universe})`);
+            break;
+          }
+        }
+        for (i in SteamID.Type) {
+          if (sid.type == SteamID.Type[i]) {
+            details.push(`*Type:* ${i.split('_').map(j => _.capitalize(j.toLowerCase())).join(' ')} (${sid.type})`);
+            break;
+          }
+        }
+        for (i in SteamID.Instance) {
+          if (sid.instance == SteamID.Instance[i]) {
+            details.push(`*Instance:* ${_.capitalize(i.toLowerCase())} (${sid.instance})`);
+            break;
+          }
+        }
+        let msg = `${sid.getSteam3RenderedID()} ${sid.type == SteamID.Type.INDIVIDUAL ? '/' + sid.getSteam2RenderedID() : ''} / ${sid.getSteamID64()} \n *Valid:* ${sid.isValid() ? 'True' : 'False'}, ${details.join(', ')}, *AccountID:* ${sid.accountid}`;
+        return resolve(msg)
+      }).catch(reject)
     });
   }
 };

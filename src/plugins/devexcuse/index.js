@@ -2,7 +2,7 @@ import Promise from 'bluebird'
 import devexcuses from 'developerexcuses'
 
 export const plugin_info = [{
-  alias: ['devexcuse', 'developerexcuse'],
+  alias: ['devexcuse'],
   command: 'devexcuse',
   usage: 'devexcuse - returns a dev excuse'
 }]

@@ -1,6 +1,6 @@
-import Promise from 'bluebird';
-import spinsult from 'shakespeare-insult';
-import normalinsult from 'insultgenerator';
+import Promise from 'bluebird'
+import spinsult from 'shakespeare-insult'
+import normalinsult from 'insultgenerator'
 
 export const plugin_info = [{
   alias: ['insult'],
@@ -12,43 +12,17 @@ export const plugin_info = [{
   usage: 'sinsult <person>'
 }]
 
-
 export function insult(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input)
-      return resolve({
-        type: 'channel',
-        message: 'Who am I insulting?'
-      });
+  return new Promise(resolve => {
+    if (!input) return resolve({ type: 'channel', message: 'Who am I insulting?' })
 
-    try {
-      new normalinsult((meanMessage) => {
-        resolve({
-          type: 'channel',
-          message: input + ': ' + meanMessage
-        });
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
+    new normalinsult((meanMessage) => resolve({ type: 'channel', message: `${input}: ${meanMessage}` }))
+  })
 }
 export function oldinsult(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input)
-      return resolve({
-        type: 'channel',
-        message: 'Who am I insulting?'
-      });
+  return new Promise(resolve => {
+    if (!input) return resolve({ type: 'channel', message: 'Who am I insulting?' })
 
-    try {
-      resolve({
-        type: 'channel',
-        message: '_' + input + " you're a " + spinsult.random() + '_'
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
+    return resolve({ type: 'channel', message: `_ ${input} you're a ${spinsult.random()}_` })
+  })
 }
-

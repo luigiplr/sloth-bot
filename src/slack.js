@@ -124,7 +124,7 @@ const deleteQueue = queue((task, cb) => {
     ts: task.ts
   }, (err, resp, { error }) => {
     if (err || error) console.error(`Error deleting message ${err || error}`)
-    _.delay(() => { cb() }, 800)
+    _.delay(() => { cb() }, 1000)
   })
 }, 4)
 
@@ -132,4 +132,3 @@ const _logErr = (type, err) => {
   console.error(type, ':', err)
   return `${type}: ${err}`
 }
-

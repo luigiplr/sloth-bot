@@ -1,15 +1,15 @@
-import Promise from 'bluebird';
-import permissions from '../../permissions';
-import permsUtil from './utils/permUtil';
+import Promise from 'bluebird'
+import permissions from '../../permissions'
+import permsUtil from './utils/permUtil'
 
 const getUserLevel = user => {
   if ((permissions.superadmins.indexOf(user) > -1))
-    return 'superadmin';
+    return 'superadmin'
   else if ((permissions.admins.indexOf(user) > -1))
-    return 'admin';
+    return 'admin'
   else
-    return 'user';
-};
+    return 'user'
+}
 
 export const plugin_info = [{
   alias: ['set'],
@@ -60,112 +60,61 @@ export const plugin_info = [{
 }]
 
 export function admins() {
-  return new Promise(resolve => {
-    resolve({
-      type: 'channel',
-      message: 'Admins: ' + permissions.admins.concat(permissions.superadmins).join(', ')
-    });
-  });
+  return new Promise(resolve => resolve({ type: 'channel', message: 'Admins: ' + permissions.admins.concat(permissions.superadmins).join(', ') }))
 }
+
 export function owners() {
-  return new Promise(resolve => {
-    resolve({
-      type: 'channel',
-      message: 'Owners: ' + permissions.superadmins.join(', ')
-    });
-  });
+  return new Promise(resolve => resolve({ type: 'channel', message: 'Owners: ' + permissions.superadmins.join(', ') }))
 }
+
 export function ignored() {
   return new Promise(resolve => {
-    let msg = permissions.allIgnored[0] ? (`Currently ignored: ${permissions.ignored[0] ? permissions.ignored.join(', ') + ',' : ''}${permissions.permaIgnored[0] ? ' *' + permissions.permaIgnored.join(', ') + '*' : ''}`) : null;
-    resolve({
-      type: 'channel',
-      message: msg || 'No ignored users'
-    });
-  });
+    let msg = permissions.allIgnored[0] ? (`Currently ignored: ${permissions.ignored[0] ? permissions.ignored.join(', ') + ',' : ''}${permissions.permaIgnored[0] ? ' *' + permissions.permaIgnored.join(', ') + '*' : ''}`) : null
+    return resolve({ type: 'channel', message: msg || 'No ignored users' })
+  })
 }
+
 export function muted() {
-  return new Promise(resolve => {
-    resolve({
-      type: 'channel',
-      message: permissions.muted[0] ? 'Currently muted: ' + permissions.muted.join(', ') : 'No muted users'
-    });
-  });
+  return new Promise(resolve => resolve({ type: 'channel', message: permissions.muted[0] ? 'Currently muted: ' + permissions.muted.join(', ') : 'No muted users' }))
 }
+
 export function unignore(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => {
-    permsUtil.doTheThing(input, 'unignore', adminLevel).then(resp => {
-      resolve({
-        type: 'channel',
-        message: resp
-      });
-    }).catch(reject);
-  });
+  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'unignore', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
 }
+
 export function ignore(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => {
-    permsUtil.doTheThing(input, 'ignore', adminLevel).then(resp => {
-      resolve({
-        type: 'channel',
-        message: resp
-      });
-    }).catch(reject);
-  });
+  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'ignore', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
 }
+
 export function unmute(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => {
-    permsUtil.doTheThing(input, 'unmute', adminLevel).then(resp => {
-      resolve({
-        type: 'channel',
-        message: resp
-      });
-    }).catch(reject);
-  });
+  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'ummute', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
 }
+
 export function mute(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => {
-    permsUtil.doTheThing(input, 'mute', adminLevel).then(resp => {
-      resolve({
-        type: 'channel',
-        message: resp
-      });
-    }).catch(reject);
-  });
+  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'mute', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
 }
+
 export function permaIgnore(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => {
-    permsUtil.doTheThing(input, 'permaignore', adminLevel).then(resp => {
-      resolve({
-        type: 'channel',
-        message: resp
-      });
-    }).catch(reject);
-  });
+  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'permaignore', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
 }
+
 export function set(admin, channel, input, ts, plugin, adminLevel) {
   return new Promise((resolve, reject) => {
-    if (!input)
-      return reject("Please specify a user");
+    if (!input) return reject("Please specify a user");
 
-    let user = input.split(' ')[0].toString().toLowerCase();
-    let userLevel = getUserLevel(user);
-    let level = input.split(' ')[1] ? input.split(' ')[1].toString().toLowerCase().replace(/[s]$/, '') : 'user';
+    let user = input.split(' ')[0].toLowerCase()
+    let userLevel = getUserLevel(user)
+    let level = input.split(' ')[1] ? input.split(' ')[1].toLowerCase().replace(/[s]$/, '') : 'user'
     let levels = ((adminLevel === 'superadmin' && userLevel === 'superadmin')) ? -1 :
       (adminLevel === 'admin' && userLevel === 'admin') ? -1 :
-      (adminLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin'];
+      (adminLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin']
 
     if (user) {
-      if (levels == -1)
-        return reject("You cannot change the level of yourself or other admins");
+      if (levels == -1) return reject("You cannot change the level of yourself or other admins")
       else if (levels.indexOf(level) > -1) {
-        permissions.add(user, level);
-        return resolve({
-          type: 'channel',
-          message: 'Set ' + user + ' to ' + level
-        });
-      } else
-        return reject("Invalid User Level");
+        permissions.add(user, level)
+        return resolve({ type: 'channel', message: `Set ${user} to ${level}` })
+      } else return reject("Invalid User Level");
     }
-  });
+  })
 }
-

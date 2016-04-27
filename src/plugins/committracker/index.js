@@ -2,17 +2,17 @@ import Promise from 'bluebird'
 import { retrieveSwearCommits, updateSwearCommits } from './utils/swearTracker'
 
 export const plugin_info = [{
-  alias: ['nc', 'commits', 'naughtycommits'],
+  alias: ['nc', 'naughtycommit'],
   command: 'swearCommit',
-  usage: 'commits <user>'
+  usage: 'naughtycommit <user> - returns random commit in DB'
 }, {
   alias: ['fetchcommits'],
   command: 'fetchCommits',
-  usage: 'fetchcommits <user> <optional other user repos to search>'
+  usage: 'fetchcommits <user> [user to search] - updates commits for user'
 }, {
   alias: ['listcommits'],
   command: 'listCommits',
-  usage: 'listcommits <user>'
+  usage: 'listcommits <user> - lists all naughty commits for user'
 }]
 
 export function swearCommit(user, channel, input) {
@@ -41,4 +41,3 @@ export function listCommits(user, channel, input) {
 const _genCommitResp = commit => {
   return `(_${commit.repo}_): *${commit.message}* (${commit.url.slice(8, -33)})`
 }
-
