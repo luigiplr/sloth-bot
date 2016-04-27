@@ -10,6 +10,11 @@ const getUserLevel = user => {
   else
     return 'user'
 }
+const setPermission = (user, channel, input, ts, plugin, adminLevel, action) => {
+  return new Promise((resolve, reject) => permsUtil.doTheThing(input, action, adminLevel)
+    .then(resp => resolve({ type: 'channel', message: resp }))
+    .catch(reject))
+}
 
 export const plugin_info = [{
   alias: ['set'],
@@ -79,23 +84,23 @@ export function muted() {
 }
 
 export function unignore(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'unignore', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
+  return setPermission(...arguments, 'unignore')
 }
 
 export function ignore(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'ignore', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
+  return setPermission(...arguments, 'ignore')
 }
 
 export function unmute(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'ummute', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
+    return setPermission(...arguments, 'unmute')
 }
 
 export function mute(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'mute', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
+    return setPermission(...arguments, 'mute')
 }
 
 export function permaIgnore(user, channel, input, ts, plugin, adminLevel) {
-  return new Promise((resolve, reject) => permsUtil.doTheThing(input, 'permaignore', adminLevel).then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
+    return setPermission(...arguments, 'permaignore')
 }
 
 export function set(admin, channel, input, ts, plugin, adminLevel) {
