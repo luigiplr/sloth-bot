@@ -11,7 +11,7 @@ const ytOpts = {
   videoEmbeddable: true,
   safeSearch: 'none'
 }
-google.resultsPerPage = 5
+google.resultsPerPage = 1
 
 export const plugin_info = [{
   alias: ['g', 'google'],
@@ -55,7 +55,8 @@ export function googleSearch(user, channel, input) {
 
     google(input, (err, { links }) => {
       if (err) return reject(`googleSearchErr: ${err}`)
-      if (links.length) return resolve({ type: 'channel', message: `${links[0].href} - ${links[0].title} - ${links[0].description}` })
+      console.log(links)
+      if (links.length) return resolve({ type: 'channel', message: `${links[0].href} - ${links[0].title} - ${links[0].description.replace(/(\n)+/g, ' ')}` })
       else return reject("No results found")
     })
   })
