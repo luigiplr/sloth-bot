@@ -9,7 +9,6 @@ export const plugin_info = [{
 
 export function blasphemy() {
   return new Promise(resolve => {
-    return resolve({ type: 'channel', message: blasphemer.blaspheme() });
+    return resolve({ type: 'channel', message: blasphemer.blaspheme() })
   })
 }
-

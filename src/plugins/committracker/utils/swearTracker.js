@@ -4,6 +4,7 @@ import needle from 'needle'
 import async from 'async'
 import { SwearCommits, SwearUsers } from '../../../database'
 import config from '../../../../config.json'
+
 const word_list = ["fuk", "fuck", "bitch", "shit", "tits", "asshole", "arsehole", "cocksucker", "cunt", "douche", "testicle", "twat", "bastard", "sperm", "shit", "dildo", "wanker", "prick", "penis", "vagina", "whore", "boner"]
 const githubAuthentication = { headers: { 'Authorization': 'Basic ' + new Buffer(config.githubToken).toString('base64') } }
 
@@ -18,11 +19,11 @@ const endpoints = {
 // Formats Endpoint URLs
 const getUrl = ((type, repo) => {
   if (userToLook) {
-    let out = endpoints[type].replace(/%u/, userToLook).replace(/%u/, username);
+    let out = endpoints[type].replace(/%u/, userToLook).replace(/%u/, username)
     return out.replace('%r%', repo);
   } else {
-    let out = endpoints[type].replace(/%u/g, (userToLook ? userToLook : username));
-    return out.replace('%r%', repo);
+    let out = endpoints[type].replace(/%u/g, (userToLook ? userToLook : username))
+    return out.replace('%r%', repo)
   }
 })
 
@@ -30,10 +31,10 @@ const getUrl = ((type, repo) => {
 const getRepos = (() => {
   return new Promise((resolve, reject) => needle.get(getUrl('repositories'), githubAuthentication, (err, resp, body) => {
     if (!err && body) {
-      if (!body[0] && !body.message) reject('User has no repos')
-      else if (body.message === 'Not Found') reject('Cannot find a user by that name')
-      else if (body[0].id) resolve(body)
-    } else reject("Error fetching repos", err)
+      if (!body[0] && !body.message) return reject('User has no repos')
+      else if (body.message === 'Not Found') return reject('Cannot find a user by that name')
+      else if (body[0].id) return resolve(body)
+    } else return reject("Error fetching repos", err)
   }))
 })
 
@@ -45,12 +46,10 @@ const getCommitsForRepos = (repos => {
       needle.get(getUrl('commits', repo), githubAuthentication, (err, resp, body) => {
         if (!err && body && body[0] && body[0].commit) {
           out.push(body)
-          cb();
+          cb()
         } else cb(err)
       })
-    }, err => {
-      return err ? reject(err) : resolve(out)
-    })
+    }, err => err ? reject(err) : resolve(out))
   })
 })
 
@@ -69,9 +68,9 @@ const findSwearsInCommits = (commits => {
             user: username,
             repo: commit.html_url.split('/')[4]
           }
-          commitsWithSwears.push(out);
-          return true;
-        } else return false;
+          commitsWithSwears.push(out)
+          return true
+        } else return false
       })
       cb()
     }, err => {
@@ -89,41 +88,47 @@ const formatRepos = (repos => {
       if (repo.fork && !config.includeForks) return cb()
       out.push(repo.name)
       cb()
-    }, err => {
-      if (!err) resolve(out);
-    })
+    }, err => !err ? resolve(out) : console.error("Error formatting repo"))
   })
 })
 
 // Saves all commits with swears to the DB, dupe commits won't get added to the DB
-const saveToDB = (swears => {
+const saveToDB = swears => {
   return new Promise((resolve, reject) => {
-    updating = false
-    var swearUser = new SwearUsers();
-    swearUser.user = username;
-    swearUser.lastUpdated = Math.round(new Date().getTime() / 1000);
-    let promises = [];
-    promises.push(swearUser.Persist());
+    SwearUsers.findByUser(username).then(resp => {
+      let user = resp[0] ? resp[0] : new SwearUsers()
+      user.user = username
+      user.lastUpdated = Math.round(new Date().getTime() / 1000)
+      user.Persist()
+    })
+    let promises = []
+    let newSwears = swears ? swears.length : 0
     if (swears) {
-      promises.push.apply(promises, swears.map(swear => {
-        var commit = new SwearCommits();
-        _.assign(commit, swear);
-        return commit.Persist();
-      }));
+      promises.push.apply(promises, swears.map(swear => SwearCommits.findBySha(swear.sha).then(resp => {
+        if (resp[0]) {
+          newSwears--
+          return;
+        }
+        let commit = new SwearCommits()
+        _.assign(commit, swear)
+        return commit.Persist()
+      })))
     }
+
     return Promise.all(promises).then(() => {
+      updating = false
       if (swears)
-        return resolve(`Found ${swears.length} swears`);
+        return resolve(newSwears ? `Found ${newSwears} swears` : 'Found no new swear commits');
       else
         return reject("Found no swears in recent commits :/");
     })
-  });
-})
+  })
+}
 
 // Start da lulz
 const updateSwears = (() => {
   return new Promise((resolve, reject) => {
-    updating = true;
+    updating = true
     return getRepos()
       .then(formatRepos)
       .then(getCommitsForRepos)
@@ -140,16 +145,14 @@ const updateSwears = (() => {
 const fetchSwears = (() => {
   return new Promise((resolve, reject) => SwearCommits.findByUser(username).then(commits => {
     if (commits[0]) resolve(commits)
-    else reject("I don't have commits for this user, you can fetch some with " + config.prefix + "fetchcommits <user>")
-  }).catch(() => {
-    return reject("I don't have commits for this user, you can fetch some with " + config.prefix + "fetchcommits <user>")
-  }))
+    else reject(`I don't have commits for this user, you can fetch some with ${config.prefix} fetchcommits <user>`)
+  }).catch(() => reject(`I don't have commits for this user, you can fetch some with ${config.prefix} fetchcommits <user>`)))
 })
 
 const checkIfWeCanUpdate = (() => {
   return new Promise(resolve => SwearUsers.findByUser(username).then(user => {
     if (user[0])
-      if (user[0].lastUpdated + -1 < Math.round(new Date().getTime() / 1000)) resolve(true)
+      if (user[0].lastUpdated + 3600 < Math.round(new Date().getTime() / 1000)) resolve(true)
       else resolve(false)
     else resolve(true)
   }).catch(err => {

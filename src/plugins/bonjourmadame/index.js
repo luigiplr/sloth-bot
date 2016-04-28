@@ -17,16 +17,19 @@ export function bonjourmadame(user, channel, input) {
     let url, diff, attempts = 0
 
     if (input) {
-      if (input == 'today') url = 'http://dites.bonjourmadame.fr/'
-
-      else if (input.match(/[0-9\.-]/g)) {
+      if (input == 'today') {
+        url = 'http://dites.bonjourmadame.fr/'
+      } else if (input.match(/[0-9\.-]/g)) {
         diff = moment(new Date(input.match(/[0-9\.-]/g).join(''))).diff(moment(), 'days')
-
-        if (diff === 0) url = 'http://dites.bonjourmadame.fr/'
-        else if (diff < 0) url = 'http://dites.bonjourmadame.fr/page/' + (diff * -1 + 1)
-        else return resolve({ type: 'dm', message: 'Date must be in the past. Usage: hellolady [void, \'today\', <MM.DD.YYYY>]' })
+        if (diff === 0) {
+          url = 'http://dites.bonjourmadame.fr/'
+        } else if (diff < 0) {
+          url = 'http://dites.bonjourmadame.fr/page/' + (diff * -1 + 1)
+        } else return resolve({ type: 'dm', message: 'Date must be in the past. Usage: hellolady [void, \'today\', <MM.DD.YYYY>]' })
       } else return resolve({ type: 'dm', message: 'Usage: hellolady [void, \'today\', <MM.DD.YYYY>]' })
-    } else url = 'http://dites.bonjourmadame.fr/random'
+    } else {
+      url = 'http://dites.bonjourmadame.fr/random'
+    }
 
     let client = new MetaInspector(url, { timeout: 5000 })
 
@@ -41,7 +44,7 @@ export function bonjourmadame(user, channel, input) {
     })
 
     client.fetch()
-  });
+  })
 }
 
 export function bonjourmonsieur(user, channel, input) {

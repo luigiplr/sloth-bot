@@ -17,4 +17,3 @@ export function cleverbot(user, channel, input = 'hello') {
     prepare(() => cleverb.write(input, reply => resolve({ type: 'channel', message: `Cleverbot: ${reply.message}` })))
   })
 }
-
