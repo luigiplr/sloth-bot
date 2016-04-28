@@ -46,10 +46,10 @@ module.exports = {
       let client = new MetaInspector(url, { timeout: 5000 });
 
       client.on('fetch', () => {
-        if (client.images && !client.images[0].match(/logo|avatar/i))
+        if (client.images && !client.images[3].match(/logo|avatar/i))
           return resolve({
             type: 'channel',
-            message: client.images[0]
+            message: client.images[3]
           });
         else
           return reject('No picture found');
