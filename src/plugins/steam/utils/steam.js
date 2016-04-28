@@ -5,6 +5,8 @@ import async from 'async';
 import SteamID from 'steamid';
 import lunr from 'lunr';
 
+const filters = ['basic', 'price_overview', 'release_date', 'metacritic', 'developers', 'genres'].join(',')
+
 const token = require('./../../../../config.json').steamAPIToken;
 const endpoints = {
   profile: `http://steamcommunity.com/id/%q%/?xml=1`, // Unused
@@ -12,7 +14,7 @@ const endpoints = {
   miniProfile: `http://steamcommunity.com/miniprofile/%q%`, // Unused
   gameSummary: `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${token}&steamid=%q%&include_played_free_games=1`,
   appDetailsBasic: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic`,
-  appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic,price_overview,release_date,metacritic&cc=us`,
+  appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=${filters}&cc=us`,
   searchApps: `http://steamcommunity.com/actions/SearchApps/%q%`, // Unused
   numPlayers: `http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%q%`,
   userBans: `http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=${token}&steamids=%q%`,
