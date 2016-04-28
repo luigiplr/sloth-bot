@@ -1,4 +1,5 @@
 import Promise from 'bluebird';
+import _ from 'lodash';
 import Steam from './utils/steam';
 import moment from 'moment';
 
@@ -74,39 +75,46 @@ const generateProfileResponse = (profile => {
 
 const generateAppDetailsResponse = ((app, gamesOnly) => {
   if (app && !gamesOnly || (gamesOnly && app.type == 'game')) {
-    let price = getPriceForApp(app);
+    let price = getPriceForApp(app)
 
     let out = {
-      msg: `<http://store.steampowered.com/app/${app.steam_appid}|${app.name}> (${app.steam_appid})`,
+      msg: `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_`,
       attachments: [{
-        "fallback": `${app.name} _(${app.steam_appid})_`,
+        "fallback": app.name + '(' + app.steam_appid + ')',
         "image_url": app.header_image,
         "mrkdwn_in": ["text", "pretext", "fields"],
-        "color": "#14578b",
-        "fields": [{
-          "title": "Cost",
-          "value": price,
-          "short": true
-        }, {
-          "title": app.release_date.coming_soon ? "Release Date" : "Released",
-          "value": app.release_date.date,
-          "short": true
-        }, {
-          "title": "Metacritic",
-          "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : '_Unknown_',
-          "short": true
-        }, {
-          "title": "Current Players",
-          "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '_Unknown_',
-          "short": true
-        }]
+        "color": "#14578b"
       }]
-    };
-    return out;
-  } else {
-    return `Error: App: _${app.name}_ _(${app.steam_appid})_ isn't a valid game`
-  }
-});
+    }
+
+    out.attachments[0].fields = _.filter([{
+      "title": "Cost",
+      "value": price || null,
+      "short": true
+    }, {
+      "title": app.release_date.coming_soon ? "Release Date" : "Released",
+      "value": app.release_date.date,
+      "short": true
+    }, {
+      "title": "Genres",
+      "value": app.genres.slice(0, 3).map(g => g.description).sort().join(', '),
+      "short": true
+    }, {
+      "title": "Current Players",
+      "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : null,
+      "short": true
+    }, {
+      "title": "Developers",
+      "value": _.trunc(app.developers.join(', '), 40),
+      "short": true
+    }, {
+      "title": "Metacritic",
+      "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : null,
+      "short": true
+    }], 'value')
+    return out
+  } else return `Error: App: *${app.name}* _(${app.steam_appid})_ isn't a valid game`
+})
 
 const generatePlayersResponse = app => {
   return `There are currently *${app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}* people playing _${app.name}_ right now`
