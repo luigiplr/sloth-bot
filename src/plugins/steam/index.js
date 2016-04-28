@@ -1,7 +1,7 @@
-import Promise from 'bluebird';
-import _ from 'lodash';
-import Steam from './utils/steam';
-import moment from 'moment';
+import Promise from 'bluebird'
+import _ from 'lodash'
+import { getProfileInfo, getAppPlayers, getAppInfo, getSteamIDInfo } from './utils/steam'
+import moment from 'moment'
 
 export const plugin_info = [{
   alias: ['sp', 'steamprofile'],
@@ -29,7 +29,7 @@ export function steamProfile(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information' })
 
-    Steam.getProfileInfo(input).then(resp => resolve({ type: 'channel', messages: generateProfileResponse(resp) })).catch(reject)
+    getProfileInfo(input).then(resp => resolve({ type: 'channel', messages: generateProfileResponse(resp) })).catch(reject)
   })
 }
 
@@ -37,7 +37,7 @@ export function players(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: players <appid> - Returns the current amount of players for the game' })
 
-    Steam.getAppPlayers(input).then(resp => resolve({ type: 'channel', message: generatePlayersResponse(resp) })).catch(reject)
+    getAppPlayers(input).then(resp => resolve({ type: 'channel', message: generatePlayersResponse(resp) })).catch(reject)
   })
 }
 
@@ -45,7 +45,7 @@ export function game(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: game <appid or game name> - Returns basic game info such as price and name' })
 
-    Steam.getAppInfo(input, 1).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp, 1) })).catch(reject)
+    getAppInfo(input, 1).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp, 1) })).catch(reject)
   })
 }
 
@@ -53,7 +53,15 @@ export function app(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: app <appid or app name> - Returns basic app info such as price and name' })
 
-    Steam.getAppInfo(input).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp) })).catch(reject)
+    getAppInfo(input).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp) })).catch(reject)
+  })
+}
+
+export function steamid(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return resolve({ type: 'dm', message: 'Usage: steamid <id> - ID can be any form of SteamID' })
+
+    getSteamIDInfo(input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
   })
 }
 
@@ -97,14 +105,14 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
       "short": true
     }, {
       "title": "Genres",
-      "value": app.genres.slice(0, 3).map(g => g.description).sort().join(', '),
+      "value": app.genres ? (app.genres.slice(0, 3).map(g => g.description).sort().join(', ')) : null,
       "short": true
     }, {
       "title": "Current Players",
       "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : null,
       "short": true
     }, {
-      "title": "Developers",
+      "title": app.type == 'movie' ? 'Studio' : 'Developers',
       "value": _.trunc(app.developers.join(', '), 40),
       "short": true
     }, {
@@ -116,9 +124,11 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
   } else return `Error: App: *${app.name}* _(${app.steam_appid})_ isn't a valid game`
 })
 
-const generatePlayersResponse = app => {
-  return `There are currently *${app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}* people playing _${app.name}_ right now`
-}
+const generatePlayersResponse = app => `There are currently *${formatNumber(app.player_count)}* people playing _${app.name}_ right now`
+
+const formatNumber = number => number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+const formatCurrency = (n, currency) => n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ' ' + currency
+const formatPlaytime = time => time < 120 ? `${time} minutes` : `${Math.floor(time / 60)} hours`
 
 const getPriceForApp = app => {
   if (app.is_free)
@@ -144,11 +154,3 @@ const getPersonaState = (state => {
       return 'Online'
   }
 })
-
-const formatCurrency = (n, currency) => {
-  return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ' ' + currency
-}
-
-const formatPlaytime = time => {
-  return time < 120 ? `${time} minutes` : `${Math.floor(time / 60)} hours`
-}

@@ -1,4 +1,4 @@
-import Promise from 'bluebird'
+/*import Promise from 'bluebird'
 import { User } from '../../database.js'
 import config from '../../../config.json'
 import passHash from 'password-hash'
@@ -28,7 +28,7 @@ export function setWebPassword(user, channel, input) {
       u.password = passHash.generate(input)
       u.id = uuid()
       u.Persist()
-  })*/
+  })
   })
 }
 
@@ -43,4 +43,4 @@ export function updateWebPassword(user, channel, input) {
       webUser.Persist()
     })
   })
-}
+}*/

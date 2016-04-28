@@ -38,14 +38,14 @@ export function searchMovies(user, channel, input) {
 export function searchShows(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
-    if (!input)
-      return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
+    if (!input) return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
 
     trakt.search({ type: 'show', query: input }).then(shows => {
-      Promise.join(trakt.shows.summary({ id: shows[0].show.ids.trakt, extended: 'full,images' }), trakt.seasons.summary({ id: shows[0].show.ids.trakt })).then(([show, seasons]) => {
-        if (!show) return reject("Couldn't find a show with that name");
-        return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
-      }).catch(reject)
+      Promise.join(trakt.shows.summary({ id: shows[0].show.ids.trakt, extended: 'full,images' }), trakt.seasons.summary({ id: shows[0].show.ids.trakt }))
+        .then(([show, seasons]) => {
+          if (!show) return reject("Couldn't find a show with that name");
+          return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
+        }).catch(reject)
     }).catch(reject)
   })
 }

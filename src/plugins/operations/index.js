@@ -2,11 +2,9 @@ import Promise from 'bluebird'
 import { sendMessage } from '../../slack'
 import moment from 'moment'
 import config from '../../../config.json'
-import {
-  exec as execCmd
-} from 'child_process';
+import { exec as execCmd } from 'child_process'
 
-var updating;
+var updating
 
 export const plugin_info = [{
   alias: ['shutdown'],
@@ -44,7 +42,7 @@ export function shutdown() {
   return new Promise(resolve => {
     if (config.debugChannel) sendMessage(config.debugChannel, "Shutting bot down!")
     resolve({ type: 'channel', message: 'Shutting down in *2.. 1.*' })
-    setTimeout(() => { process.exit(0) }, 2000);
+    setTimeout(() => { process.exit(0) }, 2000)
   })
 }
 export function restart() {

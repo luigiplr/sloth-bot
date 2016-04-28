@@ -27,13 +27,11 @@ export function urbandictionary(user, channel, input) {
 }
 
 export function randomurban() {
-  return new Promise((resolve, reject) => {
-    new Urban.random().first((definition) => {
-      if (!definition) return reject("Error fetching urban")
-      return resolve({
-        type: 'channel',
-        message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
-      })
+  return new Promise((resolve, reject) => new Urban.random().first((definition) => {
+    if (!definition) return reject("Error fetching urban")
+    return resolve({
+      type: 'channel',
+      message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
     })
-  })
+  }))
 }

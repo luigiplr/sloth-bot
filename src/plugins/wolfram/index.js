@@ -9,18 +9,8 @@ export const plugin_info = [{
 
 export function wolfram(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input)
-      return resolve({
-        type: 'dm',
-        message: 'Usage: wolfram <query> - Computes <query> using Wolfram Alpha.'
-      });
+    if (!input) return resolve({ type: 'dm', message: 'Usage: wolfram <query> - Computes <query> using Wolfram Alpha.' })
 
-    wolframUtil.query(input).then(resp => {
-      return resolve({
-        type: 'channel',
-        message: `*Result*: ${resp}`
-      });
-    }).catch(reject);
-  });
+    wolframUtil.query(input).then(resp => resolve({ type: 'channel', message: `*Result*: ${resp}` })).catch(reject)
+  })
 }
-

@@ -1,9 +1,8 @@
-import Promise from 'bluebird';
-import _ from 'lodash';
-import needle from 'needle';
+import Promise from 'bluebird'
+import _ from 'lodash'
+import needle from 'needle'
 import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage } from '../../../slack.js';
-
-var config = require('../../../../config.json');
+import config from '../../../../config.json'
 
 export function kick(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -12,31 +11,28 @@ export function kick(user, channel, input) {
 
     if (user === config.botname || user.slice(2, -1) === config.botid) return reject('Error: Bitch. No.')
 
-    findUser(user).then(kickee => {
-      needle.post('https://slack.com/api/channels.kick', {
-        channel: channel.id,
-        token: config.slackToken,
-        user: kickee.id
-      }, (err, resp, body) => {
-        if (err || body.error) {
-          console.log(`kickUserErr ${err || body.error}`)
-          return reject(`kickUserErr ${err || body.error}`)
-        }
+    findUser(user).then(kickee => needle.post('https://slack.com/api/channels.kick', {
+      channel: channel.id,
+      token: config.slackToken,
+      user: kickee.id
+    }, (err, resp, { error }) => {
+      if (err || error) {
+        console.log(`kickUserErr ${err || error}`)
+        return reject(`kickUserErr ${err || error}`)
+      }
 
-        sendPMThroughSlackbot(kickee.name, `You were kicked from #${channel.name} for ${reason || 'no reason'}`)
-        return resolve(`*Kicked: ${kickee.name}* for ${reason || 'no reason.'}`)
-      })
-    }).catch(reject);
+      sendPMThroughSlackbot(kickee.name, `You were kicked from #${channel.name} for ${reason || 'no reason'}`)
+      return resolve(`*Kicked: ${kickee.name}* for ${reason || 'no reason.'}`)
+    })).catch(reject)
   })
 }
+
 export function deleteLastMessage(channel, messagets) {
   return new Promise((resolve, reject) => {
     deleteMessage(channel, messagets)
     getHistory(channel, 16).then(messages => {
       let ts = _(messages)
-        .filter(message => {
-          return message.user === config.botid;
-        })
+        .filter(message => message.user === config.botid)
         .map('ts')
         .value()[0]
 

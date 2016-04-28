@@ -93,15 +93,15 @@ export function ignore(user, channel, input, ts, plugin, adminLevel) {
 }
 
 export function unmute(user, channel, input, ts, plugin, adminLevel) {
-    return setPermission(...arguments, 'unmute')
+  return setPermission(...arguments, 'unmute')
 }
 
 export function mute(user, channel, input, ts, plugin, adminLevel) {
-    return setPermission(...arguments, 'mute')
+  return setPermission(...arguments, 'mute')
 }
 
 export function permaIgnore(user, channel, input, ts, plugin, adminLevel) {
-    return setPermission(...arguments, 'permaignore')
+  return setPermission(...arguments, 'permaignore')
 }
 
 export function set(admin, channel, input, ts, plugin, adminLevel) {

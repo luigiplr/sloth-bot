@@ -39,7 +39,8 @@ class slackClient extends Slack {
 
     this.on('error', err => {
       this._sendErrorToDebugChannel('slackClientError', err);
-      setTimeout(() => process.exit(1), 500)
+      console.log(err);
+      //setTimeout(() => process.exit(1), 500)
     })
   }
 
@@ -121,4 +122,3 @@ process.on('unhandledRejection', err => slackInstance._sendErrorToDebugChannel('
 process.on('rejectionHandled', err => slackInstance._sendErrorToDebugChannel('handledRejection', err))
 
 const slackInstance = new slackClient()
-
