@@ -26,8 +26,8 @@ class slackClient extends Slack {
       config.botid = this.self.id
       config.imageURL = this.users[config.botid].profile.image_72
 
-      console.log('Welcome to Slack. You are @' + this.self.name, 'of', this.team.name);
-      console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages');
+      console.log('Welcome to Slack. You are @' + this.self.name, 'of', this.team.name)
+      console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages')
     })
 
     this.on('message', ::this._onNewMessage)
@@ -38,9 +38,9 @@ class slackClient extends Slack {
     })
 
     this.on('error', err => {
-      this._sendErrorToDebugChannel('slackClientError', err);
-      console.log(err);
-      //setTimeout(() => process.exit(1), 500)
+      this._sendErrorToDebugChannel('slackClientError', err)
+      console.log("Error", err)
+        //setTimeout(() => process.exit(1), 500)
     })
   }
 
@@ -52,23 +52,23 @@ class slackClient extends Slack {
     if (message.type === 'message' && text && channel && !message.subtype) {
       parseMsg(user, channel, text, ts)
         .then(response => {
-          if (!response) return false;
+          if (!response) return false
 
-          if (!response.type == 'dm' || !response.type == 'channel') return console.error("Invalid message response type, must be channel or dm");
+          if (!response.type == 'dm' || !response.type == 'channel') return console.error("Invalid message response type, must be channel or dm")
 
           this._checkIfDM(response.type, response.user ? response.user : user.id)
             .then(DM => {
-              if (DM) channel = DM;
+              if (DM) channel = DM
               console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages))
               if (response.message && response.message.attachments) {
                 channel.postMessage(this._getParams(response.message.msg, response.message.attachments))
               } else if (!response.multiLine) {
                 if (response.message && !Array.isArray(response.message)) channel.send(response.message)
                 else if (response.messages && Array.isArray(response.messages)) channel.postMessage(this._getParams(response.messages.join('\n')))
-                else return this._sendErrorToDebugChannel('sendMsg', "Invalid messages format, your array must contain more than 1 message and use the 'messages' response type");
+                else return this._sendErrorToDebugChannel('sendMsg', "Invalid messages format, your array must contain more than 1 message and use the 'messages' response type")
               } else {
                 if (response.messages && Array.isArray(response.messages)) response.messages.forEach(message => channel.send(message))
-                else return this._sendErrorToDebugChannel('sendMsg', "Invalid Multiline format, your array must contain more than 1 message and use the 'messages' response type");
+                else return this._sendErrorToDebugChannel('sendMsg', "Invalid Multiline format, your array must contain more than 1 message and use the 'messages' response type")
               }
             })
         })
@@ -96,14 +96,14 @@ class slackClient extends Slack {
         sendMessage(config.debugChannel, message)
         setTimeout(() => {
           if (i > 0) i--
-        }, 3000)
+        }, 4000)
       } else {
         sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
         process.exit()
       }
     } else {
-      console.error("Caught Error:", type, error);
-      if (config.debugChannel) sendMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```');
+      console.error("Caught Error:", type, error)
+      if (config.debugChannel) sendMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```')
     }
   }
 

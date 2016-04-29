@@ -8,7 +8,7 @@ const dbFile = path.join(dbDir, 'database.sqlite')
 if (!fs.existsSync(dbDir))
   fs.mkdirSync(dbDir)
 
-function SwearUsers() {
+export function SwearUsers() {
   CRUD.Entity.call(this)
 }
 
@@ -19,7 +19,7 @@ CRUD.define(SwearUsers, {
   createStatement: 'CREATE TABLE SwearUser (swearUserId INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) NOT NULL, lastUpdated DATETIME)'
 })
 
-function SwearCommits() {
+export function SwearCommits() {
   CRUD.Entity.call(this)
 }
 
@@ -37,14 +37,14 @@ CRUD.define(SwearCommits, {
   createStatement: 'CREATE TABLE SwearCommit (swearCommitId INTEGER PRIMARY KEY NOT NULL, message VARCHAR(1024) NOT NULL, url VARCHAR(512) NOT NULL, sha VARCHAR(128), user VARCHAR(256) NOT NULL, repo VARCHAR(256) NOT NULL)'
 })
 
-function Quotes() {
+export function Quotes() {
   CRUD.Entity.call(this)
 }
 
 CRUD.define(Quotes, {
-  table: 'Quote', // Database table this entity is bound to
-  primary: 'quoteId', // Primary key. Make sure to use uniquely named keys, don't use 'id' on every table and refer to 'id_something'
-  fields: [ // List all individual properties including primary key. Accessors will be auto-created (but can be overwritten)
+  table: 'Quote',
+  primary: 'quoteId',
+  fields: [
     'quoteId',
     'quotedUser',
     'message',
@@ -54,8 +54,17 @@ CRUD.define(Quotes, {
   createStatement: 'CREATE TABLE Quote (quoteId INTEGER PRIMARY KEY NOT NULL, quotedUser VARCHAR(128) NOT NULL, message VARCHAR(4000) NOT NULL, grabUser VARCHAR(128), date DATETIME)'
 })
 
+export function InviteUsers() {
+  CRUD.Entity.call(this)
+}
+
+CRUD.define(InviteUsers, {
+  table: 'InviteUsers',
+  primary: 'inviteUserId',
+  fields: ['inviteUserId', 'inviter', 'email', 'invitedUser', 'date'],
+  createStatement: 'CREATE TABLE InviteUsers (inviteUserId INTEGER PRIMARY KEY NOT NULL, inviter VARCHAR(128) DEFAULT (NULL), email VARCHAR(128) DEFAULT (NULL), invitedUser VARCHAR(128) DEFAULT (NULL), date DATETIME)'
+})
+
 CRUD.setAdapter(new CRUD.SQLiteAdapter(dbFile, {
   estimatedSize: 25 * 1024 * 1024
 }))
-
-module.exports = { Quotes, SwearCommits, SwearUsers }

@@ -4,6 +4,25 @@ import needle from 'needle'
 import config from '../config.json'
 import { queue } from 'async'
 
+let userNamesCache = {}
+let usersCache = {}
+
+export function updateUsersCache() {
+  return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.list', {
+    token: config.slackAPIToken
+  }, (err, resp, { error, members }) => {
+    if (err || error) return reject(_logErr('updateUserCacheErr', err || error))
+    userNamesCache = {}
+    usersCache = {}
+    _.forEach(members, member => {
+      usersCache[member.id] = member
+      userNamesCache[member.name] = member.id
+    })
+    return resolve(`Updated successfully`)
+  }))
+}
+updateUsersCache().then(console.log).catch(console.error) // Update da cache on startup
+
 export function sendMessage(channel, input) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/chat.postMessage', {
     text: input,
@@ -37,24 +56,30 @@ export function getHistory(channel, limit = 100) {
     count: limit
   }, (err, resp, { error, messages }) => {
     if (err || error) return reject(_logErr('getHistoryErr', err || error))
-    resolve(messages);
+    resolve(messages)
   }))
 }
 
 export function findUser(user, type) {
-  return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.list', {
-    token: config.slackAPIToken
-  }, (err, resp, { error, members }) => {
-    if (err || error) return reject(_logErr('findUserErr', err || error))
+  return new Promise((resolve, reject) => {
 
-    let isID = user.slice(0, 2) == "<@"
-    let member = _.find(members, ({ name, id }) => {
-      return isID ? id === user.slice(2, user.length - 1) : name === user
-    })
+    let userID = user.slice(0, 2) == "<@" ? user.slice(0, 2) : false
+    let member = usersCache[userID ? userID : userNamesCache[user]]
+    console.log(userNamesCache)
 
     if (!member) return reject("Couldn't find a user by that name")
 
+    if (type == 'email') return resolve({ name: member.name, email: member.profile.email }) // Dirty Cheat
     resolve(type == 'both' ? { name: member.name, id: member.id } : (type == 'name' ? member.name : member.id))
+  })
+}
+
+export function getUsers() {
+  return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.list', {
+    token: config.slackAPIToken
+  }, (err, resp, { error, members }) => {
+    if (err || error) return reject(_logErr('getUsersErr', err || error))
+    return resolve(members)
   }))
 }
 

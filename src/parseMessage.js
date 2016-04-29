@@ -6,13 +6,10 @@ import { deleteMessage } from './slack'
 import { getPlugins as plugins } from './plugins'
 
 const getUserlevel = user => {
-  if ((permissions.superadmins.indexOf(user) > -1))
-    return 'superadmin'
-  else if ((permissions.admins.indexOf(user) > -1))
-    return 'admin'
-  else
-    return 'user'
-};
+  if ((permissions.superadmins.indexOf(user) > -1)) return 'superadmin'
+  else if ((permissions.admins.indexOf(user) > -1)) return 'admin'
+  else return 'user'
+}
 
 export function parse(user, channel, text, ts) {
   return new Promise((resolve, reject) => {
@@ -43,8 +40,7 @@ export function parse(user, channel, text, ts) {
           if (cmd.userLevel) cmdLevel = cmd.userLevel
           call = cmd
           return true
-        } else
-          return false
+        } else return false
       })
     })
 
