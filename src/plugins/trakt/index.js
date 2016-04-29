@@ -72,7 +72,7 @@ const generateShowResponse = ((showDetails, seasons) => {
     // Filter the shit to remove nulls
   out.attachments[0].fields = _.filter([{
     "title": "Overview",
-    "value": _.trunc(showDetails.overview, 400) || null,
+    "value": _.truncate(showDetails.overview, 400) || null,
     "short": false
   }, {
     "title": "First Aired",
