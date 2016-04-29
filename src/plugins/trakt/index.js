@@ -44,6 +44,14 @@ export function searchShows(user, channel, input) {
       Promise.join(trakt.shows.summary({ id: shows[0].show.ids.trakt, extended: 'full,images' }), trakt.seasons.summary({ id: shows[0].show.ids.trakt }))
         .then(([show, seasons]) => {
           if (!show) return reject("Couldn't find a show with that name");
+          if (seasons[0].number == 0) {
+            trakt.seasons.season({id: shows[0].show.ids.trakt, season: 0}).then((specialSeason) => {
+              show.aired_episodes = show.aired_episodes - specialSeason.length
+              seasons.pop()
+              return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
+            })
+          }
+        else
           return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
         }).catch(reject)
     }).catch(reject)
