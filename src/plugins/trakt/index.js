@@ -1,96 +1,85 @@
-import Promise from 'bluebird';
-import _ from 'lodash';
+import Promise from 'bluebird'
+import _ from 'lodash'
 import Trakt from 'trakt.tv'
-import config from '../../../config.json';
-import moment from 'moment';
+import config from '../../../config.json'
+import moment from 'moment'
 
 var trakt;
 if (config.traktApiKey) {
-  trakt = new Trakt({
-    client_id: config.traktApiKey
-  })
+  trakt = new Trakt({ client_id: config.traktApiKey })
 } else console.error("Error: Trakt Plugin requires traktApiKey")
 
+export const plugin_info = [{
+  alias: ['movie'],
+  command: 'searchMovies',
+  usage: 'movie <name> - fetches info for a movie'
+}, {
+  alias: ['show', 'tvshow'],
+  command: 'searchShows',
+  usage: 'players <appid> - returns players for app'
+}, {
+  alias: ['imdb', 'trakt'],
+  command: 'redirect'
+}]
 
-module.exports = {
-  commands: [{
-    alias: ['movie'],
-    command: 'searchMovies'
-  }, {
-    alias: ['show', 'tvshow'],
-    command: 'searchShows'
-  }, {
-    alias: ['imdb', 'trakt'],
-    command: 'redirect'
-  }],
-  help: [{
-    command: ['movie'],
-    usage: 'movie <name> - fetches info for a movie'
-  }, {
-    command: ['show', 'tvshow'],
-    usage: 'show <name> - fetches info for a show'
-  }],
-  searchMovies(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
-      if (!input)
-        return resolve({
-          type: 'dm',
-          message: 'Usage: movie <query> - Returns movie information for query'
-        });
-
-      return reject("Not implemented");
-    });
-  },
-  searchShows(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
-      if (!input)
-        return resolve({
-          type: 'dm',
-          message: 'Usage: movie <query> - Returns movie information for query'
-        });
-
-      trakt.search({ type: 'show', query: input }).then(shows => {
-        Promise.join(trakt.shows.summary({ id: shows[0].show.ids.trakt, extended: 'full,images' }), trakt.seasons.summary({ id: shows[0].show.ids.trakt })).then(([show, seasons]) => {
-          if (!show) return reject("Couldn't find a show with that name");
-          return resolve({
-            type: 'channel',
-            message: generateShowRsesponse(show, seasons)
-          });
-        }).catch(reject);
-      }).catch(reject);
-    });
-  },
-  redirect() {
-    return new Promise(resolve => {
+export function searchMovies(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
+    if (!input)
       return resolve({
         type: 'dm',
-        message: `You can use the ${config.prefix}movie or ${config.prefix}tvshow commands to fetch movie/show information`
+        message: 'Usage: movie <query> - Returns movie information for query'
       });
-    });
-  }
-};
 
-const imgResize = 'https://images.weserv.nl/?w=175&url=';
+    return reject("Not implemented");
+  })
+}
 
-const generateMovieResponse = (movieDetails => {})
+export function searchShows(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
+    if (!input) return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
 
-const generateShowRsesponse = ((showDetails, seasons) => {
+    trakt.search({ type: 'show', query: input }).then(shows => {
+      Promise.join(trakt.shows.summary({ id: shows[0].show.ids.trakt, extended: 'full,images' }), trakt.seasons.summary({ id: shows[0].show.ids.trakt }))
+        .then(([show, seasons]) => {
+          if (!show) return reject("Couldn't find a show with that name");
+          if (seasons[0].number == 0) {
+            trakt.seasons.season({ id: shows[0].show.ids.trakt, season: 0 }).then((specialSeason) => {
+              show.aired_episodes = show.aired_episodes - specialSeason.length
+              seasons.pop()
+              return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
+            })
+          } else
+            return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
+        }).catch(reject)
+    }).catch(reject)
+  })
+}
+
+export function redirect() {
+  return new Promise(resolve => resolve({ type: 'dm', message: `You can use the ${config.prefix}movie or ${config.prefix}tvshow commands to fetch movie/show information` }))
+}
+
+const imgResize = 'https://images.weserv.nl/?w=175&url='
+
+//const generateMovieResponse = (movieDetails => {})
+
+const generateShowResponse = ((showDetails, seasons) => {
   let out = {
-    attachments: [{
-      "title": `${showDetails.title} (${showDetails.year || 'Unknown'})`,
-      "title_link": `https://trakt.tv/shows/${showDetails.ids.slug}`,
-      "fallback": `${showDetails.title} (${showDetails.year})`,
-      "image_url": showDetails.images.poster.thumb ? imgResize + showDetails.images.poster.thumb.replace('https://', '') : null,
-      "mrkdwn_in": ["text", "pretext", "fields"],
-      "color": "#c61017"
-    }]
-  };
-  // Filter the shit to remove nulls
+      attachments: [{
+        "title": `${showDetails.title} (${showDetails.year || 'Unknown'})`,
+        "title_link": `https://trakt.tv/shows/${showDetails.ids.slug}`,
+        "fallback": `${showDetails.title} (${showDetails.year})`,
+        "image_url": showDetails.images.poster.thumb ? imgResize + showDetails.images.poster.thumb.replace('https://', '') : null,
+        "mrkdwn_in": ["text", "pretext", "fields"],
+        "color": "#c61017"
+      }]
+    }
+    // Filter the shit to remove nulls
   out.attachments[0].fields = _.filter([{
     "title": "Overview",
-    "value": _.trunc(showDetails.overview, 400) || null,
+    "value": _.truncate(showDetails.overview, { length: 400 }) || null,
     "short": false
   }, {
     "title": "First Aired",
@@ -125,5 +114,5 @@ const generateShowRsesponse = ((showDetails, seasons) => {
     "value": showDetails.trailer ? showDetails.trailer.replace(/^(https?):\/\//, '') : null,
     "short": true
   }], 'value')
-  return out;
+  return out
 })

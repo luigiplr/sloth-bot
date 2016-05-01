@@ -1,31 +1,18 @@
-import Promise from 'bluebird';
-import nodeMorse from 'morse-node';
+import Promise from 'bluebird'
+import nodeMorse from 'morse-node'
 
-var morse = nodeMorse.create('ITU');
+export const plugin_info = [{
+  alias: ['morse'],
+  command: 'morse',
+  usage: 'morse <text>'
+}]
 
-module.exports = {
-  commands: [{
-    alias: ['morse'],
-    command: 'morse'
-  }],
-  help: [{
-    command: ['morse'],
-    usage: 'morse <text>'
-  }],
-  morse(user, channel, input) {
-    return new Promise(resolve => {
-      if (!input)
-        return resolve({
-          type: 'dm',
-          message: 'Usage: Morse <morse code> - Translates morse code into English. Words should be seperated by a /'
-        });
+const morseConvert = nodeMorse.create('ITU')
 
-      let decoded = morse.decode(input);
-      resolve({
-        'type': 'channel',
-        'message': "Translation: " + decoded
-      });
-    });
-  }
-};
+export function morse(user, channel, input) {
+  return new Promise(resolve => {
+    if (!input) return resolve({ type: 'dm', message: 'Usage: Morse <morse code> - Translates morse code into English. Words should be seperated by a /' })
 
+    resolve({ 'type': 'channel', 'message': "Translation: " + morseConvert.decode(input) })
+  })
+}

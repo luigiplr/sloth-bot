@@ -1,0 +1,12 @@
+extends main
+
+block subheader
+  if user
+    h2#loggedin Logged in as #{user.name}
+  else
+    h2
+      a#loginBtn(href='/login') Login 
+      
+block content
+  for route in routes
+    a.plugin(href=route.url) #{route.name}

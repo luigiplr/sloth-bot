@@ -1,48 +1,41 @@
-import Promise from 'bluebird';
+import Promise from 'bluebird'
 import _ from 'lodash'
-const config = require('../../../config.json');
+import config from '../../../config.json'
 
-module.exports = {
-  commands: [{
-    alias: ['help', 'h'],
-    command: 'default'
-  }],
-  help: [{
-    command: ['help', 'h'],
-    usage: 'shows help for commands'
-  }],
-  default (user, channel, context, ts, plugins) {
-    return new Promise(resolve => {
-      let helpList = ["```"];
-      let commands = [];
-      let aliases = [];
+export const plugin_info = [{
+  alias: ['help', 'h'],
+  command: 'help',
+  usage: 'shows help for commands'
+}]
 
-      plugins.forEach(plugin => {
-        if (plugin.help && Array.isArray(plugin.help)) {
-          plugin.help.forEach(help => {
-            if (!help.command || !help.usage) return;
+export function help(user, channel, context, ts, plugins, userLevel) {
+  return new Promise(resolve => {
+    let helpList = ["```"],
+      commands = [],
+      aliases = []
 
-            let cmdalias = '';
-            help.command.forEach(cmd => cmdalias += config.prefix + cmd + ' ');
-            aliases.push(cmdalias);
-            commands.push(`${cmdalias}%pad%| ${help.usage}`);
-          });
-        }
-      });
-      let padding = aliases.sort((a, b) => {
-        return b.length - a.length
-      })[0].length + 1
+    plugins.forEach(plugin => {
+      if (plugin.plugin_info && Array.isArray(plugin.plugin_info)) {
+        plugin.plugin_info.forEach(help => {
+          if (!help.alias || !help.usage || (help.userLevel && help.userLevel.indexOf(userLevel) === -1)) return
 
-      helpList.push(commands.map(cmd => {
-        let initialSize = cmd.split('|')[0].length - 5 // the %pad%
-        return cmd.replace("%pad%", new Array(padding - initialSize).join(' '))
-      }).sort())
-      helpList.push("```");
-
-      return resolve({
-        type: 'dm',
-        messages: _.flatten(helpList)
-      });
+          let cmdalias = '';
+          help.alias.forEach(cmd => cmdalias += config.prefix + cmd + ' ')
+          aliases.push(cmdalias)
+          commands.push(`${cmdalias}%pad%| ${help.usage}`)
+        });
+      }
     });
-  }
-};
+    let padding = aliases.sort((a, b) => {
+      return b.length - a.length
+    })[0].length + 1
+
+    helpList.push(commands.map(cmd => {
+      let initialSize = cmd.split('|')[0].length - 5 // the %pad%
+      return cmd.replace("%pad%", new Array(padding - initialSize).join(' '))
+    }).sort())
+    helpList.push("```");
+
+    return resolve({ type: 'dm', messages: _.flatten(helpList) })
+  })
+}

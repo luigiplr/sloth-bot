@@ -1,0 +1,30 @@
+doctype html
+html
+  head
+    meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="author", content="Js41637")
+    title #{name} Web Interface
+    link(href="css/style.css", rel="stylesheet", type="text/css")
+    link(href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,700,400italic' rel='stylesheet' type='text/css')
+  body
+    #particles-js
+    #root
+        .container
+          .header
+            h1 #{name} Web Interface
+            block subheader
+          .content
+            block content
+    #footer
+      .container
+        .left
+          .breadcrumbs
+            a(href='/') Home
+            span /
+            block breadcrumbs
+        .right
+          span sloth-bot web interface v0.1
+    script(src='js/particles.js')
+    script.
+      particlesJS.load('particles-js', 'particlesjs-config.json');

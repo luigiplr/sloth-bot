@@ -1,58 +1,28 @@
-import Promise from 'bluebird';
-import spinsult from 'shakespeare-insult';
-import normalinsult from 'insultgenerator';
+import Promise from 'bluebird'
+import spinsult from 'shakespeare-insult'
+import normalinsult from 'insultgenerator'
 
-module.exports = {
-  commands: [{
-    alias: ['insult'],
-    command: 'insult'
-  }, {
-    alias: ['sinsult', 'shakespeareinsult'],
-    command: 'oldinsult'
-  }],
-  help: [{
-    command: ['insult'],
-    usage: 'insult <person>'
-  }, {
-    command: ['shakespeareinsult'],
-    usage: 'sinsult <person>'
-  }],
-  insult(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return resolve({
-          type: 'channel',
-          message: 'Who am I insulting?'
-        });
+export const plugin_info = [{
+  alias: ['insult'],
+  command: 'insult',
+  usage: 'insult <person>'
+}, {
+  alias: ['sinsult', 'shakespeareinsult'],
+  command: 'oldinsult',
+  usage: 'sinsult <person>'
+}]
 
-      try {
-        new normalinsult((meanMessage) => {
-          resolve({
-            type: 'channel',
-            message: input + ': ' + meanMessage
-          });
-        });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  },
-  oldinsult(user, channel, input) {
-    return new Promise((resolve, reject) => {
-      if (!input)
-        return resolve({
-          type: 'channel',
-          message: 'Who am I insulting?'
-        });
+export function insult(user, channel, input) {
+  return new Promise(resolve => {
+    if (!input) return resolve({ type: 'channel', message: 'Who am I insulting?' })
 
-      try {
-        resolve({
-          type: 'channel',
-          message: '_' + input + " you're a " + spinsult.random() + '_'
-        });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-};
+    new normalinsult((meanMessage) => resolve({ type: 'channel', message: `${input}: ${meanMessage}` }))
+  })
+}
+export function oldinsult(user, channel, input) {
+  return new Promise(resolve => {
+    if (!input) return resolve({ type: 'channel', message: 'Who am I insulting?' })
+
+    return resolve({ type: 'channel', message: `_ ${input} you're a ${spinsult.random()}_` })
+  })
+}

@@ -1,31 +1,18 @@
-import Promise from 'bluebird';
+import Promise from 'bluebird'
 
-module.exports = {
-  commands: [{
-    alias: ['csi'],
-    command: 'csi'
-  }],
-  help: [{
-    command: ['csi'],
-    usage: 'csi'
-  }],
-  csi() {
-    return new Promise(resolve => {
-      return resolve({ type: 'channel', message: _genMessage() });
-    });
-  }
-};
+export const plugin_info = [{
+  alias: ['csi'],
+  command: 'csi',
+  usage: 'csi'
+}]
+
+export function csi() {
+  return new Promise(resolve => resolve({ type: 'channel', message: _genMessage() }))
+}
 
 // Credit to http://mcpubba.net/techgen.html & https://github.com/DoctorMcKay/steam-irc-bot for this amazing code
-
-function _getFunny(list) {
-  return list[Math.floor(Math.random() * list.length)];
-}
-
-function _genMessage() {
-  return _getFunny(start) + _getFunny(verb) + _getFunny(noun) + _getFunny(preposition) + _getFunny(noun) + '.';
-}
-
+const _getFunny = list => list[Math.floor(Math.random() * list.length)]
+const _genMessage = () => _getFunny(start) + _getFunny(verb) + _getFunny(noun) + _getFunny(preposition) + _getFunny(noun) + '.'
 const start = [
   'The first thing we need to do is ',
   'To fix your problem, we have to ',
@@ -33,8 +20,7 @@ const start = [
   'To get in to the government database we\'re going to ',
   'Quickly! We have to ',
   'We can get rid of the virus, don\'t worry. First we have to '
-];
-
+]
 const verb = [
   'reroute',
   'splice',
@@ -61,8 +47,7 @@ const verb = [
   'write a GUI to track',
   'trace',
   'troubleshoot'
-];
-
+]
 const noun = [
   ' the VGA cable',
   ' the USB',
@@ -111,11 +96,10 @@ const noun = [
   ' FTP',
   ' SSH',
   ' Visual Basic'
-];
-
+]
 const preposition = [
   ' through',
   ' into',
   ' with',
   ' on'
-];
+]

@@ -1,25 +1,21 @@
 import Promise from 'bluebird';
-import kickass from './utils/kickass';
+import kickassUtil from './utils/kickass';
 
-module.exports = {
-  commands: [{
-    alias: ['kickass'],
-    command: 'kickass'
-  }],
-  help: [{
-    command: ['kickass'],
-    usage: 'kickass <search>'
-  }],
-  kickass(user, channel, input = '') {
-    return new Promise((resolve, reject) => {
-      kickass.search(input, true).then((data) => {
-        let result = data.results[0];
-        resolve({
-          type: 'channel',
-          message: result.title + ' - ' + result.link
-        });
-      }).catch(reject);
-    });
-  }
-};
+export const plugin_info = [{
+  alias: ['kickass'],
+  command: 'kickass',
+  usage: 'kickass <search>'
+}]
+
+export function kickass(user, channel, input = '') {
+  return new Promise((resolve, reject) => {
+    kickassUtil.search(input, true).then((data) => {
+      let result = data.results[0];
+      resolve({
+        type: 'channel',
+        message: result.title + ' - ' + result.link
+      });
+    }).catch(reject);
+  });
+}
 

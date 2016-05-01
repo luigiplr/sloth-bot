@@ -1,35 +1,19 @@
+import Promise from 'bluebird'
 import CleverBot, {
   prepare
 }
-from 'cleverbot-node';
-import Promise from 'bluebird';
+from 'cleverbot-node'
 
-const cleverb = new CleverBot;
+const cleverb = new CleverBot
 
-module.exports = {
-  commands: [{
-    alias: ['cb', 'cleverbot'],
-    command: 'cleverbot'
-  }],
-  help: [{
-    command: ['cb', 'cleverbot'],
-    usage: 'cleverbot <message>'
-  }],
-  cleverbot(user, channel, input = 'hello') {
-    return new Promise((resolve, reject) => {
-      try {
-        prepare(() => {
-          cleverb.write(input, reply => {
-            resolve({
-              type: 'channel',
-              message: 'Cleverbot: ' + reply.message
-            });
-          });
-        });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-};
+export const plugin_info = [{
+  alias: ['cb', 'cleverbot'],
+  command: 'cleverbot',
+  usage: 'cleverbot <message>'
+}]
 
+export function cleverbot(user, channel, input = 'hello') {
+  return new Promise(resolve => {
+    prepare(() => cleverb.write(input, reply => resolve({ type: 'channel', message: `Cleverbot: ${reply.message}` })))
+  })
+}
