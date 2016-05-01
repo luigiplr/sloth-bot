@@ -1,5 +1,5 @@
 import path from 'path'
-import fs from 'fs-extra'
+import fs from 'fs'
 import CRUD from 'createreadupdatedelete.js'
 
 const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot')
