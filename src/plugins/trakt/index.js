@@ -45,14 +45,13 @@ export function searchShows(user, channel, input) {
         .then(([show, seasons]) => {
           if (!show) return reject("Couldn't find a show with that name");
           if (seasons[0].number == 0) {
-            trakt.seasons.season({id: shows[0].show.ids.trakt, season: 0}).then((specialSeason) => {
+            trakt.seasons.season({ id: shows[0].show.ids.trakt, season: 0 }).then((specialSeason) => {
               show.aired_episodes = show.aired_episodes - specialSeason.length
               seasons.pop()
               return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
             })
-          }
-        else
-          return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
+          } else
+            return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
         }).catch(reject)
     }).catch(reject)
   })
@@ -80,7 +79,7 @@ const generateShowResponse = ((showDetails, seasons) => {
     // Filter the shit to remove nulls
   out.attachments[0].fields = _.filter([{
     "title": "Overview",
-    "value": _.truncate(showDetails.overview, 400) || null,
+    "value": _.truncate(showDetails.overview, { length: 400 }) || null,
     "short": false
   }, {
     "title": "First Aired",

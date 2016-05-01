@@ -113,7 +113,7 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
       "short": true
     }, {
       "title": app.type == 'movie' ? 'Studio' : 'Developers',
-      "value": _.truncate(app.developers.join(', '), 40),
+      "value": _.truncate(app.developers.join(', '), { length: 40 }),
       "short": true
     }, {
       "title": "Metacritic",
