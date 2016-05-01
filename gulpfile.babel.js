@@ -17,19 +17,19 @@ gulp.task('build', () => gulp.src(['!src/plugins/webui/utils/public/**/*', 'src/
   })
   .pipe(gulp.dest('build')))
 
-gulp.task('build-webui', () => {
-  gulp.src('src/plugins/webui/utils/public/**/*').pipe(gulp.dest('build/plugins/webui/utils/public'))
-  gulp.src('src/plugins/webui/utils/views/**/*').pipe(gulp.dest('build/plugins/webui/utils/views'))
-})
+//gulp.task('build-webui', () => {
+//  gulp.src('src/plugins/webui/utils/public/**/*').pipe(gulp.dest('build/plugins/webui/utils/public'))
+//  gulp.src('src/plugins/webui/utils/views/**/*').pipe(gulp.dest('build/plugins/webui/utils/views'))
+//})
 
 gulp.task('clean-build', () => gulp.src('build', { read: false }).pipe(rimraf()))
 
-gulp.task('watch-build', () => gulp.watch('src/**/*', ['build', 'build-webui', server.restart]))
+gulp.task('watch-build', () => gulp.watch('src/**/*', ['build', server.restart]))
 
 gulp.task('sloth:start', () => server.listen({ path: './index.js', env: { BLUEBIRD_WARNINGS: 0 } }))
 
 /* Watch Tasks */
 
-gulp.task('start-dev', callback => runSequence('clean-build', 'build', 'build-webui', 'watch-build', 'sloth:start', callback))
+gulp.task('start-dev', callback => runSequence('clean-build', 'build', 'watch-build', 'sloth:start', callback))
 
-gulp.task('start', callback => runSequence('clean-build', 'build', 'build-webui', 'sloth:start', callback))
+gulp.task('start', callback => runSequence('clean-build', 'build', 'sloth:start', callback))
