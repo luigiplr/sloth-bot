@@ -109,11 +109,11 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
       "short": true
     }, {
       "title": "Current Players",
-      "value": app.player_count ? app.player_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : null,
+      "value": app.player_count ? formatNumber(app.player_count) : null,
       "short": true
     }, {
       "title": app.type == 'movie' ? 'Studio' : 'Developers',
-      "value": _.trunc(app.developers.join(', '), 40),
+      "value": _.truncate(app.developers.join(', '), 40),
       "short": true
     }, {
       "title": "Metacritic",
