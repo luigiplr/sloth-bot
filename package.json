@@ -8,7 +8,7 @@
   },
   "scripts": {
     "babel": "babel src -d build",
-    "forever": "forever start -a -o out.log -e err.log -m 1 build/index.js"
+    "forever": "forever start -a -o out.log -e err.log -m 1 index.js"
   },
   "repository": {
     "type": "git",
