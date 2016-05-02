@@ -65,7 +65,6 @@ export function findUser(user, type) {
 
     let userID = user.slice(0, 2) == "<@" ? user.slice(0, 2) : false
     let member = usersCache[userID ? userID : userNamesCache[user]]
-    console.log(userNamesCache)
 
     if (!member) return reject("Couldn't find a user by that name")
 
