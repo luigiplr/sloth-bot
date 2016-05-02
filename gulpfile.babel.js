@@ -8,7 +8,7 @@ import runSequence from 'run-sequence'
 
 /* Build Tasks */
 
-gulp.task('build', () => gulp.src(['!src/plugins/webui/utils/public/**/*', 'src/**/*.js'])
+gulp.task('build-src', () => gulp.src(['!src/plugins/webui/utils/public/**/*', 'src/**/*.js'])
   .pipe(plumber())
   .pipe(babel())
   .on('error', err => {
@@ -30,8 +30,8 @@ gulp.task('sloth:start', () => server.listen({ path: './index.js', env: { BLUEBI
 
 /* Watch Tasks */
 
-gulp.task('start-dev', callback => runSequence('clean-build', 'build', 'watch-build', 'sloth:start', callback))
+gulp.task('start-dev', callback => runSequence('clean-build', 'build-src', 'watch-build', 'sloth:start', callback))
 
-gulp.task('start', callback => runSequence('clean-build', 'build', 'sloth:start', callback))
+gulp.task('start', callback => runSequence('clean-build', 'build-src', 'sloth:start', callback))
 
-gulp.task('build', callback => runSequence('clean-build', 'build', callback))
+gulp.task('build', callback => runSequence('clean-build', 'build-src', callback))
