@@ -51,6 +51,8 @@ CRUD.define(Quotes, {
     'grabUser',
     'date'
   ],
+  orderProperty: 'date',
+  orderDirection: 'DESC',
   createStatement: 'CREATE TABLE Quote (quoteId INTEGER PRIMARY KEY NOT NULL, quotedUser VARCHAR(128) NOT NULL, message VARCHAR(4000) NOT NULL, grabUser VARCHAR(128), date DATETIME)'
 })
 

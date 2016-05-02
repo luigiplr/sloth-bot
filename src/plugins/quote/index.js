@@ -18,7 +18,7 @@ export const plugin_info = [{
 export function grab(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: grab <username> [index] - Grabs a message from a user. Index can be up to 3 messages back where 0 is latest' })
-    let grabee = input.split(' ')[0]
+    let grabee = input.split(' ')[0].toLowerCase()
     let index = input.split(' ')[1] ? input.split(' ')[1] : 0
     if (!index || (index < 4 && index >= 0))
       grabQuote(grabee, channel, index, user).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
@@ -29,7 +29,7 @@ export function grab(user, channel, input) {
 export function quote(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: quote <username> [index] - Retrives and displays a users most recent or specified quote' })
-    let grabee = input.split(' ')[0]
+    let grabee = input.split(' ')[0].toLowerCase()
     let index = input.split(' ')[1] ? input.split(' ')[1] : undefined
     getQuote(grabee, index).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
   })
