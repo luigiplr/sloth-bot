@@ -33,3 +33,5 @@ gulp.task('sloth:start', () => server.listen({ path: './index.js', env: { BLUEBI
 gulp.task('start-dev', callback => runSequence('clean-build', 'build', 'watch-build', 'sloth:start', callback))
 
 gulp.task('start', callback => runSequence('clean-build', 'build', 'sloth:start', callback))
+
+gulp.task('build', callback => runSequence('clean-build', 'build', callback))

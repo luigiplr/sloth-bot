@@ -66,7 +66,7 @@ export function uptime() {
 }
 export function update(user, channel, input) {
   return new Promise((resolve, reject) => {
-    let updatecmd = 'git pull && grunt install'
+    let updatecmd = 'git pull && gulp build'
 
     if (updating) return reject('Update already in process')
 
