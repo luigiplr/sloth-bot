@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import _ from 'lodash'
-import slackTools from '../../slack.js'
+import { findUser } from '../../slack.js'
 
 var disabled = false
 
@@ -18,7 +18,7 @@ export function poopbomb(user, channel, input) {
     if (disabled) return reject("I can't poop again that quickly")
     if (amount > 3) return reject('Too much poop :|')
 
-    slackTools.findUser(input.split(' ')[0]).then(poopee => {
+    findUser(input.split(' ')[0]).then(poopee => {
       let p = _.fill(Array(amount), ':hankey: p :hankey:')
       let o = _.fill(Array(amount), ':hankey: o :hankey:')
       let oo = _.fill(Array(2), ':hankey: o :hankey:')

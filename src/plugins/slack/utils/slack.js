@@ -11,7 +11,7 @@ export function kick(user, channel, input) {
 
     if (user === config.botname || user.slice(2, -1) === config.botid) return reject('Error: Bitch. No.')
 
-    findUser(user).then(kickee => needle.post('https://slack.com/api/channels.kick', {
+    findUser(user, 'both').then(kickee => needle.post('https://slack.com/api/channels.kick', {
       channel: channel.id,
       token: config.slackToken,
       user: kickee.id
@@ -22,7 +22,7 @@ export function kick(user, channel, input) {
       }
 
       sendPMThroughSlackbot(kickee.name, `You were kicked from #${channel.name} for ${reason || 'no reason'}`)
-      return resolve(`*Kicked: ${kickee.name}* for ${reason || 'no reason.'}`)
+      return resolve(`*Kicked: ${kickee.name}* ${reason || 'for no reason.'}`)
     })).catch(reject)
   })
 }

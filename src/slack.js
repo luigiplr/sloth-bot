@@ -63,8 +63,8 @@ export function getHistory(channel, limit = 100) {
 export function findUser(user, type) {
   return new Promise((resolve, reject) => {
 
-    let userID = user.slice(0, 2) == "<@" ? user.slice(0, 2) : false
-    let member = usersCache[userID ? userID : userNamesCache[user]]
+    let userID = user.slice(0, 2) == "<@" ? user.slice(2, -1) : false
+    let member = usersCache[userID ? userID : userNamesCache[user.toLowerCase()]]
 
     if (!member) return reject("Couldn't find a user by that name")
 

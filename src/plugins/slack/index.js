@@ -47,7 +47,7 @@ export const plugin_info = [{
   userLevel: ['admin', 'superadmin']
 }]
 
-export function kickUser(user, channel, input = false) {
+export function kickUser(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: kick <username> [reason]> - Kicks a user from the channel' })
 
