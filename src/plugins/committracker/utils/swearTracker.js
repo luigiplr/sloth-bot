@@ -13,7 +13,7 @@ var username, userToLook, updating;
 // Github API Endpoints
 const endpoints = {
   repositories: 'https://api.github.com/users/%u/repos',
-  commits: 'https://api.github.com/repos/%u/%r%/commits?author=%u'
+  commits: 'https://api.github.com/repos/%u/%r%/commits?author=%u&per_page=40'
 }
 
 // Formats Endpoint URLs
