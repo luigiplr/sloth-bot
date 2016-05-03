@@ -38,6 +38,10 @@ export const plugin_info = [{
   command: 'whoInvited',
   usage: 'whoinvited <user> - finds out who invited user to team'
 }, {
+  alias: ['invitedwho'],
+  command: 'invitedWho',
+  usage: 'whoinvited <user> - shows who user has invited to the team'
+}, {
   alias: ['updateusercache'],
   command: 'updateUserCache',
   userLevel: ['admin', 'superadmin']
@@ -72,16 +76,30 @@ export function whoInvited(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: "Usage: whoinvited <user> - Returns information for who invited user if it's available" })
     InviteUsers.findOneByInvitedUser(input).then(resp => {
-      if (resp) return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* on ${moment(resp.date).isValid() ? moment(resp.date).format("dddd, Do MMM YYYY") : 'who knows'}` })
+      if (resp) return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* on ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
 
       findUser(input, 'email').then(({ name, email }) => {
         InviteUsers.findOneByEmail(email).then(resp => {
           if (!resp) return reject("I don't have invite data for this user :(")
           resp.invitedUser = name
           resp.Persist()
-          return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* on ${moment(resp.date).isValid() ? moment(resp.date).format("dddd, Do MMM YYYY") : 'who knows'}` })
+          return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
         })
       }).catch(reject)
+    })
+  })
+}
+
+export function invitedWho(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return resolve({ type: 'dm', message: "Usage: invitedwho <user> - Returns list of users that have been invited by user" })
+    InviteUsers.findByInviter(input.toLowerCase()).then(resp => {
+      if (!resp[0]) return reject("Couldn't find any users invited by this user")
+      let out = [`${input.toLowerCase()} has invited ${resp.length} members to this team:`]
+      resp.forEach(invitee => {
+        out.push(` - *${invitee.invitedUser}* on ${moment(invitee.date).isValid() ? moment(invitee.date).format("dddd, Do MMM YYYY") : 'Unknown'}`)
+      })
+      return resolve({ type: 'channel', messages: out })
     })
   })
 }

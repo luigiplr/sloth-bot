@@ -64,6 +64,8 @@ CRUD.define(InviteUsers, {
   table: 'InviteUsers',
   primary: 'inviteUserId',
   fields: ['inviteUserId', 'inviter', 'email', 'invitedUser', 'date'],
+  orderProperty: 'date',
+  orderDirection: 'DESC',
   createStatement: 'CREATE TABLE InviteUsers (inviteUserId INTEGER PRIMARY KEY NOT NULL, inviter VARCHAR(128) DEFAULT (NULL), email VARCHAR(128) DEFAULT (NULL), invitedUser VARCHAR(128) DEFAULT (NULL), date DATETIME)'
 })
 
