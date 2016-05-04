@@ -40,7 +40,7 @@ class slackClient extends Slack {
     this.on('error', err => {
       this._sendErrorToDebugChannel('slackClientError', err)
       console.log("Error", err)
-        //setTimeout(() => process.exit(1), 500)
+      setTimeout(() => process.exit(1), 500)
     })
   }
 

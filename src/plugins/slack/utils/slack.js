@@ -39,7 +39,7 @@ export function deleteLastMessage(channel, messagets) {
       if (!ts) return resolve(false);
 
       deleteMessage(channel, ts)
-      return resolve(ts)
+      return resolve()
     }).catch(reject);
   })
 }
