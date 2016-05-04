@@ -4,9 +4,9 @@ import config from '../../../../config.json'
 
 export function query(input) {
   return new Promise((resolve, reject) => {
-    if (!config.wolframAppKey) return reject("Error: WolframAlpha API Key required to use this function")
+    if (!config.wolframAPIKey) return reject("Error: WolframAlpha API Key required to use this function")
 
-    let url = `http://api.wolframalpha.com/v2/query?input=${input}&primary=true&appid=${config.wolframAppKey}`
+    let url = `http://api.wolframalpha.com/v2/query?input=${input}&primary=true&appid=${config.wolframAPIKey}`
 
     needle.get(url, (err, resp, body) => {
       if (!err && body)

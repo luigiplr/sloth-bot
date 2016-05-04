@@ -13,7 +13,7 @@ export function kick(user, channel, input) {
 
     findUser(user, 'both').then(kickee => needle.post('https://slack.com/api/channels.kick', {
       channel: channel.id,
-      token: config.slackToken,
+      token: config.slackAPIToken,
       user: kickee.id
     }, (err, resp, { error }) => {
       if (err || error) {

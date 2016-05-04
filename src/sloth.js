@@ -4,14 +4,14 @@ import { sendMessage } from './slack'
 import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
 
-if (!config.prefix || !config.slackToken || !config.slackAPIToken) {
+if (!config.prefix || !config.slackAPIToken || !config.slackBotToken) {
   console.error("Invalid config, please fill in the first 3 required config fields")
   process.exit()
 }
 
 class slackClient extends Slack {
   constructor() {
-    super(config.slackAPIToken, true, true)
+    super(config.slackBotToken, true, true)
 
     this._registerEvents()
     this.login()
@@ -107,7 +107,7 @@ class slackClient extends Slack {
     }
   }
 
-  _getParams = (text = '', attachments = null) => ({ text, attachments, as_user: true, token: config.slackAPIToken })
+  _getParams = (text = '', attachments = null) => ({ text, attachments, as_user: true, token: config.slackBotToken })
 
   _checkIfDM = (type, user) => new Promise(resolve => (type == 'dm') ? this.openDM(user, ({ channel }) => resolve(this.getChannelGroupOrDMByID(channel.id))) : resolve(0))
 }

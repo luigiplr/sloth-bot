@@ -9,7 +9,7 @@ let usersCache = {}
 
 export function updateUsersCache() {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.list', {
-    token: config.slackAPIToken
+    token: config.slackBotToken
   }, (err, resp, { error, members }) => {
     if (err || error) return reject(_logErr('updateUserCacheErr', err || error))
     userNamesCache = {}
@@ -28,7 +28,7 @@ export function sendMessage(channel, input) {
     text: input,
     channel: channel,
     as_user: 'true',
-    token: config.slackAPIToken,
+    token: config.slackBotToken,
     icon_url: config.imageURL
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('sendMsgErr', err || error))
@@ -40,7 +40,7 @@ export function sendPMThroughSlackbot(channel, input) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/chat.postMessage', {
     text: input,
     channel: `@${channel}`,
-    token: config.slackAPIToken,
+    token: config.slackBotToken,
     username: config.botname,
     icon_url: config.imageURL
   }, (err, resp, { error }) => {
@@ -52,7 +52,7 @@ export function sendPMThroughSlackbot(channel, input) {
 export function getHistory(channel, limit = 100) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/channels.history', {
     channel: channel,
-    token: config.slackAPIToken,
+    token: config.slackBotToken,
     count: limit
   }, (err, resp, { error, messages }) => {
     if (err || error) return reject(_logErr('getHistoryErr', err || error))
@@ -75,7 +75,7 @@ export function findUser(user, type) {
 
 export function getUsers() {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.list', {
-    token: config.slackAPIToken
+    token: config.slackBotToken
   }, (err, resp, { error, members }) => {
     if (err || error) return reject(_logErr('getUsersErr', err || error))
     return resolve(members)
@@ -84,7 +84,7 @@ export function getUsers() {
 
 export function setInactive(user) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.admin.setInactive', {
-    token: config.slackToken,
+    token: config.slackAPIToken,
     user: user,
     set_active: true,
     _attempts: 1
@@ -96,7 +96,7 @@ export function setInactive(user) {
 
 export function setRegular(user) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.admin.setRegular', {
-    token: config.slackToken,
+    token: config.slackAPIToken,
     user: user,
     set_active: true,
     _attempts: 1
@@ -108,7 +108,7 @@ export function setRegular(user) {
 
 export function addLoadingMsg(message) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/team.loading.addMsg', {
-    token: config.slackToken,
+    token: config.slackAPIToken,
     message: message
   }, (err, resp, { error, id }) => {
     if (err || error) return reject(_logErr('addLoadingMsgErr', err || error))
@@ -118,7 +118,7 @@ export function addLoadingMsg(message) {
 
 export function deleteLoadingMsg(id) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/team.loading.deleteMsg', {
-    token: config.slackToken,
+    token: config.slackAPIToken,
     id: id
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('delLoadingMsgErr', err || error))
@@ -129,7 +129,7 @@ export function deleteLoadingMsg(id) {
 export function invite(email) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.admin.invite', {
     email: email,
-    token: config.slackToken,
+    token: config.slackAPIToken,
     set_active: true
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('inviteErr', err || error))
@@ -144,7 +144,7 @@ export function deleteMessage(channel, ts) {
 const deleteQueue = queue((task, cb) => {
   needle.post('https://slack.com/api/chat.delete', {
     channel: task.channel,
-    token: config.slackToken,
+    token: config.slackAPIToken,
     ts: task.ts
   }, (err, resp, { error }) => {
     if (err || error) console.error(`Error deleting message ${err || error}`)

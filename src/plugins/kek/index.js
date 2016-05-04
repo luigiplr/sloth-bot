@@ -2,7 +2,7 @@ import Promise from 'bluebird'
 import needle from 'needle'
 import config from '../../../config.json'
 
-const subscriberUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=TheFineBros&fields=items/statistics/subscriberCount&key=${config.googleToken}`
+const subscriberUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=TheFineBros&fields=items/statistics/subscriberCount&key=${config.googleAPIKey}`
 const originalSubCount = 14080108
 var lastCheck
 
@@ -14,7 +14,7 @@ export const plugin_info = [{
 
 export function topkek() {
   return new Promise((resolve, reject) => {
-    if (!config.googleToken) return reject("Error: Google APIKey required to use this function")
+    if (!config.googleAPIKey) return reject("Error: Google APIKey required to use this function")
 
     needle.get(subscriberUrl, (err, resp, body) => {
       if (!err && body) {

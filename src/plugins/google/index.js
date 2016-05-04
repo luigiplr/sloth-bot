@@ -6,7 +6,7 @@ import config from '../../../config.json'
 
 const ytOpts = {
   maxResults: 1,
-  key: config.googleToken,
+  key: config.googleAPIKey,
   type: 'video',
   videoEmbeddable: true,
   safeSearch: 'none'
@@ -31,9 +31,9 @@ export function googleImage(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 5 images returned for query' })
 
-    if (!config.googleToken || !config.cseToken) return reject("Error: Google API Key and CSE Key are required to use this function")
+    if (!config.googleAPIKey || !config.cseID) return reject("Error: Google API Key and CSE Key are required to use this function")
 
-    let url = `https://www.googleapis.com/customsearch/v1?q=${input}&num=5&searchType=image&start=1&key=${config.googleToken}&cx=${config.cseToken}`
+    let url = `https://www.googleapis.com/customsearch/v1?q=${input}&num=5&searchType=image&start=1&key=${config.googleAPIKey}&cx=${config.cseID}`
 
     needle.get(url, (err, resp, body) => {
       if (!err && body && !body.error) {
@@ -66,7 +66,7 @@ export function youtubeSearch(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: youtube <query> | Returns the Youtube result for query' });
 
-    if (!config.googleToken) return reject("Error: Google APIKey required to use this function");
+    if (!config.googleAPIKey) return reject("Error: Google APIKey required to use this function");
 
     ytSearch(input, ytOpts, (err, resp) => {
       if (err) return reject(`ytSearchErr: ${err}`)

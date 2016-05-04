@@ -5,9 +5,9 @@ import config from '../../../config.json'
 import moment from 'moment'
 
 var trakt;
-if (config.traktApiKey) {
-  trakt = new Trakt({ client_id: config.traktApiKey })
-} else console.error("Error: Trakt Plugin requires traktApiKey")
+if (config.traktAPIKey) {
+  trakt = new Trakt({ client_id: config.traktAPIKey })
+} else console.error("Error: Trakt Plugin requires traktAPIKey")
 
 export const plugin_info = [{
   alias: ['movie'],
@@ -24,7 +24,7 @@ export const plugin_info = [{
 
 export function searchMovies(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
+    if (!config.traktAPIKey) return reject("Error: traktAPIKey is required to use this function");
     if (!input)
       return resolve({
         type: 'dm',
@@ -37,7 +37,7 @@ export function searchMovies(user, channel, input) {
 
 export function searchShows(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!config.traktApiKey) return reject("Error: traktApiKey is required to use this function");
+    if (!config.traktAPIKey) return reject("Error: traktAPIKey is required to use this function");
     if (!input) return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
 
     trakt.search({ type: 'show', query: input }).then(shows => {
