@@ -35,7 +35,6 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "giphy": "0.0.4",
-    "google": "^2.0.0",
     "insultgenerator": "0.0.2",
     "jade": "^1.11.0",
     "lodash": "^4.11.1",

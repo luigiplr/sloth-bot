@@ -1,5 +1,4 @@
 import Promise from 'bluebird'
-import google from 'google'
 import ytSearch from 'youtube-search'
 import needle from 'needle'
 import config from '../../../config.json'
@@ -11,11 +10,10 @@ const ytOpts = {
   videoEmbeddable: true,
   safeSearch: 'none'
 }
-google.resultsPerPage = 1
 
 export const plugin_info = [{
   alias: ['g', 'google'],
-  command: 'googleSearch',
+  command: 'bingSearch',
   usage: 'google <query> - returns first google result for query'
 }, {
   alias: ['yt', 'youtube'],
@@ -49,15 +47,19 @@ export function googleImage(user, channel, input) {
   })
 }
 
-export function googleSearch(user, channel, input) {
+export function bingSearch(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: google <query> -Returns the first Google result for query' })
+    if (!input) return resolve({ type: 'dm', message: 'Usage: google <query> - Returns the first Google result for query' })
+    if (!config.bingAPIKey) return reject('Bing API Key required to use this function')
 
-    google(input, (err, { links }) => {
-      if (err) return reject(`googleSearchErr: ${err}`)
-      console.log(links)
-      if (links.length) return resolve({ type: 'channel', message: `${links[0].href} - ${links[0].title} - ${links[0].description.replace(/(\n)+/g, ' ')}` })
-      else return reject("No results found")
+    let url = `https://bingapis.azure-api.net/api/v5/search/?q=${input}&count=1&safesearch=Off`
+    let headers = { headers: { 'Ocp-Apim-Subscription-Key': config.bingAPIKey } }
+
+    needle.get(url, headers, (err, resp, body) => {
+      if (!err && !body.error && body.webPages) {
+        let result = body.webPages.value[0]
+        return resolve({ type: 'channel', message: `${result.name} - ${result.snippet} - ${unescape(result.url.split('&r=')[1].split('&p=')[0])}` })
+      } else return reject(err || body.error)
     })
   })
 }

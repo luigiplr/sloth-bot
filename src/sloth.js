@@ -82,11 +82,9 @@ class slackClient extends Slack {
   }
 
   _sendErrorToDebugChannel(type, error) {
-    if (!config.debugChannel) return
-
     if (error && error.message && error.stack) {
       console.error("Caught Error:", type, error.message, error.stack);
-
+      if (!config.debugChannel) return
 
       let i = 0;
       const message = 'Caught ' + type + ' ```' + error.message + '\n' + error.stack + '```';
