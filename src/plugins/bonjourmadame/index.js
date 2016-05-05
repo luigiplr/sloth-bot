@@ -75,7 +75,7 @@ export function f00px(user, channel, input = 'popular') {
     let validFeatures = ['popular', 'highest_rated', 'upcoming', 'editors', 'fresh_today', 'fresh_yesterday', 'fresh_week']
     let feature = _.includes(validFeatures, inpt[0]) ? inpt[0] : 'popular'
 
-    let url = `https://api.500px.com/v1/photos?rpp=20&only=nude&image_size=1080&consumer_key=${config.f00pxAPIKey}&feature=${feature}`
+    let url = `https://api.500px.com/v1/photos?rpp=20&only=nude&image_size=[1080,1600,2048]&consumer_key=${config.f00pxAPIKey}&feature=${feature}`
 
     needle.get(url, (err, resp, body) => {
       if (!err && body && body.photos) {
