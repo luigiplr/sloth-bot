@@ -4,7 +4,7 @@ import Trakt from 'trakt.tv'
 import config from '../../../config.json'
 import moment from 'moment'
 
-var trakt;
+var trakt
 if (config.traktAPIKey) {
   trakt = new Trakt({ client_id: config.traktAPIKey })
 } else console.error("Error: Trakt Plugin requires traktAPIKey")
@@ -39,7 +39,7 @@ export function searchShows(user, channel, input) {
     getShowWithSlugOrSearch(input).then(id => {
       Promise.join(trakt.shows.summary({ id, extended: 'full,images' }), trakt.seasons.summary({ id }))
         .then(([show, seasons]) => {
-          if (!show || !seasons) return reject("No results found")
+          if (!show || !seasons) return reject("Error fetching Show/Seasons info")
           if (seasons[0].number == 0) {
             trakt.seasons.season({ id, season: 0 }).then(specialSeason => {
               show.aired_episodes = show.aired_episodes - specialSeason.length
@@ -58,7 +58,9 @@ export function redirect() {
 
 const getShowWithSlugOrSearch = input => new Promise((resolve, reject) => {
   let query = input.split(' ')
-  if (query[0] == '-s') return resolve(query[1])
+  if (query[0] == '-s') trakt.shows.summary({ id: query[1] }).then(show => {
+    return resolve(show.ids.trakt)
+  }).catch(() => reject('No results found'))
   else trakt.search({ type: 'show', query: query[0] }).then(shows => {
     if (!shows.length) return reject('No results found')
     return resolve(shows[0].show.ids.trakt)
