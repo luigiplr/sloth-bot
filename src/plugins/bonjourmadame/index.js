@@ -1,6 +1,9 @@
 import Promise from 'bluebird'
 import MetaInspector from 'node-metainspector'
 import moment from 'moment'
+import needle from 'needle'
+import _ from 'lodash'
+import config from '../../../config.json'
 
 export const plugin_info = [{
   alias: ['hellolady', 'bonjourmadame'],
@@ -10,6 +13,10 @@ export const plugin_info = [{
   alias: ['hellosir', 'bonjourmonsieur'],
   command: 'bonjourmonsieur',
   usage: 'hellosir [void, \'today\']'
+}, {
+  alias: ['500px'],
+  command: 'f00px',
+  usage: '500px [feature|index] [index]'
 }]
 
 export function bonjourmadame(user, channel, input) {
@@ -59,5 +66,23 @@ export function bonjourmonsieur(user, channel, input) {
     client.on('error', () => reject('Error loading page'))
 
     client.fetch()
+  })
+}
+
+export function f00px(user, channel, input = 'popular') {
+  return new Promise((resolve, reject) => {
+    let inpt = input.split(' ')
+    let validFeatures = ['popular', 'highest_rated', 'upcoming', 'editors', 'fresh_today', 'fresh_yesterday', 'fresh_week']
+    let feature = _.includes(validFeatures, inpt[0]) ? inpt[0] : 'popular'
+
+    let url = `https://api.500px.com/v1/photos?rpp=20&only=nude&image_size=1080&consumer_key=${config.f00pxAPIKey}&feature=${feature}`
+
+    needle.get(url, (err, resp, body) => {
+      if (!err && body && body.photos) {
+        let index = !isNaN(parseInt(inpt[0])) ? parseInt(inpt[0]) : (!isNaN(parseInt(inpt[1])) ? parseInt(inpt[1]) : Math.floor(Math.random() * body.photos.length))
+        index = index > body.photos.length - 1 ? Math.floor(Math.random() * body.photos.length) : index
+        return resolve({ type: 'channel', message: body.photos[index].image_url })
+      } else return reject(err || 'An unknown error occured')
+    })
   })
 }
