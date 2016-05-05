@@ -16,7 +16,7 @@ export const plugin_info = [{
 }, {
   alias: ['show', 'tvshow'],
   command: 'searchShows',
-  usage: 'players <appid> - returns players for app'
+  usage: 'show [-s] <query> - returns info for a show'
 }, {
   alias: ['imdb', 'trakt'],
   command: 'redirect'
@@ -25,11 +25,7 @@ export const plugin_info = [{
 export function searchMovies(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!config.traktAPIKey) return reject("Error: traktAPIKey is required to use this function");
-    if (!input)
-      return resolve({
-        type: 'dm',
-        message: 'Usage: movie <query> - Returns movie information for query'
-      });
+    if (!input) return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
 
     return reject("Not implemented");
   })
@@ -38,20 +34,19 @@ export function searchMovies(user, channel, input) {
 export function searchShows(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!config.traktAPIKey) return reject("Error: traktAPIKey is required to use this function");
-    if (!input) return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
+    if (!input) return resolve({ type: 'dm', message: 'Usage: show [-s] <query> - Returns show information for query, optionally specify -s to use a shows slug as the ID' })
 
-    trakt.search({ type: 'show', query: input }).then(shows => {
-      Promise.join(trakt.shows.summary({ id: shows[0].show.ids.trakt, extended: 'full,images' }), trakt.seasons.summary({ id: shows[0].show.ids.trakt }))
+    getShowWithSlugOrSearch(input).then(id => {
+      Promise.join(trakt.shows.summary({ id, extended: 'full,images' }), trakt.seasons.summary({ id }))
         .then(([show, seasons]) => {
-          if (!show) return reject("Couldn't find a show with that name");
+          if (!show || !seasons) return reject("No results found")
           if (seasons[0].number == 0) {
-            trakt.seasons.season({ id: shows[0].show.ids.trakt, season: 0 }).then((specialSeason) => {
+            trakt.seasons.season({ id, season: 0 }).then(specialSeason => {
               show.aired_episodes = show.aired_episodes - specialSeason.length
               seasons.pop()
               return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
-            })
-          } else
-            return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
+            }).catch(reject)
+          } else return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
         }).catch(reject)
     }).catch(reject)
   })
@@ -60,6 +55,15 @@ export function searchShows(user, channel, input) {
 export function redirect() {
   return new Promise(resolve => resolve({ type: 'dm', message: `You can use the ${config.prefix}movie or ${config.prefix}tvshow commands to fetch movie/show information` }))
 }
+
+const getShowWithSlugOrSearch = input => new Promise((resolve, reject) => {
+  let query = input.split(' ')
+  if (query[0] == '-s') return resolve(query[1])
+  else trakt.search({ type: 'show', query: query[0] }).then(shows => {
+    if (!shows.length) return reject('No results found')
+    return resolve(shows[0].show.ids.trakt)
+  })
+})
 
 const imgResize = 'https://images.weserv.nl/?w=175&url='
 
