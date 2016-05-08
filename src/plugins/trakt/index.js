@@ -27,7 +27,7 @@ export function searchMovies(user, channel, input) {
     if (!config.traktAPIKey) return reject("Error: traktAPIKey is required to use this function");
     if (!input) return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
 
-    return reject("Not implemented");
+    return reject("Not implemented")
   })
 }
 
@@ -40,13 +40,8 @@ export function searchShows(user, channel, input) {
       Promise.join(trakt.shows.summary({ id, extended: 'full,images' }), trakt.seasons.summary({ id }))
         .then(([show, seasons]) => {
           if (!show || !seasons) return reject("Error fetching Show/Seasons info")
-          if (seasons[0].number == 0) {
-            trakt.seasons.season({ id, season: 0 }).then(specialSeason => {
-              show.aired_episodes = show.aired_episodes - specialSeason.length
-              seasons.pop()
-              return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
-            }).catch(reject)
-          } else return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
+          if (seasons[0].number == 0) seasons.shift()
+          return resolve({ type: 'channel', message: generateShowResponse(show, seasons) })
         }).catch(reject)
     }).catch(reject)
   })
@@ -96,7 +91,7 @@ const generateShowResponse = ((showDetails, seasons) => {
     "value": showDetails.status.split(' ').map(s => _.capitalize(s)).join(' ') || null,
     "short": true
   }, {
-    "title": "Episodes",
+    "title": "Aired Episodes",
     "value": `${showDetails.aired_episodes} Episodes | ${seasons.length} ${seasons.length == 1 ? 'Season' : 'Seasons'}`,
     "short": true
   }, {
