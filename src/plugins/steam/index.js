@@ -29,7 +29,7 @@ export function steamProfile(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information' })
 
-    getProfileInfo(input).then(resp => resolve({ type: 'channel', messages: generateProfileResponse(resp) })).catch(reject)
+    getProfileInfo(input).then(resp => resolve({ type: 'channel', message: generateProfileResponse(resp) })).catch(reject)
   })
 }
 
@@ -66,19 +66,28 @@ export function steamid(user, channel, input) {
 }
 
 const generateProfileResponse = (profile => {
-  if (profile && profile.communityvisibilitystate !== 1) {
+  if (profile) {
     let realname = profile.realname ? `(${profile.realname})` : ''
     let status = profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)
     let msg = [
       `*Profile Name:* ${profile.personaname} ${realname}`,
       `*Level:* ${profile.user_level} | *Status:* ${status}`,
-      `*Joined Steam:* ${moment(profile.timecreated * 1000).format("dddd, Do MMM YYYY")}`,
+      `*Joined Steam:* ${profile.timecreated ? moment(profile.timecreated * 1000).format("dddd, Do MMM YYYY") : 'Unknown'}`,
       `*Total Games:* ${profile.totalgames} | *Most Played:* ${profile.mostplayed.name} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
-      profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : `` : ``
+      profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
+      profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
     ]
-    return (msg.filter(Boolean))
-  } else if (profile && profile.communityvisibilitystate == 1) return [`${profile.personaname} appears to be a private profile`]
-  else return ['Error fetching profile info']
+    let out = {
+      attachments: [{
+        "mrkdwn_in": ["text"],
+        "author_name": profile.personaname,
+        "author_icon": profile.avatar,
+        "author_link": profile.profileurl,
+        "text": msg.filter(Boolean).join('\n')
+      }]
+    }
+    return out
+  } else return 'Error fetching profile info'
 })
 
 const generateAppDetailsResponse = ((app, gamesOnly) => {
