@@ -76,7 +76,7 @@ export function f00px(user, channel, input = 'popular') {
     let feature = _.includes(validFeatures, inpt[0]) ? inpt[0] : undefined
     if (!feature && isNaN(parseInt(inpt[0]))) return reject(`Invalid feature, valid features are: \n \`${validFeatures.join(', ')}\``)
 
-    let url = `https://api.500px.com/v1/photos?rpp=25&only=nude&image_size=2048&consumer_key=${config.f00pxAPIKey}&feature=${feature}`
+    let url = `https://api.500px.com/v1/photos?rpp=60&only=nude&image_size=2048&consumer_key=${config.f00pxAPIKey}&feature=${feature}`
 
     needle.get(url, (err, resp, body) => {
       if (!err && body && body.photos) {
