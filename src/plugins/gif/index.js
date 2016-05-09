@@ -1,7 +1,7 @@
-import Promise from 'bluebird';
+import Promise from 'bluebird'
 import Giphy from 'giphy'
 
-const giphy = new Giphy('dc6zaTOxFJmzC');
+const giphy = new Giphy('dc6zaTOxFJmzC')
 
 export const plugin_info = [{
   alias: ['gif'],
@@ -9,14 +9,9 @@ export const plugin_info = [{
   usage: 'gif <query>'
 }]
 
-
 export function gif(user, channel, input = false) {
   return new Promise((resolve, reject) => {
-    if (!input)
-      return resolve({
-        type: 'dm',
-        message: 'Usage: gif <query> - Returns the first returned result for query'
-      });
+    if (!input) return resolve({ type: 'dm', message: 'Usage: gif <query> - Returns top 4 results for query' })
 
     giphy.search({
       q: input.replace(' ', '+'),
@@ -27,11 +22,9 @@ export function gif(user, channel, input = false) {
       if (res.pagination.count > 0)
         return resolve({
           type: 'channel',
-          message: res.data[Math.floor(Math.random() * res.pagination.count)].images.downsized_medium.url
+          message: res.data[Math.floor(Math.random() * res.pagination.count)].images.fixed_height.url
         });
-      else
-        reject('No Gifs Found :(')
-    });
-  });
+      else return reject('No Gifs Found :(')
+    })
+  })
 }
-
