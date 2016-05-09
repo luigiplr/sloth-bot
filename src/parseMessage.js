@@ -29,8 +29,8 @@ export function parse(user, channel, text, ts) {
     if (((permissions.allIgnored.indexOf(username) > -1) && userLevel != 'superadmin') || user.name.toString().toLowerCase() === config.botname)
       return resolve(false)
 
-    let command = text.substr(1).split(' ')[0].toLowerCase()
-    let context = (text.indexOf(' ') >= 0) ? text.substr(1).split(' ').splice(1).join(' ') : undefined
+    let command = text.split(' ')[0].substr(1).toLowerCase()
+    let context = text.split(' ').slice(1).join(' ').trim() !== '' ? text.split(' ').slice(1).join(' ').trim() : undefined
 
     let cmdLevel = false
     let call = false
