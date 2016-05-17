@@ -105,7 +105,7 @@ export function invitedWho(user, channel, input) {
 }
 
 export function channelid(user, channel) {
-  return { type: 'channel', message: "This channel's ID is " + channel.id }
+  return new Promise(resolve => resolve({ type: 'channel', message: "This channel's ID is " + channel.id }))
 }
 
 export function userid(user, channel, input) {
