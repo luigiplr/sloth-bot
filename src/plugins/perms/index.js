@@ -24,7 +24,7 @@ export const plugin_info = [{
   userLevel: ['admin', 'superadmin']
 }, {
   alias: ['permaignore'],
-  command: 'permaignore',
+  command: 'permaIgnore',
   usage: 'permaignore <username> - have the bot permanently ignore all commands from user',
   userLevel: ['superadmin']
 }, {

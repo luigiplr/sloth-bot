@@ -76,7 +76,7 @@ export function whoInvited(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: "Usage: whoinvited <user> - Returns information for who invited user if it's available" })
     InviteUsers.findOneByInvitedUser(input).then(resp => {
-      if (resp) return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* on ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
+      if (resp) return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
 
       findUser(input, 'email').then(({ name, email }) => {
         InviteUsers.findOneByEmail(email).then(resp => {
