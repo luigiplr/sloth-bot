@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import Slack from 'slack-client'
-import { sendMessage } from './slack'
+import { sendMessage, updateUsersCache } from './slack'
 import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
 
@@ -47,9 +47,9 @@ class slackClient extends Slack {
   _onNewMessage(message) {
     const user = this.getUserByID(message.user)
     let channel = this.getChannelGroupOrDMByID(message.channel)
-    const { text, ts } = message
-
-    if (message.type === 'message' && text && channel && !message.subtype) {
+    const { text, ts, subtype, type } = message
+    if (subtype === 'channel_join') return updateUsersCache() // Kind of a cheat
+    if (type === 'message' && text && channel && !subtype) {
       parseMsg(user, channel, text, ts)
         .then(response => {
           if (!response) return false
