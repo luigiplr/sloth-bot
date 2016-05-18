@@ -18,6 +18,7 @@ export function updateUsersCache() {
       usersCache[member.id] = member
       userNamesCache[member.name] = member.id
     })
+    console.log('Updated successfully')
     return resolve(`Updated successfully`)
   }))
 }

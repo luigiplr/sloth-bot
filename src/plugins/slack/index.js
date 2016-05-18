@@ -67,6 +67,7 @@ export function inviteUser(user, channel, input) {
         newInv.inviter = user.name
         newInv.email = email
         newInv.date = moment().utc().format()
+        newInv.Persist()
       })
     }).catch(reject)
   })
