@@ -1,7 +1,6 @@
 import Promise from 'bluebird'
 import _ from 'lodash'
-import needle from 'needle'
-import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage } from '../../../slack.js';
+import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser } from '../../../slack.js';
 import config from '../../../../config.json'
 
 export function kick(user, channel, input) {
@@ -11,19 +10,10 @@ export function kick(user, channel, input) {
 
     if (user === config.botname || user.slice(2, -1) === config.botid) return reject('Error: Bitch. No.')
 
-    findUser(user, 'both').then(kickee => needle.post('https://slack.com/api/channels.kick', {
-      channel: channel.id,
-      token: config.slackAPIToken,
-      user: kickee.id
-    }, (err, resp, { error }) => {
-      if (err || error) {
-        console.log(`kickUserErr ${err || error}`)
-        return reject(`kickUserErr ${err || error}`)
-      }
-
-      sendPMThroughSlackbot(kickee.name, `You were kicked from #${channel.name} for ${reason || 'no reason'}`)
+    findUser(user, 'both').then(kickee => kickUser(channel.id, kickee.id).then(() => {
+      sendPMThroughSlackbot(kickee.name, `You were kicked from #${channel.name} ${reason || 'for no reason'}`)
       return resolve(`*Kicked: ${kickee.name}* ${reason || 'for no reason.'}`)
-    })).catch(reject)
+    }).catch(reject)).catch(reject)
   })
 }
 

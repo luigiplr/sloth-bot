@@ -50,13 +50,24 @@ export function sendPMThroughSlackbot(channel, input) {
 }
 
 export function getHistory(channel, limit = 100) {
-  return new Promise((resolve, reject) => needle.post('https://slack.com/api/channels.history', {
+  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] == 'C' ? 'channels.history' : 'groups.history'}`, {
     channel: channel,
     token: config.slackBotToken,
     count: limit
   }, (err, resp, { error, messages }) => {
     if (err || error) return reject(_logErr('getHistoryErr', err || error))
     resolve(messages)
+  }))
+}
+
+export function kickUser(channel, user) {
+  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] == 'C' ? 'channels.kick' : 'groups.kick'}`, {
+    channel: channel,
+    token: config.slackAPIToken,
+    user: user
+  }, (err, resp, { error }) => {
+    if (err || error) return reject(_logErr('kickUserErr', err || error))
+    resolve()
   }))
 }
 
