@@ -88,7 +88,7 @@ const generateShowResponse = ((showDetails, seasons) => {
     "short": true
   }, {
     "title": "Status",
-    "value": showDetails.status.split(' ').map(s => _.capitalize(s)).join(' ') || null,
+    "value": showDetails.status ? (showDetails.status.split(' ').map(s => _.capitalize(s)).join(' ')) : null,
     "short": true
   }, {
     "title": "Aired Episodes",
@@ -96,7 +96,7 @@ const generateShowResponse = ((showDetails, seasons) => {
     "short": true
   }, {
     "title": "Genres",
-    "value": showDetails.genres.slice(0, 3).map(g => _.capitalize(g)).join(', ') || null,
+    "value": showDetails.genres ? (showDetails.genres.slice(0, 3).map(g => _.capitalize(g)).join(', ')) : null,
     "short": true
   }, {
     "title": "Rating",
