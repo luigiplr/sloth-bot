@@ -44,7 +44,7 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
     dbQuote.message = uID.toString()
     dbQuote.grabUser = grabber.name
     dbQuote.date = moment().utc().format()
-    dbQuote.Persist().then(() => resolve("Successfully grabed a quote for " + grabee))
+    dbQuote.Persist().then(() => resolve("Successfully grabbed a quote for " + grabee))
   }).catch(reject))
 }
 
