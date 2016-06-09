@@ -97,9 +97,11 @@ export function invitedWho(user, channel, input) {
     InviteUsers.findByInviter(input.toLowerCase()).then(resp => {
       if (!resp[0]) return reject("Couldn't find any users invited by this user")
       let out = [`${input.toLowerCase()} has invited ${resp.length} members to this team:`]
+      let pending = 0
       resp.forEach(invitee => {
-        out.push(` - *${invitee.invitedUser}* on ${moment(invitee.date).isValid() ? moment(invitee.date).format("dddd, Do MMM YYYY") : 'Unknown'}`)
+        invitee.invitedUser ? (out.push(` - *${invitee.invitedUser}* on ${moment(invitee.date).isValid() ? moment(invitee.date).format("dddd, Do MMM YYYY") : 'Unknown'}`)) : pending++
       })
+      pending ? out.push(` - _${pending} pending invitation${pending > 1 ? 's' : ''}_`) : void 0
       return resolve({ type: 'channel', messages: out })
     })
   })
