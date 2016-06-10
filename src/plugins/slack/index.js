@@ -127,7 +127,7 @@ export function addLoadMessage(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: addloadingmessage <message> - Adds a loading message to the slack team' })
 
-    addLoadingMsg(input).then(resp => resolve({ type: 'channel', message: `Successfully added message with id ${resp.id}` })).catch(reject)
+    addLoadingMsg(input).then(id => resolve({ type: 'channel', message: `Successfully added message with id ${id}` })).catch(reject)
   })
 }
 
