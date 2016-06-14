@@ -5,7 +5,7 @@ import async from 'async'
 import SteamID from 'steamid'
 import lunr from 'lunr'
 
-const filters = ['basic', 'price_overview', 'release_date', 'metacritic', 'developers', 'genres'].join(',')
+const filters = ['basic', 'price_overview', 'release_date', 'metacritic', 'developers', 'genres', 'demos'].join(',')
 const token = require('./../../../../config.json').steamAPIKey
 const endpoints = {
   profile: `http://steamcommunity.com/id/%q%/?xml=1`, // Unused

@@ -132,6 +132,10 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
       "title": "Metacritic",
       "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : null,
       "short": true
+    }, {
+      "title": "Demo",
+      "value": app.demos ? 'Demos available' : null,
+      "short": true
     }], 'value')
     return out
   } else return `Error: App: *${app.name}* _(${app.steam_appid})_ isn't a valid game`
