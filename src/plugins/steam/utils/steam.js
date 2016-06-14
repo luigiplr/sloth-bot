@@ -1,9 +1,7 @@
 import _ from 'lodash'
 import Promise from 'bluebird'
 import needle from 'needle'
-import async from 'async'
 import SteamID from 'steamid'
-import lunr from 'lunr'
 
 const filters = ['basic', 'price_overview', 'release_date', 'metacritic', 'developers', 'genres', 'demos'].join(',')
 const token = require('./../../../../config.json').steamAPIKey
@@ -15,15 +13,13 @@ const endpoints = {
   appDetailsBasic: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic`,
   appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=${filters}&cc=us`,
   packageDetails: `http://store.steampowered.com/api/packagedetails/?packageids=%q%&cc=us`, // Unused
-  searchApps: `http://steamcommunity.com/actions/SearchApps/%q%`, // Unused
+  searchApps: `http://steamcommunity.com/actions/SearchApps/%q%`,
   numPlayers: `http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%q%`,
   userBans: `http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=${token}&steamids=%q%`,
-  appList: `http://api.steampowered.com/ISteamApps/GetAppList/v0002/`,
+  appList: `http://api.steampowered.com/ISteamApps/GetAppList/v0002/`, // Unused
   userLevel: `https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${token}&steamid=%q%`,
   resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`
 }
-
-var appList, lastUpdated, fullTextAppList, query, regexType
 
 const getUrl = (type, param) => endpoints[type].replace('%q%', param)
 
@@ -76,88 +72,11 @@ const getAppDetails = (appid, basic) => {
   }))
 }
 
-const updateAppList = hasApplist => {
-  return new Promise((resolve, reject) => {
-    // Update the list every 4 hours
-    if (!lastUpdated || lastUpdated + (4 * 3600) < Math.round(new Date().getTime() / 1000)) {
-      needle.get(getUrl('appList'), (err, resp, body) => {
-        if (!err && body) {
-          appList = body.applist
-          lastUpdated = Math.round(new Date().getTime() / 1000)
-
-          fullTextAppList = new lunr.Index()
-          fullTextAppList.ref('appid')
-          fullTextAppList.field('name', { boost: 10 })
-          appList.apps.forEach((app) => { fullTextAppList.add(app) })
-          return resolve()
-        } else {
-          if (hasApplist) return resolve()
-          else return reject("Error fetching appList")
-        }
-      })
-    } else return resolve()
-  })
-}
-
-const getAppsByFullText = appName => {
-  return new Promise((resolve, reject) => {
-    // Regex Stuff
-    query = appName
-    regexType = 0
-    if (appName.charAt(0) == '^') regexType++;
-    if (appName.charAt(appName.length - 1) == '$') regexType = regexType + 2;
-
-    let input = regexType == 0 ? appName : (regexType == 1 ? appName.slice(1) : (regexType == 2 ? appName.slice(0, -1) : appName.slice(1, -1)))
-
-    let hasApplist = (!!appList && !!appList.apps && !!fullTextAppList)
-    updateAppList(hasApplist).then(() => {
-      let matchedAppIds = fullTextAppList.search(input).slice(0, 4).map((app) => app.ref)
-      let apps = appList.apps.filter(game => _.includes(matchedAppIds, game.appid))
-      if (apps.length) return resolve(apps)
-      else return reject("Couldn't find a game with that name")
-    }).catch(reject)
-  })
-}
-
-const findValidAppInApps = (apps, gamesOnly) => {
-  return new Promise((resolve, reject) => {
-    const CheckQueue = async.queue((appID, next) => {
-      getAppDetails(appID.appid).then(app => {
-        if (!gamesOnly || (gamesOnly && app.type == 'game')) {
-          CheckQueue.kill()
-          return resolve(app);
-        }
-
-        if (next) next()
-        else CheckQueue.kill()
-      }).catch(() => next ? next() : CheckQueue.kill())
-    })
-
-    CheckQueue.drain = () => reject("Couldn't find a valid game with that name, try refining your search")
-
-    checkRegex(apps).then(nApps => _.forEach(nApps, app => CheckQueue.push(app)))
-  })
-}
-
-const checkRegex = apps => {
-  return new Promise(resolve => {
-    if (!regexType) return resolve(apps)
-    let match = new RegExp(query, 'gi')
-    let matched = _.find(apps, app => app.name.match(match))
-    matched ? resolve(promote(apps, matched.appid, 'appid')) : resolve(apps)
-  })
-}
-
-// Function for moving an element in an array to front
-const promote = function(array, param, param2) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i][param2] === param) {
-      let a = array.splice(i, 1);
-      array.unshift(a[0])
-      return array
-    }
-  }
-  return array;
+const searchForApp = query => {
+  return new Promise((resolve, reject) => needle.get(getUrl('searchApps', query), (err, resp, apps) => {
+    if (!err && apps.length) return resolve(apps[0].appid)
+    else return reject("Couldn't find an app with that name")
+  }))
 }
 
 const getPlayersForApp = appid => {
@@ -193,12 +112,12 @@ export function getProfileInfo(id) {
 export function getAppPlayers(appid) {
   return new Promise((resolve, reject) => {
     if (!appid.match(/^\d+$/)) {
-      getAppsByFullText(appid).then(apps => findValidAppInApps(apps).then(app => {
+      searchForApp(appid).then(getAppDetails).then(app => {
         getPlayersForApp(app.steam_appid).then(players => {
           players.name = app.name
           return resolve(players)
         }).catch(reject)
-      }).catch(reject)).catch(reject)
+      }).catch(reject)
     } else {
       Promise.join(getAppDetails(appid, true), getPlayersForApp(appid), (app, players) => {
         players.name = app.name
@@ -208,10 +127,10 @@ export function getAppPlayers(appid) {
   })
 }
 
-export function getAppInfo(appid, gamesOnly) {
+export function getAppInfo(appid) {
   return new Promise((resolve, reject) => {
     if (!appid.match(/^\d+$/)) { // Not an appid
-      getAppsByFullText(appid).then(apps => findValidAppInApps(apps, gamesOnly).then(app => {
+      searchForApp(appid).then(getAppDetails).then(app => {
         getPlayersForApp(app.steam_appid).then(players => {
           app.player_count = players.player_count
           return resolve(app)
@@ -219,7 +138,7 @@ export function getAppInfo(appid, gamesOnly) {
           console.error(err)
           return resolve(app)
         })
-      }).catch(reject)).catch(reject)
+      }).catch(reject)
     } else { //appid
       getAppDetails(appid).then(app => getPlayersForApp(appid).then(players => {
         app.player_count = players.player_count
