@@ -109,8 +109,12 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
       "value": price || null,
       "short": true
     }, {
-      "title": app.release_date.coming_soon ? "Release Date" : "Released",
+      "title": app.release_date ? (app.release_date.coming_soon ? "Release Date" : "Released") : null,
       "value": app.release_date.date,
+      "short": true
+    }, {
+      "title": "Type",
+      "value": _.capitalize(app.type),
       "short": true
     }, {
       "title": "Genres",
@@ -121,8 +125,8 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
       "value": app.player_count ? formatNumber(app.player_count) : null,
       "short": true
     }, {
-      "title": app.type == 'movie' ? 'Studio' : 'Developers',
-      "value": _.truncate(app.developers.join(', '), { length: 40 }),
+      "title": 'Developers',
+      "value": app.developers ? (_.truncate(app.developers.join(', '), { length: 40 })) : null,
       "short": true
     }, {
       "title": "Metacritic",
