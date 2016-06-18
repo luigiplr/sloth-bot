@@ -92,8 +92,6 @@ const generateProfileResponse = (profile => {
 
 const generateAppDetailsResponse = ((app, gamesOnly) => {
   if (app && !gamesOnly || (gamesOnly && app.type == 'game')) {
-    let price = getPriceForApp(app)
-
     let out = {
       msg: `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_`,
       attachments: [{
@@ -104,13 +102,16 @@ const generateAppDetailsResponse = ((app, gamesOnly) => {
       }]
     }
 
+    let price = getPriceForApp(app)
+    let date = getDateForApp(app)
+
     out.attachments[0].fields = _.filter([{
       "title": "Cost",
       "value": price || null,
       "short": true
     }, {
       "title": app.release_date ? (app.release_date.coming_soon ? "Release Date" : "Released") : null,
-      "value": app.release_date.date,
+      "value": date || null,
       "short": true
     }, {
       "title": "Type",
@@ -156,6 +157,12 @@ const getPriceForApp = app => {
     return (`$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}`)
   else
     return '_Unknown_'
+}
+
+const getDateForApp = app => {
+  let date = new Date(app.release_date.date)
+  if (app.release_date.coming_soon && moment(date).isValid()) return `${app.release_date.date} (${moment().to(date)})`
+  else return app.release_date.date
 }
 
 const getPersonaState = (state => {
