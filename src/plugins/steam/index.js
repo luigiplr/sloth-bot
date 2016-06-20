@@ -23,6 +23,10 @@ export const plugin_info = [{
   alias: ['sid', 'steamid'],
   command: 'steamid',
   usage: 'steamid <steamid> - returns steamid info'
+}, {
+  alias: ['summersale', 'summasael'],
+  command: 'summersale',
+  usage: 'summersale - tells u wen da sale is, durh'
 }]
 
 export function steamProfile(user, channel, input) {
@@ -62,6 +66,20 @@ export function steamid(user, channel, input) {
     if (!input) return resolve({ type: 'dm', message: 'Usage: steamid <id> - ID can be any form of SteamID' })
 
     getSteamIDInfo(input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
+  })
+}
+
+export function summersale() {
+  return new Promise(resolve => {
+    let time = moment.duration(moment(1466701200000).diff(moment()))
+    let msg = ''
+    if (time.toString().charAt(0) != '-') {
+      const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
+      const getTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds || '0 seconds'}` : seconds
+      msg = `Summer Sale starts in approximately ${getTime(['days', 'hours', 'minutes'].map(duration).filter(Boolean).join(', '), duration('seconds'))}`
+    } else msg = 'DA SUMMER SALE IS ALREADY HERE'
+
+    return resolve({ type: 'channel', message: msg })
   })
 }
 
