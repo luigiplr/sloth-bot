@@ -15,7 +15,7 @@
     "url": ""
   },
   "engines": {
-    "node": ">= 5.10.x"
+    "node": ">= 6.0.0"
   },
   "main": "build/sloth.js",
   "license": "GPL-3.0",
@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.7.5",
-    "babel-preset-node5": "^11.0.1",
+    "babel-preset-node6": "^11.0.0",
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.7.2",
     "gulp": "^3.9.1",
