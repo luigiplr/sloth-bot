@@ -20,7 +20,6 @@ export function userInfo(user, channel, input) {
 }
 
 const generateUserStatsResponse = data => {
-  console.log(data.heroes)
   let out = {
     msg: `Overwatch Player Data for ${data.battletag}`,
     attachments: [{

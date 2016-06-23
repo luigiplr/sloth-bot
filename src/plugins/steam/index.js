@@ -16,10 +16,6 @@ export const plugin_info = [{
   command: 'game',
   usage: 'game <appid or game name> - returns steam game info'
 }, {
-  alias: ['app'],
-  command: 'app',
-  usage: 'app <appid or app name> - returns steam app info'
-}, {
   alias: ['sid', 'steamid'],
   command: 'steamid',
   usage: 'steamid <steamid> - returns steamid info'
@@ -48,14 +44,6 @@ export function players(user, channel, input) {
 export function game(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: game <appid or game name> - Returns basic game info such as price and name' })
-
-    getAppInfo(input).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp, 1) })).catch(reject)
-  })
-}
-
-export function app(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: app <appid or app name> - Returns basic app info such as price and name' })
 
     getAppInfo(input).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp) })).catch(reject)
   })
@@ -112,8 +100,8 @@ const generateProfileResponse = (profile => {
   } else return 'Error fetching profile info'
 })
 
-const generateAppDetailsResponse = ((app, gamesOnly) => {
-  if (app && !gamesOnly || (gamesOnly && app.type == 'game')) {
+const generateAppDetailsResponse = (app => {
+  if (app) {
     let out = {
       msg: `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_`,
       attachments: [{
