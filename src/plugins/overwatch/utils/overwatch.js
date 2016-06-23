@@ -22,7 +22,7 @@ export function getUserStats(user, heroes) {
         getTopHeroes(user).then(heroes => {
           body.heroes = heroes
           return resolve(body)
-        }).catch(() => { resolve(body) })
+        }).catch(reject)
       } else return resolve(body)
     } else {
       return reject(`getUserStatsErr: ${err}`)
