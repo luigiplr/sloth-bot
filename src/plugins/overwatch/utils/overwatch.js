@@ -16,7 +16,8 @@ const getURL = (type, user, hero) => {
 
 export function getUserStats(user, heroes) {
   return new Promise((resolve, reject) => needle.get(getURL('stats', user), (err, resp, body) => {
-    if (!err && body && !body.error) {
+    if (!err && body) {
+      if (body.error) return reject(`Error: ${body.error} - ${body.msg || ''}`)
       if (heroes) {
         getTopHeroes(user).then(heroes => {
           body.heroes = heroes
@@ -24,17 +25,18 @@ export function getUserStats(user, heroes) {
         }).catch(() => { resolve(body) })
       } else return resolve(body)
     } else {
-      return reject((body && body.error === 404) ? 'Profile not found' : `getUserStatsErr: ${err || body.error}`)
+      return reject(`getUserStatsErr: ${err}`)
     }
   }))
 }
 
 export function getTopHeroes(user) {
   return new Promise((resolve, reject) => needle.get(getURL('heroes', user), (err, resp, body) => {
-    if (!err && body && !body.error) {
+    if (!err && body) {
+      if (body.error) return reject(`Error: ${body.error} - ${body.msg || ''}`)
       return resolve(body.heroes)
     } else {
-      return reject((body && body.error === 404) ? 'Profile not found' : `getTopHeroesErr: ${err || body.error}`)
+      return reject(`getTopHeroesErr: ${err}`)
     }
   }))
 }
