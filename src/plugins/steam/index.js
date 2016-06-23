@@ -71,16 +71,20 @@ export function steamid(user, channel, input) {
 
 export function summersale() {
   return new Promise(resolve => {
-    let time = moment.duration(moment(1466701200000).diff(moment()))
-    let msg = ''
-    if (time.toString().charAt(0) != '-') {
-      const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
-      const getTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds || '0 seconds'}` : seconds
-      msg = `Summer Sale starts in approximately ${getTime(['days', 'hours', 'minutes'].map(duration).filter(Boolean).join(', '), duration('seconds'))}`
-    } else msg = 'DA SUMMER SALE IS ALREADY HERE'
+    let startDate = 1466701200000
+    let endDate = 1467651600000 // We think
+    let sale = moment(startDate).isBefore(moment())
+    let time = moment.duration(moment(sale ? endDate : startDate).diff(moment()))
+    let msg = `${sale ? 'The Steam Summer Sale is here!! It ends' : 'The Steam Summer Sale starts'} ${_getTime(time)}`
 
     return resolve({ type: 'channel', message: msg })
   })
+}
+
+const _getTime = time => {
+  const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
+  const getTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds || '0 seconds'}` : seconds
+  return `in approximately ${getTime(['days', 'hours', 'minutes'].map(duration).filter(Boolean).join(', '), duration('seconds'))}`
 }
 
 const generateProfileResponse = (profile => {
