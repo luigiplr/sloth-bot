@@ -24,7 +24,7 @@ export function getUserStats(user, heroes) {
         }).catch(() => { resolve(body) })
       } else return resolve(body)
     } else {
-      return reject(body.error === 404 ? 'Profile not found' : `getUserStatsErr: ${err || body.error}`)
+      return reject((body && body.error === 404) ? 'Profile not found' : `getUserStatsErr: ${err || body.error}`)
     }
   }))
 }
@@ -34,7 +34,7 @@ export function getTopHeroes(user) {
     if (!err && body && !body.error) {
       return resolve(body.heroes)
     } else {
-      return reject(body.error === 404 ? 'Profile not found' : `getTopHeroesErr: ${err || body.error}`)
+      return reject((body && body.error === 404) ? 'Profile not found' : `getTopHeroesErr: ${err || body.error}`)
     }
   }))
 }
