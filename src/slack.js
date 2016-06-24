@@ -10,11 +10,12 @@ let usersCache = {}
 export function updateUsersCache() {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.list', {
     token: config.slackBotToken
-  }, (err, resp, { error, members }) => {
-    if (err || error) return reject(_logErr('updateUserCacheErr', err || error))
+  }, (err, resp, body) => {
+    if (!body) return reject(_logErr('updateUserCacheErr', 'No body?!'))
+    if (err || body.error) return reject(_logErr('updateUserCacheErr', err || body.error))
     userNamesCache = {}
     usersCache = {}
-    _.forEach(members, member => {
+    _.forEach(body.members, member => {
       usersCache[member.id] = member
       userNamesCache[member.name] = member.id
     })
