@@ -12,7 +12,7 @@ export const plugin_info = [{
   command: 'players',
   usage: 'players <appid> - returns players for steam app'
 }, {
-  alias: ['game'],
+  alias: ['game', 'app'],
   command: 'game',
   usage: 'game <appid or game name> - returns steam game info'
 }, {
@@ -43,9 +43,12 @@ export function players(user, channel, input) {
 
 export function game(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: game <appid or game name> - Returns basic game info such as price and name' })
-
-    getAppInfo(input).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp) })).catch(reject)
+    if (!input) return resolve({ type: 'dm', message: 'Usage: game <appid or game name> [-cc us] - Returns basic game info such as price and name, optinally include the country code via -cc AU' })
+    if (input.match(/-cc.../)) {
+      var cc = input.match(/-cc.../)[0].split(' ')[1]
+      input = input.replace(input.match(/-cc.../)[0], '').trim()
+    }
+    getAppInfo(input, cc).then(resp => resolve({ type: 'channel', message: generateAppDetailsResponse(resp, cc) })).catch(reject)
   })
 }
 
@@ -100,10 +103,10 @@ const generateProfileResponse = (profile => {
   } else return 'Error fetching profile info'
 })
 
-const generateAppDetailsResponse = (app => {
+const generateAppDetailsResponse = ((app, cc = 'US') => {
   if (app) {
     let out = {
-      msg: `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_`,
+      msg: `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_ _(${cc.toUpperCase()})_`,
       attachments: [{
         "fallback": app.name + '(' + app.steam_appid + ')',
         "image_url": app.header_image,

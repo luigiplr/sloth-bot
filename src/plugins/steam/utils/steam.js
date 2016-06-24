@@ -11,7 +11,7 @@ const endpoints = {
   miniProfile: `http://steamcommunity.com/miniprofile/%q%`, // Unused
   gameSummary: `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${token}&steamid=%q%&include_played_free_games=1`,
   appDetailsBasic: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic`,
-  appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=${filters}&cc=us`,
+  appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=${filters}&cc=%cc%`,
   packageDetails: `http://store.steampowered.com/api/packagedetails/?packageids=%q%&cc=us`, // Unused
   searchApps: `http://steamcommunity.com/actions/SearchApps/%q%`,
   numPlayers: `http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%q%`,
@@ -21,7 +21,10 @@ const endpoints = {
   resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`
 }
 
-const getUrl = (type, param) => endpoints[type].replace('%q%', param)
+const getUrl = (type, param, cc) => {
+  let out = endpoints[type].replace('%q%', param).replace('%cc%', cc)
+  return (cc ? out.replace('%cc%', cc) : out)
+}
 
 const getIDFromProfile = id => {
   return new Promise((resolve, reject) => needle.get(getUrl('resolveVanity', id), (err, resp, { response }) => {
@@ -63,8 +66,8 @@ const getUserGames = id => {
   }))
 }
 
-const getAppDetails = (appid, basic) => {
-  return new Promise((resolve, reject) => needle.get(getUrl(basic ? 'appDetailsBasic' : 'appDetails', appid), (err, resp, body) => {
+const getAppDetails = (appid, cc, basic) => {
+  return new Promise((resolve, reject) => needle.get(getUrl(basic ? 'appDetailsBasic' : 'appDetails', appid, cc), (err, resp, body) => {
     if (!err && body)
       if (body[appid].success) return resolve(body[appid].data)
       else return reject(`Couldn't fetch app details for that AppID, invalid? ${appid}`)
@@ -98,7 +101,7 @@ export function getProfileInfo(id) {
         let sortedGames = games.games.sort((a, b) => b.playtime_forever - a.playtime_forever)
         profile.totalgames = games.game_count
         profile.mostplayed = sortedGames[0]
-        getAppDetails(sortedGames[0].appid, true).then(game => {
+        getAppDetails(sortedGames[0].appid, false, true).then(game => {
           if (game) {
             profile.mostplayed.name = game.name;
             return resolve(profile)
@@ -112,14 +115,14 @@ export function getProfileInfo(id) {
 export function getAppPlayers(appid) {
   return new Promise((resolve, reject) => {
     if (!appid.match(/^\d+$/)) {
-      searchForApp(appid).then(getAppDetails).then(app => {
+      searchForApp(appid).then(id => getAppDetails(id, false, true)).then(app => {
         getPlayersForApp(app.steam_appid).then(players => {
           players.name = app.name
           return resolve(players)
         }).catch(reject)
       }).catch(reject)
     } else {
-      Promise.join(getAppDetails(appid, true), getPlayersForApp(appid), (app, players) => {
+      Promise.join(getAppDetails(appid, false, true), getPlayersForApp(appid), (app, players) => {
         players.name = app.name
         return resolve(players)
       }).catch(reject)
@@ -127,10 +130,10 @@ export function getAppPlayers(appid) {
   })
 }
 
-export function getAppInfo(appid) {
+export function getAppInfo(appid, cc = 'US') {
   return new Promise((resolve, reject) => {
     if (!appid.match(/^\d+$/)) { // Not an appid
-      searchForApp(appid).then(getAppDetails).then(app => {
+      searchForApp(appid).then(id => getAppDetails(id, cc)).then(app => {
         getPlayersForApp(app.steam_appid).then(players => {
           app.player_count = players.player_count
           return resolve(app)
@@ -140,7 +143,7 @@ export function getAppInfo(appid) {
         })
       }).catch(reject)
     } else { //appid
-      getAppDetails(appid).then(app => getPlayersForApp(appid).then(players => {
+      getAppDetails(appid, cc).then(app => getPlayersForApp(appid).then(players => {
         app.player_count = players.player_count
         return resolve(app)
       }).catch(err => { // If we can't fetch player counts just return anyway
