@@ -1,4 +1,5 @@
 import Promise from 'bluebird'
+import needle from 'needle'
 import _ from 'lodash'
 import { getProfileInfo, getAppPlayers, getAppInfo, getSteamIDInfo } from './utils/steam'
 import moment from 'moment'
@@ -24,6 +25,8 @@ export const plugin_info = [{
   command: 'summersale',
   usage: 'summersale - tells u wen da sale is, durh'
 }]
+
+var AUDRate;
 
 export function steamProfile(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -123,6 +126,10 @@ const generateAppDetailsResponse = ((app, cc = 'US') => {
       "value": price || null,
       "short": true
     }, {
+      "title": "Real Cost",
+      "value": (AUDRate && cc.toUpperCase() == 'AU') ? '~$' + formatCurrency((app.price_overview.final / 100) * AUDRate, 'AUD') : null,
+      "short": true
+    }, {
       "title": app.release_date ? (app.release_date.coming_soon ? "Release Date" : "Released") : null,
       "value": date || null,
       "short": true
@@ -165,7 +172,7 @@ const getPriceForApp = app => {
   if (app.is_free)
     return 'This game is Free 2 Play, yay :)'
   else if (app.price_overview && app.price_overview.discount_percent > 0)
-    return (`~$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final/100, app.price_overview.currency)}* ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`)
+    return (`~$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final/100, app.price_overview.currency)}* \n ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`)
   else if (app.price_overview)
     return (`$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}`)
   else
@@ -191,3 +198,10 @@ const getPersonaState = (state => {
       return 'Online'
   }
 })
+
+const getAUDRate = () => needle.get('http://api.fixer.io/latest?base=USD', (err, resp, { rates }) => {
+  if (!err && resp.body && rates) AUDRate = rates.AUD
+  else console.error("Error fetching AUD Rate")
+})
+
+_.delay(() => getAUDRate(), 1000) // Fetch AUD rate on startup
