@@ -69,13 +69,13 @@ export function summersale() {
     let endDate = 1467651600000 // We think
     let sale = moment(startDate).isBefore(moment())
     let time = moment.duration(moment(sale ? endDate : startDate).diff(moment()))
-    let msg = `${sale ? 'The Steam Summer Sale is here!! It ends' : 'The Steam Summer Sale starts'} ${_getTime(time)}`
+    let msg = `${sale ? 'The Steam Summer Sale is here!! It ends' : 'The Steam Summer Sale starts'} ${_getSaleTime(time)}`
 
     return resolve({ type: 'channel', message: msg })
   })
 }
 
-const _getTime = time => {
+const _getSaleTime = time => {
   const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
   const getTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds || '0 seconds'}` : seconds
   return `in approximately ${getTime(['months', 'days', 'hours', 'minutes'].map(duration).filter(Boolean).join(', '), duration('seconds'))}`
@@ -204,4 +204,11 @@ const getAUDRate = () => needle.get('http://api.fixer.io/latest?base=USD', (err,
   else console.error("Error fetching AUD Rate")
 })
 
-_.delay(() => getAUDRate(), 1000) // Fetch AUD rate on startup
+// Fetch AUD rate on startup and update every 12 hours
+_.delay(() => {
+  setInterval(() => {
+    console.log("Updating AUD Rate")
+    getAUDRate()
+  }, 3600 * 12);
+  getAUDRate()
+}, 1000)
