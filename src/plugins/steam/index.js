@@ -2,6 +2,7 @@ import Promise from 'bluebird'
 import needle from 'needle'
 import _ from 'lodash'
 import { getProfileInfo, getAppPlayers, getAppInfo, getSteamIDInfo } from './utils/steam'
+import sales from './utils/sales'
 import moment from 'moment'
 
 export const plugin_info = [{
@@ -21,9 +22,9 @@ export const plugin_info = [{
   command: 'steamid',
   usage: 'steamid <steamid> - returns steamid info'
 }, {
-  alias: ['summersale', 'summasael'],
+  alias: ['steamsale'],
   command: 'summersale',
-  usage: 'summersale - tells u wen da sale is, durh'
+  usage: 'steamsale - tells u wen da sale is, durh'
 }]
 
 var AUDRate;
@@ -65,11 +66,20 @@ export function steamid(user, channel, input) {
 
 export function summersale() {
   return new Promise(resolve => {
-    let startDate = 1466701200000
-    let endDate = 1467651600000 // We think
-    let sale = moment(startDate).isBefore(moment())
-    let time = moment.duration(moment(sale ? endDate : startDate).diff(moment()))
-    let msg = `${sale ? 'The Steam Summer Sale is here!! It ends' : 'The Steam Summer Sale starts'} ${_getSaleTime(time)}`
+    let sale = sales.sale[sales.ids[sales.active]]
+    let msg = ''
+    if (sale.dates.start && sale.dates.end) {
+      let isActive = (moment(sale.dates.start).isBefore(moment()) && moment().isBefore(sale.dates.end))
+      let hasEnded = moment().isAfter(sale.dates.end)
+      if (!hasEnded) {
+        let time = moment.duration(moment(isActive ? sale.dates.end : sale.dates.start).diff(moment()))
+        msg = `The Steam ${sale.name} ${isActive ? 'is here! It ends' : 'starts'} ${_getSaleTime(time)} ${sale.unsure ? ', I think' : ''}`
+      } else {
+        msg = `The Steam ${sale.name} has ended :( Stay tuned for the next sale which might be the ${sales.sale[sales.ids[sale.id + 1]].name}`
+      }
+    } else {
+      msg = `I'm not sure when the next Steam Sale is, it could be the ${sales.sale[sales.ids[sale.id + 1]].name}`
+    }
 
     return resolve({ type: 'channel', message: msg })
   })
@@ -204,11 +214,12 @@ const getAUDRate = () => needle.get('http://api.fixer.io/latest?base=USD', (err,
   else console.error("Error fetching AUD Rate")
 })
 
-// Fetch AUD rate on startup and update every 12 hours
-_.delay(() => {
+// Fetch AUD rate on startup and update every 24 hours
+setTimeout(() => {
+  console.log("Fetching AUD Rate")
   setInterval(() => {
     console.log("Updating AUD Rate")
     getAUDRate()
-  }, 3600 * 12);
+  }, 86403600)
   getAUDRate()
 }, 1000)

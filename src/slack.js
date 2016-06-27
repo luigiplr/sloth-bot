@@ -19,11 +19,13 @@ export function updateUsersCache() {
       usersCache[member.id] = member
       userNamesCache[member.name] = member.id
     })
-    console.log('Updated successfully')
-    return resolve(`Updated successfully`)
+    return resolve(`Successfully updated UsersCache`)
   }))
 }
-updateUsersCache().then(console.log).catch(console.error) // Update da cache on startup
+
+setTimeout(() => {
+  updateUsersCache().then(console.log, console.error) // Update da cache on startup
+}, 1000)
 
 export function sendMessage(channel, input) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/chat.postMessage', {

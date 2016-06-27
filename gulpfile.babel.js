@@ -8,19 +8,17 @@ import runSequence from 'run-sequence'
 
 /* Build Tasks */
 
-gulp.task('build-src', () => gulp.src(['!src/plugins/webui/utils/public/**/*', 'src/**/*.js'])
-  .pipe(plumber())
-  .pipe(babel())
-  .on('error', err => {
-    gutil.log(gutil.colors.red('[Code Compilation Error]'))
-    gutil.log(gutil.colors.red(err.message))
-  })
-  .pipe(gulp.dest('build')))
-
-//gulp.task('build-webui', () => {
-//  gulp.src('src/plugins/webui/utils/public/**/*').pipe(gulp.dest('build/plugins/webui/utils/public'))
-//  gulp.src('src/plugins/webui/utils/views/**/*').pipe(gulp.dest('build/plugins/webui/utils/views'))
-//})
+gulp.task('build-src', () => {
+  gulp.src('src/**/*.json').pipe(gulp.dest('build'))
+  return gulp.src('src/**/*.js')
+    .pipe(plumber())
+    .pipe(babel())
+    .on('error', err => {
+      gutil.log(gutil.colors.red('[Code Compilation Error]'))
+      gutil.log(gutil.colors.red(err.message))
+    })
+    .pipe(gulp.dest('build'))
+})
 
 gulp.task('clean-build', () => gulp.src('build', { read: false }).pipe(rimraf()))
 
