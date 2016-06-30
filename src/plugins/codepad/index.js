@@ -28,7 +28,7 @@ export function codep(user, channel, input) {
       if (!rejected) {
         clearTimeout(timeout)
         console.log(out.output.split('\n').length)
-        if (out.output.length < 7000 && out.output.split('\n').length < 101) return resolve({ type: 'channel', message: !err ? 'Output: ```' + out.output + '```' : `Error: ${err}` })
+        if (out.output.length < 7000 && out.output.split('\n').length < 86) return resolve({ type: 'channel', message: !err ? 'Output: ```' + out.output + '```' : `Error: ${err}` })
         else return reject("Error, output is too large to post")
       }
     }, true)
