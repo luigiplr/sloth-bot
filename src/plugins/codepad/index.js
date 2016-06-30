@@ -17,8 +17,7 @@ export function codep(user, channel, input) {
         type: 'dm',
         message: 'Usage: eval <langage> <code> | Evals the code in the specified language, valid languages are: ' + langs.join(' ')
       })
-    let split = input.split(' ')[0].trim()
-    let type = split.match(/\w+\+?\+?\`\`\`/) ? split.slice(0, -3) : split
+    let type = input.split(' ')[0].split('\n')[0]
     let code = _.unescape(input.split('```')[1])
     let rejected = false
     let timeout = setTimeout(function() {
