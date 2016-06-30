@@ -1,5 +1,4 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
 import codepad from 'codepad'
 
 const langs = ['C', 'C++', 'D', 'Haskell', 'Lua', 'OCaml', 'PHP', 'Perl', 'Python', 'Ruby', 'Scheme', 'Tcl']
@@ -18,7 +17,7 @@ export function codep(user, channel, input) {
         message: 'Usage: eval <langage> <code> | Evals the code in the specified language, valid languages are: ' + langs.join(' ')
       })
     let type = input.split(' ')[0].split('\n')[0]
-    let code = _.unescape(input.split('```')[1])
+    let code = input.split('```')[1]
     let rejected = false
     let timeout = setTimeout(function() {
       rejected = true
