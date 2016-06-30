@@ -58,7 +58,7 @@ export function uptime() {
 
 export function update(user, channel, input) {
   return new Promise((resolve, reject) => {
-    let updatecmd = 'git pull && npm i && gulp build'
+    let updatecmd = 'git pull && gulp build'
 
     if (updating) return reject('Update already in process')
 
