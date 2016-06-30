@@ -11,7 +11,7 @@ export const plugin_info = [{
 }]
 
 export function codep(user, channel, input) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     if (!input || !input.split('```')[1])
       return resolve({
         type: 'dm',
@@ -20,8 +20,16 @@ export function codep(user, channel, input) {
 
     let type = input.split(' ')[0]
     let code = _.unescape(input.split('```')[1])
+    let rejected = false
+    let timeout = setTimeout(function() {
+      rejected = true
+      return reject("Error: Took too long, request killed")
+    }, 10000)
     codepad.eval(type, code, (err, out) => {
-      return resolve({ type: 'channel', message: !err ? 'Output: ```' + out.output + '```' : err })
+      if (!rejected) {
+        clearTimeout(timeout)
+        return resolve({ type: 'channel', message: !err ? 'Output: ```' + out.output + '```' : `Error: ${err}` })
+      }
     }, true)
   })
 }
