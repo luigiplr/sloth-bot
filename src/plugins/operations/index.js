@@ -4,7 +4,8 @@ import moment from 'moment'
 import config from '../../../config.json'
 import { exec as execCmd } from 'child_process'
 
-var updating
+var version = require('../../../package.json').version
+var updating;
 
 export const plugin_info = [{
   alias: ['shutdown'],
@@ -25,6 +26,10 @@ export const plugin_info = [{
   command: 'update',
   usage: 'update <optional restart 1/0> - updates the bot from github',
   userLevel: ['superadmin']
+}, {
+  alias: ['version'],
+  command: 'info',
+  usage: 'version - returns bot info'
 }]
 
 export function shutdown() {
@@ -77,6 +82,20 @@ export function update(user, channel, input) {
           } else return resolve({ type: 'channel', message: "Sucessfully fetched and installed new updates" })
         } else return reject("Possible error while fetching and installing new updates?");
       } else return reject("Error while fetching and installing updates ```" + stdout + stderr + error + '```')
+    })
+  })
+}
+
+export function info() {
+  return new Promise((resolve, reject) => {
+    execCmd('git rev-parse HEAD', { timeout: 1000 }, (error, stdout) => {
+      if (!error && stdout) {
+        let url = `https://github.com/luigiplr/sloth-bot/commit/${stdout.slice(0, -33)}`
+        return resolve({
+          type: 'channel', // using messages subtype allows us to build custom urls
+          messages: [`sloth-bot version ${version} \n built from commit #<${url}|${stdout.slice(0, -34)}>`]
+        })
+      } else return reject('Error fetching commit')
     })
   })
 }
