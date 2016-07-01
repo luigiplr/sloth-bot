@@ -22,13 +22,15 @@ export function codep(user, channel, input) {
     let rejected = false
     let timeout = setTimeout(function() {
       rejected = true
-      return reject("Error: Took too long, request killed")
-    }, 10000)
+      return reject("Error: Request took too long")
+    }, 11000)
     codepad.eval(type, code, (err, out) => {
       if (!rejected) {
         clearTimeout(timeout)
-        if (out.output.length < 7000 && out.output.split('\n').length < 86) return resolve({ type: 'channel', message: !err ? 'Output: ```' + out.output + '```' : `Error: ${err}` })
-        else return reject("Error, output is too large to post")
+        if (err) return reject(`Error: ${err}`)
+        if (out.output.length < 7000 && out.output.split('\n').length < 86) {
+          return resolve({ type: 'channel', message: out.output.length > 0 ? 'Output: ```' + out.output + '```' : `Recieved no output` })
+        } else return reject("Error: Output is too large to post")
       }
     }, true)
   })
