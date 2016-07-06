@@ -1,4 +1,5 @@
-const lodashFunctions = {
+// Last Updated 6/07/16
+export const lodashFunctions = {
   "chunk": {
     "name": "chunk",
     "command": "_.chunk(array, [size=1])",
@@ -62,18 +63,18 @@ const lodashFunctions = {
   "fill": {
     "name": "fill",
     "command": "_.fill(array, value, [start=0], [end=array.length])",
-    "description": "Fills elements of array with value from start up to, but not including, end.",
+    "description": "Fills elements of array with value from start up to, but not including, end.  Note: This method mutates array.",
     "since": "3.2.0"
   },
   "findindex": {
     "name": "findIndex",
-    "command": "_.findIndex(array, [predicate=_.identity])",
+    "command": "_.findIndex(array, [predicate=_.identity], [fromIndex=0])",
     "description": "This method is like _.find except that it returns the index of the first element predicate returns truthy for instead of the element itself.",
     "since": "1.1.0"
   },
   "findlastindex": {
     "name": "findLastIndex",
-    "command": "_.findLastIndex(array, [predicate=_.identity])",
+    "command": "_.findLastIndex(array, [predicate=_.identity], [fromIndex=array.length-1])",
     "description": "This method is like _.findIndex except that it iterates over elements of collection from right to left.",
     "since": "2.0.0"
   },
@@ -158,55 +159,55 @@ const lodashFunctions = {
   "nth": {
     "name": "nth",
     "command": "_.nth(array, [n=0])",
-    "description": "Gets the nth element of array. If n is negative, the nth element from the end is returned.",
+    "description": "Gets the element at index n of array. If n is negative, the nth element from the end is returned.",
     "since": "4.11.0"
   },
   "pull": {
     "name": "pull",
     "command": "_.pull(array, [values])",
-    "description": "Removes all given values from array using SameValueZero for equality comparisons.",
+    "description": "Removes all given values from array using SameValueZero for equality comparisons.  Note: Unlike _.without, this method mutates array. Use _.remove to remove elements from an array by predicate.",
     "since": "2.0.0"
   },
   "pullall": {
     "name": "pullAll",
     "command": "_.pullAll(array, values)",
-    "description": "This method is like _.pull except that it accepts an array of values to remove.",
+    "description": "This method is like _.pull except that it accepts an array of values to remove.  Note: Unlike _.difference, this method mutates array.",
     "since": "4.0.0"
   },
   "pullallby": {
     "name": "pullAllBy",
     "command": "_.pullAllBy(array, values, [iteratee=_.identity])",
-    "description": "This method is like _.pullAll except that it accepts iteratee which is invoked for each element of array and values to generate the criterion by which they're compared. The iteratee is invoked with one argument: (value).",
+    "description": "This method is like _.pullAll except that it accepts iteratee which is invoked for each element of array and values to generate the criterion by which they're compared. The iteratee is invoked with one argument: (value).  Note: Unlike _.differenceBy, this method mutates array.",
     "since": "4.0.0"
   },
   "pullallwith": {
     "name": "pullAllWith",
     "command": "_.pullAllWith(array, values, [comparator])",
-    "description": "This method is like _.pullAll except that it accepts comparator which is invoked to compare elements of array to values. The comparator is invoked with two arguments: (arrVal, othVal).",
+    "description": "This method is like _.pullAll except that it accepts comparator which is invoked to compare elements of array to values. The comparator is invoked with two arguments: (arrVal, othVal).  Note: Unlike _.differenceWith, this method mutates array.",
     "since": "4.6.0"
   },
   "pullat": {
     "name": "pullAt",
     "command": "_.pullAt(array, [indexes])",
-    "description": "Removes elements from array corresponding to indexes and returns an array of removed elements.",
+    "description": "Removes elements from array corresponding to indexes and returns an array of removed elements.  Note: Unlike _.at, this method mutates array.",
     "since": "3.0.0"
   },
   "remove": {
     "name": "remove",
     "command": "_.remove(array, [predicate=_.identity])",
-    "description": "Removes all elements from array that predicate returns truthy for and returns an array of the removed elements. The predicate is invoked with three arguments: (value, index, array).",
+    "description": "Removes all elements from array that predicate returns truthy for and returns an array of the removed elements. The predicate is invoked with three arguments: (value, index, array).  Note: Unlike _.filter, this method mutates array. Use _.pull to pull elements from an array by value.",
     "since": "2.0.0"
   },
   "reverse": {
     "name": "reverse",
     "command": "_.reverse(array)",
-    "description": "Reverses array so that the first element becomes the last, the second element becomes the second to last, and so on.",
+    "description": "Reverses array so that the first element becomes the last, the second element becomes the second to last, and so on.  Note: This method mutates array and is based on Array#reverse.",
     "since": "4.0.0"
   },
   "slice": {
     "name": "slice",
     "command": "_.slice(array, [start=0], [end=array.length])",
-    "description": "Creates a slice of array from start up to, but not including, end.",
+    "description": "Creates a slice of array from start up to, but not including, end.  Note: This method is used instead of Array#slice to ensure dense arrays are returned.",
     "since": "3.0.0"
   },
   "sortedindex": {
@@ -403,13 +404,13 @@ const lodashFunctions = {
   },
   "find": {
     "name": "find",
-    "command": "_.find(collection, [predicate=_.identity])",
+    "command": "_.find(collection, [predicate=_.identity], [fromIndex=0])",
     "description": "Iterates over elements of collection, returning the first element predicate returns truthy for. The predicate is invoked with three arguments: (value, index|key, collection).",
     "since": "0.1.0"
   },
   "findlast": {
     "name": "findLast",
-    "command": "_.findLast(collection, [predicate=_.identity])",
+    "command": "_.findLast(collection, [predicate=_.identity], [fromIndex=collection.length-1])",
     "description": "This method is like _.find except that it iterates over elements of collection from right to left.",
     "since": "2.0.0"
   },
@@ -434,7 +435,7 @@ const lodashFunctions = {
   "foreach": {
     "name": "forEach",
     "command": "_.forEach(collection, [iteratee=_.identity])",
-    "description": "Iterates over elements of collection and invokes iteratee for each element. The iteratee is invoked with three arguments: (value, index|key, collection). Iteratee functions may exit iteration early by explicitly returning false.",
+    "description": "Iterates over elements of collection and invokes iteratee for each element. The iteratee is invoked with three arguments: (value, index|key, collection). Iteratee functions may exit iteration early by explicitly returning false.  Note: As with other \"Collections\" methods, objects with a \"length\" property are iterated like arrays. To avoid this behavior use _.forIn or _.forOwn for object iteration.",
     "since": "0.1.0"
   },
   "foreachright": {
@@ -470,7 +471,7 @@ const lodashFunctions = {
   "map": {
     "name": "map",
     "command": "_.map(collection, [iteratee=_.identity])",
-    "description": "Creates an array of values by running each element in collection thru iteratee. The iteratee is invoked with three arguments: (value, index|key, collection).",
+    "description": "Creates an array of values by running each element in collection thru iteratee. The iteratee is invoked with three arguments: (value, index|key, collection).  Many lodash methods are guarded to work as iteratees for methods like _.every, _.filter, _.map, _.mapValues, _.reject, and _.some.  The guarded methods are: ary, chunk, curry, curryRight, drop, dropRight, every, fill, invert, parseInt, random, range, rangeRight, repeat, sampleSize, slice, some, sortBy, split, take, takeRight, template, trim, trimEnd, trimStart, and words",
     "since": "0.1.0"
   },
   "orderby": {
@@ -488,7 +489,7 @@ const lodashFunctions = {
   "reduce": {
     "name": "reduce",
     "command": "_.reduce(collection, [iteratee=_.identity], [accumulator])",
-    "description": "Reduces collection to a value which is the accumulated result of running each element in collection thru iteratee, where each successive invocation is supplied the return value of the previous. If accumulator is not given, the first element of collection is used as the initial value. The iteratee is invoked with four arguments: (accumulator, val...",
+    "description": "Reduces collection to a value which is the accumulated result of running each element in collection thru iteratee, where each successive invocation is supplied the return value of the previous. If accumulator is not given, the first element of collection is used as the initial value. The iteratee is invoked with four arguments: (accumulator, value, index|key, collection).  Many lodash methods are guarded to work as iteratees for methods like _.reduce, _.reduceRight, and _.transform.  The guarded methods are: assign, defaults, defaultsDeep, includes, merge, orderBy, and sortBy",
     "since": "0.1.0"
   },
   "reduceright": {
@@ -566,31 +567,31 @@ const lodashFunctions = {
   "bind": {
     "name": "bind",
     "command": "_.bind(func, thisArg, [partials])",
-    "description": "Creates a function that invokes func with the this binding of thisArg and partials prepended to the arguments it receives.",
+    "description": "Creates a function that invokes func with the this binding of thisArg and partials prepended to the arguments it receives.  The _.bind.placeholder value, which defaults to _ in monolithic builds, may be used as a placeholder for partially applied arguments.  Note: Unlike native Function#bind, this method doesn’t set the \"length\" property of bound functions.",
     "since": "0.1.0"
   },
   "bindkey": {
     "name": "bindKey",
     "command": "_.bindKey(object, key, [partials])",
-    "description": "Creates a function that invokes the method at object[key] with partials prepended to the arguments it receives.",
+    "description": "Creates a function that invokes the method at object[key] with partials prepended to the arguments it receives.  This method differs from _.bind by allowing bound functions to reference methods that may be redefined or don’t yet exist. See Peter Michaux’s article for more details.  The _.bindKey.placeholder value, which defaults to _ in monolithic builds, may be used as a placeholder for partially applied arguments.",
     "since": "0.10.0"
   },
   "curry": {
     "name": "curry",
     "command": "_.curry(func, [arity=func.length])",
-    "description": "Creates a function that accepts arguments of func and either invokes func returning its result, if at least arity number of arguments have been provided, or returns a function that accepts the remaining func arguments, and so on. The arity of func may be specified if func.length is not sufficient.",
+    "description": "Creates a function that accepts arguments of func and either invokes func returning its result, if at least arity number of arguments have been provided, or returns a function that accepts the remaining func arguments, and so on. The arity of func may be specified if func.length is not sufficient.  The _.curry.placeholder value, which defaults to _ in monolithic builds, may be used as a placeholder for provided arguments.  Note: This method doesn’t set the \"length\" property of curried functions.",
     "since": "2.0.0"
   },
   "curryright": {
     "name": "curryRight",
     "command": "_.curryRight(func, [arity=func.length])",
-    "description": "This method is like _.curry except that arguments are applied to func in the manner of _.partialRight instead of _.partial.",
+    "description": "This method is like _.curry except that arguments are applied to func in the manner of _.partialRight instead of _.partial.  The _.curryRight.placeholder value, which defaults to _ in monolithic builds, may be used as a placeholder for provided arguments.  Note: This method doesn’t set the \"length\" property of curried functions.",
     "since": "3.0.0"
   },
   "debounce": {
     "name": "debounce",
     "command": "_.debounce(func, [wait=0], [options={}], [options.leading=false], [options.maxWait], [options.trailing=true])",
-    "description": "Creates a debounced function that delays invoking func until after wait milliseconds have elapsed since the last time the debounced function was invoked. The debounced function comes with a cancel method to cancel delayed func invocations and a flush method to immediately invoke them. Provide an options object to indicate whether func should be ...",
+    "description": "Creates a debounced function that delays invoking func until after wait milliseconds have elapsed since the last time the debounced function was invoked. The debounced function comes with a cancel method to cancel delayed func invocations and a flush method to immediately invoke them. Provide an options object to indicate whether func should be invoked on the leading and/or trailing edge of the wait timeout. The func is invoked with the last arguments provided to the debounced function. Subsequent calls to the debounced function return the result of the last func invocation.  Note: If leading and trailing options are true, func is invoked on the trailing edge of the timeout only if the debounced function is invoked more than once during the wait timeout.  See David Corbacho’s article for details over the differences between _.debounce and _.throttle.",
     "since": "0.1.0"
   },
   "defer": {
@@ -614,7 +615,7 @@ const lodashFunctions = {
   "memoize": {
     "name": "memoize",
     "command": "_.memoize(func, [resolver])",
-    "description": "Creates a function that memoizes the result of func. If resolver is provided, it determines the cache key for storing the result based on the arguments provided to the memoized function. By default, the first argument provided to the memoized function is used as the map cache key. The func is invoked with the this binding of the memoized function.",
+    "description": "Creates a function that memoizes the result of func. If resolver is provided, it determines the cache key for storing the result based on the arguments provided to the memoized function. By default, the first argument provided to the memoized function is used as the map cache key. The func is invoked with the this binding of the memoized function.  Note: The cache is exposed as the cache property on the memoized function. Its creation may be customized by replacing the _.memoize.Cache constructor with one whose instances implement the Map method interface of delete, get, has, and set.",
     "since": "0.1.0"
   },
   "negate": {
@@ -638,13 +639,13 @@ const lodashFunctions = {
   "partial": {
     "name": "partial",
     "command": "_.partial(func, [partials])",
-    "description": "Creates a function that invokes func with partials prepended to the arguments it receives. This method is like _.bind except it does not alter the this binding.",
+    "description": "Creates a function that invokes func with partials prepended to the arguments it receives. This method is like _.bind except it does not alter the this binding.  The _.partial.placeholder value, which defaults to _ in monolithic builds, may be used as a placeholder for partially applied arguments.  Note: This method doesn’t set the \"length\" property of partially applied functions.",
     "since": "0.2.0"
   },
   "partialright": {
     "name": "partialRight",
     "command": "_.partialRight(func, [partials])",
-    "description": "This method is like _.partial except that partially applied arguments are appended to the arguments it receives.",
+    "description": "This method is like _.partial except that partially applied arguments are appended to the arguments it receives.  The _.partialRight.placeholder value, which defaults to _ in monolithic builds, may be used as a placeholder for partially applied arguments.  Note: This method doesn’t set the \"length\" property of partially applied functions.",
     "since": "1.0.0"
   },
   "rearg": {
@@ -656,19 +657,19 @@ const lodashFunctions = {
   "rest": {
     "name": "rest",
     "command": "_.rest(func, [start=func.length-1])",
-    "description": "Creates a function that invokes func with the this binding of the created function and arguments from start and beyond provided as an array.",
+    "description": "Creates a function that invokes func with the this binding of the created function and arguments from start and beyond provided as an array.  Note: This method is based on the rest parameter.",
     "since": "4.0.0"
   },
   "spread": {
     "name": "spread",
     "command": "_.spread(func, [start=0])",
-    "description": "Creates a function that invokes func with the this binding of the create function and an array of arguments much like Function#apply.",
+    "description": "Creates a function that invokes func with the this binding of the create function and an array of arguments much like Function#apply.  Note: This method is based on the spread operator.",
     "since": "3.2.0"
   },
   "throttle": {
     "name": "throttle",
     "command": "_.throttle(func, [wait=0], [options={}], [options.leading=true], [options.trailing=true])",
-    "description": "Creates a throttled function that only invokes func at most once per every wait milliseconds. The throttled function comes with a cancel method to cancel delayed func invocations and a flush method to immediately invoke them. Provide an options object to indicate whether func should be invoked on the leading and/or trailing edge of the wait time...",
+    "description": "Creates a throttled function that only invokes func at most once per every wait milliseconds. The throttled function comes with a cancel method to cancel delayed func invocations and a flush method to immediately invoke them. Provide an options object to indicate whether func should be invoked on the leading and/or trailing edge of the wait timeout. The func is invoked with the last arguments provided to the throttled function. Subsequent calls to the throttled function return the result of the last func invocation.  Note: If leading and trailing options are true, func is invoked on the trailing edge of the timeout only if the throttled function is invoked more than once during the wait timeout.  See David Corbacho’s article for details over the differences between _.throttle and _.debounce.",
     "since": "0.1.0"
   },
   "unary": {
@@ -692,7 +693,7 @@ const lodashFunctions = {
   "clone": {
     "name": "clone",
     "command": "_.clone(value)",
-    "description": "Creates a shallow clone of value.",
+    "description": "Creates a shallow clone of value.  Note: This method is loosely based on the structured clone algorithm and supports cloning arrays, array buffers, booleans, date objects, maps, numbers, Object objects, regexes, sets, strings, symbols, and typed arrays. The own enumerable properties of arguments objects are cloned as plain objects. An empty object is returned for uncloneable values such as error objects, functions, DOM nodes, and WeakMaps.",
     "since": "0.1.0"
   },
   "clonedeep": {
@@ -788,13 +789,13 @@ const lodashFunctions = {
   "isempty": {
     "name": "isEmpty",
     "command": "_.isEmpty(value)",
-    "description": "Checks if value is an empty object, collection, map, or set.",
+    "description": "Checks if value is an empty object, collection, map, or set.  Objects are considered empty if they have no own enumerable string keyed properties.  Array-like values such as arguments objects, arrays, buffers, strings, or jQuery-like collections are considered empty if they have a length of 0. Similarly, maps and sets are considered empty if they have a size of 0.",
     "since": "0.1.0"
   },
   "isequal": {
     "name": "isEqual",
     "command": "_.isEqual(value, other)",
-    "description": "Performs a deep comparison between two values to determine if they are equivalent.",
+    "description": "Performs a deep comparison between two values to determine if they are equivalent.  Note: This method supports comparing arrays, array buffers, booleans, date objects, error objects, maps, numbers, Object objects, regexes, sets, strings, symbols, and typed arrays. Object objects are compared by their own, not inherited, enumerable properties. Functions and DOM nodes are not supported.",
     "since": "0.1.0"
   },
   "isequalwith": {
@@ -812,7 +813,7 @@ const lodashFunctions = {
   "isfinite": {
     "name": "isFinite",
     "command": "_.isFinite(value)",
-    "description": "Checks if value is a finite primitive number.",
+    "description": "Checks if value is a finite primitive number.  Note: This method is based on Number.isFinite.",
     "since": "0.1.0"
   },
   "isfunction": {
@@ -824,13 +825,13 @@ const lodashFunctions = {
   "isinteger": {
     "name": "isInteger",
     "command": "_.isInteger(value)",
-    "description": "Checks if value is an integer.",
+    "description": "Checks if value is an integer.  Note: This method is based on Number.isInteger.",
     "since": "4.0.0"
   },
   "islength": {
     "name": "isLength",
     "command": "_.isLength(value)",
-    "description": "Checks if value is a valid array-like length.",
+    "description": "Checks if value is a valid array-like length.  Note: This function is loosely based on ToLength.",
     "since": "4.0.0"
   },
   "ismap": {
@@ -842,7 +843,7 @@ const lodashFunctions = {
   "ismatch": {
     "name": "isMatch",
     "command": "_.isMatch(object, source)",
-    "description": "Performs a partial deep comparison between object and source to determine if object contains equivalent property values. This method is equivalent to a _.matches function when source is partially applied.",
+    "description": "Performs a partial deep comparison between object and source to determine if object contains equivalent property values. This method is equivalent to a _.matches function when source is partially applied.  Note: This method supports comparing the same values as _.isEqual.",
     "since": "3.0.0"
   },
   "ismatchwith": {
@@ -854,13 +855,13 @@ const lodashFunctions = {
   "isnan": {
     "name": "isNaN",
     "command": "_.isNaN(value)",
-    "description": "Checks if value is NaN.",
+    "description": "Checks if value is NaN.  Note: This method is based on Number.isNaN and is not the same as global isNaN which returns true for undefined and other non-number values.",
     "since": "0.1.0"
   },
   "isnative": {
     "name": "isNative",
     "command": "_.isNative(value)",
-    "description": "Checks if value is a native function.",
+    "description": "Checks if value is a pristine native function.  Note: This method can’t reliably detect native functions in the presence of the core-js package because core-js circumvents this kind of detection. Despite multiple requests, the core-js maintainer has made it clear: any attempt to fix the detection will be obstructed. As a result, we're left with little choice but to throw an error. Unfortunately, this also affects packages, like babel-polyfill, which rely on core-js.",
     "since": "3.0.0"
   },
   "isnil": {
@@ -878,7 +879,7 @@ const lodashFunctions = {
   "isnumber": {
     "name": "isNumber",
     "command": "_.isNumber(value)",
-    "description": "Checks if value is classified as a Number primitive or object.",
+    "description": "Checks if value is classified as a Number primitive or object.  Note: To exclude Infinity, -Infinity, and NaN, which are classified as numbers, use the _.isFinite method.",
     "since": "0.1.0"
   },
   "isobject": {
@@ -908,7 +909,7 @@ const lodashFunctions = {
   "issafeinteger": {
     "name": "isSafeInteger",
     "command": "_.isSafeInteger(value)",
-    "description": "Checks if value is a safe integer. An integer is safe if it’s an IEEE-754 double precision number which isn’t the result of a rounded unsafe integer.",
+    "description": "Checks if value is a safe integer. An integer is safe if it’s an IEEE-754 double precision number which isn’t the result of a rounded unsafe integer.  Note: This method is based on Number.isSafeInteger.",
     "since": "4.0.0"
   },
   "isset": {
@@ -971,16 +972,22 @@ const lodashFunctions = {
     "description": "Converts value to an array.",
     "since": "0.1.0"
   },
+  "tofinite": {
+    "name": "toFinite",
+    "command": "_.toFinite(value)",
+    "description": "Converts value to a finite number.",
+    "since": "4.12.0"
+  },
   "tointeger": {
     "name": "toInteger",
     "command": "_.toInteger(value)",
-    "description": "Converts value to an integer.",
+    "description": "Converts value to an integer.  Note: This method is loosely based on ToInteger.",
     "since": "4.0.0"
   },
   "tolength": {
     "name": "toLength",
     "command": "_.toLength(value)",
-    "description": "Converts value to an integer suitable for use as the length of an array-like object.",
+    "description": "Converts value to an integer suitable for use as the length of an array-like object.  Note: This method is based on ToLength.",
     "since": "4.0.0"
   },
   "tonumber": {
@@ -1106,37 +1113,37 @@ const lodashFunctions = {
   "inrange": {
     "name": "inRange",
     "command": "_.inRange(number, [start=0], end)",
-    "description": "Checks if n is between start and up to but not including, end. If end is not specified, it’s set to start with start then set to 0. If start is greater than end the params are swapped to support negative ranges.",
+    "description": "Checks if n is between start and up to, but not including, end. If end is not specified, it’s set to start with start then set to 0. If start is greater than end the params are swapped to support negative ranges.",
     "since": "3.3.0"
   },
   "random": {
     "name": "random",
     "command": "_.random([lower=0], [upper=1], [floating])",
-    "description": "Produces a random number between the inclusive lower and upper bounds. If only one argument is provided a number between 0 and the given number is returned. If floating is true, or either lower or upper are floats, a floating-point number is returned instead of an integer.",
+    "description": "Produces a random number between the inclusive lower and upper bounds. If only one argument is provided a number between 0 and the given number is returned. If floating is true, or either lower or upper are floats, a floating-point number is returned instead of an integer.  Note: JavaScript follows the IEEE-754 standard for resolving floating-point values which can produce unexpected results.",
     "since": "0.7.0"
   },
   "assign": {
     "name": "assign",
     "command": "_.assign(object, [sources])",
-    "description": "Assigns own enumerable string keyed properties of source objects to the destination object. Source objects are applied from left to right. Subsequent sources overwrite property assignments of previous sources.",
+    "description": "Assigns own enumerable string keyed properties of source objects to the destination object. Source objects are applied from left to right. Subsequent sources overwrite property assignments of previous sources.  Note: This method mutates object and is loosely based on Object.assign.",
     "since": "0.10.0"
   },
   "assignin": {
     "name": "assignIn",
     "command": "_.assignIn(object, [sources])",
-    "description": "This method is like _.assign except that it iterates over own and inherited source properties.",
+    "description": "This method is like _.assign except that it iterates over own and inherited source properties.  Note: This method mutates object.",
     "since": "4.0.0"
   },
   "assigninwith": {
     "name": "assignInWith",
     "command": "_.assignInWith(object, sources, [customizer])",
-    "description": "This method is like _.assignIn except that it accepts customizer which is invoked to produce the assigned values. If customizer returns undefined, assignment is handled by the method instead. The customizer is invoked with five arguments: (objValue, srcValue, key, object, source).",
+    "description": "This method is like _.assignIn except that it accepts customizer which is invoked to produce the assigned values. If customizer returns undefined, assignment is handled by the method instead. The customizer is invoked with five arguments: (objValue, srcValue, key, object, source).  Note: This method mutates object.",
     "since": "4.0.0"
   },
   "assignwith": {
     "name": "assignWith",
     "command": "_.assignWith(object, sources, [customizer])",
-    "description": "This method is like _.assign except that it accepts customizer which is invoked to produce the assigned values. If customizer returns undefined, assignment is handled by the method instead. The customizer is invoked with five arguments: (objValue, srcValue, key, object, source).",
+    "description": "This method is like _.assign except that it accepts customizer which is invoked to produce the assigned values. If customizer returns undefined, assignment is handled by the method instead. The customizer is invoked with five arguments: (objValue, srcValue, key, object, source).  Note: This method mutates object.",
     "since": "4.0.0"
   },
   "at": {
@@ -1154,13 +1161,13 @@ const lodashFunctions = {
   "defaults": {
     "name": "defaults",
     "command": "_.defaults(object, [sources])",
-    "description": "Assigns own and inherited enumerable string keyed properties of source objects to the destination object for all destination properties that resolve to undefined. Source objects are applied from left to right. Once a property is set, additional values of the same property are ignored.",
+    "description": "Assigns own and inherited enumerable string keyed properties of source objects to the destination object for all destination properties that resolve to undefined. Source objects are applied from left to right. Once a property is set, additional values of the same property are ignored.  Note: This method mutates object.",
     "since": "0.1.0"
   },
   "defaultsdeep": {
     "name": "defaultsDeep",
     "command": "_.defaultsDeep(object, [sources])",
-    "description": "This method is like _.defaults except that it recursively assigns default properties.",
+    "description": "This method is like _.defaults except that it recursively assigns default properties.  Note: This method mutates object.",
     "since": "3.10.0"
   },
   "findkey": {
@@ -1250,13 +1257,13 @@ const lodashFunctions = {
   "keys": {
     "name": "keys",
     "command": "_.keys(object)",
-    "description": "Creates an array of the own enumerable property names of object.",
+    "description": "Creates an array of the own enumerable property names of object.  Note: Non-object values are coerced to objects. See the ES spec for more details.",
     "since": "0.1.0"
   },
   "keysin": {
     "name": "keysIn",
     "command": "_.keysIn(object)",
-    "description": "Creates an array of the own and inherited enumerable property names of object.",
+    "description": "Creates an array of the own and inherited enumerable property names of object.  Note: Non-object values are coerced to objects.",
     "since": "3.0.0"
   },
   "mapkeys": {
@@ -1274,13 +1281,13 @@ const lodashFunctions = {
   "merge": {
     "name": "merge",
     "command": "_.merge(object, [sources])",
-    "description": "This method is like _.assign except that it recursively merges own and inherited enumerable string keyed properties of source objects into the destination object. Source properties that resolve to undefined are skipped if a destination value exists. Array and plain object properties are merged recursively.Other objects and value types are overri...",
+    "description": "This method is like _.assign except that it recursively merges own and inherited enumerable string keyed properties of source objects into the destination object. Source properties that resolve to undefined are skipped if a destination value exists. Array and plain object properties are merged recursively. Other objects and value types are overridden by assignment. Source objects are applied from left to right. Subsequent sources overwrite property assignments of previous sources.  Note: This method mutates object.",
     "since": "0.5.0"
   },
   "mergewith": {
     "name": "mergeWith",
     "command": "_.mergeWith(object, sources, customizer)",
-    "description": "This method is like _.merge except that it accepts customizer which is invoked to produce the merged values of the destination and source properties. If customizer returns undefined, merging is handled by the method instead. The customizer is invoked with seven arguments: (objValue, srcValue, key, object, source, stack).",
+    "description": "This method is like _.merge except that it accepts customizer which is invoked to produce the merged values of the destination and source properties. If customizer returns undefined, merging is handled by the method instead. The customizer is invoked with seven arguments: (objValue, srcValue, key, object, source, stack).  Note: This method mutates object.",
     "since": "4.0.0"
   },
   "omit": {
@@ -1316,62 +1323,68 @@ const lodashFunctions = {
   "set": {
     "name": "set",
     "command": "_.set(object, path, value)",
-    "description": "Sets the value at path of object. If a portion of path doesn’t exist, it’s created. Arrays are created for missing index properties while objects are created for all other missing properties. Use _.setWith to customize path creation.",
+    "description": "Sets the value at path of object. If a portion of path doesn’t exist, it’s created. Arrays are created for missing index properties while objects are created for all other missing properties. Use _.setWith to customize path creation.  Note: This method mutates object.",
     "since": "3.7.0"
   },
   "setwith": {
     "name": "setWith",
     "command": "_.setWith(object, path, value, [customizer])",
-    "description": "This method is like _.set except that it accepts customizer which is invoked to produce the objects of path.  If customizer returns undefined path creation is handled by the method instead. The customizer is invoked with three arguments: (nsValue, key, nsObject).",
+    "description": "This method is like _.set except that it accepts customizer which is invoked to produce the objects of path. If customizer returns undefined path creation is handled by the method instead. The customizer is invoked with three arguments: (nsValue, key, nsObject).  Note: This method mutates object.",
     "since": "4.0.0"
   },
   "topairs": {
     "name": "toPairs",
     "command": "_.toPairs(object)",
-    "description": "Creates an array of own enumerable string keyed-value pairs for object which can be consumed by _.fromPairs.",
+    "description": "Creates an array of own enumerable string keyed-value pairs for object which can be consumed by _.fromPairs. If object is a map or set, its entries are returned.",
     "since": "4.0.0"
   },
   "topairsin": {
     "name": "toPairsIn",
     "command": "_.toPairsIn(object)",
-    "description": "Creates an array of own and inherited enumerable string keyed-value pairs for object which can be consumed by _.fromPairs.",
+    "description": "Creates an array of own and inherited enumerable string keyed-value pairs for object which can be consumed by _.fromPairs. If object is a map or set, its entries are returned.",
     "since": "4.0.0"
   },
   "transform": {
     "name": "transform",
     "command": "_.transform(object, [iteratee=_.identity], [accumulator])",
-    "description": "An alternative to _.reduce; this method transforms object to a new accumulator object which is the result of running each of its own enumerable string keyed properties thru iteratee, with each invocation potentially mutating the accumulator object. The iteratee is invoked with four arguments: (accumulator, value, key, object). Iteratee functions...",
+    "description": "An alternative to _.reduce; this method transforms object to a new accumulator object which is the result of running each of its own enumerable string keyed properties thru iteratee, with each invocation potentially mutating the accumulator object. If accumulator is not provided, a new object with the same [[Prototype]] will be used. The iteratee is invoked with four arguments: (accumulator, value, key, object). Iteratee functions may exit iteration early by explicitly returning false.",
     "since": "1.3.0"
   },
   "unset": {
     "name": "unset",
     "command": "_.unset(object, path)",
-    "description": "Removes the property at path of object.",
+    "description": "Removes the property at path of object.  Note: This method mutates object.",
     "since": "4.0.0"
   },
   "update": {
     "name": "update",
     "command": "_.update(object, path, updater)",
-    "description": "This method is like _.set except that accepts updater to produce the value to set. Use _.updateWith to customize path creation. The updater is invoked with one argument: (value).",
+    "description": "This method is like _.set except that accepts updater to produce the value to set. Use _.updateWith to customize path creation. The updater is invoked with one argument: (value).  Note: This method mutates object.",
     "since": "4.6.0"
   },
   "updatewith": {
     "name": "updateWith",
     "command": "_.updateWith(object, path, updater, [customizer])",
-    "description": "This method is like _.update except that it accepts customizer which is invoked to produce the objects of path.  If customizer returns undefined path creation is handled by the method instead. The customizer is invoked with three arguments: (nsValue, key, nsObject).",
+    "description": "This method is like _.update except that it accepts customizer which is invoked to produce the objects of path. If customizer returns undefined path creation is handled by the method instead. The customizer is invoked with three arguments: (nsValue, key, nsObject).  Note: This method mutates object.",
     "since": "4.6.0"
   },
   "values": {
     "name": "values",
     "command": "_.values(object)",
-    "description": "Creates an array of the own enumerable string keyed property values of object.",
+    "description": "Creates an array of the own enumerable string keyed property values of object.  Note: Non-object values are coerced to objects.",
     "since": "0.1.0"
   },
   "valuesin": {
     "name": "valuesIn",
     "command": "_.valuesIn(object)",
-    "description": "Creates an array of the own and inherited enumerable string keyed property values of object.",
+    "description": "Creates an array of the own and inherited enumerable string keyed property values of object.  Note: Non-object values are coerced to objects.",
     "since": "3.0.0"
+  },
+  "_": {
+    "name": "_",
+    "command": "_(value)",
+    "description": "Creates a lodash object which wraps value to enable implicit method chain sequences. Methods that operate on and return arrays, collections, and functions can be chained together. Methods that retrieve a single value or may return a primitive value will automatically end the chain sequence and return the unwrapped value. Otherwise, the value must be unwrapped with _#value.  Explicit chain sequences, which must be unwrapped with _#value, may be enabled using _.chain.  The execution of chained methods is lazy, that is, it’s deferred until _#value is implicitly or explicitly called.  Lazy evaluation allows several methods to support shortcut fusion. Shortcut fusion is an optimization to merge iteratee calls; this avoids the creation of intermediate arrays and can greatly reduce the number of iteratee executions. Sections of a chain sequence qualify for shortcut fusion if the section is applied to an array of at least 200 elements and any iteratees accept only one argument. The heuristic for whether a section qualifies for shortcut fusion is subject to change.  Chaining is supported in custom builds as long as the _#value method is directly or indirectly included in the build.  In addition to lodash methods, wrappers have Array and String methods.  The wrapper Array methods are: concat, join, pop, push, shift, sort, splice, and unshift  The wrapper String methods are: replace and split  The wrapper methods that support shortcut fusion are: at, compact, drop, dropRight, dropWhile, filter, find, findLast, head, initial, last, map, reject, reverse, slice, tail, take, takeRight, takeRightWhile, takeWhile, and toArray  The chainable wrapper methods are: after, ary, assign, assignIn, assignInWith, assignWith, at, before, bind, bindAll, bindKey, castArray, chain, chunk, commit, compact, concat, conforms, constant, countBy, create, curry, debounce, defaults, defaultsDeep, defer, delay, difference, differenceBy, differenceWith, drop, dropRight, dropRightWhile, dropWhile, extend, extendWith, fill, filter, flatMap, flatMapDeep, flatMapDepth, flatten, flattenDeep, flattenDepth, flip, flow, flowRight, fromPairs, functions, functionsIn, groupBy, initial, intersection, intersectionBy, intersectionWith, invert, invertBy, invokeMap, iteratee, keyBy, keys, keysIn, map, mapKeys, mapValues, matches, matchesProperty, memoize, merge, mergeWith, method, methodOf, mixin, negate, nthArg, omit, omitBy, once, orderBy, over, overArgs, overEvery, overSome, partial, partialRight, partition, pick, pickBy, plant, property, propertyOf, pull, pullAll, pullAllBy, pullAllWith, pullAt, push, range, rangeRight, rearg, reject, remove, rest, reverse, sampleSize, set, setWith, shuffle, slice, sort, sortBy, splice, spread, tail, take, takeRight, takeRightWhile, takeWhile, tap, throttle, thru, toArray, toPairs, toPairsIn, toPath, toPlainObject, transform, unary, union, unionBy, unionWith, uniq, uniqBy, uniqWith, unset, unshift, unzip, unzipWith, update, updateWith, values, valuesIn, without, wrap, xor, xorBy, xorWith, zip, zipObject, zipObjectDeep, and zipWith  The wrapper methods that are not chainable by default are: add, attempt, camelCase, capitalize, ceil, clamp, clone, cloneDeep, cloneDeepWith, cloneWith, deburr, divide, each, eachRight, endsWith, eq, escape, escapeRegExp, every, find, findIndex, findKey, findLast, findLastIndex, findLastKey, first, floor, forEach, forEachRight, forIn, forInRight, forOwn, forOwnRight, get, gt, gte, has, hasIn, head, identity, includes, indexOf, inRange, invoke, isArguments, isArray, isArrayBuffer, isArrayLike, isArrayLikeObject, isBoolean, isBuffer, isDate, isElement, isEmpty, isEqual, isEqualWith, isError, isFinite, isFunction, isInteger, isLength, isMap, isMatch, isMatchWith, isNaN, isNative, isNil, isNull, isNumber, isObject, isObjectLike, isPlainObject, isRegExp, isSafeInteger, isSet, isString, isUndefined, isTypedArray, isWeakMap, isWeakSet, join, kebabCase, last, lastIndexOf, lowerCase, lowerFirst, lt, lte, max, maxBy, mean, meanBy, min, minBy, multiply, noConflict, noop, now, nth, pad, padEnd, padStart, parseInt, pop, random, reduce, reduceRight, repeat, result, round, runInContext, sample, shift, size, snakeCase, some, sortedIndex, sortedIndexBy, sortedLastIndex, sortedLastIndexBy, startCase, startsWith, stubArray, stubFalse, stubObject, stubString, stubTrue, subtract, sum, sumBy, template, times, toFinite, toInteger, toJSON, toLength, toLower, toNumber, toSafeInteger, toString, toUpper, trim, trimEnd, trimStart, truncate, unescape, uniqueId, upperCase, upperFirst, value, and words",
+    "since": "value (*): The value to wrap in a lodash instance.\n"
   },
   "chain": {
     "name": "chain",
@@ -1430,7 +1443,7 @@ const lodashFunctions = {
   "prototype-reverse": {
     "name": "prototype-reverse",
     "command": "_.prototype.reverse()",
-    "description": "This method is the wrapper version of _.reverse.",
+    "description": "This method is the wrapper version of _.reverse.  Note: This method mutates the wrapped array.",
     "since": "0.1.0"
   },
   "prototype-value": {
@@ -1466,7 +1479,7 @@ const lodashFunctions = {
   "escape": {
     "name": "escape",
     "command": "_.escape([string=''])",
-    "description": "Converts the characters \"&\", \"<\", \">\", '\"', \"'\", and \"`\" in string to their corresponding HTML entities.",
+    "description": "Converts the characters \"&\", \"<\", \">\", '\"', \"'\", and \"`\" in string to their corresponding HTML entities.  Note: No other characters are escaped. To escape additional characters use a third-party library like he.  Though the \">\" character is escaped for symmetry, characters like \">\" and \"/\" don’t need escaping in HTML and have no special meaning unless they're part of a tag or unquoted attribute value. See Mathias Bynens’s article (under \"semi-related fun fact\") for more details.  Backticks are escaped because in IE < 9, they can break out of attribute values or HTML comments. See #59, #102, #108, and #133 of the HTML5 Security Cheatsheet for more details.  When working with HTML you should always quote attribute values to reduce XSS vectors.",
     "since": "0.1.0"
   },
   "escaperegexp": {
@@ -1514,7 +1527,7 @@ const lodashFunctions = {
   "parseint": {
     "name": "parseInt",
     "command": "_.parseInt(string, [radix=10])",
-    "description": "Converts string to an integer of the specified radix. If radix is undefined or 0, a radix of 10 is used unless value is a hexadecimal, in which case a radix of 16 is used.",
+    "description": "Converts string to an integer of the specified radix. If radix is undefined or 0, a radix of 10 is used unless value is a hexadecimal, in which case a radix of 16 is used.  Note: This method aligns with the ES5 implementation of parseInt.",
     "since": "1.1.0"
   },
   "repeat": {
@@ -1526,7 +1539,7 @@ const lodashFunctions = {
   "replace": {
     "name": "replace",
     "command": "_.replace([string=''], pattern, replacement)",
-    "description": "Replaces matches for pattern in string with replacement.",
+    "description": "Replaces matches for pattern in string with replacement.  Note: This method is based on String#replace.",
     "since": "4.0.0"
   },
   "snakecase": {
@@ -1538,7 +1551,7 @@ const lodashFunctions = {
   "split": {
     "name": "split",
     "command": "_.split([string=''], separator, [limit])",
-    "description": "Splits string by separator.",
+    "description": "Splits string by separator.  Note: This method is based on String#split.",
     "since": "4.0.0"
   },
   "startcase": {
@@ -1596,7 +1609,7 @@ const lodashFunctions = {
   "unescape": {
     "name": "unescape",
     "command": "_.unescape([string=''])",
-    "description": "The inverse of _.escape; this method converts the HTML entities &amp;, &lt;, &gt;, &quot;, &#39;, and &#96; in string to their corresponding characters.",
+    "description": "The inverse of _.escape; this method converts the HTML entities &amp;, &lt;, &gt;, &quot;, &#39;, and &#96; in string to their corresponding characters.  Note: No other HTML entities are unescaped. To unescape additional HTML entities use a third-party library like he.",
     "since": "0.6.0"
   },
   "uppercase": {
@@ -1626,7 +1639,7 @@ const lodashFunctions = {
   "bindall": {
     "name": "bindAll",
     "command": "_.bindAll(object, methodNames)",
-    "description": "Binds methods of an object to the object itself, overwriting the existing method.",
+    "description": "Binds methods of an object to the object itself, overwriting the existing method.  Note: This method doesn’t set the \"length\" property of bound functions.",
     "since": "0.1.0"
   },
   "cond": {
@@ -1657,7 +1670,7 @@ const lodashFunctions = {
     "name": "flowRight",
     "command": "_.flowRight([funcs])",
     "description": "This method is like _.flow except that it creates a function that invokes the given functions from right to left.",
-    "since": "0.1.0"
+    "since": "3.0.0"
   },
   "identity": {
     "name": "identity",
@@ -1674,13 +1687,13 @@ const lodashFunctions = {
   "matches": {
     "name": "matches",
     "command": "_.matches(source)",
-    "description": "Creates a function that performs a partial deep comparison between a given object and source, returning true if the given object has equivalent property values, else false. The created function is equivalent to _.isMatch with a source partially applied.",
+    "description": "Creates a function that performs a partial deep comparison between a given object and source, returning true if the given object has equivalent property values, else false. The created function is equivalent to _.isMatch with a source partially applied.  Note: This method supports comparing the same values as _.isEqual.",
     "since": "3.0.0"
   },
   "matchesproperty": {
     "name": "matchesProperty",
     "command": "_.matchesProperty(path, srcValue)",
-    "description": "Creates a function that performs a partial deep comparison between the value at path of a given object to srcValue, returning true if the object value is equivalent, else false.",
+    "description": "Creates a function that performs a partial deep comparison between the value at path of a given object to srcValue, returning true if the object value is equivalent, else false.  Note: This method supports comparing the same values as _.isEqual.",
     "since": "3.2.0"
   },
   "method": {
@@ -1698,7 +1711,7 @@ const lodashFunctions = {
   "mixin": {
     "name": "mixin",
     "command": "_.mixin([object=lodash], source, [options={}], [options.chain=true])",
-    "description": "Adds all own enumerable string keyed function properties of a source object to the destination object. If object is a function, then methods are added to its prototype as well.",
+    "description": "Adds all own enumerable string keyed function properties of a source object to the destination object. If object is a function, then methods are added to its prototype as well.  Note: Use _.runInContext to create a pristine lodash function to avoid conflicts caused by modifying the original.",
     "since": "0.1.0"
   },
   "noconflict": {
@@ -1710,13 +1723,13 @@ const lodashFunctions = {
   "noop": {
     "name": "noop",
     "command": "_.noop()",
-    "description": "A no-operation function that returns undefined regardless of the arguments it receives.",
+    "description": "A method that returns undefined.",
     "since": "2.3.0"
   },
   "ntharg": {
     "name": "nthArg",
     "command": "_.nthArg([n=0])",
-    "description": "Creates a function that returns its nth argument. If n is negative, the nth argument from the end is returned.",
+    "description": "Creates a function that gets the argument at index n. If n is negative, the nth argument from the end is returned.",
     "since": "4.0.0"
   },
   "over": {
@@ -1752,7 +1765,7 @@ const lodashFunctions = {
   "range": {
     "name": "range",
     "command": "_.range([start=0], end, [step=1])",
-    "description": "Creates an array of numbers (positive and/or negative) progressing from start up to, but not including, end. A step of -1 is used if a negative start is specified without an end or step. If end is not specified, it’s set to start with start then set to 0.",
+    "description": "Creates an array of numbers (positive and/or negative) progressing from start up to, but not including, end. A step of -1 is used if a negative start is specified without an end or step. If end is not specified, it’s set to start with start then set to 0.  Note: JavaScript follows the IEEE-754 standard for resolving floating-point values which can produce unexpected results.",
     "since": "0.1.0"
   },
   "rangeright": {
@@ -1766,6 +1779,36 @@ const lodashFunctions = {
     "command": "_.runInContext([context=root])",
     "description": "Create a new pristine lodash function using the context object.",
     "since": "1.1.0"
+  },
+  "stubarray": {
+    "name": "stubArray",
+    "command": "_.stubArray()",
+    "description": "A method that returns a new empty array.",
+    "since": "4.13.0"
+  },
+  "stubfalse": {
+    "name": "stubFalse",
+    "command": "_.stubFalse()",
+    "description": "A method that returns false.",
+    "since": "4.13.0"
+  },
+  "stubobject": {
+    "name": "stubObject",
+    "command": "_.stubObject()",
+    "description": "A method that returns a new empty object.",
+    "since": "4.13.0"
+  },
+  "stubstring": {
+    "name": "stubString",
+    "command": "_.stubString()",
+    "description": "A method that returns an empty string.",
+    "since": "4.13.0"
+  },
+  "stubtrue": {
+    "name": "stubTrue",
+    "command": "_.stubTrue()",
+    "description": "A method that returns true.",
+    "since": "4.13.0"
   },
   "times": {
     "name": "times",
@@ -1789,8 +1832,48 @@ const lodashFunctions = {
     "name": "VERSION",
     "command": "_.VERSION",
     "description": "(string): The semantic version number.",
-    "since": ""
+    "since": "Unknown"
+  },
+  "templatesettings": {
+    "name": "templateSettings",
+    "command": "_.templateSettings",
+    "description": "(Object): By default, the template delimiters used by lodash are like those in embedded Ruby (ERB). Change the following template settings to use alternative delimiters.",
+    "since": "Unknown"
+  },
+  "templatesettings-escape": {
+    "name": "templateSettings-escape",
+    "command": "_.templateSettings.escape",
+    "description": "(RegExp): Used to detect data property values to be HTML-escaped.",
+    "since": "Unknown"
+  },
+  "templatesettings-evaluate": {
+    "name": "templateSettings-evaluate",
+    "command": "_.templateSettings.evaluate",
+    "description": "(RegExp): Used to detect code to be evaluated.",
+    "since": "Unknown"
+  },
+  "templatesettings-imports": {
+    "name": "templateSettings-imports",
+    "command": "_.templateSettings.imports",
+    "description": "(Object): Used to import variables into the compiled template.",
+    "since": "Unknown"
+  },
+  "templatesettings-interpolate": {
+    "name": "templateSettings-interpolate",
+    "command": "_.templateSettings.interpolate",
+    "description": "(RegExp): Used to detect data property values to inject.",
+    "since": "Unknown"
+  },
+  "templatesettings-variable": {
+    "name": "templateSettings-variable",
+    "command": "_.templateSettings.variable",
+    "description": "(string): Used to reference the data object in the template text.",
+    "since": "Unknown"
+  },
+  "templatesettings-imports-_": {
+    "name": "templateSettings-imports-_",
+    "command": "_.templateSettings.imports._",
+    "description": "A reference to the lodash function.",
+    "since": "Unknown"
   }
 }
-
-module.exports = lodashFunctions;
