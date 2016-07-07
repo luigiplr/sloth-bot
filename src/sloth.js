@@ -54,17 +54,20 @@ class slackClient extends Slack {
         .then(response => {
           if (!response) return false
 
-          if (!response.type == 'dm' || !response.type == 'channel') return console.error("Invalid message response type, must be channel or dm")
+          if (!response.type == 'dm' || !response.type == 'channel') {
+            response.type = 'channel'
+            console.warn("No response type, assuming channel response")
+          }
 
           this._checkIfDM(response.type, response.user ? response.user : user.id)
             .then(DM => {
               if (DM) channel = DM
               console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages))
               if (response.message && response.message.attachments) {
-                channel.postMessage(this._getParams(response.message.msg, response.message.attachments))
+                channel.postMessage(this._getParams(response.message.msg, response.message.attachments, response.options))
               } else if (!response.multiLine) {
-                if (response.message && !Array.isArray(response.message)) channel.send(response.message)
-                else if (response.messages && Array.isArray(response.messages)) channel.postMessage(this._getParams(response.messages.join('\n')))
+                if (response.message && !Array.isArray(response.message)) channel.postMessage(this._getParams(response.message, null, response.options))
+                else if (response.messages && Array.isArray(response.messages)) channel.postMessage(this._getParams(response.messages.join('\n'), null, response.options))
                 else return this._sendErrorToDebugChannel('sendMsg', "Invalid messages format, your array must contain more than 1 message and use the 'messages' response type")
               } else {
                 if (response.messages && Array.isArray(response.messages)) response.messages.forEach(message => channel.send(message))
@@ -105,7 +108,7 @@ class slackClient extends Slack {
     }
   }
 
-  _getParams = (text = '', attachments = null) => ({ text, attachments, as_user: true, token: config.slackBotToken })
+  _getParams = (text = '', attachments = null, opts = {}) => (Object.assign({}, opts, { text, attachments, as_user: true, token: config.slackBotToken }))
 
   _checkIfDM = (type, user) => new Promise(resolve => (type == 'dm') ? this.openDM(user, ({ channel }) => resolve(this.getChannelGroupOrDMByID(channel.id))) : resolve(0))
 }
