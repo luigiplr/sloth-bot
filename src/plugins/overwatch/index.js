@@ -1,7 +1,6 @@
 import Promise from 'bluebird'
 import { getUserStats } from './utils/overwatch.js'
 import _ from 'lodash'
-import moment from 'moment'
 
 export const plugin_info = [{
   alias: ['overwatch'],
@@ -20,38 +19,41 @@ export function userInfo(user, channel, input) {
 }
 
 const generateUserStatsResponse = data => {
-  if (data && data.overall_stats && data.game_stats && data.region && data.battletag && data.heroes) {
+  // Only returns quickplay stats
+  data.stats = data.stats.quickplay
+  data.heroes = data.heroes.quickplay
+  if (data && data.player && data.stats && data.heroes) {
     let out = {
-      msg: `Overwatch Player Data for ${data.battletag}`,
+      msg: `Overwatch Player Data for ${data.player.battletag} _(QuickPlay)_`,
       attachments: [{
-        "fallback": `Overwatch Data for ${data.battletag}, level ${data.overall_stats.level}. Overall Stats: Wins: ${data.overall_stats.wins} | Losses ${data.overall_stats.losses} out of ${data.overall_stats.games} games`,
+        "fallback": `Overwatch Data for ${data.player.battletag}, level ${data.player.level}. Overall Stats: Wins: ${data.stats.overall_stats.wins} | Losses ${data.stats.overall_stats.losses} out of ${data.stats.overall_stats.games} games`,
         "mrkdwn_in": ["text", "pretext", "fields"],
         "color": "#ff9c00"
       }]
     }
     out.attachments[0].fields = _.filter([{
       "title": "Region",
-      "value": data.region.toUpperCase(),
+      "value": data.player.region.toUpperCase(),
       "short": true
     }, {
       "title": "Level",
-      "value": `${data.overall_stats.rank || ''}${data.overall_stats.level}`,
+      "value": `${data.player.rank || ''}${data.player.level}`,
       "short": true
     }, {
       "title": "Games Played",
-      "value": data.overall_stats.games,
+      "value": data.stats.overall_stats.games,
       "short": true
     }, {
       "title": "Wins / Losses",
-      "value": `${data.overall_stats.wins} / ${data.overall_stats.losses}`,
+      "value": `${data.stats.overall_stats.wins} / ${data.stats.overall_stats.losses}`,
+      "short": true
+    }, {
+      "title": "Top 10 Heroes",
+      "value": data.heroes ? data.heroes.map(hero => `*${_.capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n') : null,
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": data.game_stats.map(stat => `*${_.capitalize(stat.name)}*: ${Math.round(stat.value * 100) / 100} ${stat.avg ? '- avg. ' + Math.round(stat.avg * 100) / 100 : ''}`).join('\n'),
-      "short": true
-    }, {
-      "title": "Top 5 Heroes",
-      "value": data.heroes ? data.heroes.map(hero => `*${_.capitalize(hero.name)}*: ${hero.hours < 1 ? Math.floor(moment.duration(hero.hours, 'hours').asMinutes()) + ' minutes' : Math.floor(hero.hours) + ' hours'}`).join('\n') : null,
+      "value": data.stats.featured_stats.map(stat => `*${_.capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n'),
       "short": true
     }], 'value')
     return out

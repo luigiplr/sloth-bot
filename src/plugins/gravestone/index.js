@@ -24,7 +24,6 @@ export function rip(user, channel, input) {
         return resolve(imageUrl)
       } else return reject("Something went wrong :(")
     } else return reject('Invalid markup, must resemble `"Bob Jones" whoknows-2016 "Rest in pizza"`')
-
   })
 }
 
