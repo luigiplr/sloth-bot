@@ -16,7 +16,7 @@ export function rip(user, channel, input) {
       message: 'rip "username" startdate-enddate "message" -  Username and message must be surrounded by `" "` and date must be seperpated by `-` can be year or text'
     })
 
-    let match = input.match(/("[\w+ ]+") (\w+-\w+) ("[\w+ ]+")/g)
+    let match = input.match(/"[\w+ ']+" \w+-\w+ "[\w+ ']+"/g)
     if (match) {
       let split = _.flatten(_.compact(match[0].split('"')).map(m => _.trim(m).replace(/ /g, '+')).map(m => m.split('-')))
       if (split.length == '4') {
