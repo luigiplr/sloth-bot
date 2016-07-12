@@ -54,8 +54,8 @@ class slackClient extends Slack {
         .then(response => {
           if (!response) return false
 
-          if (!response.type == 'dm' || !response.type == 'channel') {
-            response.type = 'channel'
+          if (typeof response == 'string' || (!response.type == 'dm' || !response.type == 'channel')) {
+            response = { type: 'channel', message: response }
             console.warn("No response type, assuming channel response")
           }
 
