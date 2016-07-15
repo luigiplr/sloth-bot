@@ -4,8 +4,8 @@ import needle from 'needle'
 const apiUrl = 'https://owapi-1368.appspot.com/api/u'
 
 const endpoints = {
-  stats: `${apiUrl}/%u/stats`, // returns basic stats for user
-  heroes: `${apiUrl}/%u/heroes`, // returns top 5 played heroes
+  stats: `${apiUrl}/%u/stats/quickplay`, // returns basic stats for user
+  heroes: `${apiUrl}/%u/heroes/quickplay`, // returns top 5 played heroes
   hero: `${apiUrl}/%u/hero/%h`
 }
 
