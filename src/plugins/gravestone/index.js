@@ -1,5 +1,4 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
 
 export const plugin_info = [{
   alias: ['rip', 'gravestone'],
@@ -16,14 +15,17 @@ export function rip(user, channel, input) {
       message: 'rip "username" startdate-enddate "message" -  Username and message must be surrounded by `" "` and date must be seperpated by `-` can be year or text'
     })
 
-    let match = input.match(/"[\w+ ']+" \w+-\w+ "[\w+ ']+"/g)
-    if (match) {
-      let split = _.flatten(_.compact(match[0].split('"')).map(m => _.trim(m).replace(/ /g, '+')).map(m => m.split('-')))
-      if (split.length == '4') {
-        let imageUrl = `${url}?id=${randomNumber()}.JPG&name=${split[0]}&byear=${split[1]}&dyear=${split[2]}&insc=${split[3]}`
-        return resolve(imageUrl)
-      } else return reject("Something went wrong :(")
-    } else return reject('Invalid markup, must resemble `"Bob Jones" whoknows-2016 "Rest in pizza"`')
+    let texts = input.match(/["'”“][\w+ ']+["'”“]/g)
+    let time = input.match(/\w+-\w+/)
+
+    if (texts && time && texts.length == 2) {
+      texts = texts.map(t => t.slice(1, -1).replace(/ /g, '+'))
+      time = time[0].split('-')
+      let imageUrl = `${url}?id=${randomNumber()}.JPG&name=${texts[0]}&byear=${time[0]}&dyear=${time[1]}&insc=${texts[1]}`
+      return resolve(imageUrl)
+    } else {
+      return reject('Invalid markup, must resemble `"Bob Jones" whoknows-2016 "Rest in pizza"`')
+    }
   })
 }
 
