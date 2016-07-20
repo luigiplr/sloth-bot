@@ -6,7 +6,7 @@ const apiUrl = 'https://owapi-1368.appspot.com/api/u'
 const endpoints = {
   stats: `${apiUrl}/%u/stats/quickplay`, // returns basic stats for user
   heroes: `${apiUrl}/%u/heroes/quickplay`, // returns top 5 played heroes
-  hero: `${apiUrl}/%u/hero/%h`
+  hero: `${apiUrl}/%u/hero/%h/quickplay`
 }
 
 const getURL = (type, user, hero) => {
@@ -14,11 +14,11 @@ const getURL = (type, user, hero) => {
   return (hero ? out.replace('%h', hero) : out)
 }
 
-export function getUserStats(user, heroes) {
+export function getUserStats(user, getHeroes) {
   return new Promise((resolve, reject) => needle.get(getURL('stats', user), (err, resp, body) => {
     if (!err && body) {
       if (!body.ok) return reject(`Error: ${resp.statusCode} - ${body.error || ''}`)
-      if (heroes) {
+      if (getHeroes) {
         getTopHeroes(user).then(heroes => {
           body.data.heroes = heroes
           return resolve(body.data)
@@ -37,6 +37,22 @@ export function getTopHeroes(user) {
       return resolve(body.data)
     } else {
       return reject(`getTopHeroesErr: ${err}`)
+    }
+  }))
+}
+
+export function getHero(user, hero, getProfile) {
+  return new Promise((resolve, reject) => needle.get(getURL('hero', user, hero), (err, resp, body) => {
+    if (!err && body) {
+      if (!body.ok) return reject(`Error: ${resp.statusCode} - ${body.error || ''}`)
+      if (getProfile) {
+        getUserStats(user).then(stats => {
+          body.data.player = stats.player
+          return resolve(body.data)
+        }).catch(reject)
+      } else return resolve(body.data)
+    } else {
+      return reject(`getHeroErr: ${err}`)
     }
   }))
 }
