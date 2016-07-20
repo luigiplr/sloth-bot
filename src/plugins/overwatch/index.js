@@ -19,7 +19,7 @@ export function userInfo(user, channel, input) {
       if (validHeroes.includes(name)) {
         getHero(battletag, name, true).then(data => {
           return resolve({ type: channel, message: generateHeroResponse(data) })
-        })
+        }).catch(reject)
       } else return reject(`Invalid hero name, valid heroes are \`${validHeroes.join(', ')}\``)
     } else {
       getUserStats(battletag.replace('#', '-'), true).then(data => {

@@ -17,7 +17,7 @@ const getURL = (type, user, hero) => {
 export function getUserStats(user, getHeroes) {
   return new Promise((resolve, reject) => needle.get(getURL('stats', user), (err, resp, body) => {
     if (!err && body) {
-      if (!body.ok) return reject(`Error: ${resp.statusCode} - ${body.error || ''}`)
+      if (!body.ok) return reject(`Error: ${body.error || ''}`)
       if (getHeroes) {
         getTopHeroes(user).then(heroes => {
           body.data.heroes = heroes
@@ -33,7 +33,7 @@ export function getUserStats(user, getHeroes) {
 export function getTopHeroes(user) {
   return new Promise((resolve, reject) => needle.get(getURL('heroes', user), (err, resp, body) => {
     if (!err && body) {
-      if (!body.ok) return reject(`Error: ${resp.statusCode} - ${body.error || ''}`)
+      if (!body.ok) return reject(`Error: ${body.error || ''}`)
       return resolve(body.data)
     } else {
       return reject(`getTopHeroesErr: ${err}`)
@@ -44,7 +44,7 @@ export function getTopHeroes(user) {
 export function getHero(user, hero, getProfile) {
   return new Promise((resolve, reject) => needle.get(getURL('hero', user, hero), (err, resp, body) => {
     if (!err && body) {
-      if (!body.ok) return reject(`Error: ${resp.statusCode} - ${body.error || ''}`)
+      if (!body.ok) return reject(`Error: ${body.error || ''}`)
       if (getProfile) {
         getUserStats(user).then(stats => {
           body.data.player = stats.player
