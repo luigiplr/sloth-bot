@@ -27,13 +27,14 @@ setTimeout(() => {
   updateUsersCache().then(console.log, console.error) // Update da cache on startup
 }, 1000)
 
-export function sendMessage(channel, input) {
+export function sendMessage(channel, input, attachments) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/chat.postMessage', {
     text: input,
     channel: channel,
     as_user: 'true',
     token: config.slackBotToken,
-    icon_url: config.imageURL
+    icon_url: config.imageURL,
+    attachments: attachments
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('sendMsgErr', err || error))
     resolve()
