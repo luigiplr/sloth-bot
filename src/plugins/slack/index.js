@@ -65,7 +65,7 @@ export function inviteUser(user, channel, input) {
       InviteUsers.findOneByEmail(email).then(res => {
         let newInv = res ? res : new InviteUsers()
         newInv.inviter = user.name
-        newInv.email = email
+        newInv.email = email.toLowerCase()
         newInv.date = moment().utc().format()
         newInv.Persist()
       })
