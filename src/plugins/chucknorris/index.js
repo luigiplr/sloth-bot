@@ -1,4 +1,4 @@
-import Promise from 'bluebird'
+/*import Promise from 'bluebird'
 import needle from 'needle'
 import { unescape } from 'lodash'
 
@@ -16,4 +16,4 @@ export function chucknorris(user, channel, input = 'Chuck Norris') {
       else return reject("Error fetching ChuckNorris Joke")
     })
   })
-}
+}*/
