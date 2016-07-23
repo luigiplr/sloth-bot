@@ -1,6 +1,5 @@
-/*import Promise from 'bluebird'
-import _ from 'lodash'
-import chuck from './utils/chuck'
+import Promise from 'bluebird'
+import chuck from 'chuck-norris-api'
 
 export const plugin_info = [{
   alias: ['cn', 'chucknorris'],
@@ -8,8 +7,18 @@ export const plugin_info = [{
   usage: 'CHUCK THE NORRIS'
 }]
 
-export function chucknorris(user, channel, input = 'Chuck Norris') {
+export function chucknorris(user, channel, input) {
   return new Promise(resolve => {
-    new chuck(input).random((err, joke) => resolve({ type: 'channel', message: !err ? _.unescape(joke.replace(/ +(?= )/g, '')) : err }))
+    console.log(input)
+    if (input) {
+      let split = input.split(' ')
+      chuck.getRandom({ firstName: split[0], lastName: split[1] || ' ' }).then(joke => {
+        return resolve({ type: 'channel', message: joke.value.joke.replace(/ +(?= )/g, '') })
+      })
+    } else {
+      chuck.getRandom().then(joke => {
+        return resolve({ type: 'channel', message: joke.value.joke })
+      })
+    }
   })
-}*/
+}

@@ -25,6 +25,7 @@
     "bluebird": "^3.3.5",
     "body-parser": "^1.15.0",
     "chuck": "0.0.4",
+    "chuck-norris-api": "^1.0.8",
     "cleverbot-node": "^0.2.1",
     "codepad": "^0.1.1",
     "connect-flash": "^0.1.1",
