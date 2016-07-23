@@ -2,5 +2,6 @@
   "database.version.Quote": 1,
   "database.version.SwearCommit": 1,
   "database.version.SwearUser": 1,
-  "database.version.InviteUsers": 1
+  "database.version.InviteUsers": 1,
+  "database.version.RSSFeeds": 1
 }

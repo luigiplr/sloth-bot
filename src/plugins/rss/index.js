@@ -2,6 +2,8 @@ import RSSWatcher from 'rss-watcher'
 import { sendMessage } from '../../slack'
 import config from '../../../config.json'
 import striptags from 'striptags'
+import { RSSFeeds } from '../../database'
+import _ from 'lodash'
 
 if (config.feeds) {
   if (Array.isArray(config.feeds) && config.feeds[0] && config.feedsChannel) {
@@ -9,7 +11,14 @@ if (config.feeds) {
       let watcher = new RSSWatcher(feed.url)
       watcher.set({ feedUrl: feed.url, interval: 15 }) // I dunno
       watcher.on('new article', article => {
-        sendMessage(config.feedsChannel, null, generateAttachment(article, feed))
+        RSSFeeds.findOneByGuid(article.guid).then(resp => {
+          if (!resp) {
+            let newFeed = new RSSFeeds()
+            newFeed.guid = article.guid
+            newFeed.Persist()
+            sendMessage(config.feedsChannel, null, generateAttachment(article, feed))
+          } else console.log("Feed already been sent")
+        })
       })
       watcher.run((err) => {
         if (err) console.error(err)
@@ -34,12 +43,12 @@ const generateAttachment = (data, provider) => {
   let out = [{
     "mrkdwn_in": ["text"],
     "color": "#ff4794",
-    "pretext": `RSS - New ${provider.name} Article`,
+    "pretext": `RSS - New ${provider.name} Post`,
     "author_name": data.author || null,
     "thumb_url": image,
     "title": data.title,
-    "title_link": data.link,
-    "text": striptags(data.summary).split('\n')[0],
+    "title_link": data.link.indexOf('http') == 0 ? data.link : data.meta.link,
+    "text": data.summary ? striptags(data.summary).split('\n')[0] : _.truncate(striptags(data.description), { length: 100 }),
     "footer": provider.name,
     "footer_icon": provider.image,
     "ts": new Date(data.date).getTime() / 1000

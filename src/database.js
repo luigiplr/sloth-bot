@@ -69,6 +69,17 @@ CRUD.define(InviteUsers, {
   createStatement: 'CREATE TABLE InviteUsers (inviteUserId INTEGER PRIMARY KEY NOT NULL, inviter VARCHAR(128) DEFAULT (NULL), email VARCHAR(128) DEFAULT (NULL), invitedUser VARCHAR(128) DEFAULT (NULL), date DATETIME)'
 })
 
+export function RSSFeeds() {
+  CRUD.Entity.call(this)
+}
+
+CRUD.define(RSSFeeds, {
+  table: 'RSSFeeds',
+  primary: 'feedId',
+  fields: ['feedId', 'guid'],
+  createStatement: 'CREATE TABLE RSSFeeds (feedId INTEGER PRIMARY KEY NOT NULL, guid VARCHAR(256) DEFAULT (NULL))'
+})
+
 CRUD.setAdapter(new CRUD.SQLiteAdapter(dbFile, {
   estimatedSize: 25 * 1024 * 1024
 }))
