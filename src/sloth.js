@@ -4,6 +4,8 @@ import { sendMessage, updateUsersCache } from './slack'
 import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
 
+var errors = 0
+
 if (!config.prefix || !config.slackAPIToken || !config.slackBotToken) {
   console.error("Invalid config, please fill in the first 3 required config fields")
   process.exit()
@@ -85,23 +87,24 @@ class slackClient extends Slack {
   }
 
   _sendErrorToDebugChannel(type, error) {
+    if (errors < 4) {
+      errors++
+      setTimeout(() => {
+        if (errors > 0) errors--
+      }, 4000)
+    } else {
+      sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
+      process.exit()
+      return
+    }
+
     if (error && error.message && error.stack) {
-      console.error("Caught Error:", type, error.message, error.stack);
+      console.error("Caught Error:", type, error.message, error.stack)
       if (!config.debugChannel) return
 
-      let i = 0;
-      const message = 'Caught ' + type + ' ```' + error.message + '\n' + error.stack + '```';
+      const message = 'Caught ' + type + ' ```' + error.message + '\n' + error.stack + '```'
+      sendMessage(config.debugChannel, message)
 
-      if (i < 4) {
-        i++
-        sendMessage(config.debugChannel, message)
-        setTimeout(() => {
-          if (i > 0) i--
-        }, 4000)
-      } else {
-        sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
-        process.exit()
-      }
     } else {
       console.error("Caught Error:", type, error)
       if (config.debugChannel) sendMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```')
