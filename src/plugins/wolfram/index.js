@@ -1,5 +1,5 @@
-import Promise from 'bluebird';
-import wolframUtil from './utils/wolfram';
+import Promise from 'bluebird'
+import wolframUtil from './utils/wolfram'
 
 export const plugin_info = [{
   alias: ['calc', 'wolfram'],

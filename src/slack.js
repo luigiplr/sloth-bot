@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { forEach, delay } from 'lodash'
 import needle from 'needle'
 import config from '../config.json'
 import { queue } from 'async'
@@ -15,7 +15,7 @@ export function updateUsersCache() {
     if (err || body.error) return reject(_logErr('updateUserCacheErr', err || body.error))
     userNamesCache = {}
     usersCache = {}
-    _.forEach(body.members, member => {
+    forEach(body.members, member => {
       usersCache[member.id] = member
       userNamesCache[member.name] = member.id
     })
@@ -164,7 +164,7 @@ const deleteQueue = queue((task, cb) => {
     ts: task.ts
   }, (err, resp, { error }) => {
     if (err || error) console.error(`Error deleting message ${err || error}`)
-    _.delay(() => { cb() }, 1000)
+    delay(() => { cb() }, 1000)
   })
 }, 4)
 

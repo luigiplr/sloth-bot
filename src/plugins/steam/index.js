@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import needle from 'needle'
-import _ from 'lodash'
+import { filter, capitalize, truncate } from 'lodash'
 import { getProfileInfo, getAppPlayers, getAppInfo, getSteamIDInfo } from './utils/steam'
 import sales from './utils/sales'
 import moment from 'moment'
@@ -131,7 +131,7 @@ const generateAppDetailsResponse = ((app, cc = 'US') => {
     let price = getPriceForApp(app)
     let date = getDateForApp(app)
 
-    out.attachments[0].fields = _.filter([{
+    out.attachments[0].fields = filter([{
       "title": "Cost",
       "value": price || null,
       "short": true
@@ -145,7 +145,7 @@ const generateAppDetailsResponse = ((app, cc = 'US') => {
       "short": true
     }, {
       "title": "Type",
-      "value": _.capitalize(app.type),
+      "value": capitalize(app.type),
       "short": true
     }, {
       "title": "Genres",
@@ -157,7 +157,7 @@ const generateAppDetailsResponse = ((app, cc = 'US') => {
       "short": true
     }, {
       "title": 'Developers',
-      "value": app.developers ? (_.truncate(app.developers.join(', '), { length: 40 })) : null,
+      "value": app.developers ? (truncate(app.developers.join(', '), { length: 40 })) : null,
       "short": true
     }, {
       "title": "Metacritic",

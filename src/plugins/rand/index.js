@@ -1,7 +1,6 @@
 import Promise from 'bluebird'
 import Random from './utils/random'
 
-
 export const plugin_info = [{
   alias: ['rand', 'random'],
   command: 'rand',

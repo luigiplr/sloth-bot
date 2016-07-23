@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { slice, includes } from 'lodash'
 import crypto from 'crypto'
 
 export const plugin_info = [{
@@ -19,9 +19,9 @@ export function encrypt(user, channel, input) {
     if (!input) return resolve({ type: 'dm', message: `Usage: crypto <algorithm> <text> - Encrypts text as algorithm, valid algorithms are ${cryptoTypes.join(', ')}` })
 
     let type = input.split(' ')[0].toLowerCase()
-    let toHash = _.slice(input.split(' '), 1).join(' ')
+    let toHash = slice(input.split(' '), 1).join(' ')
 
-    if (!_.includes(cryptoTypes, type)) return reject("Error: Unsupported algorithm")
+    if (!includes(cryptoTypes, type)) return reject("Error: Unsupported algorithm")
     if (!toHash) return reject("Error: I need something to hash")
     if (toHash.length > 90) return reject("Input must be <= 90")
 

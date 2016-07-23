@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { fill, delay } from 'lodash'
 import { findUser } from '../../slack.js'
 
 var disabled = false
@@ -19,13 +19,13 @@ export function poopbomb(user, channel, input) {
     if (amount > 3) return reject('Too much poop :|')
 
     findUser(input.split(' ')[0]).then(poopee => {
-      let p = _.fill(Array(amount), ':hankey: p :hankey:')
-      let o = _.fill(Array(amount), ':hankey: o :hankey:')
-      let oo = _.fill(Array(2), ':hankey: o :hankey:')
-      let pp = _.fill(Array(amount), ':hankey: p :hankey:')
+      let p = fill(Array(amount), ':hankey: p :hankey:')
+      let o = fill(Array(amount), ':hankey: o :hankey:')
+      let oo = fill(Array(2), ':hankey: o :hankey:')
+      let pp = fill(Array(amount), ':hankey: p :hankey:')
       let poop = [':hankey: poop :hankey:']
       disabled = true;
-      _.delay(() => { disabled = false }, 20000)
+      delay(() => { disabled = false }, 20000)
       return resolve({ type: 'dm', user: poopee, multiLine: true, messages: p.concat(o, oo, pp, poop) })
     }).catch(reject)
   })

@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import { getUserStats, getHero } from './utils/overwatch.js'
-import _ from 'lodash'
+import { filter, capitalize, isEmpty } from 'lodash'
 
 export const plugin_info = [{
   alias: ['overwatch'],
@@ -46,7 +46,7 @@ const generateUserStatsResponse = data => {
         "author_link": `https://playoverwatch.com/en-us/career/pc/${player.region}/${player.battletag}`
       }]
     }
-    out.attachments[0].fields = _.filter([{
+    out.attachments[0].fields = filter([{
       "title": "Region",
       "value": player.region.toUpperCase(),
       "short": true
@@ -64,11 +64,11 @@ const generateUserStatsResponse = data => {
       "short": true
     }, {
       "title": `Top ${heroes.slice(0, 10).length} Heroes`,
-      "value": heroes ? heroes.map(hero => `*${_.capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n') : null,
+      "value": heroes ? heroes.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n') : null,
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${_.capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : null,
+      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : null,
       "short": true
     }], 'value')
     return out
@@ -91,7 +91,7 @@ const generateHeroResponse = data => {
         "author_link": `https://playoverwatch.com/en-us/career/pc/${player.region}/${player.battletag}`
       }]
     }
-    out.attachments[0].fields = _.filter([{
+    out.attachments[0].fields = filter([{
       "title": "Time Played",
       "value": stats.general_stats.time_played ? stats.general_stats.time_played : null,
       "short": true
@@ -101,11 +101,11 @@ const generateHeroResponse = data => {
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${_.capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : null,
+      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : null,
       "short": true
     }, {
       "title": "Hero Specific Stats",
-      "value": _.isEmpty(stats.hero_stats) ? null : Object.keys(stats.hero_stats).map(stat => `*${_.capitalize(stat).replace(/_/g, ' ')}*: ${stats.hero_stats[stat]}`).join('\n'),
+      "value": isEmpty(stats.hero_stats) ? null : Object.keys(stats.hero_stats).map(stat => `*${capitalize(stat).replace(/_/g, ' ')}*: ${stats.hero_stats[stat]}`).join('\n'),
       "short": true
     }], 'value')
     return out

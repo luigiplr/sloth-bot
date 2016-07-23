@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { find } from 'lodash'
 import permissions from './permissions'
 import config from '../config.json'
 import { deleteMessage } from './slack'
@@ -34,8 +34,8 @@ export function parse(user, channel, text, ts) {
 
     let cmdLevel = false
     let call = false
-    let plugin = _.find(plugins, plugin => {
-      return _.find(plugin.plugin_info, cmd => {
+    let plugin = find(plugins, plugin => {
+      return find(plugin.plugin_info, cmd => {
         if (cmd.alias.indexOf(command) > -1) {
           if (cmd.userLevel) cmdLevel = cmd.userLevel
           call = cmd

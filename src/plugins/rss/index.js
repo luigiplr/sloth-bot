@@ -3,7 +3,7 @@ import { sendMessage } from '../../slack'
 import config from '../../../config.json'
 import striptags from 'striptags'
 import { RSSFeeds } from '../../database'
-import _ from 'lodash'
+import { truncate } from 'lodash'
 
 if (config.feeds) {
   if (Array.isArray(config.feeds) && config.feeds[0] && config.feedsChannel) {
@@ -48,7 +48,7 @@ const generateAttachment = (data, provider) => {
     "thumb_url": image,
     "title": data.title,
     "title_link": data.link.indexOf('http') == 0 ? data.link : data.meta.link,
-    "text": data.summary ? striptags(data.summary).split('\n')[0] : _.truncate(striptags(data.description), { length: 100 }),
+    "text": data.summary ? striptags(data.summary).split('\n')[0] : truncate(striptags(data.description), { length: 100 }),
     "footer": provider.name,
     "footer_icon": provider.image,
     "ts": new Date(data.date).getTime() / 1000

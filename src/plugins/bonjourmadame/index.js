@@ -1,8 +1,8 @@
 import Promise from 'bluebird'
+import { includes } from 'lodash'
 import MetaInspector from 'node-metainspector'
 import moment from 'moment'
 import needle from 'needle'
-import _ from 'lodash'
 import config from '../../../config.json'
 
 export const plugin_info = [{
@@ -73,7 +73,7 @@ export function f00px(user, channel, input = 'popular') {
   return new Promise((resolve, reject) => {
     let inpt = input.split(' ')
     let validFeatures = ['popular', 'highest_rated', 'upcoming', 'editors', 'fresh_today', 'fresh_yesterday', 'fresh_week']
-    let feature = _.includes(validFeatures, inpt[0]) ? inpt[0] : undefined
+    let feature = includes(validFeatures, inpt[0]) ? inpt[0] : undefined
     if (!feature && isNaN(parseInt(inpt[0]))) return reject(`Invalid feature, valid features are: \n \`${validFeatures.join(', ')}\``)
 
     let url = `https://api.500px.com/v1/photos?rpp=60&only=nude&image_size=2048&consumer_key=${config.f00pxAPIKey}&feature=${feature}`

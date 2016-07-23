@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { filter, truncate, capitalize, floor } from 'lodash'
 import Trakt from 'trakt.tv'
 import config from '../../../config.json'
 import moment from 'moment'
@@ -78,9 +78,9 @@ const generateShowResponse = ((showDetails, seasons) => {
       }]
     }
     // Filter the shit to remove nulls
-  out.attachments[0].fields = _.filter([{
+  out.attachments[0].fields = filter([{
     "title": "Overview",
-    "value": _.truncate(showDetails.overview, { length: 400 }) || null,
+    "value": truncate(showDetails.overview, { length: 400 }) || null,
     "short": false
   }, {
     "title": "First Aired",
@@ -88,7 +88,7 @@ const generateShowResponse = ((showDetails, seasons) => {
     "short": true
   }, {
     "title": "Status",
-    "value": showDetails.status ? (showDetails.status.split(' ').map(s => _.capitalize(s)).join(' ')) : null,
+    "value": showDetails.status ? (showDetails.status.split(' ').map(s => capitalize(s)).join(' ')) : null,
     "short": true
   }, {
     "title": "Aired Episodes",
@@ -96,11 +96,11 @@ const generateShowResponse = ((showDetails, seasons) => {
     "short": true
   }, {
     "title": "Genres",
-    "value": showDetails.genres ? (showDetails.genres.slice(0, 3).map(g => _.capitalize(g)).join(', ')) : null,
+    "value": showDetails.genres ? (showDetails.genres.slice(0, 3).map(g => capitalize(g)).join(', ')) : null,
     "short": true
   }, {
     "title": "Rating",
-    "value": _.floor(showDetails.rating, 1) || null,
+    "value": floor(showDetails.rating, 1) || null,
     "short": true
   }, {
     "title": "Network",

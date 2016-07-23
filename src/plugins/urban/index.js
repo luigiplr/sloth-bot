@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { unescape } from 'lodash'
 import Urban from 'urban'
 
 export const plugin_info = [{
@@ -20,7 +20,7 @@ export function urbandictionary(user, channel, input) {
       if (!definition) return reject("No results found")
       return resolve({
         type: 'channel',
-        message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
+        message: unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
       })
     })
   })
@@ -31,7 +31,7 @@ export function randomurban() {
     if (!definition) return reject("Error fetching urban")
     return resolve({
       type: 'channel',
-      message: _.unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
+      message: unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
     })
   }))
 }

@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import Promise from 'bluebird'
+import { capitalize } from 'lodash'
 import needle from 'needle'
 import SteamID from 'steamid'
 
@@ -162,19 +162,19 @@ export function getSteamIDInfo(id) {
     let i, details = []
     for (i in SteamID.Universe) {
       if (sid.universe == SteamID.Universe[i]) {
-        details.push(`*Universe:* ${_.capitalize(i.toLowerCase())} (${sid.universe})`)
+        details.push(`*Universe:* ${capitalize(i.toLowerCase())} (${sid.universe})`)
         break
       }
     }
     for (i in SteamID.Type) {
       if (sid.type == SteamID.Type[i]) {
-        details.push(`*Type:* ${i.split('_').map(j => _.capitalize(j.toLowerCase())).join(' ')} (${sid.type})`)
+        details.push(`*Type:* ${i.split('_').map(j => capitalize(j.toLowerCase())).join(' ')} (${sid.type})`)
         break
       }
     }
     for (i in SteamID.Instance) {
       if (sid.instance == SteamID.Instance[i]) {
-        details.push(`*Instance:* ${_.capitalize(i.toLowerCase())} (${sid.instance})`)
+        details.push(`*Instance:* ${capitalize(i.toLowerCase())} (${sid.instance})`)
         break
       }
     }

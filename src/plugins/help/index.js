@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { flatten } from 'lodash'
 import config from '../../../config.json'
 import { sendMessage } from '../../slack'
 
@@ -57,7 +57,7 @@ export function help(user, channel, context = 0, ts, plugins, userLevel) {
     })
 
     helpList.forEach(helps => {
-      sendMessage('@' + user.name, _.flatten(helps).join('\n'))
+      sendMessage('@' + user.name, flatten(helps).join('\n'))
     })
 
     return resolve()

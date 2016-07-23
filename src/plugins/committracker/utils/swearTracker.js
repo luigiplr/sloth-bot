@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import _ from 'lodash'
+import { some, assign, flatten } from 'lodash'
 import needle from 'needle'
 import async from 'async'
 import { SwearCommits, SwearUsers } from '../../../database'
@@ -59,7 +59,7 @@ const findSwearsInCommits = (commits => {
     let commitsWithSwears = []
 
     async.each(commits, (commit, cb) => {
-      _.some(word_list, word => {
+      some(word_list, word => {
         if (commit.commit.message.toLowerCase().indexOf(word) >= 0) {
           let out = {
             message: commit.commit.message,
@@ -110,7 +110,7 @@ const saveToDB = swears => {
           return;
         }
         let commit = new SwearCommits()
-        _.assign(commit, swear)
+        assign(commit, swear)
         return commit.Persist()
       })))
     }
@@ -132,7 +132,7 @@ const updateSwears = (() => {
     return getRepos()
       .then(formatRepos)
       .then(getCommitsForRepos)
-      .then(commits => findSwearsInCommits(_.flatten(commits)))
+      .then(commits => findSwearsInCommits(flatten(commits)))
       .then(saveToDB)
       .then(resolve)
       .catch(err => {
