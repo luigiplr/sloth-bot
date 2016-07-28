@@ -11,7 +11,7 @@ export function lodash(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: lodash <command> | Searches for lodash function' })
 
-    let method = input.replace('_.', '').replace('_', '')
+    let method = input == '_' ? input : input.replace('_.', '').replace('_', '')
     if (lodashFunctions[method.toLowerCase()]) {
       let cmd = lodashFunctions[method.toLowerCase()]
       if (cmd.dontShow) return resolve({ type: channel, messages: [`<https://lodash.com/docs#${cmd.name}|lodash.com/docs#${cmd.name}>`] })
