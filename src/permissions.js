@@ -70,6 +70,10 @@ class Perms {
     return this.ignoreList.concat(this.permaIgnored)
   }
 
+  get getAll() {
+    return { admins: this.adminList, owners: this.superadminList, allIgnored: this.ignoreList.concat(this.permaIgnored), ignored: this.ignoreList, muted: this.muteList, permaIgnored: this.permaIgnoreList }
+  }
+
   add(username, mode) {
     switch (mode) {
       case 'superadmin':

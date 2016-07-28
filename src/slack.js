@@ -85,6 +85,7 @@ export function findUser(user, type) {
     if (!member) return reject("Couldn't find a user by that name")
 
     if (type == 'email') return resolve({ name: member.name, email: member.profile.email }) // Dirty Cheat
+    if (type == 'full') return resolve(member) // Dirty Cheat
     resolve(type == 'both' ? { name: member.name, id: member.id } : (type == 'name' ? member.name : member.id))
   })
 }

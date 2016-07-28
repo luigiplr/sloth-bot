@@ -3,6 +3,8 @@ import { kick, deleteLastMessage } from './utils/slack'
 import { invite, findUser, addLoadingMsg, deleteLoadingMsg, updateUsersCache } from '../../slack.js'
 import { InviteUsers } from '../../database'
 import moment from 'moment'
+import { filter } from 'lodash'
+import perms from '../../permissions'
 
 export const plugin_info = [{
   alias: ['kick'],
@@ -45,6 +47,10 @@ export const plugin_info = [{
   alias: ['updateusercache'],
   command: 'updateUserCache',
   userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['whois'],
+  command: 'whois',
+  usage: 'whois <user> - tells you who they are'
 }]
 
 export function kickUser(user, channel, input) {
@@ -142,6 +148,29 @@ export function delLoadMessage(user, channel, input) {
 
 export function updateUserCache() {
   return new Promise((resolve, reject) => updateUsersCache().then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
+}
+
+export function whois(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return reject("Who am I looking for??")
+
+    findUser(input, 'full').then(u => {
+      let p = perms.getAll
+      InviteUsers.findOneByInvitedUser(u.name).then(resp => {
+        let invited = resp ? `- They were invited by ${resp.inviter} ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` : "- I don't know when they were invited to the team"
+
+        let name = `*${u.name}* ${u.real_name ? 'or otherwise known as ' + u.real_name : ''}`
+        let deleted = u.deleted ? '- This users account has been deactivated' : null
+        let bot = u.is_bot ? `- This user is a bot` : null
+        let admin = (u.is_admin || u.is_owner) ? `- They are an Admin${u.is_owner ? (' and ' + (u.is_primary_owner ? 'Primary Owner' : 'Owner')) : ''} of this team` : bot || deleted ? null : '- They are a regular user of this team'
+        let region = u.tz ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null
+        let ignored = p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null
+        let botAdmin = p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
+
+        return resolve(filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n'))
+      })
+    }).catch(reject)
+  })
 }
 
 /*export function disableUser(user, channel, input) {
