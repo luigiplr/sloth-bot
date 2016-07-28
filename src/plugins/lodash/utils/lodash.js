@@ -1,4 +1,4 @@
-// Last Updated 6/07/16
+// Last Updated 28/07/16 v4.14.0 or .1 ?
 const lodashFunctions = {
   "chunk": {
     "name": "chunk",
@@ -21,19 +21,19 @@ const lodashFunctions = {
   "difference": {
     "name": "difference",
     "command": "_.difference(array, [values])",
-    "description": "Creates an array of unique array values not included in the other given arrays using SameValueZero for equality comparisons. The order of result values is determined by the order they occur in the first array.",
+    "description": "Creates an array of array values not included in the other given arrays using SameValueZero for equality comparisons. The order of result values is determined by the order they occur in the first array.  Note: Unlike _.pullAll, this method returns a new array.",
     "since": "0.1.0"
   },
   "differenceby": {
     "name": "differenceBy",
     "command": "_.differenceBy(array, [values], [iteratee=_.identity])",
-    "description": "This method is like _.difference except that it accepts iteratee which is invoked for each element of array and values to generate the criterion by which they're compared. Result values are chosen from the first array. The iteratee is invoked with one argument: (value).",
+    "description": "This method is like _.difference except that it accepts iteratee which is invoked for each element of array and values to generate the criterion by which they're compared. Result values are chosen from the first array. The iteratee is invoked with one argument: (value).  Note: Unlike _.pullAllBy, this method returns a new array.",
     "since": "4.0.0"
   },
   "differencewith": {
     "name": "differenceWith",
     "command": "_.differenceWith(array, [values], [comparator])",
-    "description": "This method is like _.difference except that it accepts comparator which is invoked to compare elements of array to values. Result values are chosen from the first array. The comparator is invoked with two arguments: (arrVal, othVal).",
+    "description": "This method is like _.difference except that it accepts comparator which is invoked to compare elements of array to values. Result values are chosen from the first array. The comparator is invoked with two arguments: (arrVal, othVal).  Note: Unlike _.pullAllWith, this method returns a new array.",
     "since": "4.0.0"
   },
   "drop": {
@@ -297,13 +297,13 @@ const lodashFunctions = {
   "unionby": {
     "name": "unionBy",
     "command": "_.unionBy([arrays], [iteratee=_.identity])",
-    "description": "This method is like _.union except that it accepts iteratee which is invoked for each element of each arrays to generate the criterion by which uniqueness is computed. The iteratee is invoked with one argument: (value).",
+    "description": "This method is like _.union except that it accepts iteratee which is invoked for each element of each arrays to generate the criterion by which uniqueness is computed. Result values are chosen from the first array in which the value occurs. The iteratee is invoked with one argument: (value).",
     "since": "4.0.0"
   },
   "unionwith": {
     "name": "unionWith",
     "command": "_.unionWith([arrays], [comparator])",
-    "description": "This method is like _.union except that it accepts comparator which is invoked to compare elements of arrays. The comparator is invoked with two arguments: (arrVal, othVal).",
+    "description": "This method is like _.union except that it accepts comparator which is invoked to compare elements of arrays. Result values are chosen from the first array in which the value occurs. The comparator is invoked with two arguments: (arrVal, othVal).",
     "since": "4.0.0"
   },
   "uniq": {
@@ -339,7 +339,7 @@ const lodashFunctions = {
   "without": {
     "name": "without",
     "command": "_.without(array, [values])",
-    "description": "Creates an array excluding all given values using SameValueZero for equality comparisons.",
+    "description": "Creates an array excluding all given values using SameValueZero for equality comparisons.  Note: Unlike _.pull, this method returns a new array.",
     "since": "0.1.0"
   },
   "xor": {
@@ -399,7 +399,7 @@ const lodashFunctions = {
   "filter": {
     "name": "filter",
     "command": "_.filter(collection, [predicate=_.identity])",
-    "description": "Iterates over elements of collection, returning an array of all elements predicate returns truthy for. The predicate is invoked with three arguments: (value, index|key, collection).",
+    "description": "Iterates over elements of collection, returning an array of all elements predicate returns truthy for. The predicate is invoked with three arguments: (value, index|key, collection).  Note: Unlike _.remove, this method returns a new array.",
     "since": "0.1.0"
   },
   "find": {
@@ -459,7 +459,7 @@ const lodashFunctions = {
   "invokemap": {
     "name": "invokeMap",
     "command": "_.invokeMap(collection, path, [args])",
-    "description": "Invokes the method at path of each element in collection, returning an array of the results of each invoked method. Any additional arguments are provided to each invoked method. If methodName is a function, it’s invoked for and this bound to, each element in collection.",
+    "description": "Invokes the method at path of each element in collection, returning an array of the results of each invoked method. Any additional arguments are provided to each invoked method. If path is a function, it’s invoked for, and this bound to, each element in collection.",
     "since": "4.0.0"
   },
   "keyby": {
@@ -632,8 +632,8 @@ const lodashFunctions = {
   },
   "overargs": {
     "name": "overArgs",
-    "command": "_.overArgs(func)",
-    "description": "Creates a function that invokes func with arguments transformed by corresponding transforms.",
+    "command": "_.overArgs(func, [transforms=[_.identity]])",
+    "description": "Creates a function that invokes func with its arguments transformed.",
     "since": "4.0.0"
   },
   "partial": {
@@ -681,7 +681,7 @@ const lodashFunctions = {
   "wrap": {
     "name": "wrap",
     "command": "_.wrap(value, [wrapper=identity])",
-    "description": "Creates a function that provides value to the wrapper function as its first argument. Any additional arguments provided to the function are appended to those provided to the wrapper function. The wrapper is invoked with the this binding of the created function.",
+    "description": "Creates a function that provides value to wrapper as its first argument. Any additional arguments provided to the function are appended to those provided to the wrapper. The wrapper is invoked with the this binding of the created function.",
     "since": "0.1.0"
   },
   "castarray": {
@@ -713,6 +713,12 @@ const lodashFunctions = {
     "command": "_.cloneWith(value, [customizer])",
     "description": "This method is like _.clone except that it accepts customizer which is invoked to produce the cloned value. If customizer returns undefined, cloning is handled by the method instead. The customizer is invoked with up to four arguments; (value [, index|key, object, stack]).",
     "since": "4.0.0"
+  },
+  "conformsto": {
+    "name": "conformsTo",
+    "command": "_.conformsTo(object, source)",
+    "description": "Checks if object conforms to source by invoking the predicate properties of source with the corresponding property values of object. This method is equivalent to a _.conforms function when source is partially applied.",
+    "since": "4.14.0"
   },
   "eq": {
     "name": "eq",
@@ -1221,7 +1227,7 @@ const lodashFunctions = {
   "get": {
     "name": "get",
     "command": "_.get(object, path, [defaultValue])",
-    "description": "Gets the value at path of object. If the resolved value is undefined, the defaultValue is used in its place.",
+    "description": "Gets the value at path of object. If the resolved value is undefined, the defaultValue is returned in its place.",
     "since": "3.7.0"
   },
   "has": {
@@ -1658,6 +1664,12 @@ const lodashFunctions = {
     "description": "Creates a function that returns value.",
     "since": "2.4.0"
   },
+  "defaultto": {
+    "name": "defaultTo",
+    "command": "_.defaultTo(value, defaultValue)",
+    "description": "Checks value to determine whether a default value should be returned in its place. The defaultValue is returned if value is NaN, null, or undefined.",
+    "since": "4.14.0"
+  },
   "flow": {
     "name": "flow",
     "command": "_.flow([funcs])",
@@ -1673,7 +1685,7 @@ const lodashFunctions = {
   "identity": {
     "name": "identity",
     "command": "_.identity(value)",
-    "description": "This method returns the first argument given to it.",
+    "description": "This method returns the first argument it receives.",
     "since": "0.1.0"
   },
   "iteratee": {
@@ -1721,7 +1733,7 @@ const lodashFunctions = {
   "noop": {
     "name": "noop",
     "command": "_.noop()",
-    "description": "A method that returns undefined.",
+    "description": "This method returns undefined.",
     "since": "2.3.0"
   },
   "ntharg": {
@@ -1781,31 +1793,31 @@ const lodashFunctions = {
   "stubarray": {
     "name": "stubArray",
     "command": "_.stubArray()",
-    "description": "A method that returns a new empty array.",
+    "description": "This method returns a new empty array.",
     "since": "4.13.0"
   },
   "stubfalse": {
     "name": "stubFalse",
     "command": "_.stubFalse()",
-    "description": "A method that returns false.",
+    "description": "This method returns false.",
     "since": "4.13.0"
   },
   "stubobject": {
     "name": "stubObject",
     "command": "_.stubObject()",
-    "description": "A method that returns a new empty object.",
+    "description": "This method returns a new empty object.",
     "since": "4.13.0"
   },
   "stubstring": {
     "name": "stubString",
     "command": "_.stubString()",
-    "description": "A method that returns an empty string.",
+    "description": "This method returns an empty string.",
     "since": "4.13.0"
   },
   "stubtrue": {
     "name": "stubTrue",
     "command": "_.stubTrue()",
-    "description": "A method that returns true.",
+    "description": "This method returns true.",
     "since": "4.13.0"
   },
   "times": {
