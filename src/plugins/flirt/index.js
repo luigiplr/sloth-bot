@@ -9,13 +9,11 @@ export const plugin_info = [{
 }]
 
 export function flirt(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return reject("Its no fun if you dont tell me who i'm flirting with :(")
-    findUser(input, 'name').then(user => {
-      return resolve({
-        type: 'channel',
-        message: flirts[Math.floor(Math.random() * flirts.length)].replace('%s', user)
-      })
-    }).catch(reject)
+  return new Promise(resolve => {
+    input = input ? (input.slice(0, 2) == "<@" ? findUser(input).name : input) : user.name
+    return resolve({
+      type: 'channel',
+      message: flirts[Math.floor(Math.random() * flirts.length)].replace('%s', input)
+    })
   })
 }

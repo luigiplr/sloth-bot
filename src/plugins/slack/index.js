@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import { kick, deleteLastMessage } from './utils/slack'
-import { invite, findUser, addLoadingMsg, deleteLoadingMsg, updateUsersCache } from '../../slack.js'
+import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache } from '../../slack.js'
 import { InviteUsers } from '../../database'
 import moment from 'moment'
 import { filter } from 'lodash'
@@ -82,17 +82,17 @@ export function inviteUser(user, channel, input) {
 export function whoInvited(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: "Usage: whoinvited <user> - Returns information for who invited user if it's available" })
-    InviteUsers.findOneByInvitedUser(input).then(resp => {
+    user = findUser(input)
+    if (!user) return reject("Found no user by that name")
+    InviteUsers.findOneByInvitedUser(user.name).then(resp => {
       if (resp) return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
 
-      findUser(input, 'email').then(({ name, email }) => {
-        InviteUsers.findOneByEmail(email).then(resp => {
-          if (!resp) return reject("I don't have invite data for this user :(")
-          resp.invitedUser = name
-          resp.Persist()
-          return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
-        })
-      }).catch(reject)
+      InviteUsers.findOneByEmail(user.profile.email).then(resp => {
+        if (!resp) return reject("I don't have invite data for this user :(")
+        resp.invitedUser = user.name
+        resp.Persist()
+        return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
+      })
     })
   })
 }
@@ -121,7 +121,9 @@ export function userid(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input || input === user.name) return resolve({ type: 'channel', message: 'Your UserID is ' + user.id })
 
-    findUser(input).then(id => resolve({ type: 'channel', message: `${input}'s UserID is ${id}` })).catch(reject)
+    user = findUser(input)
+    if (!user) return reject("Found no user by that name")
+    return resolve({ type: 'channel', message: `${user.name}'s UserID is ${user.id}` })
   })
 }
 
@@ -153,55 +155,28 @@ export function updateUserCache() {
 export function whois(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return reject("Who am I looking for??")
+    let type = 'name'
+    let query = input
+    if (input.includes('<mailto:')) {
+      type = ['profile', 'email']
+      query = input.substr(8).split('|')[0]
+    }
+    let u = findUserByParam(type, query)
+    if (!u) return reject("Couldn't find a user matching input")
 
-    findUser(input, 'full').then(u => {
-      let p = perms.getAll
-      InviteUsers.findOneByInvitedUser(u.name).then(resp => {
-        let invited = resp ? `- They were invited by ${resp.inviter} ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` : "- I don't know when they were invited to the team"
+    let p = perms.getAll
+    InviteUsers.findOneByInvitedUser(u.name).then(resp => {
+      let invited = resp ? `- They were invited by ${resp.inviter} ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` : "- I don't know when they were invited to the team"
 
-        let name = `*${u.name}* ${u.real_name ? 'or otherwise known as ' + u.real_name : ''}`
-        let deleted = u.deleted ? '- This users account has been deactivated' : null
-        let bot = u.is_bot ? `- This user is a bot` : null
-        let admin = (u.is_admin || u.is_owner) ? `- They are an Admin${u.is_owner ? (' and ' + (u.is_primary_owner ? 'Primary Owner' : 'Owner')) : ''} of this team` : bot || deleted ? null : '- They are a regular user of this team'
-        let region = u.tz ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null
-        let ignored = p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null
-        let botAdmin = p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
+      let name = `*${u.name}* ${u.real_name ? 'or otherwise known as ' + u.real_name : ''}`
+      let deleted = u.deleted ? '- This users account has been deactivated' : null
+      let bot = u.is_bot ? `- This user is a bot` : null
+      let admin = (u.is_admin || u.is_owner) ? `- They are an Admin${u.is_owner ? (' and ' + (u.is_primary_owner ? 'Primary Owner' : 'Owner')) : ''} of this team` : bot || deleted ? null : '- They are a regular user of this team'
+      let region = u.tz ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null
+      let ignored = p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null
+      let botAdmin = p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
 
-        return resolve(filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n'))
-      })
-    }).catch(reject)
+      return resolve(filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n'))
+    })
   })
 }
-
-/*export function disableUser(user, channel, input) {
-    return new Promise((resolve, reject) => {
-        if (!input) {
-            return reject("Please specify a user")
-        }
-
-        slackTools.findUser(input).then(id => {
-            slackTools.setInactive(id).then(() => {
-                resolve({
-                    type: 'channel',
-                    message: `Sucessfully disabled ${input}'s account`
-                });
-            }).catch(reject);
-        }).catch(reject);
-    })
-}
-
-export function enableUser(user, channel, input) {
-    return new Promise((resolve, reject) => {
-        if (!input)
-            return reject("Please specify a user")
-
-        slackTools.findUser(input).then(id => {
-            slackTools.setRegular(id).then(resp => {
-                resolve({
-                    type: 'channel',
-                    message: `Sucessfully enabled ${input}'s account`
-                });
-            }).catch(reject);
-        }).catch(reject);
-    })
-}*/

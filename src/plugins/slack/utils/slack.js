@@ -5,15 +5,17 @@ import config from '../../../../config.json'
 
 export function kick(user, channel, input) {
   return new Promise((resolve, reject) => {
-    let user = input.split(' ')[0]
+    let user = findUser(input.split(' ')[0].toLowerCase())
     let reason = _.slice(input.split(' '), 1).join(' ')
 
-    if (user === config.botname || user.slice(2, -1) === config.botid) return reject('Error: Bitch. No.')
+    if (!user) return reject("Found no user by that name")
 
-    findUser(user, 'both').then(kickee => kickUser(channel.id, kickee.id).then(() => {
-      sendPMThroughSlackbot(kickee.name, `You were kicked from #${channel.name} ${reason || 'for no reason'}`)
-      return resolve(`*Kicked: ${kickee.name}* ${reason || 'for no reason.'}`)
-    }).catch(reject)).catch(reject)
+    if (user.name == config.botname || user.id === config.botid) return reject('Error: Bitch. No.')
+
+    kickUser(channel.id, user.id).then(() => {
+      sendPMThroughSlackbot(user.name, `You were kicked from #${channel.name} ${reason || 'for no reason'}`)
+      return resolve(`*Kicked: ${user.name}* ${reason || 'for no reason.'}`)
+    }).catch(reject).catch(reject)
   })
 }
 

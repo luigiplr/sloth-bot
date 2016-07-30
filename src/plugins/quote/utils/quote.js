@@ -7,17 +7,19 @@ import config from '../../../../config.json'
 
 export function getQuote(user, quotenum = 0) {
   return new Promise((resolve, reject) => {
-    Quotes.findByQuotedUser(user).then(quotes => {
+    user = findUser(user)
+    if (!user) return reject("Couldn't find a user by that name")
+    Quotes.findByQuotedUser(user.name).then(quotes => {
       if (quotenum === 'all') {
-        let total = [`<${user}> Quotes (${quotes.length}):`]
+        let total = [`<${user.name}> Quotes (${quotes.length}):`]
         quotes.forEach((quotenums, i) => total.push(urlify(`[${i}] (${moment(quotenums.date).format("DD-MM-YYYY")}) ${quotenums.message}`)))
         return resolve(total)
       } else {
         let quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
-        if (quotes[quoteindex]) return resolve(urlify(`<${user}> ${quotes[quoteindex].message}`))
+        if (quotes[quoteindex]) return resolve(urlify(`<${user.name}> ${quotes[quoteindex].message}`))
         else {
-          if (quotes.length > 0) return reject("I don't have quotes that far back for " + user);
-          else return reject(`No quotes found for ${user}, grab a quote via \`${config.prefix}grab <username>\``)
+          if (quotes.length > 0) return reject("I don't have quotes that far back for " + user.name);
+          else return reject(`No quotes found for ${user.name}, grab a quote via \`${config.prefix}grab <username>\``)
         }
       }
     }).catch(reject)
@@ -25,14 +27,16 @@ export function getQuote(user, quotenum = 0) {
 }
 
 export function grabQuote(grabee, channel, index = 0, grabber) {
-  return new Promise((resolve, reject) => Promise.join(getHistory(channel.id), findUser(grabee), (messages, user) => {
+  return new Promise((resolve, reject) => getHistory(channel.id).then(messages => {
+    let user = findUser(grabee)
+    if (!user) return reject("Couldn't find a user by that name")
     let i = 0
-    if (grabber.id == user) { index++ }
+    if (grabber.id == user.id) { index++ }
 
     let uID = _(messages)
       .filter(message => {
-        if (parseInt(index) == i) return message.user === user
-        else if (message.user === user) i++
+        if (parseInt(index) == i) return message.user === user.id
+        else if (message.user === user.id) i++
       })
       .map('text')
       .value()[0]
@@ -40,11 +44,11 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
     if (!uID) return reject("Something went wrong")
 
     var dbQuote = new Quotes()
-    dbQuote.quotedUser = grabee.toString().toLowerCase()
+    dbQuote.quotedUser = user.name
     dbQuote.message = uID.toString()
     dbQuote.grabUser = grabber.name
     dbQuote.date = moment().utc().format()
-    dbQuote.Persist().then(() => resolve("Successfully grabbed a quote for " + grabee))
+    dbQuote.Persist().then(() => resolve("Successfully grabbed a quote for " + user.name))
   }).catch(reject))
 }
 

@@ -7,12 +7,18 @@ export const plugin_info = [{
   usage: 'ddos <user> - :)'
 }]
 
+const _cleanInput = input => {
+  if (input.includes('<mailto:')) return input.substr(8).split('|')[0]
+  if (input.slice(0, 2) == "<@") return findUser(input).name || input
+  if (input.includes('<http:')) return input.split('|')[1].slice(0, -1)
+  return input
+}
+
 export function ddos(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return reject('Its no fun if you dont tell me who to DDoS :(')
-    findUser(input, 'name').then(user => {
-      resolve(`Resolving hostname for ${user}`)
-      setTimeout(() => sendMessage(channel.id, `Hostname resolved, Beginning DDoS on ${user}`), 3000)
-    }).catch(reject)
+    if (!input) return reject('Its no fun if you dont tell me what to DDoS :(')
+    let newInput = _cleanInput(input.split(' ')[0])
+    resolve(`Resolving hostname for ${newInput}`)
+    setTimeout(() => sendMessage(channel.id, `Hostname resolved, Beginning DDoS on ${newInput}`), 3000)
   })
 }

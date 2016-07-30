@@ -33,34 +33,33 @@ module.exports = {
   doTheThing(input, type, adminLevel) {
     return new Promise((resolve, reject) => {
       if (!input) return reject("Please specify a user")
-      let username = input.split(' ')[0].toString().toLowerCase()
+      let user = findUser(input.split(' ')[0].toLowerCase())
+      if (!user) return reject("Couldn't find a user by that name")
 
       // If you're trying to pull shit on the bot
-      if (username == config.botname || username.slice(2, -1) == config.botid.toLowerCase())
+      if (user.name == config.botname || user.id == config.botid)
         return reject("Error: Bitch. No.")
 
       // If you're trying to pull shit on ur m8s
-      if (!canDoTheThing(username, adminLevel)) return reject("Error: lolno")
+      if (!canDoTheThing(user.name, adminLevel)) return reject("Error: lolno")
 
-      if (type == 'ignore' && includes(permissions.allIgnored, username))
+      if (type == 'ignore' && includes(permissions.allIgnored, user.name))
         return reject("This user is already ignored")
-      if (type == 'mute' && includes(permissions.muted, username))
+      if (type == 'mute' && includes(permissions.muted, user.name))
         return reject("This user is already muted")
-      if (type == 'unignore' && !includes(permissions.allIgnored, username))
+      if (type == 'unignore' && !includes(permissions.allIgnored, user.name))
         return reject("This user is not ignored")
-      if (type == 'unmute' && !includes(permissions.muted, username))
+      if (type == 'unmute' && !includes(permissions.muted, user.name))
         return reject("This user is not muted")
-      if (type == 'permaignore' && includes(permissions.permaIgnored, username))
+      if (type == 'permaignore' && includes(permissions.permaIgnored, user.name))
         return reject("This user is already permanently ignored")
 
       if (type == 'unignore' || type == 'unmute') {
-        permissions.add(username, type)
-        return resolve(`${responses[type]} ${username}`)
+        permissions.add(user.name, type)
+        return resolve(`${responses[type]} ${user.name}`)
       } else {
-        findUser(username, 'name').then(user => {
-          permissions.add(user, type)
-          return resolve(`${responses[type]} ${user}`)
-        }).catch(reject)
+        permissions.add(user.name, type)
+        return resolve(`${responses[type]} ${user.name}`)
       }
     })
   }
