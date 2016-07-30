@@ -9,7 +9,7 @@ if (config.feeds) {
   if (Array.isArray(config.feeds) && config.feeds[0] && config.feedsChannel) {
     config.feeds.forEach(feed => {
       let watcher = new RSSWatcher(feed.url)
-      watcher.set({ feedUrl: feed.url, interval: 120 }) // I dunno
+      watcher.set({ feedUrl: feed.url, interval: 180 }) // I dunno
       watcher.on('new article', article => {
         RSSFeeds.findOneByGuid(article.guid).then(resp => {
           if (!resp) {

@@ -38,7 +38,7 @@ export function sendMessage(channel, input, attachments) {
     as_user: 'true',
     token: config.slackBotToken,
     icon_url: config.imageURL,
-    attachments: JSON.stringify(attachments)
+    attachments: typeof attachments == 'string' ? attachments : JSON.stringify(attachments)
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('sendMsgErr', err || error))
     resolve()
