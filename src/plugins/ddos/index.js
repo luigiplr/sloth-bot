@@ -18,7 +18,7 @@ export function ddos(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return reject('Its no fun if you dont tell me what to DDoS :(')
     let newInput = _cleanInput(input.split(' ')[0])
-    resolve(`Resolving hostname for ${newInput}`)
+    resolve({ type: 'channel', message: `Resolving hostname for ${newInput}` })
     setTimeout(() => sendMessage(channel.id, `Hostname resolved, Beginning DDoS on ${newInput}`), 3000)
   })
 }
