@@ -17,24 +17,32 @@ export const plugin_info = [{
 
 export function swearCommit(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: commits <user> | Fetches a random naughty github commit made by user' })
-    retrieveSwearCommits(input, false).then(resp => resolve({ type: 'channel', message: _genCommitResp(resp) })).catch(reject)
+    if (!input) return resolve({ type: 'dm', message: 'Usage: commits <user> [index] | Fetches a random or index naughty github commit made by user' })
+    let u = input.split(' ')[0].toLowerCase()
+    let index = input.split(' ')[1] ? input.split(' ')[1] : false
+    retrieveSwearCommits(u, index).then(resp => resolve({ type: 'channel', message: _genCommitResp(resp) })).catch(reject)
   })
 }
-export function fetchCommits(user, channel, input) {
+export function fetchCommits(user, channel, input, ts, plugin, adminLevel) {
   return new Promise((resolve, reject) => {
     if (!input)
       return resolve({
         type: 'dm',
         message: 'Usage: fetchcommits <user> <optional user to search> | Fetches naughty commits for user, if a second user is specified, it will search for commits by user in the other users repos'
       })
-    updateSwearCommits(user, channel, input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
+    updateSwearCommits(input, adminLevel).then(newSwears => {
+      if (newSwears.length) {
+        let out = [`*New commits found for ${input.split(' ')[0].toLowerCase()}:*`]
+        newSwears.forEach(commit => out.push(_genCommitResp(commit)))
+        return resolve({ type: 'channel', messages: out })
+      } else return reject('Found no new swears')
+    }).catch(reject)
   })
 }
 export function listCommits(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: listcommits <user> | Lists all saved naughty commits for a user' })
-    retrieveSwearCommits(input, true).then(resp => resolve({ type: 'channel', messages: resp })).catch(reject)
+    retrieveSwearCommits(input, false).then(resp => resolve({ type: 'channel', messages: resp })).catch(reject)
   })
 }
 

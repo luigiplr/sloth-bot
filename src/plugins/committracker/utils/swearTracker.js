@@ -13,7 +13,7 @@ var username, userToLook, updating;
 // Github API Endpoints
 const endpoints = {
   repositories: 'https://api.github.com/users/%u/repos',
-  commits: 'https://api.github.com/repos/%u/%r%/commits?author=%u&per_page=40'
+  commits: 'https://api.github.com/repos/%u/%r%/commits?author=%u&per_page=100'
 }
 
 // Formats Endpoint URLs
@@ -102,13 +102,13 @@ const saveToDB = swears => {
       user.Persist()
     })
     let promises = []
-    let newSwears = swears ? swears.length : 0
+    let newSwears = []
     if (swears) {
       promises.push.apply(promises, swears.map(swear => SwearCommits.findBySha(swear.sha).then(resp => {
         if (resp[0]) {
-          newSwears--
           return;
         }
+        newSwears.push(swear)
         let commit = new SwearCommits()
         assign(commit, swear)
         return commit.Persist()
@@ -118,7 +118,7 @@ const saveToDB = swears => {
     return Promise.all(promises).then(() => {
       updating = false
       if (swears)
-        return resolve(newSwears ? `Found ${newSwears} swears` : 'Found no new swear commits');
+        return resolve(newSwears);
       else
         return reject("Found no swears in recent commits :/");
     })
@@ -160,27 +160,29 @@ const checkIfWeCanUpdate = (() => {
   }))
 })
 
-export function retrieveSwearCommits(input, all) {
+export function retrieveSwearCommits(input, index) {
   return new Promise((resolve, reject) => {
     username = input.toLowerCase()
     fetchSwears().then(commits => {
-      if (!all) return resolve(commits[Math.floor(Math.random() * commits.length)]);
-      else {
+      if (index == 'all') {
         let total = [`<${username}> Commits (${commits.length}):`]
         commits.forEach(commit => total.push(`(_${commit.repo}_): *${commit.message}* (${commit.url.slice(8, -33)})`))
         return resolve(total)
+      } else {
+        let i = index < 0 ? commits.length + parseInt(index) : parseInt(index)
+        if (commits[i]) return resolve(commits[i])
+        else return reject("I don't have commits that far back")
       }
     }).catch(reject)
   })
 }
 
-export function updateSwearCommits(user, channel, input) {
+export function updateSwearCommits(input, adminLevel) {
   return new Promise((resolve, reject) => {
     username = input.split(' ')[0].toLowerCase()
     userToLook = input.split(' ')[1] ? input.split(' ')[1].toLowerCase() : undefined
-
     checkIfWeCanUpdate().then(resp => {
-      if (resp)
+      if (resp || adminLevel == 'superadmin')
         if (!updating) updateSwears().then(resolve).catch(reject)
         else reject('DB update already in progress, try again laterz')
       else
