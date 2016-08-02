@@ -62,7 +62,7 @@ const findSwearsInCommits = (commits => {
       some(word_list, word => {
         if (commit.commit.message.toLowerCase().indexOf(word) >= 0) {
           let out = {
-            message: commit.commit.message,
+            message: commit.commit.message.replace(/\r?\n|\r|\*/g, ''),
             url: commit.html_url.toLowerCase(),
             sha: commit.sha,
             user: username,
