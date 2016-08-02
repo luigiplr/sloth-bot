@@ -3,20 +3,20 @@ import { sendMessage } from '../../slack'
 import config from '../../../config.json'
 import striptags from 'striptags'
 import { RSSFeeds } from '../../database'
-import { truncate } from 'lodash'
 
 if (config.feeds) {
-  if (Array.isArray(config.feeds) && config.feeds[0] && config.feedsChannel) {
+  if (Array.isArray(config.feeds) && config.feeds[0]) {
     config.feeds.forEach(feed => {
+      if (feed.channels.length == 0 || !feed.url || !feed.name || !feed.image) return;
       let watcher = new RSSWatcher(feed.url)
-      watcher.set({ feedUrl: feed.url, interval: 180 }) // I dunno
+      watcher.set({ feedUrl: feed.url, interval: 600 }) // Check for new posts every 10 minutes
       watcher.on('new article', article => {
         RSSFeeds.findOneByGuid(article.guid).then(resp => {
           if (!resp) {
             let newFeed = new RSSFeeds()
             newFeed.guid = article.guid
             newFeed.Persist()
-            sendMessage(config.feedsChannel, null, generateAttachment(article, feed))
+            feed.channels.forEach(chan => sendMessage(chan, null, generateAttachment(article, feed)))
           } else console.log("Feed already been sent")
         })
       })
@@ -48,7 +48,7 @@ const generateAttachment = (data, provider) => {
     "thumb_url": image,
     "title": data.title,
     "title_link": data.link.indexOf('http') == 0 ? data.link : data.meta.link,
-    "text": data.summary ? striptags(data.summary).split('\n')[0] : truncate(striptags(data.description), { length: 100 }),
+    "text": data.summary ? striptags(data.summary).split('\n')[0] : striptags(data.description).replace(/\n\s*\n/g, '\n'),
     "footer": provider.name,
     "footer_icon": provider.image,
     "ts": new Date(data.date).getTime() / 1000
