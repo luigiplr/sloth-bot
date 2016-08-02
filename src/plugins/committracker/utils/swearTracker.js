@@ -160,7 +160,7 @@ const checkIfWeCanUpdate = (() => {
   }))
 })
 
-export function retrieveSwearCommits(input, index) {
+export function retrieveSwearCommits(input, index = 'random') {
   return new Promise((resolve, reject) => {
     username = input.toLowerCase()
     fetchSwears().then(commits => {
@@ -168,6 +168,8 @@ export function retrieveSwearCommits(input, index) {
         let total = [`<${username}> Commits (${commits.length}):`]
         commits.forEach(commit => total.push(`(_${commit.repo}_): *${commit.message}* (${commit.url.slice(8, -33)})`))
         return resolve(total)
+      } else if (index == 'random') {
+        return resolve(commits[Math.floor(Math.random() * commits.length)])
       } else {
         let i = index < 0 ? commits.length + parseInt(index) : parseInt(index)
         if (commits[i]) return resolve(commits[i])
