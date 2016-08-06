@@ -1,4 +1,4 @@
-[
+export default [
   "covers %s in blancmange",
   "jumps for joy at the thought of %s",
   "offers %s a bunch of flowers",

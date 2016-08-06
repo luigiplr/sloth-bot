@@ -44,6 +44,10 @@ export const plugin_info = [{
   command: 'invitedWho',
   usage: 'whoinvited <user> - shows who user has invited to the team'
 }, {
+  alias: ['modifyinvite'],
+  command: 'modifyInvite',
+  userLevel: ['superadmin']
+}, {
   alias: ['updateusercache'],
   command: 'updateUserCache',
   userLevel: ['admin', 'superadmin']
@@ -109,6 +113,37 @@ export function invitedWho(user, channel, input) {
       })
       pending ? out.push(` - _${pending} pending invitation${pending > 1 ? 's' : ''}_`) : void 0
       return resolve({ type: 'channel', messages: out })
+    })
+  })
+}
+
+export function modifyInvite(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return resolve({ type: 'dm', message: 'Usage: addinvite <add|remove|edit> <email> <inviter> <date> - Email, date and inviter are required, email and inviter cannot contain spaces' })
+    let split = input.split(' ')
+    let type = split[0]
+    let email = split[1]
+    let inviter = split[2]
+    let date = split.slice(3).join(' ')
+    if (type !== 'add' && type !== 'edit') return reject("Invalid type, only `add` and `edit` are currently supported")
+    if (!email.includes('<mailto:')) return reject(`Invalid email recieved: ${email}`)
+    if (moment(new Date(inviter)).isValid()) return reject("Invalid inviter")
+    if (!moment(new Date(date)).isValid()) {
+      if (date == 'today') date = moment()
+      else return reject("Invalid date")
+    }
+
+    email = email.substr(8).split('|')[0].toLowerCase()
+    date = moment(new Date(date))
+
+    InviteUsers.findOneByEmail(email).then(resp => {
+      if (resp && type == 'add') return reject("Error: Email already in DB, if you wish to edit it you can use the `edit` type")
+      let newInv = type == 'add' ? new InviteUsers() : resp
+      newInv.inviter = inviter.toLowerCase()
+      newInv.email = email
+      newInv.date = date.utc().format()
+      newInv.Persist()
+      return resolve({ type: 'channel', message: `Successfully ${type == 'add' ? 'added' : 'edited'} invite for: ${email}, invited by ${inviter} on ${date.format("dddd, Do MMM YYYY")}` })
     })
   })
 }

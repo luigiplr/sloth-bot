@@ -1,13 +1,13 @@
-{
-  "active": 1,
+export default {
+  "active": 2,
   "sale": {
     "springSale": {
       "id": 0,
       "name": "Spring Sale",
       "unsure": true,
       "dates": {
-        "start":  "",
-        "end":    ""
+        "start": "",
+        "end": ""
       }
     },
     "summerSale": {
@@ -15,8 +15,8 @@
       "name": "Summer Sale",
       "unsure": false,
       "dates": {
-        "start":  "2016-06-23T17:00:00.000Z",
-        "end":    "2016-07-04T17:00:00.000Z"
+        "start": "2016-06-23T17:00:00.000Z",
+        "end": "2016-07-04T17:00:00.000Z"
       }
     },
     "halloweenSale": {
@@ -24,8 +24,8 @@
       "name": "Halloween Sale",
       "unsure": true,
       "dates": {
-        "start":  "",
-        "end":    ""
+        "start": "",
+        "end": ""
       }
     },
     "autumnSale": {
@@ -33,8 +33,8 @@
       "name": "Autumn Sale",
       "unsure": true,
       "dates": {
-        "start":  "",
-        "end":    ""
+        "start": "",
+        "end": ""
       }
     },
     "holidaySale": {
@@ -42,8 +42,8 @@
       "name": "Holiday Sale",
       "unsure": true,
       "dates": {
-        "start":  "2016-12-19T17:00:00.000Z",
-        "end":    "2017-01-03T17:00:00.000Z"
+        "start": "2016-12-19T17:00:00.000Z",
+        "end": "2017-01-03T17:00:00.000Z"
       }
     }
   },

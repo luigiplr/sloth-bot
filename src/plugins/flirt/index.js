@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import { findUser } from '../../slack'
-import flirts from './flirts'
+import flirts from './utils/flirts'
 
 export const plugin_info = [{
   alias: ['flirt'],
