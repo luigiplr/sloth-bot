@@ -48,32 +48,36 @@ const _formatData = data => {
   })
 }
 
-export function medals(user, channel, input = 'top') {
+const _getUpdateMessage = noItalic => {
+  let minsTillUpdate = nextupdate.diff(moment(), 'minutes')
+  let msg = minsTillUpdate > 1 ? `Data updates in ${minsTillUpdate} minutes` : `Data will update in less than a minute`
+  return noItalic ? msg : `_${msg}_`
+}
+
+export function medals(user, channel, input = 'all') {
   return new Promise((resolve, reject) => {
     _getData().then(data => {
-      let minsTillUpdate = nextupdate.diff(moment(), 'minutes')
-      if (input == 'top') {
+      if (input == 'all') {
         let out = ['*Countries with the top medals:* ```']
         data.topMedals.forEach(({ name, total, gold, silver, bronze }) => {
           if (!total) return
-          out.push(`${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Gold: ${gold} | Silver: ${silver} | Bronze: ${bronze}`)
+          out.push(`${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`)
         })
-        out.push('```')
-        out.push(minsTillUpdate > 1 ? `_Data updates in ${minsTillUpdate} minutes_` : `_Data will update in less than a minute_`)
+        out.push(`\`\`\` ${_getUpdateMessage()}`)
         return resolve({ type: 'channel', messages: out })
       } else {
-        let country = data.countries[input.toLowerCase()]
+        let country = input == 'top' ? data.topMedals[0] : data.countries[input.toLowerCase()]
         if (!country) return reject("Couldn't find data for that country name, use the `listcountries` command to view valid countries")
-        if (!country.total) return reject("I have no medals recorded for this country.")
+        if (!country.total) return reject(`I have no medals recorded for this country. \n ${_getUpdateMessage()}`)
         let { total, gold, silver, bronze, name, flag } = country
         let out = {
           msg: `*Olympic Medal Statistics for ${name}*`,
           attachments: [{
-            "fallback": `Medal Stats for ${name} - Total: ${total} | Gold: ${gold} | Silver: ${silver} | Bronze: ${bronze}`,
+            "fallback": `Medal Stats for ${name} - Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`,
             "mrkdwn_in": ["text", "fields"],
             "color": "#43a047",
             "thumb_url": flag,
-            "footer": minsTillUpdate > 1 ? `Data updates in ${minsTillUpdate} minutes` : `Data will update in less than a minute`,
+            "footer": _getUpdateMessage(true),
             "ts": lastupdated.unix(),
             "fields": [{
               "title": "Total",
