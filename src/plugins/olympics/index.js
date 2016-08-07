@@ -15,6 +15,8 @@ export const plugin_info = [{
 
 var medalsCache = undefined
 var nextUpdate = undefined
+var medalsCount = {}
+var oldMedalsCount = {}
 
 const _getMedals = () => {
   return new Promise((resolve, reject) => {
@@ -34,9 +36,13 @@ const _formatMedalsData = data => {
       padding: 0,
       topMedals: data.slice(0, 15)
     }
+
     out.padding = out.topMedals.slice(0).sort((a, b) => {
       return b.name.length - a.name.length;
     })[0].name.length + 1
+
+    oldMedalsCount = medalsCount
+    _.forEach(data, cnt => medalsCount[cnt.name] = cnt.total)
 
     medalsCache = out
     return resolve(out)
@@ -71,13 +77,20 @@ export function medals(user, channel, input = 'all') {
     if (input == 'all') {
       _getMedals().then(data => {
         let minsTillUpdate = nextUpdate.diff(moment(), 'minutes')
-        let out = ['*Top 15 Countries sorted by gold medals* ```']
+        let out = ['*Top 15 countries sorted by Gold Medals* ```']
+        let newTotal = 0
         data.topMedals.forEach(({ name, total, gold, silver, bronze }) => {
           if (!total) return
-          out.push(`${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`)
+          let msg = `${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`
+          if (oldMedalsCount && oldMedalsCount[name] != total) {
+            let newCount = total - oldMedalsCount[name]
+            newTotal = newTotal + newCount
+            out.push(`${msg} (+${newCount})`)
+          } else out.push(msg)
         })
         out.push('```')
-        out.push(minsTillUpdate > 1 ? `Data updates in ${minsTillUpdate} minutes (${nextUpdate.format('h:m')})` : `Data will update in less than a minute (${nextUpdate.format('h:m')})`)
+        if (newTotal) out.push(`_${newTotal} new medal${newTotal.length > 1 ? 's have' : ' has'} been recorded since my last update_`)
+        out.push(minsTillUpdate > 1 ? `_Data updates in ${minsTillUpdate} minutes_` : `_Data will update in less than a minute_`)
         return resolve({ type: 'channel', messages: out })
       }).catch(reject)
     } else {
