@@ -2,6 +2,7 @@ import Promise from 'bluebird'
 import _ from 'lodash'
 import needle from 'needle'
 import moment from 'moment'
+import olympics from './utils/olympics'
 
 export const plugin_info = [{
   alias: ['medals', 'olympics'],
@@ -12,102 +13,109 @@ export const plugin_info = [{
   command: 'listcountries'
 }]
 
-var nextupdate = undefined
-var lastupdated = undefined
-var cachedData = undefined
+var medalsCache = undefined
+var nextUpdate = undefined
 
-const _getData = () => {
+const _getMedals = () => {
   return new Promise((resolve, reject) => {
-    if (cachedData && nextupdate && nextupdate.diff(moment(), 'minutes') != 0) return resolve(cachedData)
-
-    needle.get('http://olympics.atelerix.co/medals', (err, resp, body) => {
+    if (medalsCache && nextUpdate && nextUpdate.diff(moment(), 'minutes') != 0) return resolve(medalsCache)
+    needle.get(olympics.api.medals, (err, resp, body) => {
       if (!err && body) {
-        nextupdate = moment(body.nextUpdate)
-        lastupdated = moment(body.lastUpdated)
-        _formatData(body).then(resolve)
-      } else return reject("Error fetching data")
+        nextUpdate = moment(body.nextUpdate)
+        _formatMedalsData(body.medals).then(resolve)
+      } else return reject("Error fetching stats")
     })
   })
 }
 
-const _formatData = data => {
+const _formatMedalsData = data => {
   return new Promise(resolve => {
     let out = {
       padding: 0,
-      countries: {},
       topMedals: []
     }
-    _.forEach(data.medals, country => out.countries[country.name.toLowerCase()] = country)
-    out.topMedals = _.reverse(_.sortBy(out.countries, 'total')).slice(0, 10)
+    out.topMedals = _.reverse(_.sortBy(data, 'total')).slice(0, 10)
     out.padding = out.topMedals.slice(0).sort((a, b) => {
       return b.name.length - a.name.length;
     })[0].name.length + 1
 
-    cachedData = out
+    medalsCache = out
     return resolve(out)
   })
 }
 
-const _getUpdateMessage = noItalic => {
-  let minsTillUpdate = nextupdate.diff(moment(), 'minutes')
-  let msg = minsTillUpdate > 1 ? `Data updates in ${minsTillUpdate} minutes` : `Data will update in less than a minute`
-  return noItalic ? msg : `_${msg}_`
+const _getDetailedMedals = cid => {
+  return new Promise((resolve, reject) => {
+    needle.get(olympics.api.countryMedals + cid, (err, resp, body) => {
+      if (!err && body) {
+        _formatDetailedMedals(_.get(body, 'body.countriesMedals', undefined)).then(resolve, reject)
+      } else return reject("Error fetching detailed stats")
+    })
+  })
+}
+
+const _formatDetailedMedals = data => {
+  console.log(data)
+  return new Promise((resolve, reject) => {
+    if (!data) return reject('Error fetching detailed stats')
+    let out = { bronze: [], silver: [], gold: [], total: 0 }
+    _.forEach(_.concat([], data.bronzeList, data.goldList, data.silverList), ({ medal_code, document_code: sport }) => {
+      out.total++;
+      let type = medal_code.substring(3).toLowerCase()
+      out[type].push(olympics.sports[sport.slice(0, 2)])
+      console.log(out)
+    })
+    return resolve(out)
+  })
 }
 
 export function medals(user, channel, input = 'all') {
   return new Promise((resolve, reject) => {
-    _getData().then(data => {
-      if (input == 'all') {
+    if (input == 'all') {
+      _getMedals().then(data => {
+        let minsTillUpdate = nextUpdate.diff(moment(), 'minutes')
         let out = ['*Countries with the top medals:* ```']
         data.topMedals.forEach(({ name, total, gold, silver, bronze }) => {
           if (!total) return
           out.push(`${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`)
         })
-        out.push(`\`\`\` ${_getUpdateMessage()}`)
+        out.push('```')
+        out.push(minsTillUpdate > 1 ? `Data updates in ${minsTillUpdate} minutes` : 'Data will update in less than a minute')
         return resolve({ type: 'channel', messages: out })
-      } else {
-        let country = input == 'top' ? data.topMedals[0] : data.countries[input.toLowerCase()]
-        if (!country) return reject("Couldn't find data for that country name, use the `listcountries` command to view valid countries")
-        if (!country.total) return reject(`I have no medals recorded for this country. \n ${_getUpdateMessage()}`)
-        let { total, gold, silver, bronze, name, flag } = country
-        let out = {
-          msg: `*Olympic Medal Statistics for ${name}*`,
+      }).catch(reject)
+    } else {
+      let country = undefined
+      if (input.length == '3' && input.toUpperCase() in olympics.countryCodes) country = input.toUpperCase()
+      else if (input.toLowerCase() in olympics.countryNames) country = olympics.countryNames[input.toLowerCase()]
+      else return reject("Couldn't find a valid country matching input")
+
+      _getDetailedMedals(country).then(({ bronze, silver, gold, total }) => {
+        console.log(bronze, silver, gold, total)
+        if (!total) return reject('I have no medals recorded for this country')
+        let attachment = {
+          msg: `*Olympic Medal Statistics for ${olympics.countryCodes[country]}*`,
           attachments: [{
-            "fallback": `Medal Stats for ${name} - Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`,
+            "fallback": `Medal Stats for ${olympics.countryCodes[country]} - Total: ${total} | Bronze: ${bronze.length} | Silver: ${silver.length} | Gold: ${gold.length}`,
             "mrkdwn_in": ["text", "fields"],
             "color": "#43a047",
-            "thumb_url": flag,
-            "footer": _getUpdateMessage(true),
-            "ts": lastupdated.unix(),
             "fields": [{
               "title": "Total",
-              "value": `:totalmedals: *${total}*`,
-              "short": true
+              "value": `:totalmedals: *${total}*`
             }, {
               "title": "Bronze",
-              "value": `:bronzemedal: *${bronze}*`,
-              "short": true
+              "value": `:bronzemedal: *${bronze.length}* \n ${bronze.map(m => '- _' + m + '_').join('\n')}`
             }, {
               "title": "Silver",
-              "value": `:silvermedal: *${silver}*`,
-              "short": true
+              "value": `:silvermedal: *${silver.length}* \n ${silver.map(m => '- _' + m + '_').join('\n')}`
             }, {
               "title": "Gold",
-              "value": `:goldmedal: *${gold}*`,
+              "value": `:goldmedal: *${gold.length}* \n ${gold.map(m => '- _' + m + '_').join('\n')}`,
               "short": true
             }]
           }]
         }
-        return resolve({ type: 'channel', message: out })
-      }
-    }).catch(reject)
-  })
-}
-
-export function listcountries() {
-  return new Promise((resolve, reject) => {
-    _getData().then(data => {
-      return resolve({ type: 'channel', message: Object.keys(data.countries).map(c => `\`${c}\``).join(', ') })
-    }).catch(reject)
+        return resolve({ type: 'channel', message: attachment })
+      })
+    }
   })
 }
