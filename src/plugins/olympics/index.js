@@ -32,7 +32,7 @@ const _formatMedalsData = data => {
   return new Promise(resolve => {
     let out = {
       padding: 0,
-      topMedals: data.slice(0, 10)
+      topMedals: data.slice(0, 15)
     }
     out.padding = out.topMedals.slice(0).sort((a, b) => {
       return b.name.length - a.name.length;
@@ -73,7 +73,7 @@ export function medals(user, channel, input = 'all') {
     if (input == 'all') {
       _getMedals().then(data => {
         let minsTillUpdate = nextUpdate.diff(moment(), 'minutes')
-        let out = ['*Countries with the top gold medals:* ```']
+        let out = ['*Top 15 Countries sorted by gold medals* ```']
         data.topMedals.forEach(({ name, total, gold, silver, bronze }) => {
           if (!total) return
           out.push(`${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`)
