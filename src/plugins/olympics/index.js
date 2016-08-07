@@ -18,7 +18,7 @@ var nextUpdate = undefined
 
 const _getMedals = () => {
   return new Promise((resolve, reject) => {
-    if (medalsCache && nextUpdate && nextUpdate.diff(moment(), 'minutes') != 0) return resolve(medalsCache)
+    if (medalsCache && nextUpdate && moment().isBefore(nextUpdate)) return resolve(medalsCache)
     needle.get(olympics.api.medals, (err, resp, body) => {
       if (!err && body) {
         nextUpdate = moment(body.nextUpdate)
@@ -32,9 +32,8 @@ const _formatMedalsData = data => {
   return new Promise(resolve => {
     let out = {
       padding: 0,
-      topMedals: []
+      topMedals: data.slice(0, 10)
     }
-    out.topMedals = _.reverse(_.sortBy(data, 'total')).slice(0, 10)
     out.padding = out.topMedals.slice(0).sort((a, b) => {
       return b.name.length - a.name.length;
     })[0].name.length + 1
@@ -74,13 +73,13 @@ export function medals(user, channel, input = 'all') {
     if (input == 'all') {
       _getMedals().then(data => {
         let minsTillUpdate = nextUpdate.diff(moment(), 'minutes')
-        let out = ['*Countries with the top medals:* ```']
+        let out = ['*Countries with the top gold medals:* ```']
         data.topMedals.forEach(({ name, total, gold, silver, bronze }) => {
           if (!total) return
           out.push(`${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`)
         })
         out.push('```')
-        out.push(minsTillUpdate > 1 ? `Data updates in ${minsTillUpdate} minutes` : 'Data will update in less than a minute')
+        out.push(minsTillUpdate > 1 ? `Data updates in ${minsTillUpdate} minutes (${nextUpdate.format('h:m')})` : `Data will update in less than a minute (${nextUpdate.format('h:m')})`)
         return resolve({ type: 'channel', messages: out })
       }).catch(reject)
     } else {
