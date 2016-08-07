@@ -54,7 +54,6 @@ const _getDetailedMedals = cid => {
 }
 
 const _formatDetailedMedals = data => {
-  console.log(data)
   return new Promise((resolve, reject) => {
     if (!data) return reject('Error fetching detailed stats')
     let out = { bronze: [], silver: [], gold: [], total: 0 }
@@ -62,7 +61,6 @@ const _formatDetailedMedals = data => {
       out.total++;
       let type = medal_code.substring(3).toLowerCase()
       out[type].push(olympics.sports[sport.slice(0, 2)])
-      console.log(out)
     })
     return resolve(out)
   })
@@ -97,20 +95,19 @@ export function medals(user, channel, input = 'all') {
             "fallback": `Medal Stats for ${olympics.countryCodes[country]} - Total: ${total} | Bronze: ${bronze.length} | Silver: ${silver.length} | Gold: ${gold.length}`,
             "mrkdwn_in": ["text", "fields"],
             "color": "#43a047",
-            "fields": [{
+            "fields": _.filter([{
               "title": "Total",
               "value": `:totalmedals: *${total}*`
             }, {
               "title": "Bronze",
-              "value": `:bronzemedal: *${bronze.length}* \n ${bronze.map(m => '- _' + m + '_').join('\n')}`
+              "value": bronze.length ? `:bronzemedal: *${bronze.length}* \n ${bronze.map(m => '- _' + m + '_').join('\n')}` : null
             }, {
               "title": "Silver",
-              "value": `:silvermedal: *${silver.length}* \n ${silver.map(m => '- _' + m + '_').join('\n')}`
+              "value": silver.length ? `:silvermedal: *${silver.length}* \n ${silver.map(m => '- _' + m + '_').join('\n')}` : null
             }, {
               "title": "Gold",
-              "value": `:goldmedal: *${gold.length}* \n ${gold.map(m => '- _' + m + '_').join('\n')}`,
-              "short": true
-            }]
+              "value": gold.length ? `:goldmedal: *${gold.length}* \n ${gold.map(m => '- _' + m + '_').join('\n')}` : null
+            }], 'value')
           }]
         }
         return resolve({ type: 'channel', message: attachment })
