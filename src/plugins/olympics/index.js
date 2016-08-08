@@ -42,6 +42,7 @@ const _formatMedalsData = data => {
     })[0].name.length + 1
 
     oldMedalsCount = medalsCount
+    medalsCount = {}
     _.forEach(data, cnt => medalsCount[cnt.name] = cnt.total)
 
     medalsCache = out
@@ -82,7 +83,7 @@ export function medals(user, channel, input = 'all') {
         data.topMedals.forEach(({ name, total, gold, silver, bronze }) => {
           if (!total) return
           let msg = `${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`
-          if (oldMedalsCount && oldMedalsCount[name] != total) {
+          if (oldMedalsCount && oldMedalsCount[name] < total) {
             let newCount = total - oldMedalsCount[name]
             newTotal = newTotal + newCount
             out.push(`${msg} (+${newCount})`)
