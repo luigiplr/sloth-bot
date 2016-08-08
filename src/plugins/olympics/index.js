@@ -114,7 +114,8 @@ export function medals(user, channel, input = 'all') {
               "value": `:totalmedals: *${total}*`
             }, {
               "title": "Bronze",
-              "value": bronze.length ? `:bronzemedal: *${bronze.length}* \n ${bronze.map(m => '- _' + m + '_').join('\n')}` : null
+              "value": bronze.length ? `:bronzemedal: *${bronze.length}* \n ${bronze.map(m => '- _' + m + '_').join('\n')}` : null,
+              "short": true
             }, {
               "title": "Silver",
               "value": silver.length ? `:silvermedal: *${silver.length}* \n ${silver.map(m => '- _' + m + '_').join('\n')}` : null
