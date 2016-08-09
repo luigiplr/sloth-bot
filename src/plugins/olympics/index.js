@@ -18,6 +18,8 @@ var nextUpdate = undefined
 var medalsCount = {}
 var oldMedalsCount = {}
 
+// Fetches medals from unofficial API that updates are set intervals,
+// return cached data until next update occurs
 const _getMedals = () => {
   return new Promise((resolve, reject) => {
     if (medalsCache && nextUpdate && moment().isBefore(nextUpdate)) return resolve(medalsCache)
@@ -37,10 +39,12 @@ const _formatMedalsData = data => {
       topMedals: data.slice(0, 15)
     }
 
+    // Determine longest country name to properly space the table out so it looks nice :))
     out.padding = out.topMedals.slice(0).sort((a, b) => {
       return b.name.length - a.name.length;
     })[0].name.length + 1
 
+    // Update medal counts on each update to see what changed
     oldMedalsCount = medalsCount
     medalsCount = {}
     _.forEach(data, cnt => medalsCount[cnt.name] = cnt.total)
@@ -50,6 +54,7 @@ const _formatMedalsData = data => {
   })
 }
 
+// Fetches detailed medal statistics including medals per sport
 const _getDetailedMedals = cid => {
   return new Promise((resolve, reject) => {
     needle.get(olympics.api.countryMedals + cid, (err, resp, body) => {
@@ -60,14 +65,15 @@ const _getDetailedMedals = cid => {
   })
 }
 
+// Returns usable data
 const _formatDetailedMedals = data => {
   return new Promise((resolve, reject) => {
     if (!data) return reject('Error fetching detailed stats')
     let out = { bronze: [], silver: [], gold: [], total: 0 }
     _.forEach(_.concat([], data.bronzeList, data.goldList, data.silverList), ({ medal_code, document_code: sport }) => {
       out.total++;
-      let type = medal_code.substring(3).toLowerCase()
-      out[type].push(olympics.sports[sport.slice(0, 2)])
+      let type = medal_code.substring(3).toLowerCase() // remove ME_
+      out[type].push(olympics.sports[sport.slice(0, 2)]) // first 2 letters correlate to sport id
     })
     return resolve(out)
   })

@@ -5,6 +5,8 @@ export default {
     countryMedals: 'http://wowappprd.rio2016.com/countries/countriesMedals?lang_code=ENG&os_kind=ANDROID&competition_code=OG2016&noc_code=',
     countryInfo: 'https://wamsgtpenv.rio2016.com/v1/en/olympic/country/'
   },
+  // Sport code correlates to the first two letters of the document_code,
+  // third letter represents gender
   sports: {
     AR: 'Archery',
     AT: 'Athletics',
@@ -46,6 +48,7 @@ export default {
     FE: 'Fencing',
     GA: 'Artistic Gymnastics'
   },
+  // Sue me
   countryCodes: {
     "USA": {
       "name": "United States",
@@ -872,6 +875,7 @@ export default {
       "flag": "https://ssl.gstatic.com/onebox/media/sports/logos/g-8Bhxe0l2KlSE6aP02_eg_48x48.png"
     }
   },
+  // I'll accept that this is a ridiculous way to do this but sue me
   countryNames: {
     "refugee olympic team": "ROT",
     "refugee olympic athlete": "ROA",
