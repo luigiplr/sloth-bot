@@ -95,19 +95,25 @@ export function medals(user, channel, input = 'all') {
         return resolve({ type: 'channel', messages: out })
       }).catch(reject)
     } else {
-      let country = undefined
-      if (input.length == '3' && input.toUpperCase() in olympics.countryCodes) country = input.toUpperCase()
-      else if (input.toLowerCase() in olympics.countryNames) country = olympics.countryNames[input.toLowerCase()]
-      else return reject("Couldn't find a valid country matching input")
+      let countryCode = undefined
+      if (input.length == '3' && input.toUpperCase() in olympics.countryCodes) countryCode = input.toUpperCase()
+      else if (input.toLowerCase() in olympics.countryNames) countryCode = olympics.countryNames[input.toLowerCase()]
+      else countryCode = _.find(olympics.countryNames, (value, key) => {
+        return key.includes(input.toLowerCase())
+      })
 
-      _getDetailedMedals(country).then(({ bronze, silver, gold, total }) => {
-        console.log(bronze, silver, gold, total)
-        if (!total) return reject('I have no medals recorded for this country')
+      if (!countryCode) return reject("Couldn't find a valid country resembling input")
+
+      _getDetailedMedals(countryCode).then(({ bronze, silver, gold, total }) => {
+        let country = olympics.countryCodes[countryCode]
+        if (!country) return reject(`Error fetching country details for ${countryCode}`)
+        if (!total) return reject(`I have no medals recorded for ${country.name}`)
         let attachment = {
-          msg: `*Olympic Medal Statistics for ${olympics.countryCodes[country]}*`,
+          msg: `*Olympic Medal Statistics for ${country.name}*`,
           attachments: [{
-            "fallback": `Medal Stats for ${olympics.countryCodes[country]} - Total: ${total} | Bronze: ${bronze.length} | Silver: ${silver.length} | Gold: ${gold.length}`,
+            "fallback": `Medal Stats for ${country.name} - Total: ${total} | Bronze: ${bronze.length} | Silver: ${silver.length} | Gold: ${gold.length}`,
             "mrkdwn_in": ["text", "fields"],
+            "thumb_url": country.flag,
             "color": "#43a047",
             "fields": _.filter([{
               "title": "Total",
@@ -127,7 +133,7 @@ export function medals(user, channel, input = 'all') {
           }]
         }
         return resolve({ type: 'channel', message: attachment })
-      })
+      }).catch(reject)
     }
   })
 }
