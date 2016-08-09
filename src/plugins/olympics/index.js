@@ -36,7 +36,7 @@ const _formatMedalsData = data => {
   return new Promise(resolve => {
     let out = {
       padding: 0,
-      topMedals: data.slice(0, 15)
+      topMedals: _.orderBy(data.slice(0, 15), ['gold', 'silver'], ['desc', 'desc'])
     }
 
     // Determine longest country name to properly space the table out so it looks nice :))
