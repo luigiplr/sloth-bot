@@ -15,8 +15,8 @@ export const plugin_info = [{
 
 var medalsCache = undefined
 var nextUpdate = undefined
-var medalsCount = {}
-var oldMedalsCount = {}
+var MC = undefined
+var OMC = undefined
 
 // Fetches medals from unofficial API that updates are set intervals,
 // return cached data until next update occurs
@@ -45,9 +45,9 @@ const _formatMedalsData = data => {
     })[0].name.length + 1
 
     // Update medal counts on each update to see what changed
-    oldMedalsCount = medalsCount
-    medalsCount = {}
-    _.forEach(data, cnt => medalsCount[cnt.name] = cnt.total)
+    OMC = MC
+    MC = {}
+    _.forEach(data, cnt => MC[cnt.name] = cnt)
 
     medalsCache = out
     return resolve(out)
@@ -69,11 +69,15 @@ const _getDetailedMedals = cid => {
 const _formatDetailedMedals = data => {
   return new Promise((resolve, reject) => {
     if (!data) return reject('Error fetching detailed stats')
-    let out = { bronze: [], silver: [], gold: [], total: 0 }
-    _.forEach(_.concat([], data.bronzeList, data.goldList, data.silverList), ({ medal_code, document_code: sport }) => {
+    let out = { bronze: {}, silver: {}, gold: {}, total: 0 }
+    _.forEach(_.concat([], data.bronzeList, data.goldList, data.silverList), ({ medal_code, document_code: sportCode }) => {
       out.total++;
       let type = medal_code.substring(3).toLowerCase() // remove ME_
-      out[type].push(olympics.sports[sport.slice(0, 2)]) // first 2 letters correlate to sport id
+      let sportID = sportCode.slice(0, 2)
+      let sport = olympics.sports[sportID.slice(0, 2)]
+
+      if (out[type][sportID]) out[type][sportID].count++;
+      else out[type][sportID] = { name: sport, count: 1 }
     })
     return resolve(out)
   })
@@ -86,13 +90,21 @@ export function medals(user, channel, input = 'all') {
         let minsTillUpdate = nextUpdate.diff(moment(), 'minutes')
         let out = ['*Top 15 countries sorted by Gold Medals* ```']
         let newTotal = 0
-        data.topMedals.forEach(({ name, total, gold, silver, bronze }) => {
+
+        _.forEach(data.topMedals, ({ name, total, gold, silver, bronze }) => {
           if (!total) return
-          let msg = `${name}: ${new Array(data.padding - name.length).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`
-          if (oldMedalsCount && oldMedalsCount[name] < total) {
-            let newCount = total - oldMedalsCount[name]
+          let msg = `${name}: ${_.fill(Array(data.padding - name.length)).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`
+
+          // Close your eyes
+          if (_.get(OMC, `${name}.total`, Infinity) < total) {
+            let newCount = total - OMC[name].total
+            let newGold = gold - OMC[name].gold
+            let newSilver = silver - OMC[name].silver
+            let newBronze = bronze - OMC[name].bronze
             newTotal = newTotal + newCount
-            out.push(`${msg} (+${newCount})`)
+
+            let newMsg = (newGold ? `+${newGold}G` : '') + (newSilver ? ` +${newSilver}S` : '') + (newBronze ? ` +${newBronze}B` : '')
+            out.push(`${msg} (${newMsg})`)
           } else out.push(msg)
         })
         out.push('```')
@@ -126,15 +138,21 @@ export function medals(user, channel, input = 'all') {
               "value": `:totalmedals: *${total}*`
             }, {
               "title": "Bronze",
-              "value": bronze.length ? `:bronzemedal: *${bronze.length}* \n ${bronze.map(m => '- _' + m + '_').join('\n')}` : null,
+              "value": !_.isEmpty(bronze) ? `:bronzemedal: *${Object.keys(bronze).length}* \n ${_.map(bronze, m => {
+                return m.name + (m.count > 1 ? ' x' + m.count : '')
+              }).sort().join('\n')}` : null,
               "short": true
             }, {
               "title": "Silver",
-              "value": silver.length ? `:silvermedal: *${silver.length}* \n ${silver.map(m => '- _' + m + '_').join('\n')}` : null,
+              "value": !_.isEmpty(silver) ? `:silvermedal: *${Object.keys(silver).length}* \n ${_.map(silver, m => {
+                return m.name + (m.count > 1 ? ' x' + m.count : '')
+              }).sort().join('\n')}` : null,
               "short": true
             }, {
               "title": "Gold",
-              "value": gold.length ? `:goldmedal: *${gold.length}* \n ${gold.map(m => '- _' + m + '_').join('\n')}` : null
+              "value": !_.isEmpty(gold) ? `:goldmedal: *${Object.keys(gold).length}* \n ${_.map(gold, m => {
+                return m.name + (m.count > 1 ? ' x' + m.count : '')
+              }).sort().join('\n')}` : null
             }], 'value')
           }]
         }
