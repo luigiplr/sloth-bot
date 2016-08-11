@@ -96,7 +96,7 @@ export function medals(user, channel, input = 'all') {
           let msg = `${name}: ${_.fill(Array(data.padding - name.length)).join(' ')}Total: ${total} | Bronze: ${bronze} | Silver: ${silver} | Gold: ${gold}`
 
           // Close your eyes
-          if (_.get(OMC, `${name}.total`, Infinity) < total) {
+          if (_.lt(_.get(OMC, `${name}.total`, Infinity), total)) {
             let newCount = total - OMC[name].total
             let newGold = gold - OMC[name].gold
             let newSilver = silver - OMC[name].silver
