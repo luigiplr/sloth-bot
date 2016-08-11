@@ -138,19 +138,19 @@ export function medals(user, channel, input = 'all') {
               "value": `:totalmedals: *${total}*`
             }, {
               "title": "Bronze",
-              "value": !_.isEmpty(bronze) ? `:bronzemedal: *${Object.keys(bronze).length}* \n ${_.map(bronze, m => {
+              "value": !_.isEmpty(bronze) ? `:bronzemedal: *${_.sum(_.map(bronze, m => m.count))}* \n ${_.map(bronze, m => {
                 return m.name + (m.count > 1 ? ' x' + m.count : '')
               }).sort().join('\n')}` : null,
               "short": true
             }, {
               "title": "Silver",
-              "value": !_.isEmpty(silver) ? `:silvermedal: *${Object.keys(silver).length}* \n ${_.map(silver, m => {
+              "value": !_.isEmpty(silver) ? `:silvermedal: *${_.sum(_.map(silver, m => m.count))}* \n ${_.map(silver, m => {
                 return m.name + (m.count > 1 ? ' x' + m.count : '')
               }).sort().join('\n')}` : null,
               "short": true
             }, {
               "title": "Gold",
-              "value": !_.isEmpty(gold) ? `:goldmedal: *${Object.keys(gold).length}* \n ${_.map(gold, m => {
+              "value": !_.isEmpty(gold) ? `:goldmedal: *${_.sum(_.map(gold, m => m.count))}* \n ${_.map(gold, m => {
                 return m.name + (m.count > 1 ? ' x' + m.count : '')
               }).sort().join('\n')}` : null
             }], 'value')
