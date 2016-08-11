@@ -1,6 +1,7 @@
 import Promise from 'bluebird'
 import needle from 'needle'
 import config from '../../../../config.json'
+import { result } from 'lodash'
 
 export function query(input) {
   return new Promise((resolve, reject) => {
@@ -9,19 +10,13 @@ export function query(input) {
     let url = `http://api.wolframalpha.com/v2/query?input=${input}&primary=true&appid=${config.wolframAPIKey}`
 
     needle.get(url, (err, resp, body) => {
-      if (!err && body)
-        if (body.queryresult['$'].success === 'true' && body.queryresult['$'].error === 'false')
-          if (body.queryresult.pod[1].subpod.plaintext)
-            return resolve(body.queryresult.pod[1].subpod.plaintext)
-          else
-            return reject("No data found")
-      else
-      if (body.queryresult['$'].error === 'false')
-        return reject("No data found")
-      else
-        return reject(`WolframError: ${body.queryresult.error.msg}`)
-      else
-        return resolve(err)
+      if (!err && body) {
+        if (result(body, 'queryresult.$.error', 'true') == 'false' && result(body, 'queryresult.$.success', 'false') == 'true') {
+          let response = result(body, 'queryresult.pod[1].subpod.plaintext', undefined)
+          if (response) return resolve(response)
+          else return reject("Error parsing data")
+        } else return reject(result(body, 'queryresult.$.success', false) ? "No data found" : "Invalid data returned")
+      } else return reject("Error connecting to wolfram api")
     })
   })
 }
