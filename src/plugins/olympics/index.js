@@ -36,7 +36,7 @@ const _formatMedalsData = data => {
   return new Promise(resolve => {
     let out = {
       padding: 0,
-      topMedals: _.orderBy(data.slice(0, 15), ['gold', 'silver'], ['desc', 'desc'])
+      topMedals: _.orderBy(data, ['gold', 'silver'], ['desc', 'desc']).slice(0, 20)
     }
 
     // Determine longest country name to properly space the table out so it looks nice :))
@@ -88,7 +88,7 @@ export function medals(user, channel, input = 'all') {
     if (input == 'all') {
       _getMedals().then(data => {
         let minsTillUpdate = nextUpdate.diff(moment(), 'minutes')
-        let out = ['*Top 15 countries sorted by Gold Medals* ```']
+        let out = ['*Top 20 countries sorted by Gold Medals* ```']
         let newTotal = 0
 
         _.forEach(data.topMedals, ({ name, total, gold, silver, bronze }) => {
