@@ -29,7 +29,6 @@ export function codep(user, channel, input) {
       if (!rejected) {
         clearTimeout(timeout)
         if (err) return reject(`Error: ${err}`)
-        console.log((out.output.match(/ /g) || []).length)
         if (out.output.length < 6501 && out.output.split('\n').length < 46 && (out.output.match(/ /g) || []).length < 3701) {
           return resolve({
             type: 'channel',
