@@ -1,6 +1,7 @@
 import Promise from 'bluebird'
 import { unescape } from 'lodash'
 import codepad from 'codepad'
+import striptags from 'striptags'
 
 const langs = ['C', 'C++', 'D', 'Haskell', 'Lua', 'OCaml', 'PHP', 'Perl', 'Python', 'Ruby', 'Scheme', 'Tcl']
 
@@ -28,15 +29,16 @@ export function codep(user, channel, input) {
       if (!rejected) {
         clearTimeout(timeout)
         if (err) return reject(`Error: ${err}`)
-        if (out.output.length < 6500 && out.output.split('\n').length < 46) {
+        console.log((out.output.match(/ /g) || []).length)
+        if (out.output.length < 6501 && out.output.split('\n').length < 46 && (out.output.match(/ /g) || []).length < 3701) {
           return resolve({
             type: 'channel',
-            message: out.output.length > 0 ? 'Output: ```' + out.output + '```' : `Recieved no output`,
+            message: out.output.length > 0 ? 'Output: ```' + striptags(out.output).replace(/&quot;/g, '"') + '```' : `Recieved no output`,
             options: {
               link_names: 0
             }
           })
-        } else return reject("Error: Output is too large to post")
+        } else return reject(`Error: Output is too large to post - ${out.output.length}/6500 ${out.output.split('\n').length}/45 ${(out.output.match(/ /g) || []).length}/3700`)
       }
     }, true)
   })
