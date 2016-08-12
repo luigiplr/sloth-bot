@@ -108,7 +108,7 @@ export function medals(user, channel, input = 'all') {
           } else out.push(msg)
         })
         out.push('```')
-        if (newTotal) out.push(`_${newTotal} new medal${newTotal.length > 1 ? 's have' : ' has'} been recorded since my last update_`)
+        if (newTotal) out.push(`_${newTotal} new medal${newTotal > 1 ? 's have' : ' has'} been recorded since my last update_`)
         out.push(minsTillUpdate > 1 ? `_Data updates in ${minsTillUpdate} minutes_` : `_Data will update in less than a minute_`)
         return resolve({ type: 'channel', messages: out })
       }).catch(reject)
