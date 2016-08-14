@@ -1,24 +1,30 @@
 {
   "name": "sloth-bot",
   "version": "0.1.0",
-  "description": "",
+  "description": "Slack bot full of fun commands",
   "author": {
     "name": "Luigi Poole",
-    "email": ""
+    "email": "luigipoole@outlook.com",
+	"url": "https://github.com/luigiplr"
   },
+  "contributors": [{
+	"name": "Js41637",
+	"email": "js41637@gmail.com",
+	"url": "https://github.com/js41637"
+  }],
   "scripts": {
     "babel": "babel src -d build",
     "forever": "forever start -a -o out.log -e err.log -m 1 index.js"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/luigiplr/sloth-bot.git"
   },
   "engines": {
     "node": ">= 6.0.0"
   },
   "main": "build/sloth.js",
-  "license": "GPL-3.0",
+  "license": "Beerware",
   "dependencies": {
     "async": "^2.0.1",
     "blasphemy": "0.0.2",

@@ -3,3 +3,4 @@ build
 database.json
 config.json
 npm-debug.log
+schema-version.json
