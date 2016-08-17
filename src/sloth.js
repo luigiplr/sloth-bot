@@ -36,13 +36,14 @@ class slackClient extends Slack {
 
     this.on('close', err => {
       this._sendErrorToDebugChannel('slackClientError', `Websocket Connection Terminated, Restarting - ${err}`)
-      setTimeout(() => process.exit(1), 500)
+      setTimeout(() => process.exit(1), 1500)
     })
 
     this.on('error', err => {
       this._sendErrorToDebugChannel('slackClientError', err)
       console.log("Error", err)
-      setTimeout(() => process.exit(1), 500)
+      if (err == 'API response: 429') setTimeout(() => process.exit(1), 5000)
+      else setTimeout(() => process.exit(1), 1500)
     })
   }
 
