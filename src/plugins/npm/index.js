@@ -10,7 +10,8 @@ export const plugin_info = [{
 export function npm(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: npm <package> - Returns information on package' })
-    let p = input.split(' ')[0]
+    let split = input.split(' ')[0].split('|')
+    let p = split.length == 2 ? split[1].slice(0, -1) : split[0]
     needle.get(`https://registry.npmjs.com/${p}`, (err, resp, body) => {
       if (!err && body) {
         if (resp.statusCode == 404) return reject("Couldn't find a package with that name")

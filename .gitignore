@@ -1,6 +1,9 @@
 node_modules
+node_modules_old
 build
 database.json
 config.json
 npm-debug.log
 schema-version.json
+databases
+config.js
