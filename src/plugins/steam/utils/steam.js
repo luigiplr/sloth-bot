@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import { capitalize } from 'lodash'
+import { capitalize, get } from 'lodash'
 import needle from 'needle'
 import SteamID from 'steamid'
 
@@ -69,7 +69,7 @@ const getUserGames = id => {
 const getAppDetails = (appid, cc, basic) => {
   return new Promise((resolve, reject) => needle.get(getUrl(basic ? 'appDetailsBasic' : 'appDetails', appid, cc), (err, resp, body) => {
     if (!err && body)
-      if (body[appid].success) return resolve(body[appid].data)
+      if (get(body, `[${appid}].success`)) return resolve(body[appid].data)
       else return reject(`Couldn't fetch app details for that AppID, invalid? ${appid}`)
     else return reject('Error retrieving game details')
   }))
