@@ -192,6 +192,38 @@ export function invite(email) {
 }
 
 /**
+ * Disables a users account on the team
+ * @param id of the user
+ * @param special token
+ * @return success or error
+ */
+export function setInactive(user, token) {
+  return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.admin.setInactive', {
+    token: token,
+    user: user.id
+  }, (err, resp, { error }) => {
+    if (err || error) return reject(_logErr('setInactiveErr', err || error))
+    resolve(`Successfully disabled ${user.name}`)
+  }))
+}
+
+/**
+ * Enables a users account on the team
+ * @param id of the user
+ * @param special token
+ * @return success or error
+ */
+export function setRegular(user, token) {
+  return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.admin.setRegular', {
+    token: token,
+    user: user.id
+  }, (err, resp, { error }) => {
+    if (err || error) return reject(_logErr('setRegularErr', err || error))
+    resolve(`Successfully enabled ${user.name}`)
+  }))
+}
+
+/**
  * Deletes a message in a channel
  * @param id of the channel
  * @param ts (timestamp) of the message

@@ -1,10 +1,11 @@
 import Promise from 'bluebird'
-import { kick, deleteLastMessage } from './utils/slack'
+import { kick, deleteLastMessage, enableOrDisableUser } from './utils/slack'
 import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache } from '../../slack.js'
 import { InviteUsers } from '../../database'
 import moment from 'moment'
 import { filter } from 'lodash'
 import perms from '../../permissions'
+import config from '../../../config.json'
 
 export const plugin_info = [{
   alias: ['kick'],
@@ -55,6 +56,16 @@ export const plugin_info = [{
   alias: ['whois'],
   command: 'whois',
   usage: 'whois <user> - tells you who they are'
+}, {
+  alias: ['disable'],
+  command: 'disableUser',
+  usage: 'disableuser <user> - disables the users slack account',
+  userLevel: ['superadmin']
+}, {
+  alias: ['enable'],
+  command: 'enableUser',
+  usage: 'enableuser <user> - enables the users slack account',
+  userLevel: ['superadmin']
 }]
 
 export function kickUser(user, channel, input) {
@@ -213,5 +224,29 @@ export function whois(user, channel, input) {
 
       return resolve(filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n'))
     })
+  })
+}
+
+export function enableUser(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return reject("Please specify a user")
+
+    let u = findUser(input)
+    if (!u) return reject("Found no user by that name")
+    if (!u.deleted) return reject(`${u.name} is already enabled`)
+
+    enableOrDisableUser(1, u).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
+  })
+}
+
+export function disableUser(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return reject("Please specify a user")
+
+    let u = findUser(input)
+    if (!u) return reject("Found no user by that name")
+    if (u.deleted) return reject(`${u.name} is already disabled`)
+    if (u.id == config.botid || perms.superadmins.includes(u.name.toLowerCase()) || (config.noDisable && config.noDisable.includes(u.id))) return reject("Error: Bitch. No.")
+    enableOrDisableUser(0, u).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
   })
 }
