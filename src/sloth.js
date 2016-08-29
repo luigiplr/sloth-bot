@@ -5,6 +5,7 @@ import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
 
 var errors = 0
+var conns = 0
 
 if (!config.prefix || !config.slackAPIToken || !config.slackBotToken) {
   console.error("Invalid config, please fill in the first 3 required config fields")
@@ -20,23 +21,23 @@ class slackClient extends Slack {
   }
 
   _registerEvents() {
-    this.once('open', () => {
-      let unreads = this.getUnreadCount()
+    this.on('loggedIn', (self, team) => {
+      conns++;
+      config.teamName = team.domain
+      config.botname = self.name
+      config.botid = self.id
+      config.imageURL = this.users[self.id].profile.image_72
 
-      config.teamName = this.team.domain
-      config.botname = this.self.name
-      config.botid = this.self.id
-      config.imageURL = this.users[config.botid].profile.image_72
+      console.log('Welcome to Slack. You are @' + self.name, 'of', team.name)
 
-      console.log('Welcome to Slack. You are @' + this.self.name, 'of', this.team.name)
-      console.log('You have', unreads, 'unread', (unreads === 1) ? 'message' : 'messages')
+      if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 1 ? 'reconnected' : 'connected'} to Slack`)
     })
 
     this.on('message', ::this._onNewMessage)
 
     this.on('close', err => {
-      this._sendErrorToDebugChannel('slackClientError', `Websocket Connection Terminated, Restarting - ${err}`)
-      setTimeout(() => process.exit(1), 1500)
+      this._sendErrorToDebugChannel('slackClientError', `Websocket Connection Terminated, Reconnecting - ${err}`)
+      setTimeout(() => this.login(), 1500)
     })
 
     this.on('error', err => {
