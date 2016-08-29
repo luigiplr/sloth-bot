@@ -78,8 +78,8 @@ export function update(user, channel, input) {
         if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Finished 'build'") > -1) {
           if (input == 1) {
             this.restart();
-            return resolve({ type: 'channel', message: "Sucessfully fetched and installed new updates, restarting" })
-          } else return resolve({ type: 'channel', message: "Sucessfully fetched and installed new updates" })
+            return resolve({ type: 'channel', message: "Successfully fetched and installed new updates, restarting" })
+          } else return resolve({ type: 'channel', message: "Successfully fetched and installed new updates" })
         } else return reject("Possible error while fetching and installing new updates?");
       } else return reject("Error while fetching and installing updates ```" + stdout + stderr + error + '```')
     })
