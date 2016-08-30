@@ -7,6 +7,8 @@ import { parse as parseMsg } from './parseMessage'
 var errors = 0
 var conns = 0
 
+const DEVMODE = process.argv[2] == '--dev' ? true : false
+
 if (!config.prefix || !config.slackAPIToken || !config.slackBotToken) {
   console.error("Invalid config, please fill in the first 3 required config fields")
   process.exit()
@@ -30,7 +32,7 @@ class slackClient extends Slack {
 
       console.log('Welcome to Slack. You are @' + self.name, 'of', team.name)
 
-      if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 1 ? 'reconnected' : 'connected'} to Slack`)
+      if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 1 ? 'reconnected' : 'connected'} to Slack ${DEVMODE ? '- DEV' : ''}`)
     })
 
     this.on('message', ::this._onNewMessage)
