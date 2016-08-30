@@ -218,7 +218,7 @@ export function whois(user, channel, input) {
       let deleted = u.deleted ? '- This users account has been deactivated' : null
       let bot = u.is_bot ? `- This user is a bot` : null
       let admin = (u.is_admin || u.is_owner) ? `- They are an Admin${u.is_owner ? (' and ' + (u.is_primary_owner ? 'Primary Owner' : 'Owner')) : ''} of this team` : bot || deleted ? null : '- They are a regular user of this team'
-      let region = u.tz ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null
+      let region = (u.tz && u.tz.split('/')[1]) ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null
       let ignored = p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null
       let botAdmin = p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
 
