@@ -66,6 +66,11 @@ export const plugin_info = [{
   command: 'enableUser',
   usage: 'enableuser <user> - enables the users slack account',
   userLevel: ['superadmin']
+}, {
+  alias: ['reconnect'],
+  command: 'reconnect',
+  usage: 'reconnect <user> - disables and enables the users account causing them to reconnect',
+  userLevel: ['admin', 'superadmin']
 }]
 
 export function kickUser(user, channel, input) {
@@ -239,6 +244,8 @@ export function enableUser(user, channel, input) {
   })
 }
 
+const cantDisable = u => u.id == config.botid || perms.superadmins.includes(u.name) || (config.noDisable && config.noDisable.includes(u.id))
+
 export function disableUser(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return reject("Please specify a user")
@@ -246,7 +253,43 @@ export function disableUser(user, channel, input) {
     let u = findUser(input)
     if (!u) return reject("Found no user by that name")
     if (u.deleted) return reject(`${u.name} is already disabled`)
-    if (u.id == config.botid || perms.superadmins.includes(u.name.toLowerCase()) || (config.noDisable && config.noDisable.includes(u.id))) return reject("Error: Bitch. No.")
+    if (cantDisable(u)) return reject("Error: Bitch. No.")
     enableOrDisableUser(0, u).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
+  })
+}
+
+export function reconnect(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return reject("Please specify a user")
+
+    let u = findUser(input)
+    if (!u) return reject("Found no user by that name")
+    if (u.deleted) return reject(`${u.name} is a disabled account`)
+    if (cantDisable(u)) return reject("Error: Bitch. No.")
+
+    enableOrDisableUser(0, u).then(() => {
+      setTimeout(() => {
+        enableOrDisableUser(1, u).then(() => {
+          return resolve("Dun")
+        }).catch(reject)
+      }, 3000);
+    }).catch(reject)
+  })
+}
+
+// Soon
+export function ban(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return reject("Please specify a user")
+    let split = input.split(' ')
+    if (split.length != 2) return resolve({ type: 'dm', message: 'Usage: ban <user> [duration] - bans user for duration in minutes or 5 minutes' })
+
+    let u = findUser(split[0])
+    if (!u) return reject("Found no user by that name")
+    if (u.deleted) return reject(`${u.name} is a disabled account`)
+    if (cantDisable(u)) return reject("Error: Bitch. No.")
+
+    let time = parseInt(input[1])
+    if (!time) return reject("Invalid time, time must be a number in minutes")
   })
 }

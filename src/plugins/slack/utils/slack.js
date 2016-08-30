@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import _ from 'lodash'
-import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, setInactive, setRegular, updateUsersCache } from '../../../slack.js';
+import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, setInactive, setRegular, updateUsersCache, usersCache } from '../../../slack.js';
 import config from '../../../../config.json'
 import request from 'request'
 import moment from 'moment'
@@ -70,11 +70,12 @@ export function enableOrDisableUser(enable, user) {
     if (config.cookies && config.teamName && config.cookies.length == 3) {
       _getSpecialToken().then(token => {
         if (enable) setRegular(user, token).then(resp => {
-          updateUsersCache().then(console.log, console.error)
+          if (typeof user.real_name == 'undefined') updateUsersCache().then(console.log, console.error)
+          else usersCache[user.id].deleted = false
           return resolve(resp)
         }, reject)
         else setInactive(user, token).then(resp => {
-          updateUsersCache().then(console.log, console.error)
+          usersCache[user.id].deleted = true
           return resolve(resp)
         }, reject)
       }).catch(reject)

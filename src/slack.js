@@ -5,7 +5,7 @@ import config from '../config.json'
 import { queue } from 'async'
 
 let userNamesCache = {}
-let usersCache = {}
+export var usersCache = {}
 
 export function updateUsersCache() {
   return new Promise((resolve, reject) => getUsers(true).then(members => {
