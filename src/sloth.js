@@ -77,7 +77,7 @@ class slackClient extends Slack {
                 if (response.messages && Array.isArray(response.messages)) response.messages.forEach(message => channel.send(message))
                 else return this._sendErrorToDebugChannel('sendMsg', "Invalid Multiline format, your array must contain more than 1 message and use the 'messages' response type")
               }
-            })
+            }).catch(() => channel.send('Error finding user'))
         })
         .catch(err => {
           if (!err) return
@@ -115,7 +115,7 @@ class slackClient extends Slack {
 
   _getParams = (text = '', attachments = null, opts = {}) => (Object.assign({}, opts, { text, attachments, as_user: true, token: config.slackBotToken }))
 
-  _checkIfDM = (type, user) => new Promise(resolve => (type == 'dm') ? this.openDM(user, ({ channel }) => resolve(this.getChannelGroupOrDMByID(channel.id))) : resolve(0))
+  _checkIfDM = (type, user) => new Promise((resolve, reject) => (type == 'dm') ? this.openDM(user.id ? user.id : user, ({ channel }) => channel ? resolve(this.getChannelGroupOrDMByID(channel.id)) : reject()) : resolve(0))
 }
 
 process.on('uncaughtException', err => {
