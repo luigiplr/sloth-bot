@@ -1,54 +1,141 @@
 import Promise from 'bluebird'
-import { getUserStats, getHero } from './utils/overwatch.js'
+import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch.js'
 import { filter, capitalize, isEmpty } from 'lodash'
 
 export const plugin_info = [{
   alias: ['overwatch'],
   command: 'userInfo',
-  usage: 'overwatch <battletag> [hero] - Returns user overall or hero statistics'
+  usage: 'overwatch <battletag> <type> [hero] [version] [-r us] [-p pc]'
 }]
 
+const pageURL = 'https://playoverwatch.com/en-us/career'
 const validHeroes = ["ana", "bastion", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
+const validTypes = ["info", "stats", "hero", "heroes"]
+const validRegs = ["us", "eu", "kr"]
+const validPlats = ["pc", "xbl", "psn"]
+
+const usage = [
+  "Usage: overwatch <battletag> <type> [hero|version] [version] [-r us] [-p pc]\nReturns various different types of Overwatch player data ```",
+  "battletag - Users BattleTag e.g. Apples#1234 (case-sensitive) (required)",
+  "type      - Type of stats, valid types are: 'info', 'stats', 'hero', 'heroes' (required)",
+  "hero      - If hero type chosen, name of hero (required if hero type chosen)",
+  "version   - Version of stats your after, 'quickplay' or 'competitive' (optional)",
+  "-r region - Region of the user, defaults to 'us', valid regions are 'us', 'eu', 'kr' (optional)",
+  "-p platfm - Platform of th user, defaults to 'pc', valid platforms are 'pc', 'xbl', 'psn' (optional)```"
+]
 
 export function userInfo(user, channel, input) {
   return new Promise((resolve, reject) => {
-    let battletag = input.split(' ')[0]
-    if (!battletag) return resolve({ type: 'dm', message: 'Usage: overwatch <battletag> [hero] - Returns an Overwatch players profile or hero details, Battletag is your Username#ID' })
-    if (input.split(' ')[1]) {
-      let name = input.split(' ')[1]
-      if (validHeroes.includes(name)) {
-        getHero(battletag, name, true).then(data => {
-          return resolve({ type: channel, message: generateHeroResponse(data) })
+    if (!input) return resolve({ type: 'dm', messages: usage })
+
+    const split = input.split(' ')
+    if (split.length < 2) return resolve({ type: 'dm', messages: usage })
+
+    const battletag = split[0].replace('#', '-')
+    const type = split[1]
+    if (!validTypes.includes(type.toLowerCase())) return reject("Invalid type, valid types are " + validTypes.join(', '))
+
+    const hero = split[2]
+    if (type == 'hero' && (!hero || (hero && !validHeroes.includes(hero)))) return reject("Invalid hero, valid heroes are: " + validHeroes.join(', '))
+
+    const version = input.includes('quickplay') ? 'quickplay' : (input.includes('competitive') || input.includes('competetive')) ? 'competitive' : undefined
+
+    const regionRegex = /-r (..)/g
+    const platformRegex = /-p (...?)/g
+    const region = (regionRegex.exec(input) || [])[1]
+    const platform = (platformRegex.exec(input) || [])[1]
+    if (region && !validRegs.includes(region.toLowerCase())) return reject("Invalid region, valid regions are " + validRegs.join(', '))
+    if (platform && !validPlats.includes(platform.toLowerCase())) return reject("Invalid platform, valid platforms are " + validPlats.join(', '))
+
+    switch (type) {
+      case 'info':
+        getUserInfo(battletag, region, platform).then(info => {
+          if (!info) return reject("Error: No info returned?")
+          return resolve({ type: 'channel', message: generateInfoResp(info) })
         }).catch(reject)
-      } else return reject(`Invalid hero name, valid heroes are \`${validHeroes.join(', ')}\``)
-    } else {
-      getUserStats(battletag.replace('#', '-'), true).then(data => {
-        return resolve({ type: channel, message: generateUserStatsResponse(data) })
-      }).catch(reject)
+        break;
+      case 'stats':
+        getUserStats(battletag, region, platform, true).then(stats => {
+          if (!stats) return reject("Error: No stats returned?")
+          return resolve({ type: 'channel', 'message': generateStatsResp(stats, version) })
+        }).catch(reject)
+        break;
+      case 'hero':
+        getHero(battletag, region, platform, hero).then(stats => {
+          if (!stats) return reject("Error: No hero stats returned?")
+          return resolve({ type: 'channel', message: generateHeroResp(stats, version, battletag) })
+        }).catch(reject)
+        break;
+      case 'heroes':
+        getHeroesPlaytime(battletag, region, platform).then(heroes => {
+          if (!heroes) return reject("Error: No heroes returned?")
+          return resolve({ type: 'channel', message: generateHeroesResp(heroes, battletag) })
+        }).catch(reject)
+        break;
     }
   })
 }
 
-const generateUserStatsResponse = data => {
-  // Only returns quickplay stats
-  data.stats = data.stats.quickplay
-  data.heroes = data.heroes.quickplay
+const generateInfoResp = player => {
+  player.platform = 'pc'
+  let out = {
+    attachments: [{
+      "title": player.battletag,
+      "fallback": `Overwatch Info for ${player.battletag}, Region: ${player.region.toUpperCase()}, Platform: ${player.platform.toUpperCase()}, Level: ${player.rank || ''}${player.level}, Competitive Rank: ${player.comprank || 'None'}`,
+      "color": "#ff9c00",
+      "title_link": `${pageURL}/${player.platform}${player.platform == 'pc' ? '/' + player.region : ''}/${player.battletag}`,
+      "thumb_url": player.avatar,
+      "mrkdwn_in": ["text"],
+      text: [
+        `*Region*: ${player.region.toUpperCase()}`,
+        `*Platform*: ${player.platform.toUpperCase()}`,
+        `*Level*: ${player.rank || ''}${player.level}`,
+        `*Competitive Rank*: ${player.comprank || 'None'}`
+      ].join('\n')
+    }]
+  }
+  return out
+}
+
+const generateHeroesResp = (heroes, battletag) => {
+  if (!heroes.quickplay && !heroes.competitive) return `${battletag} has no hero stats`
+  return {
+    attachments: [{
+      "color": "#ff9c00",
+      "mrkdwn_in": ["fields"],
+      "fields": filter([{
+        "title": "Quickplay",
+        "value": heroes.quickplay.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).join('\n'),
+        short: true
+      }, {
+        "title": "Competitive",
+        "value": heroes.competitive ? heroes.competitive.map(hero => `*${capitalize(hero.name)}*: ${hero.time == '0' ? '--' : hero.time}`).join('\n') : null,
+        "short": true
+      }], 'value')
+    }]
+  }
+}
+
+const generateStatsResp = (data, version = 'quickplay') => {
+  data.stats = data.stats[version]
+  data.heroes = data.heroes[version]
+  if (version == 'competitive' && (!data.stats || !data.heroes)) return `I have no competitive stats for this user`
   if (data && data.player && data.stats && data.heroes) {
     let { player, stats, heroes } = data
+    player.platform = 'pc'
     let out = {
-      msg: `Overwatch Player Data for ${player.battletag.replace('-', '#')} _(QuickPlay)_`,
       attachments: [{
-        "fallback": `Overwatch Data for ${player.battletag.replace('-', '#')}, level ${player.rank || ''}${player.level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
-        "mrkdwn_in": ["text", "pretext", "fields"],
+        "fallback": `Overwatch Stats for ${player.battletag}, Level: ${player.rank || ''}${player.level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
+        "mrkdwn_in": ["fields"],
         "color": "#ff9c00",
-        "author_name": `${player.battletag.replace('-', '#')} (${player.region.toUpperCase()})`,
+        "author_name": `${player.battletag} (${player.region.toUpperCase()}) (${capitalize(version)})`,
         "author_icon": player.avatar,
-        "author_link": `https://playoverwatch.com/en-us/career/pc/${player.region}/${player.battletag}`
+        "author_link": `${pageURL}/${player.platform}${player.platform == 'pc' ? '/' + player.region : ''}/${player.battletag}`
       }]
     }
-    out.attachments[0].fields = filter([{
-      "title": "Region",
-      "value": player.region.toUpperCase(),
+    out.attachments[0].fields = [{
+      "title": "Region / Platform",
+      "value": `Region: ${player.region.toUpperCase()}\nPlatform: ${player.platform.toUpperCase()}`,
       "short": true
     }, {
       "title": "Level",
@@ -56,58 +143,55 @@ const generateUserStatsResponse = data => {
       "short": true
     }, {
       "title": "Games Played",
-      "value": stats.overall_stats.games ? stats.overall_stats.games : null,
+      "value": stats.overall_stats.games ? stats.overall_stats.games : "Unknown",
       "short": true
     }, {
       "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate + '%)' : ''}` : null,
+      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate + '%)' : ''}` : "Unknown",
       "short": true
     }, {
       "title": `Top ${heroes.slice(0, 10).length} Heroes`,
-      "value": heroes ? heroes.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n') : null,
+      "value": heroes ? heroes.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n') : "Unknown",
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : null,
+      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
       "short": true
-    }], 'value')
+    }]
     return out
   } else return 'Error parsing player data'
 }
 
-const generateHeroResponse = data => {
-  // Only returns quickplay stats
-  let player = data.player
-  let stats = data.quickplay
-  if (player && stats && data.name) {
+const generateHeroResp = (hero, version = 'quickplay', battletag) => {
+  hero.stats = hero[version]
+  if (version == 'competitive' && !hero.stats) return `I have no competitive stats for this hero`
+  if (hero.stats && hero.name) {
+    let { stats } = hero
     let out = {
-      msg: `Overwatch Hero Data for ${data.name} - ${player.battletag.replace('-', '#')} _(QuickPlay)_`,
       attachments: [{
-        "fallback": `Overwatch Data for ${data.name}`,
-        "mrkdwn_in": ["text", "pretext", "fields"],
+        "fallback": `Overwatch Data for ${hero.name}`,
+        "mrkdwn_in": ["text", "fields"],
         "color": "#ff9c00",
-        "author_name": `${player.battletag.replace('-', '#')} (${player.region.toUpperCase()})`,
-        "author_icon": player.avatar,
-        "author_link": `https://playoverwatch.com/en-us/career/pc/${player.region}/${player.battletag}`
+        "text": `Overwatch Hero Data for ${hero.name} - ${battletag} _(${capitalize(version)})_`,
       }]
     }
-    out.attachments[0].fields = filter([{
+    out.attachments[0].fields = [{
       "title": "Time Played",
-      "value": stats.general_stats.time_played ? stats.general_stats.time_played : null,
+      "value": stats.general_stats.time_played ? stats.general_stats.time_played : "Unknown",
       "short": true
     }, {
       "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate + '%)' : ''} ${stats.overall_stats.games ? 'out of ' + stats.overall_stats.games + ' games': ''}` : null,
+      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate + '%)' : ''} ${stats.overall_stats.games ? 'out of ' + stats.overall_stats.games + ' games': ''}` : "Unknown",
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : null,
+      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
       "short": true
     }, {
       "title": "Hero Specific Stats",
-      "value": isEmpty(stats.hero_stats) ? null : Object.keys(stats.hero_stats).map(stat => `*${capitalize(stat).replace(/_/g, ' ')}*: ${stats.hero_stats[stat]}`).join('\n'),
+      "value": isEmpty(stats.hero_stats) ? "Unknown" : Object.keys(stats.hero_stats).map(stat => `*${capitalize(stat).replace(/_/g, ' ')}*: ${stats.hero_stats[stat]}`).join('\n'),
       "short": true
-    }], 'value')
+    }]
     return out
   } else return 'Error parsing player data'
 }
