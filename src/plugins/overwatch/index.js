@@ -77,7 +77,7 @@ export function userInfo(user, channel, input) {
 }
 
 const generateInfoResp = player => {
-  player.platform = 'pc'
+  player.region = player.platform == 'pc' ? player.region : 'n/a'
   let out = {
     attachments: [{
       "title": player.battletag,
@@ -122,7 +122,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
   if (version == 'competitive' && (!data.stats || !data.heroes)) return `I have no competitive stats for this user`
   if (data && data.player && data.stats && data.heroes) {
     let { player, stats, heroes } = data
-    player.platform = 'pc'
+    player.region = player.platform == 'pc' ? player.region : 'n/a'
     let out = {
       attachments: [{
         "fallback": `Overwatch Stats for ${player.battletag}, Level: ${player.rank || ''}${player.level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
