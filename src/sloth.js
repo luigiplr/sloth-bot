@@ -37,9 +37,19 @@ class slackClient extends Slack {
 
     this.on('message', ::this._onNewMessage)
 
-    this.on('close', err => {
-      this._sendErrorToDebugChannel('slackClientError', `Websocket Connection Terminated, Reconnecting - ${err}`)
-      setTimeout(() => this.login(), 1500)
+    this.on('close', (code, message) => {
+      if (code == 1000) {
+        this._sendErrorToDebugChannel('slackClientError', `Websocket Connection closed, reconnecting - ${code} - ${message}`)
+      } else {
+        this._sendErrorToDebugChannel('slackClientError', `Websocket Connection unexpectedly closed, trying to reconnecting - ${code} - ${message}`)
+        setTimeout(() => {
+          if (!this.connected) this.login()
+          else {
+            console.log("Tried to relogin but already connected?")
+            this._sendErrorToDebugChannel('slackClientError', `Tried to relogin but already connected??`)
+          }
+        }, 1500)
+      }
     })
 
     this.on('error', err => {
