@@ -27,7 +27,6 @@
   "license": "Beerware",
   "dependencies": {
     "async": "^2.0.1",
-    "blasphemy": "0.0.2",
     "bluebird": "^3.4.1",
     "cleverbot-node": "^0.2.2",
     "codepad": "^0.1.1",
