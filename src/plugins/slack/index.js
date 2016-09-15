@@ -272,7 +272,7 @@ export function reconnect(user, channel, input) {
         enableOrDisableUser(1, u).then(() => {
           return resolve("Dun")
         }).catch(reject)
-      }, 3000);
+      }, 4500);
     }).catch(reject)
   })
 }
