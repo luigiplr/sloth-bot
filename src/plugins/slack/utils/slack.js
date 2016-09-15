@@ -38,6 +38,7 @@ export function deleteLastMessage(channel, messagets) {
   })
 }
 
+const tokenRegex = /api_token: '([a-z-0-9]+)'/
 let specialToken = null
 let nextUpdate = null
 
@@ -54,7 +55,6 @@ const _getSpecialToken = () => {
     cookieJar.setCookie(cookie3, 'https://slack.com')
     request({ url: `${url}/admin`, jar: cookieJar }, (err, resp, body) => {
       if (!err && body) {
-        let tokenRegex = /api_token: '([a-z-0-9]+)'/g
         let token = tokenRegex.exec(body)
         if (token.length == 2) {
           specialToken = token[1]
