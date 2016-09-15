@@ -17,7 +17,7 @@ export function kick(user, channel, input) {
     kickUser(channel.id, user.id).then(() => {
       sendPMThroughSlackbot(user.name, `You were kicked from #${channel.name} ${reason || 'for no reason'}`)
       return resolve(`*Kicked: ${user.name}* ${reason || 'for no reason.'}`)
-    }).catch(reject).catch(reject)
+    }).catch(reject)
   })
 }
 
