@@ -52,7 +52,7 @@ export function bingSearch(user, channel, input) {
     if (!input) return resolve({ type: 'dm', message: 'Usage: google <query> - Returns the first Google result for query' })
     if (!config.bingAPIKey) return reject('Bing API Key required to use this function')
 
-    let url = `https://bingapis.azure-api.net/api/v5/search/?q=${input}&count=1&safesearch=Off`
+    let url = `https://api.cognitive.microsoft.com/bing/v5.0/search?q=${input}&count=1&safesearch=Off`
     let headers = { headers: { 'Ocp-Apim-Subscription-Key': config.bingAPIKey } }
 
     needle.get(url, headers, (err, resp, body) => {
