@@ -1,5 +1,5 @@
-import Promise from 'bluebird'
-import Slack from 'slack-client'
+import needle from 'needle'
+import { RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from '@slack/client'
 import { sendMessage, updateUsersCache } from './slack'
 import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
@@ -14,90 +14,91 @@ if (!config.prefix || !config.slackAPIToken || !config.slackBotToken) {
   process.exit()
 }
 
-class slackClient extends Slack {
+class Slack extends RtmClient {
   constructor() {
-    super(config.slackBotToken, true, true)
+    super(config.slackBotToken, {
+      logLevel: 'error',
+      dataStore: new MemoryDataStore(),
+      autoReconnect: true
+    })
 
-    this._registerEvents()
-    this.login()
+    this._initEvents()
+    this.start()
   }
 
-  _registerEvents() {
-    this.on('loggedIn', (self, team) => {
-      conns++;
+  _initEvents() {
+    this.on(CLIENT_EVENTS.RTM.AUTHENTICATED, ({ self, team }) => {
       config.teamName = team.domain
       config.botname = self.name
       config.botid = self.id
-      config.imageURL = this.users[self.id].profile.image_72
+      config.imageURL = this.dataStore.users[self.id].profile.image_72
 
       console.log('Welcome to Slack. You are @' + self.name, 'of', team.name)
 
       if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 1 ? 'reconnected' : 'connected'} to Slack ${DEVMODE ? '- DEV' : ''}`)
     })
 
-    this.on('message', ::this._onNewMessage)
+    this.on(RTM_EVENTS.MESSAGE, ::this._handleMessage)
 
-    this.on('close', (code, message) => {
-      if (code == 1000) {
-        this._sendErrorToDebugChannel('slackClientError', `Websocket Connection closed, reconnecting - ${code} - ${message}`)
-      } else {
-        this._sendErrorToDebugChannel('slackClientError', `Websocket Connection unexpectedly closed, trying to reconnecting - ${code} - ${message}`)
-        setTimeout(() => {
-          if (!this.connected) this.login()
-          else {
-            console.log("Tried to relogin but already connected?")
-            this._sendErrorToDebugChannel('slackClientError', `Tried to relogin but already connected??`)
-          }
-        }, 1500)
-      }
-    })
+    this.on(RTM_EVENTS.TEAM_JOIN, () => updateUsersCache())
 
-    this.on('error', err => {
-      this._sendErrorToDebugChannel('slackClientError', err)
-      console.log("Error", err)
-      if (err == 'API response: 429') setTimeout(() => process.exit(1), 5000)
-      else setTimeout(() => process.exit(1), 1500)
+    this.on(CLIENT_EVENTS.RTM.DISCONNECT, (err, code) => this._handleDisconnect("DISCONNECT", err, code))
+
+    this.on(CLIENT_EVENTS.RTM.UNABLE_TO_RTM_START, err => this._handleDisconnect("UNABLE_TO_RTM_START", err))
+  }
+
+  _handleMessage(message) {
+    const user = this.dataStore.getUserById(message.user)
+    let channel = this.dataStore.getChannelGroupOrDMById(message.channel)
+    const { text, ts, subtype, type } = message
+    if (type === 'message' && text && channel && !subtype) {
+      parseMsg(user, channel, text, ts).then(response => {
+        if (!response) return
+
+        if (typeof response == 'string' || (!response.type == 'dm' || !response.type == 'channel')) {
+          response = { type: 'channel', message: response }
+          console.warn("No response type, assuming channel response")
+        }
+
+        if (response.type == 'dm') {
+          if (response.user) channel = this.dataStore.getDMByName(response.user.name ? response.user.name : response.user)
+          else channel = channel.id.startsWith('D') ? channel : this.dataStore.getDMByName(user.name)
+        }
+
+        console.log("OUT", channel.name ? channel.name : this.dataStore.users[channel.user].name + ':', (response.message ? response.message : response.messages))
+
+        if (response.message && response.message.attachments) {
+          this._sendMessage(response.message.msg, channel.id, response.message.attachments, response.options)
+        } else {
+          if (response.messages && response.multiLine) response.messages.forEach(message => this.sendMessage(message, channel.id))
+          else if (response.messages) this._sendMessage(response.messages.join('\n'), channel.id, undefined, response.options)
+          else this._sendMessage(response.message, channel.id, undefined, response.options)
+        }
+      }).catch(err => {
+        if (!err) return
+        console.error(`parseMsg Error: ${err}`)
+        if (typeof err === 'string') this.sendMessage(channel.id, err)
+        else throw (err)
+      })
+    }
+  }
+
+  _sendMessage(text, channelID, attachments = [], options = {}, api = false) {
+    if (!attachments.length && !Object.keys(options).length && !api) return this.sendMessage(text, channelID)
+    needle.post("https://slack.com/api/chat.postMessage", Object.assign({}, {
+      channel: channelID,
+      token: config.slackBotToken,
+      as_user: true,
+      attachments: typeof attachments == 'string' ? attachments : JSON.stringify(attachments),
+      text
+    }, options), (err, resp, body) => {
+      if (err || !body.ok) console.error("_sendMessageError", err, body)
     })
   }
 
-  _onNewMessage(message) {
-    const user = this.getUserByID(message.user)
-    let channel = this.getChannelGroupOrDMByID(message.channel)
-    const { text, ts, subtype, type } = message
-    if (subtype === 'channel_join') return updateUsersCache() // Kind of a cheat
-    if (type === 'message' && text && channel && !subtype) {
-      parseMsg(user, channel, text, ts)
-        .then(response => {
-          if (!response) return false
-
-          if (typeof response == 'string' || (!response.type == 'dm' || !response.type == 'channel')) {
-            response = { type: 'channel', message: response }
-            console.warn("No response type, assuming channel response")
-          }
-
-          this._checkIfDM(response.type, response.user ? response.user : user.id)
-            .then(DM => {
-              if (DM) channel = DM
-              console.log("OUT", channel.name + ':', (response.message ? response.message : response.messages))
-              if (response.message && response.message.attachments) {
-                channel.postMessage(this._getParams(response.message.msg, response.message.attachments, response.options))
-              } else if (!response.multiLine) {
-                if (response.message && !Array.isArray(response.message)) channel.postMessage(this._getParams(response.message, null, response.options))
-                else if (response.messages && Array.isArray(response.messages)) channel.postMessage(this._getParams(response.messages.join('\n'), null, response.options))
-                else return this._sendErrorToDebugChannel('sendMsg', "Invalid messages format, your array must contain more than 1 message and use the 'messages' response type")
-              } else {
-                if (response.messages && Array.isArray(response.messages)) response.messages.forEach(message => channel.send(message))
-                else return this._sendErrorToDebugChannel('sendMsg', "Invalid Multiline format, your array must contain more than 1 message and use the 'messages' response type")
-              }
-            }).catch(() => channel.send('Error finding user'))
-        })
-        .catch(err => {
-          if (!err) return
-          console.error(`parseMsg Error: ${err}`)
-          if (typeof err === 'string') channel.send(err)
-          else throw (err)
-        })
-    }
+  _handleDisconnect(type, err, code = 'N/A') {
+    this._sendErrorToDebugChannel("slackClientError", `Disconnected from Slack, attempting reconnect \n ${type} - ${err} - ${code}`)
+    setTimeout(() => this.start(), 1500)
   }
 
   _sendErrorToDebugChannel(type, error) {
@@ -105,9 +106,10 @@ class slackClient extends Slack {
       errors++
       setTimeout(() => {
         if (errors > 0) errors--
-      }, 4000)
+      }, 5000)
     } else {
-      sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
+      console.error("Warning! Error spam, stopping bot")
+      if (config.debugChannel) this._sendMessage("Warning! Error spam, stopping bot", config.debugChannel, undefined, undefined, true)
       process.exit()
       return
     }
@@ -117,17 +119,12 @@ class slackClient extends Slack {
       if (!config.debugChannel) return
 
       const message = 'Caught ' + type + ' ```' + error.message + '\n' + error.stack + '```'
-      sendMessage(config.debugChannel, message)
-
+      this._sendMessage(message, config.debugChannel, undefined, undefined, true)
     } else {
       console.error("Caught Error:", type, error)
-      if (config.debugChannel) sendMessage(config.debugChannel, "ABNORMAL ERROR: Caught " + type + ' ```' + error + '```')
+      if (config.debugChannel) this._sendMessage("Caught " + type + ' ```' + error + '```', config.debugChannel, undefined, undefined, true)
     }
   }
-
-  _getParams = (text = '', attachments = null, opts = {}) => (Object.assign({}, opts, { text, attachments, as_user: true, token: config.slackBotToken }))
-
-  _checkIfDM = (type, user) => new Promise((resolve, reject) => (type == 'dm') ? this.openDM(user.id ? user.id : user, ({ channel }) => channel ? resolve(this.getChannelGroupOrDMByID(channel.id)) : reject()) : resolve(0))
 }
 
 process.on('uncaughtException', err => {
@@ -140,4 +137,4 @@ process.on('unhandledRejection', err => slackInstance._sendErrorToDebugChannel('
 
 process.on('rejectionHandled', err => slackInstance._sendErrorToDebugChannel('handledRejection', err))
 
-const slackInstance = new slackClient()
+const slackInstance = new Slack()
