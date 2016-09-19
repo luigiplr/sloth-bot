@@ -131,6 +131,7 @@ class slackClient extends Slack {
 }
 
 process.on('uncaughtException', err => {
+  if (err && err.message && err.message == 'Unexpected end of JSON input') return
   slackInstance._sendErrorToDebugChannel('uncaughtException', err)
   setTimeout(() => process.exit(1), 500)
 })
