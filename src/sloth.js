@@ -128,9 +128,8 @@ class Slack extends RtmClient {
 }
 
 process.on('uncaughtException', err => {
-  if (err && err.message && err.message == 'Unexpected end of JSON input') return
   slackInstance._sendErrorToDebugChannel('uncaughtException', err)
-  setTimeout(() => process.exit(1), 500)
+  setTimeout(() => process.exit(1), 1500)
 })
 
 process.on('unhandledRejection', err => slackInstance._sendErrorToDebugChannel('unhandledRejection', err))
