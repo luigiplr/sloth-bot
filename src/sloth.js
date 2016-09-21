@@ -77,7 +77,7 @@ class Slack extends RtmClient {
       }).catch(err => {
         if (!err) return
         console.error(`parseMsg Error: ${err}`)
-        if (typeof err === 'string') this.sendMessage(channel.id, err)
+        if (typeof err === 'string') this.sendMessage(err, channel.id)
         else throw (err)
       })
     }
