@@ -56,7 +56,7 @@ const _getSpecialToken = () => {
     request({ url: `${url}/admin`, jar: cookieJar }, (err, resp, body) => {
       if (!err && body) {
         let token = tokenRegex.exec(body)
-        if (token.length == 2) {
+        if (token && token.length == 2) {
           specialToken = token[1]
           nextUpdate = moment().add(1, 'd').format()
           return resolve(specialToken)
