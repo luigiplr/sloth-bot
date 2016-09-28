@@ -36,6 +36,7 @@ class Slack extends RtmClient {
       console.log('Welcome to Slack. You are @' + self.name, 'of', team.name)
 
       if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 1 ? 'reconnected' : 'connected'} to Slack ${DEVMODE ? '- DEV' : ''}`)
+      conns++;
     })
 
     this.on(RTM_EVENTS.MESSAGE, ::this._handleMessage)

@@ -19,9 +19,9 @@ export function npm(user, channel, input) {
         let msg = [`*Package:* ${body.name}`,
           `*Latest Version:* ${body['dist-tags'].latest}`,
           `*Description:* ${body.description ? body.description : 'No description'}`,
-          `<https://npmjs.com/package/${p}|npmjs.com/package/${p}>`
+          `https://npmjs.com/package/${p}`
         ]
-        return resolve({ type: 'channel', messages: msg })
+        return resolve({ type: 'channel', messages: msg, options: { unfurl_links: false }})
       } else return reject("Error contacting npmjs")
     })
   })
