@@ -4,10 +4,9 @@ import Trakt from 'trakt.tv'
 import config from '../../../config.json'
 import moment from 'moment'
 
-var trakt
-if (config.traktAPIKey) {
-  trakt = new Trakt({ client_id: config.traktAPIKey })
-} else console.error("Error: Trakt Plugin requires traktAPIKey")
+if (!config.traktAPIKey) console.error("Error: Trakt Plugin requires traktAPIKey")
+
+const trakt = new Trakt({ client_id: config.traktAPIKey })
 
 export const plugin_info = [{
   alias: ['movie'],
@@ -24,7 +23,6 @@ export const plugin_info = [{
 
 export function searchMovies(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!config.traktAPIKey) return reject("Error: traktAPIKey is required to use this function");
     if (!input) return resolve({ type: 'dm', message: 'Usage: movie <query> - Returns movie information for query' })
 
     return reject("Not implemented")
@@ -33,7 +31,7 @@ export function searchMovies(user, channel, input) {
 
 export function searchShows(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!config.traktAPIKey) return reject("Error: traktAPIKey is required to use this function");
+    if (!config.traktAPIKey) console.error("Error: Trakt Plugin requires traktAPIKey")
     if (!input) return resolve({ type: 'dm', message: 'Usage: show [-s] <query> - Returns show information for query, optionally specify -s to use a shows slug as the ID' })
 
     getShowWithSlugOrSearch(input).then(id => {
@@ -56,7 +54,7 @@ const getShowWithSlugOrSearch = input => new Promise((resolve, reject) => {
   if (query[0] == '-s') trakt.shows.summary({ id: query[1] }).then(show => {
     return resolve(show.ids.trakt)
   }).catch(() => reject('No results found'))
-  else trakt.search({ type: 'show', query: query[0] }).then(shows => {
+  else trakt.search.text({ type: 'show', query: query[0] }).then(shows => {
     if (!shows.length) return reject('No results found')
     return resolve(shows[0].show.ids.trakt)
   })
