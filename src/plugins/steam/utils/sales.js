@@ -1,12 +1,14 @@
 import Promise from 'bluebird'
 import needle from 'needle'
 import _ from 'lodash'
+import moment from 'moment'
 
 try {
   var { salesAPI: [url, auth, key] } = require('../../../../config.json')
 } catch(e) {
   var noWorkie = true
 }
+
 const options = {
   headers: {
     Authorization: auth,
@@ -15,12 +17,16 @@ const options = {
 }
 
 var sales = undefined
+var nextUpdate = undefined
 
 function getSaleData() {
   return new Promise((resolve, reject) => {
     if (noWorkie) return reject("Unable to use this function")
     needle.get(url, options, (err, resp, body) => {
-      if (!err && body) return resolve(typeof body == 'string' ? JSON.parse(body) : body)
+      if (!err && body) {
+        nextUpdate = moment().add(4, 'd')
+        return resolve(typeof body == 'string' ? JSON.parse(body) : body)
+      }
       return reject("Error fetching data")
     })
   })
@@ -54,7 +60,7 @@ function findNextSale(sales) {
 
 export default function getNextSale() {
   return new Promise((resolve, reject) => {
-    if (sales) return resolve(findNextSale(sales))
+    if (sales && nextUpdate && moment().isBefore(nextUpdate)) return resolve(findNextSale(sales))
     getSaleData().then(data => {
       sales = formatDates(data)
       return resolve(findNextSale(sales))
