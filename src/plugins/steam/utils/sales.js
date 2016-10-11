@@ -19,7 +19,6 @@ var sales = undefined
 function getSaleData() {
   return new Promise((resolve, reject) => {
     if (noWorkie) return reject("Unable to use this function")
-    if (sales) return resolve(sales)
     needle.get(url, options, (err, resp, body) => {
       if (!err && body) return resolve(typeof body == 'string' ? JSON.parse(body) : body)
       return reject("Error fetching data")
@@ -55,10 +54,10 @@ function findNextSale(sales) {
 
 export default function getNextSale() {
   return new Promise((resolve, reject) => {
+    if (sales) return resolve(findNextSale(sales))
     getSaleData().then(data => {
       sales = formatDates(data)
-      let nextSale = findNextSale(sales)
-      return resolve(nextSale)
+      return resolve(findNextSale(sales))
     }).catch(reject)
   })
 }
