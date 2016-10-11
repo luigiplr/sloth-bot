@@ -19,9 +19,9 @@ export function lodash(user, channel, input) {
         `*Command:* \`${cmd.command}\``,
         `*Since:* ${cmd.since}`,
         `*Description:* ${cmd.description}`,
-        `<https://lodash.com/docs#${cmd.name}|lodash.com/docs#${cmd.name}>`
+        `https://lodash.com/docs#${cmd.name}`
       ];
-      return resolve({ type: 'channel', messages: msg })
+      return resolve({ type: 'channel', messages: msg, options: { unfurl_links: false }})
     } else reject("No function with that name")
 
   })
