@@ -2,7 +2,11 @@ import Promise from 'bluebird'
 import needle from 'needle'
 import _ from 'lodash'
 
-const { salesAPI: [url, auth, key] } = require('../../../../config.json')
+try {
+  var { salesAPI: [url, auth, key] } = require('../../../../config.json')
+} catch(e) {
+  var noWorkie = true
+}
 const options = {
   headers: {
     Authorization: auth,
@@ -14,6 +18,7 @@ var sales = undefined
 
 function getSaleData() {
   return new Promise((resolve, reject) => {
+    if (noWorkie) return reject("Unable to use this function")
     if (sales) return resolve(sales)
     needle.get(url, options, (err, resp, body) => {
       if (!err && body) return resolve(typeof body == 'string' ? JSON.parse(body) : body)
