@@ -8,7 +8,15 @@
  */
 
 var cluster = require('cluster');
+var moment = require('moment');
 
+// Override default log function to add timestamps
+["log", "warn", "error"].forEach(function(method) {
+  let oldMethod = console[method].bind(console)
+  console[method] = function() { oldMethod.apply(console, [`<${moment().format('YY-MM-DD HH:mm:ssSS')}>`, ...arguments]) }
+})
+
+// Reboot the bot on crashes
 if (cluster.isMaster) {
   cluster.fork();
 
