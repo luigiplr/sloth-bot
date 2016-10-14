@@ -92,8 +92,9 @@ export function info() {
       if (!error && stdout) {
         let url = `https://github.com/luigiplr/sloth-bot/commit/${stdout.slice(0, -33)}`
         return resolve({
-          type: 'channel', // using messages subtype allows us to build custom urls
-          messages: [`sloth-bot version ${version} \n built from commit #<${url}|${stdout.slice(0, -34)}>`]
+          type: 'channel',
+          message: `sloth-bot version ${version} \n built from commit #<${url}|${stdout.slice(0, -34)}>`,
+          options: true
         })
       } else return reject('Error fetching commit')
     })

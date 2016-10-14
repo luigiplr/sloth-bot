@@ -85,7 +85,7 @@ class Slack extends RtmClient {
   }
 
   _sendMessage(text, channelID, attachments = [], options = {}, api = false) {
-    if (!attachments.length && !Object.keys(options).length && !api) return this.sendMessage(text, channelID)
+    if (!attachments.length && !Object.keys(options).length && options !== true && !api) return this.sendMessage(text, channelID)
     needle.post("https://slack.com/api/chat.postMessage", Object.assign({}, {
       channel: channelID,
       token: config.slackBotToken,
