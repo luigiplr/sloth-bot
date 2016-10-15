@@ -103,11 +103,11 @@ class Slack extends RtmClient {
   }
 
   _sendErrorToDebugChannel(type, error) {
-    if (errors < 4) {
+    if (errors < 3) {
       errors++
       setTimeout(() => {
-        if (errors > 0) errors--
-      }, 5000)
+        if (errors > 0) errors--;
+      }, 20000)
     } else {
       console.error("Warning! Error spam, stopping bot")
       if (config.debugChannel) this._sendMessage("Warning! Error spam, stopping bot", config.debugChannel, undefined, undefined, true)
@@ -130,7 +130,7 @@ class Slack extends RtmClient {
 
 process.on('uncaughtException', err => {
   slackInstance._sendErrorToDebugChannel('uncaughtException', err)
-  setTimeout(() => process.exit(1), 1500)
+  setTimeout(() => { process.exit(1) }, 1500)
 })
 
 process.on('unhandledRejection', err => slackInstance._sendErrorToDebugChannel('unhandledRejection', err))

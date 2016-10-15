@@ -10,6 +10,8 @@
 var cluster = require('cluster');
 var moment = require('moment');
 
+var errors = 0;
+
 // Override default log function to add timestamps
 ["log", "warn", "error"].forEach(function(method) {
   let oldMethod = console[method].bind(console)
@@ -22,7 +24,18 @@ if (cluster.isMaster) {
 
   cluster.on("exit", function(worker, code) {
     if (code != 0) {
-      console.error("Worker crashed or was rebooted! Spawning a replacement.");
+      console.error("Worker crashed or was rebooted! Spawning a replacement.", errors);
+      if (errors < 3) {
+        errors++
+        setTimeout(() => {
+          if (errors > 0) errors--;
+        }, 20000)
+      } else {
+        console.error("Warning! Repeated crashing, stopping bot")
+        process.exit()
+        return
+      }
+
       cluster.fork();
     }
   });
