@@ -1,4 +1,4 @@
-import RSSWatcher from 'rss-watcher'
+/* import RSSWatcher from 'rss-watcher'
 import { sendMessage } from '../../slack'
 import config from '../../../config.json'
 import striptags from 'striptags'
@@ -55,3 +55,5 @@ const generateAttachment = (data, provider) => {
   }]
   return JSON.stringify(out)
 }
+
+*/
