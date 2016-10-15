@@ -201,8 +201,8 @@ const getPersonaState = (state => {
   }
 })
 
-const getAUDRate = () => needle.get('http://api.fixer.io/latest?base=USD', (err, resp, { rates }) => {
-  if (!err && resp.body && rates) AUDRate = rates.AUD
+const getAUDRate = () => needle.get('http://api.fixer.io/latest?base=USD', (err, resp, body) => {
+  if (!err && body && body.rates) AUDRate = body.rates.AUD
   else console.error("Error fetching AUD Rate")
 })
 
@@ -214,4 +214,4 @@ setTimeout(() => {
     getAUDRate()
   }, 86403600)
   getAUDRate()
-}, 1000)
+}, 2000)
