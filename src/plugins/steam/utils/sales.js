@@ -24,7 +24,7 @@ function getSaleData() {
     if (noWorkie) return reject("Unable to use this function")
     needle.get(url, options, (err, resp, body) => {
       if (!err && body) {
-        nextUpdate = moment().add(4, 'd')
+        nextUpdate = moment().add(3, 'd')
         return resolve(typeof body == 'string' ? JSON.parse(body) : body)
       }
       return reject("Error fetching data")
