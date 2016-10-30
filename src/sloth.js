@@ -35,7 +35,7 @@ class Slack extends RtmClient {
 
       console.log('Welcome to Slack. You are @' + self.name, 'of', team.name)
 
-      if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 1 ? 'reconnected' : 'connected'} to Slack ${DEVMODE ? '- DEV' : ''}`)
+      if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 0 ? 'reconnected' : 'connected'} to Slack ${DEVMODE ? '- DEV' : ''}`)
       conns++;
     })
 
@@ -84,8 +84,9 @@ class Slack extends RtmClient {
     }
   }
 
-  _sendMessage(text, channelID, attachments = [], options = {}, api = false) {
-    if (!attachments.length && !Object.keys(options).length && options !== true && !api) return this.sendMessage(text, channelID)
+  _sendMessage(text, channelID, attachments = [], options = {}) {
+    if (!attachments.length && !Object.keys(options).length && options !== true) return this.sendMessage(text, channelID)
+    console.log("Sending custom message")
     needle.post("https://slack.com/api/chat.postMessage", Object.assign({}, {
       channel: channelID,
       token: config.slackBotToken,
@@ -98,11 +99,15 @@ class Slack extends RtmClient {
   }
 
   _handleDisconnect(type, err, code = 'N/A') {
-    this._sendErrorToDebugChannel("slackClientError", `Disconnected from Slack, attempting reconnect \n ${type} - ${err} - ${code}`)
-    setTimeout(() => this.start(), 1500)
+    console.error("_handleDisconnect")
+    this._sendErrorToDebugChannel("slackClientError", `Disconnected from Slack, attempting reconnect \nType: ${type} | Error: ${err} | Code: ${code}`)
+    setTimeout(() => {
+      this.start()
+    }, 1500)
   }
 
   _sendErrorToDebugChannel(type, error) {
+    console.error("_sendErrorToDebugChannel")
     if (errors < 3) {
       errors++
       setTimeout(() => {
@@ -110,8 +115,10 @@ class Slack extends RtmClient {
       }, 20000)
     } else {
       console.error("Warning! Error spam, stopping bot")
-      if (config.debugChannel) this._sendMessage("Warning! Error spam, stopping bot", config.debugChannel, undefined, undefined, true)
-      process.exit()
+      if (config.debugChannel) sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
+      setTimeout(() => {
+        process.exit()
+      }, 1500)
       return
     }
 
@@ -120,13 +127,15 @@ class Slack extends RtmClient {
       if (!config.debugChannel) return
 
       const message = 'Caught ' + type + ' ```' + error.message + '\n' + error.stack + '```'
-      this._sendMessage(message, config.debugChannel, undefined, undefined, true)
+      sendMessage(config.debugChannel, message)
     } else {
       console.error("Caught Error:", type, error)
-      if (config.debugChannel) this._sendMessage("Caught " + type + ' ```' + error + '```', config.debugChannel, undefined, undefined, true)
+      if (config.debugChannel) sendMessage(config.debugChannel, "Caught " + type + ' ```' + error + '```')
     }
   }
 }
+
+const slackInstance = new Slack()
 
 process.on('uncaughtException', err => {
   slackInstance._sendErrorToDebugChannel('uncaughtException', err)
@@ -136,5 +145,3 @@ process.on('uncaughtException', err => {
 process.on('unhandledRejection', err => slackInstance._sendErrorToDebugChannel('unhandledRejection', err))
 
 process.on('rejectionHandled', err => slackInstance._sendErrorToDebugChannel('handledRejection', err))
-
-const slackInstance = new Slack()

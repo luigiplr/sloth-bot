@@ -13,7 +13,7 @@ var moment = require('moment');
 var errors = 0;
 
 // Override default log function to add timestamps
-["log", "warn", "error"].forEach(function(method) {
+["log", "error"].forEach(function(method) {
   let oldMethod = console[method].bind(console)
   console[method] = function() { oldMethod.apply(console, [`<${moment().format('YY-MM-DD HH:mm:ssSS')}>`, ...arguments]) }
 })
