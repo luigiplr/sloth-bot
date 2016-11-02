@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import devexcuses from 'developerexcuses'
+import needle from 'needle'
 
 export const plugin_info = [{
   alias: ['devexcuse'],
@@ -8,5 +8,12 @@ export const plugin_info = [{
 }]
 
 export function devexcuse() {
-  return new Promise(resolve => devexcuses((err, excuse) => resolve({ type: 'channel', message: !err ? excuse : err })))
+  return new Promise((resolve, reject) => {
+    needle.get('http://developerexcuses.com/', (err, resp, body) => {
+      if (err || !body) return reject("Error fetching dev excuse, <insert witty dev excuse here>")
+      let rx = /<a.*?>(.*?)<\/a>/
+      let match = rx.exec(body)
+      return resolve({ type: 'channel', message: match ? match[1] : 'No more excuses' })
+    })
+  })
 }
