@@ -147,7 +147,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "short": true
     }, {
       "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate + '%)' : ''}` : "Unknown",
+      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''}` : "Unknown",
       "short": true
     }, {
       "title": `Top ${heroes.slice(0, 10).length} Heroes`,
