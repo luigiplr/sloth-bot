@@ -91,7 +91,7 @@ const generateProfileResponse = (profile => {
       `*Profile Name:* ${profile.personaname} ${realname}`,
       `*Level:* ${profile.user_level} | *Status:* ${status}`,
       `*Joined Steam:* ${profile.timecreated ? moment(profile.timecreated * 1000).format("dddd, Do MMM YYYY") : 'Unknown'}`,
-      `*Total Games:* ${profile.totalgames} | *Most Played:* ${profile.mostplayed.name} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
+      `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
       profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
       profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
     ]
@@ -168,7 +168,7 @@ const generatePlayersResponse = app => `There are currently *${formatNumber(app.
 
 const formatNumber = number => number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 const formatCurrency = (n, currency) => n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ' ' + currency
-const formatPlaytime = time => time < 120 ? `${time} minutes` : `${Math.floor(time / 60)} hours`
+const formatPlaytime = time => !time ? "Unknown" : time < 120 ? `${time} minutes` : `${Math.floor(time / 60)} hours`
 
 const getPriceForApp = app => {
   if (app.is_free)

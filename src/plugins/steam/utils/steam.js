@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import { capitalize, get } from 'lodash'
+import { capitalize, get, isEmpty } from 'lodash'
 import needle from 'needle'
 import SteamID from 'steamid'
 
@@ -98,8 +98,12 @@ export function getProfileInfo(id) {
       Promise.join(getUserLevel(newID), getUserBans(newID), getUserGames(newID), (level, bans, games) => {
         profile.user_level = level
         profile.bans = bans
-        let sortedGames = games.games.sort((a, b) => b.playtime_forever - a.playtime_forever)
         profile.totalgames = games.game_count
+        if (isEmpty(games)) {
+          profile.mostplayed = {}
+          return resolve(profile)
+        }
+        let sortedGames = games.games.sort((a, b) => b.playtime_forever - a.playtime_forever)
         profile.mostplayed = sortedGames[0]
         getAppDetails(sortedGames[0].appid, false, true).then(game => {
           if (game) {
