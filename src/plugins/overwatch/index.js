@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch.js'
-import { filter, capitalize, isEmpty } from 'lodash'
+import { filter, capitalize, isEmpty, uniq, compact } from 'lodash'
 
 export const plugin_info = [{
   alias: ['overwatch'],
@@ -9,7 +9,7 @@ export const plugin_info = [{
 }]
 
 const pageURL = 'https://playoverwatch.com/en-us/career'
-const validHeroes = ["ana", "bastion", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
+const validHeroes = ["ana", "bastion", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "sombra", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
 const validTypes = ["info", "stats", "hero", "heroes"]
 const validRegs = ["us", "eu", "kr"]
 const validPlats = ["pc", "xbl", "psn"]
@@ -105,11 +105,11 @@ const generateHeroesResp = (heroes, battletag) => {
       "mrkdwn_in": ["fields"],
       "fields": filter([{
         "title": "Quickplay",
-        "value": heroes.quickplay.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).join('\n'),
+        "value": uniq(compact(heroes.quickplay.map(hero => hero.name.includes('.guid') ? null : `*${capitalize(hero.name)}*: ${hero.time}`))).join('\n'),
         short: true
       }, {
         "title": "Competitive",
-        "value": heroes.competitive ? heroes.competitive.map(hero => `*${capitalize(hero.name)}*: ${hero.time == '0' ? '--' : hero.time}`).join('\n') : null,
+        "value": heroes.competitive ? uniq(compact(heroes.competitive.map(hero => hero.name.includes('.guid') ? null : `*${capitalize(hero.name)}*: ${hero.time == '0' ? '--' : hero.time}`))).join('\n') : null,
         "short": true
       }], 'value')
     }]
