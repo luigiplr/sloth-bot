@@ -5,7 +5,7 @@ import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
 
 var errors = 0
-var conns = 0
+var firstStart = true;
 
 const DEVMODE = process.argv[2] == '--dev' ? true : false
 
@@ -27,7 +27,7 @@ class Slack extends RtmClient {
   }
 
   _initEvents() {
-    this.on(CLIENT_EVENTS.RTM.AUTHENTICATED, ({ self, team }) => {
+    this.once(CLIENT_EVENTS.RTM.AUTHENTICATED, ({ self, team }) => {
       config.teamName = team.domain
       config.botname = self.name
       config.botid = self.id
@@ -35,8 +35,13 @@ class Slack extends RtmClient {
 
       console.log('Welcome to Slack. You are @' + self.name, 'of', team.name)
 
-      if (config.debugChannel) sendMessage(config.debugChannel, `Successfully ${conns > 0 ? 'reconnected' : 'connected'} to Slack ${DEVMODE ? '- DEV' : ''}`)
-      conns++;
+      this._sendErrorToDebugChannel('ConnectionStatus', `Successfully connected to Slack ${DEVMODE ? '- DEV' : ''}`, true)
+    })
+
+    this.on(CLIENT_EVENTS.RTM.AUTHENTICATED, () => {
+      if (firstStart) return;
+      firstStart = false;
+      this._sendErrorToDebugChannel('ConnectionStatus', 'Successfully reconnected to Slack', true)
     })
 
     this.on(RTM_EVENTS.MESSAGE, ::this._handleMessage)
@@ -46,6 +51,8 @@ class Slack extends RtmClient {
     this.on(CLIENT_EVENTS.RTM.DISCONNECT, (err, code) => this._handleDisconnect("DISCONNECT", err, code))
 
     this.on(CLIENT_EVENTS.RTM.UNABLE_TO_RTM_START, err => this._handleDisconnect("UNABLE_TO_RTM_START", err))
+
+    this.on(CLIENT_EVENTS.ATTEMPTING_RECONNECT, () => this._sendErrorToDebugChannel('ConnectionStatus', "Connection lost, attempting reconnect", true))
   }
 
   _handleMessage(message) {
@@ -106,20 +113,22 @@ class Slack extends RtmClient {
     }, 1500)
   }
 
-  _sendErrorToDebugChannel(type, error) {
+  _sendErrorToDebugChannel(type, error, ignore) {
     console.error("_sendErrorToDebugChannel")
-    if (errors < 3) {
-      errors++
-      setTimeout(() => {
-        if (errors > 0) errors--;
-      }, 20000)
-    } else {
-      console.error("Warning! Error spam, stopping bot")
-      if (config.debugChannel) sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
-      setTimeout(() => {
-        process.exit()
-      }, 1500)
-      return
+    if (!ignore) {
+      if (errors < 3) {
+        errors++
+        setTimeout(() => {
+          if (errors > 0) errors--;
+        }, 20000)
+      } else {
+        console.error("Warning! Error spam, stopping bot")
+        if (config.debugChannel) sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
+        setTimeout(() => {
+          process.exit()
+        }, 1500)
+        return
+      }
     }
 
     if (error && error.message && error.stack) {
