@@ -52,6 +52,7 @@ const getImgUrl = id => {
 
 const generateShowResponse = serie => {
   if (!serie) return 'Error: Missing serie data while generating response'
+  var seasons = serie.seasons[0].number == 0 ? serie.seasons.length - 1 : serie.seasons.length
   let out = {
       attachments: [{
         "title": `${serie.title} (${serie.year || 'Unknown'})`,
@@ -77,7 +78,7 @@ const generateShowResponse = serie => {
     "short": true
   }, {
     "title": "Aired Episodes",
-    "value": `${serie.aired_episodes} Episodes | ${serie.seasons.length} ${serie.seasons.length == 1 ? 'Season' : 'Seasons'}`,
+    "value": `${serie.aired_episodes} Episode${serie.aired_episodes == 1 ? '' : 's'} | ${seasons} Season${seasons == 1 ? '' : 's'}`,
     "short": true
   }, {
     "title": "Genres",

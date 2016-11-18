@@ -105,7 +105,7 @@ const generateHeroesResp = (heroes, battletag) => {
       "mrkdwn_in": ["fields"],
       "fields": filter([{
         "title": "Quickplay",
-        "value": uniq(compact(heroes.quickplay.map(hero => hero.name.includes('.guid') ? null : `*${capitalize(hero.name)}*: ${hero.time}`))).join('\n'),
+        "value": uniq(compact(heroes.quickplay.map(hero => hero.name.includes('.guid') ? null : `*${capitalize(hero.name)}*: ${hero.time == '0' ? '--' : hero.time}`))).join('\n'),
         short: true
       }, {
         "title": "Competitive",
