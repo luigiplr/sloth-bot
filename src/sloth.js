@@ -118,7 +118,7 @@ class Slack extends RtmClient {
 
     if (connectionStatus) {
       console.log(`ConnectionStatus: ${error}`)
-      if (config.debugChannel) sendMessage(config.debugChannel, `:electric_plug: Connection Status: ${error}`)
+      if (config.debugChannel) sendMessage(config.debugChannel, `:electric_plug: *Connection Status:* \`${error}\``)
       return
     }
 
