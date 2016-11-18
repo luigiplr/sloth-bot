@@ -35,13 +35,13 @@ class Slack extends RtmClient {
 
       console.log('Welcome to Slack. You are @' + self.name, 'of', team.name)
 
-      this._sendErrorToDebugChannel('ConnectionStatus', `Successfully connected to Slack ${DEVMODE ? '- DEV' : ''}`, true)
+      this._sendErrorToDebugChannel(null, `Successfully connected to Slack ${DEVMODE ? '- DEV' : ''}`, true)
     })
 
     this.on(CLIENT_EVENTS.RTM.AUTHENTICATED, () => {
       if (firstStart) return;
       firstStart = false;
-      this._sendErrorToDebugChannel('ConnectionStatus', 'Successfully reconnected to Slack', true)
+      this._sendErrorToDebugChannel(null, 'Successfully reconnected to Slack', true)
     })
 
     this.on(RTM_EVENTS.MESSAGE, ::this._handleMessage)
@@ -52,7 +52,7 @@ class Slack extends RtmClient {
 
     this.on(CLIENT_EVENTS.RTM.UNABLE_TO_RTM_START, err => this._handleDisconnect("UNABLE_TO_RTM_START", err))
 
-    this.on(CLIENT_EVENTS.ATTEMPTING_RECONNECT, () => this._sendErrorToDebugChannel('ConnectionStatus', "Connection lost, attempting reconnect", true))
+    this.on(CLIENT_EVENTS.ATTEMPTING_RECONNECT, () => this._sendErrorToDebugChannel(null, "Connection lost, attempting reconnect", true))
   }
 
   _handleMessage(message) {
@@ -113,22 +113,27 @@ class Slack extends RtmClient {
     }, 1500)
   }
 
-  _sendErrorToDebugChannel(type, error, ignore) {
+  _sendErrorToDebugChannel(type, error, connectionStatus) {
     console.error("_sendErrorToDebugChannel")
-    if (!ignore) {
-      if (errors < 3) {
-        errors++
-        setTimeout(() => {
-          if (errors > 0) errors--;
-        }, 20000)
-      } else {
-        console.error("Warning! Error spam, stopping bot")
-        if (config.debugChannel) sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
-        setTimeout(() => {
-          process.exit()
-        }, 1500)
-        return
-      }
+
+    if (connectionStatus) {
+      console.log(`ConnectionStatus: ${error}`)
+      if (config.debugChannel) sendMessage(config.debugChannel, `:electric_plug: Connection Status: ${error}`)
+      return
+    }
+
+    if (errors < 3) {
+      errors++
+      setTimeout(() => {
+        if (errors > 0) errors--;
+      }, 20000)
+    } else {
+      console.error("Warning! Error spam, stopping bot")
+      if (config.debugChannel) sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
+      setTimeout(() => {
+        process.exit()
+      }, 1500)
+      return
     }
 
     if (error && error.message && error.stack) {
