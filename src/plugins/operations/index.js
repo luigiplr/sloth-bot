@@ -4,6 +4,10 @@ import moment from 'moment'
 import config from '../../../config.json'
 import { exec as execCmd } from 'child_process'
 
+try {
+  var getIP = require('external-ip')
+} catch(e) {} // eslint-disable-line
+
 var version = require('../../../package.json').version
 var updating;
 
@@ -30,6 +34,10 @@ export const plugin_info = [{
   alias: ['version'],
   command: 'info',
   usage: 'version - returns bot info'
+}, {
+  alias: ['ip'],
+  command: 'ip',
+  userLevel: ['superadmin']
 }]
 
 export function shutdown() {
@@ -97,6 +105,16 @@ export function info() {
           options: true
         })
       } else return reject('Error fetching commit')
+    })
+  })
+}
+
+export function ip(user) {
+  return new Promise((resolve, reject) => {
+    if (!getIP) return reject("Missing `external-ip` NPM Module")
+    if (!config.viewIP || !config.viewIP.includes(user.id)) return reject("*Access DENIED!!1!111!!eleven!*")
+    getIP()((err, ip) => {
+      return resolve({ type: 'dm', message: err ? 'Unable to find IP :(' : `My IP is ${ip}`})
     })
   })
 }
