@@ -37,7 +37,7 @@ export const plugin_info = [{
 }, {
   alias: ['ip'],
   command: 'ip',
-  userLevel: ['superadmin']
+  userLevel: ['admin', 'superadmin']
 }]
 
 export function shutdown() {
