@@ -27,9 +27,9 @@ const getUrl = (type, param, cc) => {
 }
 
 const getIDFromProfile = id => {
-  return new Promise((resolve, reject) => needle.get(getUrl('resolveVanity', id), (err, resp, { response }) => {
-    if (!err && response)
-      if (response.success == 1) return resolve(response.steamid)
+  return new Promise((resolve, reject) => needle.get(getUrl('resolveVanity', id), (err, resp, body) => {
+    if (!err && body && body.response)
+      if (body.response.success == 1) return resolve(body.response.steamid)
       else return reject("Invalid Vanity ID")
     else return reject('Error retrieving profile ID')
   }))
@@ -46,15 +46,15 @@ const formatProfileID = id => {
 }
 
 const getUserLevel = id => {
-  return new Promise(resolve => needle.get(getUrl('userLevel', id), (err, resp, { response }) => {
-    if (!err && response) return resolve(response.player_level)
+  return new Promise(resolve => needle.get(getUrl('userLevel', id), (err, resp, body) => {
+    if (!err && body && body.response) return resolve(body.response.player_level)
     else return resolve(0)
   }))
 }
 
 const getUserBans = id => {
-  return new Promise(resolve => needle.get(getUrl('userBans', id), (err, resp, { players }) => {
-    if (!err && players[0]) return resolve(players[0])
+  return new Promise(resolve => needle.get(getUrl('userBans', id), (err, resp, body) => {
+    if (!err && body && body.players[0]) return resolve(body.players[0])
     else return resolve(0)
   }))
 }
@@ -83,9 +83,9 @@ const searchForApp = query => {
 }
 
 const getPlayersForApp = appid => {
-  return new Promise((resolve, reject) => needle.get(getUrl('numPlayers', appid), (err, resp, { response }) => {
-    if (!err && response)
-      if (typeof response.player_count != 'undefined') return resolve(response)
+  return new Promise((resolve, reject) => needle.get(getUrl('numPlayers', appid), (err, resp, body) => {
+    if (!err && body && body.response)
+      if (typeof body.response.player_count != 'undefined') return resolve(body.response)
       else return reject('Unable to view player counts for this app')
     else return reject('Error retrieving player counts')
   }))
