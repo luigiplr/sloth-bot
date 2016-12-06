@@ -83,19 +83,26 @@ const _getSaleTime = time => {
   return `in approximately ${getTime(['months', 'days', 'hours', 'minutes'].map(duration).filter(Boolean).join(', '), duration('seconds'))}`
 }
 
+const formatTimeCreated = time => {
+  if (!time) return 'Unknown'
+  const timeCreated = moment(time * 1000)
+  const diff = moment().diff(timeCreated, 'years')
+  return `${timeCreated.format("dddd, Do MMMM YYYY")} _(${diff == 0 ? 'Less than a year' : (diff + ' years')})_`
+}
+
 const generateProfileResponse = (profile => {
   if (profile) {
-    let realname = profile.realname ? `(${profile.realname})` : ''
-    let status = profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)
+    const realname = profile.realname ? `(${profile.realname})` : ''
+    const status = profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)
     let msg = [
       `*Profile Name:* ${profile.personaname} ${realname}`,
       `*Level:* ${profile.user_level} | *Status:* ${status}`,
-      `*Joined Steam:* ${profile.timecreated ? moment(profile.timecreated * 1000).format("dddd, Do MMM YYYY") : 'Unknown'}`,
+      `*Joined Steam:*: ${formatTimeCreated(profile.timecreated)}`,
       `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
       profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
       profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
     ]
-    let out = {
+    const out = {
       attachments: [{
         "mrkdwn_in": ["text"],
         "author_name": profile.personaname,
