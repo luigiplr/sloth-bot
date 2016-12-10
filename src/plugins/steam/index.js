@@ -97,7 +97,7 @@ const generateProfileResponse = (profile => {
     let msg = [
       `*Profile Name:* ${profile.personaname} ${realname}`,
       `*Level:* ${profile.user_level} | *Status:* ${status}`,
-      `*Joined Steam:*: ${formatTimeCreated(profile.timecreated)}`,
+      `*Joined Steam:* ${formatTimeCreated(profile.timecreated)}`,
       `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
       profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
       profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
