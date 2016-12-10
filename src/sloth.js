@@ -39,8 +39,10 @@ class Slack extends RtmClient {
     })
 
     this.on(CLIENT_EVENTS.RTM.AUTHENTICATED, () => {
-      if (firstStart) return;
-      firstStart = false;
+      if (firstStart) {
+        firstStart = false;
+        return;
+      }
       this._sendErrorToDebugChannel(null, 'Successfully reconnected to Slack', true)
     })
 
@@ -86,7 +88,7 @@ class Slack extends RtmClient {
         if (!err) return
         console.error(`parseMsg Error: ${err}`)
         if (typeof err === 'string') this.sendMessage(err, channel.id)
-        else throw (err)
+        else throw(err)
       })
     }
   }
