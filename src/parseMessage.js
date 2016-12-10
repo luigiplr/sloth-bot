@@ -30,7 +30,8 @@ export function parse(user, channel, text, ts) {
       return resolve(false)
 
     let command = text.split(' ')[0].substr(1).toLowerCase()
-    let context = text.split(' ').slice(1).join(' ').trim() !== '' ? text.split(' ').slice(1).join(' ').trim() : undefined
+    let context = text.split(' ').slice(1).join(' ').trim()
+    context = context !== '' ? context : undefined
 
     let cmdLevel = false
     let call = false

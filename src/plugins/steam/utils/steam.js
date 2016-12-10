@@ -75,11 +75,14 @@ const getAppDetails = (appid, cc, basic) => {
   }))
 }
 
-const searchForApp = query => {
-  return new Promise((resolve, reject) => needle.get(getUrl('searchApps', query), (err, resp, apps) => {
-    if (!err && apps.length) return resolve(apps[0].appid)
-    else return reject("Couldn't find an app with that name")
-  }))
+const searchForApp = (query, isAppID) => {
+  return new Promise((resolve, reject) => {
+    if (isAppID) return resolve(query)
+    needle.get(getUrl('searchApps', query), (err, resp, apps) => {
+      if (!err && apps.length) return resolve(apps[0].appid)
+      else return reject("Couldn't find an app with that name")
+    })
+  })
 }
 
 const getPlayersForApp = appid => {
@@ -116,45 +119,19 @@ export function getProfileInfo(id) {
   })).catch(reject))
 }
 
-export function getAppPlayers(appid) {
+export function getAppInfo(appid, cc = 'US', playersOnly) {
   return new Promise((resolve, reject) => {
-    if (!appid.match(/^\d+$/)) {
-      searchForApp(appid).then(id => getAppDetails(id, false, true)).then(app => {
-        getPlayersForApp(app.steam_appid).then(players => {
+    const isAppID = appid.match(/^\d+$/)
+    searchForApp(appid, isAppID).then(id => {
+      Promise.join(getAppDetails(id, cc), getPlayersForApp(id), (app, players) => {
+        if (playersOnly) {
           players.name = app.name
           return resolve(players)
-        }).catch(reject)
-      }).catch(reject)
-    } else {
-      Promise.join(getAppDetails(appid, false, true), getPlayersForApp(appid), (app, players) => {
-        players.name = app.name
-        return resolve(players)
-      }).catch(reject)
-    }
-  })
-}
-
-export function getAppInfo(appid, cc = 'US') {
-  return new Promise((resolve, reject) => {
-    if (!appid.match(/^\d+$/)) { // Not an appid
-      searchForApp(appid).then(id => getAppDetails(id, cc)).then(app => {
-        getPlayersForApp(app.steam_appid).then(players => {
-          app.player_count = players.player_count
-          return resolve(app)
-        }).catch(err => { // If we can't fetch player counts just return anyway
-          console.error(err)
-          return resolve(app)
-        })
-      }).catch(reject)
-    } else { //appid
-      getAppDetails(appid, cc).then(app => getPlayersForApp(appid).then(players => {
+        }
         app.player_count = players.player_count
         return resolve(app)
-      }).catch(err => { // If we can't fetch player counts just return anyway
-        console.error(err)
-        return resolve(app)
-      })).catch(reject)
-    }
+      }).catch(reject)
+    }).catch(reject)
   })
 }
 

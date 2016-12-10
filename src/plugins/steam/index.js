@@ -1,7 +1,7 @@
 import Promise from 'bluebird'
 import needle from 'needle'
 import { filter, capitalize, truncate } from 'lodash'
-import { getProfileInfo, getAppPlayers, getAppInfo, getSteamIDInfo } from './utils/steam'
+import { getProfileInfo, getAppInfo, getSteamIDInfo } from './utils/steam'
 import getNextSale from './utils/sales'
 import moment from 'moment'
 
@@ -41,7 +41,7 @@ export function players(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: players <appid> - Returns the current amount of players for the game' })
 
-    getAppPlayers(input).then(resp => resolve({ type: 'channel', message: generatePlayersResponse(resp) })).catch(reject)
+    getAppInfo(input, null, true).then(resp => resolve({ type: 'channel', message: generatePlayersResponse(resp) })).catch(reject)
   })
 }
 
@@ -108,7 +108,8 @@ const generateProfileResponse = (profile => {
         "author_name": profile.personaname,
         "author_icon": profile.avatar,
         "author_link": profile.profileurl,
-        "text": msg.filter(Boolean).join('\n')
+        "text": msg.filter(Boolean).join('\n'),
+        "fallback": msg.filter(Boolean).join(' | ').replace(/[\*\_]/g, '')
       }]
     }
     return out
@@ -117,18 +118,18 @@ const generateProfileResponse = (profile => {
 
 const generateAppDetailsResponse = ((app, cc = 'US') => {
   if (app) {
-    let out = {
-      msg: `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_ _(${cc.toUpperCase()})_`,
-      attachments: [{
-        "fallback": app.name + '(' + app.steam_appid + ')',
-        "image_url": app.header_image,
-        "mrkdwn_in": ["text", "pretext", "fields"],
-        "color": "#14578b"
-      }]
-    }
-
     let price = getPriceForApp(app)
     let date = getDateForApp(app)
+
+    let out = {
+      attachments: [{
+        "fallback": `${app.name} (${app.steam_appid}) | Cost: ${price} | Current Players: ${app.player_count ? formatNumber(app.player_count) : null}`,
+        "image_url": app.header_image,
+        "mrkdwn_in": ["text", "pretext", "fields"],
+        "color": "#14578b",
+        "pretext": `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_ _(${cc.toUpperCase()})_`
+      }]
+    }
 
     out.attachments[0].fields = filter([{
       "title": "Cost",
