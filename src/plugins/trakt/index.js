@@ -52,7 +52,8 @@ const getImgUrl = id => {
 
 const generateShowResponse = serie => {
   if (!serie) return 'Error: Missing serie data while generating response'
-  var seasons = serie.seasons[0].number == 0 ? serie.seasons.length - 1 : serie.seasons.length
+  if (serie.seasons[0].number == 0) serie.seasons.shift() // Don't count specials season
+  if (serie.seasons[serie.seasons.length-1].aired_episodes == 0) serie.seasons.pop() // Ignore last season if no aired episodes
   let out = {
       attachments: [{
         "title": `${serie.title} (${serie.year || 'Unknown'})`,
@@ -78,7 +79,7 @@ const generateShowResponse = serie => {
     "short": true
   }, {
     "title": "Aired Episodes",
-    "value": `${serie.aired_episodes} Episode${serie.aired_episodes == 1 ? '' : 's'} | ${seasons} Season${seasons == 1 ? '' : 's'}`,
+    "value": `${serie.aired_episodes} Episode${serie.aired_episodes == 1 ? '' : 's'} | ${serie.seasons.length} Season${serie.seasons.length == 1 ? '' : 's'}`,
     "short": true
   }, {
     "title": "Genres",

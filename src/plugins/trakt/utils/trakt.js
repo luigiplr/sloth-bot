@@ -9,7 +9,7 @@ const options = { headers: { "trakt-api-key": token } }
 const endpoints = {
   serie: 'shows/%s?extended=full',
   search: 'search/show?extended=full&query=%s',
-  season: 'shows/%s/seasons'
+  season: 'shows/%s/seasons?extended=full'
 }
 
 const getURL = (type, input) => {
