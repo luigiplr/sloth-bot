@@ -212,7 +212,7 @@ export function whois(user, channel, input) {
       type = ['profile', 'email']
       query = input.substr(8).split('|')[0]
     }
-    let u = findUserByParam(type, query)
+    let u = findUserByParam(type, query) || findUserByParam('id', query)
     if (!u) return reject("Couldn't find a user matching input")
 
     let p = perms.getAll
