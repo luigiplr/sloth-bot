@@ -78,6 +78,7 @@ export function userInfo(user, channel, input) {
 
 const generateInfoResp = player => {
   player.region = player.platform == 'pc' ? player.region : 'n/a'
+  var level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
   let out = {
     attachments: [{
       "title": player.battletag,
@@ -89,7 +90,7 @@ const generateInfoResp = player => {
       text: [
         `*Region*: ${player.region.toUpperCase()}`,
         `*Platform*: ${player.platform.toUpperCase()}`,
-        `*Level*: ${player.rank || ''}${player.level}`,
+        `*Level*: ${level}`,
         `*Competitive Rank*: ${player.comprank || 'None'}`
       ].join('\n')
     }]
@@ -123,9 +124,10 @@ const generateStatsResp = (data, version = 'quickplay') => {
   if (data && data.player && data.stats && data.heroes) {
     let { player, stats, heroes } = data
     player.region = player.platform == 'pc' ? player.region : 'n/a'
+    var level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
     let out = {
       attachments: [{
-        "fallback": `Overwatch Stats for ${player.battletag}, Level: ${player.rank || ''}${player.level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
+        "fallback": `Overwatch Stats for ${player.battletag}, Level: ${level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
         "mrkdwn_in": ["fields"],
         "color": "#ff9c00",
         "author_name": `${player.battletag} (${player.region.toUpperCase()}) (${capitalize(version)})`,
@@ -139,7 +141,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "short": true
     }, {
       "title": "Level",
-      "value": `${player.rank || ''}${player.level}`,
+      "value": level,
       "short": true
     }, {
       "title": "Games Played",
