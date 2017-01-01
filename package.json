@@ -15,7 +15,8 @@
   "scripts": {
     "forever": "forever start -a -o out.log -e err.log -m 1 index.js",
     "debug": "gulp build && node-debug build/sloth.js",
-    "start": "gulp start-dev",
+    "dev": "gulp start-dev",
+    "start": "gulp build && set NODE_ENV=production&& node index.js",
     "build": "gulp build"
   },
   "repository": {
