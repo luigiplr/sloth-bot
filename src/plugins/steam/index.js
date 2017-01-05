@@ -91,86 +91,85 @@ const formatTimeCreated = time => {
 }
 
 const generateProfileResponse = (profile => {
-  if (profile) {
-    const realname = profile.realname ? `(${profile.realname})` : ''
-    const status = profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)
-    let msg = [
-      `*Profile Name:* ${profile.personaname} ${realname}`,
-      `*Level:* ${profile.user_level} | *Status:* ${status}`,
-      `*Joined Steam:* ${formatTimeCreated(profile.timecreated)}`,
-      `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
-      profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
-      profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
-    ]
-    const out = {
-      attachments: [{
-        "mrkdwn_in": ["text"],
-        "author_name": profile.personaname,
-        "author_icon": profile.avatar,
-        "author_link": profile.profileurl,
-        "color": "#14578b",
-        "text": msg.filter(Boolean).join('\n'),
-        "fallback": msg.filter(Boolean).join(' | ').replace(/[\*\_]/g, '')
-      }]
-    }
-    return out
-  } else return 'Error fetching profile info'
+  if (!profile) return 'Error fetching profile info'
+  const realname = profile.realname ? `(${profile.realname})` : ''
+  const status = profile.gameextrainfo ? `In-Game ${profile.gameextrainfo} (${profile.gameid})` : getPersonaState(profile.personastate)
+  let msg = [
+    `*Profile Name:* ${profile.personaname} ${realname}`,
+    `*Level:* ${profile.user_level} | *Status:* ${status}`,
+    `*Joined Steam:* ${formatTimeCreated(profile.timecreated)}`,
+    `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
+    profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
+    profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
+  ]
+
+  const out = {
+    attachments: [{
+      "mrkdwn_in": ["text"],
+      "author_name": profile.personaname,
+      "author_icon": profile.avatar,
+      "author_link": profile.profileurl,
+      "color": "#14578b",
+      "text": msg.filter(Boolean).join('\n'),
+      "fallback": msg.filter(Boolean).join(' | ').replace(/[\*\_]/g, '')
+    }]
+  }
+  return out
 })
 
 const generateAppDetailsResponse = ((app, cc = 'US') => {
-  if (app) {
-    let price = getPriceForApp(app)
-    let date = getDateForApp(app)
+  if (!app) return `Error: App: *${app.name}* _(${app.steam_appid})_ isn't a valid game`
+  let price = getPriceForApp(app)
+  let date = getDateForApp(app)
 
-    let out = {
-      attachments: [{
-        "fallback": `${app.name} (${app.steam_appid}) | Cost: ${price} | Current Players: ${app.player_count ? formatNumber(app.player_count) : null}`,
-        "image_url": app.header_image,
-        "mrkdwn_in": ["text", "pretext", "fields"],
-        "color": "#14578b",
-        "pretext": `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_ _(${cc.toUpperCase()})_`
-      }]
-    }
+  let out = {
+    attachments: [{
+      "fallback": `${app.name} (${app.steam_appid}) | Cost: ${price} | Current Players: ${app.player_count ? formatNumber(app.player_count) : null}`,
+      "image_url": app.header_image,
+      "mrkdwn_in": ["text", "pretext", "fields"],
+      "color": "#14578b",
+      "pretext": `*<http://store.steampowered.com/app/${app.steam_appid}|${app.name}>* _(${app.steam_appid})_ _(${cc.toUpperCase()})_`
+    }]
+  }
 
-    out.attachments[0].fields = filter([{
-      "title": "Cost",
-      "value": price || null,
-      "short": true
-    }, {
-      "title": "Real Cost",
-      "value": (AUDRate && cc.toUpperCase() == 'AU') ? '~$' + formatCurrency((app.price_overview.final / 100) * AUDRate, 'AUD') : null,
-      "short": true
-    }, {
-      "title": app.release_date ? (app.release_date.coming_soon ? "Release Date" : "Released") : null,
-      "value": date || null,
-      "short": true
-    }, {
-      "title": "Type",
-      "value": capitalize(app.type),
-      "short": true
-    }, {
-      "title": "Genres",
-      "value": app.genres ? (app.genres.slice(0, 3).map(g => g.description).sort().join(', ')) : null,
-      "short": true
-    }, {
-      "title": "Current Players",
-      "value": app.player_count ? formatNumber(app.player_count) : null,
-      "short": true
-    }, {
-      "title": 'Developers',
-      "value": app.developers ? (truncate(app.developers.join(', '), { length: 40 })) : null,
-      "short": true
-    }, {
-      "title": "Metacritic",
-      "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : null,
-      "short": true
-    }, {
-      "title": "Demo",
-      "value": app.demos ? 'Demos available' : null,
-      "short": true
-    }], 'value')
-    return out
-  } else return `Error: App: *${app.name}* _(${app.steam_appid})_ isn't a valid game`
+  out.attachments[0].fields = filter([{
+    "title": "Cost",
+    "value": price || null,
+    "short": true
+  }, {
+    "title": "Real Cost",
+    "value": (AUDRate && cc.toUpperCase() == 'AU') ? '~$' + formatCurrency((app.price_overview.final / 100) * AUDRate, 'AUD') : null,
+    "short": true
+  }, {
+    "title": app.release_date ? (app.release_date.coming_soon ? "Release Date" : "Released") : null,
+    "value": date || null,
+    "short": true
+  }, {
+    "title": "Type",
+    "value": capitalize(app.type),
+    "short": true
+  }, {
+    "title": "Genres",
+    "value": app.genres ? (app.genres.slice(0, 3).map(g => g.description).sort().join(', ')) : null,
+    "short": true
+  }, {
+    "title": "Current Players",
+    "value": app.player_count ? formatNumber(app.player_count) : null,
+    "short": true
+  }, {
+    "title": 'Developers',
+    "value": app.developers ? (truncate(app.developers.join(', '), { length: 40 })) : null,
+    "short": true
+  }, {
+    "title": "Metacritic",
+    "value": (app.metacritic && app.metacritic.score) ? app.metacritic.score : null,
+    "short": true
+  }, {
+    "title": "Demo",
+    "value": app.demos ? 'Demos available' : null,
+    "short": true
+  }], 'value')
+  return out
 })
 
 const generatePlayersResponse = app => `There are currently *${formatNumber(app.player_count)}* people playing _${app.name}_ right now`
@@ -198,8 +197,6 @@ const getDateForApp = app => {
 
 const getPersonaState = (state => {
   switch (state) {
-    case 0:
-      return 'Offline'
     case 1: //Online
     case 2: //Busy
     case 3: //Away
@@ -207,6 +204,8 @@ const getPersonaState = (state => {
     case 5: //Looking to trade
     case 6: //Looking to play
       return 'Online'
+    default: // 0
+      return 'Offline'
   }
 })
 
