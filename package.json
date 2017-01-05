@@ -7,11 +7,13 @@
     "email": "luigipoole@outlook.com",
     "url": "https://github.com/luigiplr"
   },
-  "contributors": [{
-    "name": "Js41637",
-    "email": "js41637@gmail.com",
-    "url": "https://github.com/js41637"
-  }],
+  "contributors": [
+    {
+      "name": "Js41637",
+      "email": "js41637@gmail.com",
+      "url": "https://github.com/js41637"
+    }
+  ],
   "scripts": {
     "forever": "forever start -a -o out.log -e err.log -m 1 index.js",
     "debug": "gulp build && node-debug build/sloth.js",
@@ -32,6 +34,7 @@
     "@slack/client": "^3.6.0",
     "async": "^2.0.1",
     "bluebird": "^3.4.6",
+    "caniuse-api": "^1.5.2",
     "cleverbot-node": "^0.2.2",
     "codepad": "^0.1.1",
     "createreadupdatedelete.js": "^0.8.0",
