@@ -108,6 +108,7 @@ const generateProfileResponse = (profile => {
         "author_name": profile.personaname,
         "author_icon": profile.avatar,
         "author_link": profile.profileurl,
+        "color": "#14578b",
         "text": msg.filter(Boolean).join('\n'),
         "fallback": msg.filter(Boolean).join(' | ').replace(/[\*\_]/g, '')
       }]
