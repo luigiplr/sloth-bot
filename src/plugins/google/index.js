@@ -3,19 +3,7 @@ import ytSearch from 'youtube-search'
 import needle from 'needle'
 import config from '../../../config.json'
 
-const ytOpts = {
-  maxResults: 1,
-  key: config.googleAPIKey,
-  type: 'video',
-  videoEmbeddable: true,
-  safeSearch: 'none'
-}
-
 export const plugin_info = [{
-  alias: ['g', 'google'],
-  command: 'bingSearch',
-  usage: 'google <query> - returns first google result for query'
-}, {
   alias: ['yt', 'youtube'],
   command: 'youtubeSearch',
   usage: 'youtube <query> - returns first youtube result for query'
@@ -24,6 +12,14 @@ export const plugin_info = [{
   command: 'googleImage',
   usage: 'googleimage <query> - returns random image for query'
 }]
+
+const ytOpts = {
+  maxResults: 1,
+  key: config.googleAPIKey,
+  type: 'video',
+  videoEmbeddable: true,
+  safeSearch: 'none'
+}
 
 export function googleImage(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -43,23 +39,6 @@ export function googleImage(user, channel, input) {
         console.error(`googleImgError: ${err || body.error.message}`)
         reject(`googleImgError: ${err || body.error.message}`)
       }
-    })
-  })
-}
-
-export function bingSearch(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: google <query> - Returns the first Google result for query' })
-    if (!config.bingAPIKey) return reject('Bing API Key required to use this function')
-
-    let url = `https://api.cognitive.microsoft.com/bing/v5.0/search?q=${input}&count=1&safesearch=Off`
-    let headers = { headers: { 'Ocp-Apim-Subscription-Key': config.bingAPIKey } }
-
-    needle.get(url, headers, (err, resp, body) => {
-      if (!err && !body.error && body.webPages) {
-        let result = body.webPages.value[0]
-        return resolve({ type: 'channel', message: `${result.name} - ${result.snippet} - ${unescape(result.url.split('&r=')[1].split('&p=')[0])}` })
-      } else return reject(err || body.error)
     })
   })
 }
