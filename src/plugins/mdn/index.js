@@ -1,5 +1,6 @@
 import Promise from 'bluebird'
 import scrapeMDN from 'scrape-mdn'
+import { find } from 'lodash'
 
 export const plugin_info = [{
   alias: ['mdn'],
@@ -14,7 +15,7 @@ export function mdn(user, channel, input) {
 
     scrapeMDN.search(query).then(results => {
       if (!results || !results[0]) return reject("Nothing found for that query")
-      const { url, title, description } = results[0]
+      const { url, title, description } = find(results, result => result.title === query) || results[0]
       let attachment = {
         attachments: [{
           author_name: 'Mozilla Developer Network',

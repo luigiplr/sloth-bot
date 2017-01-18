@@ -13,9 +13,9 @@ export function lodash(user, channel, input) {
 
     let method = input == '_' ? input : input.replace('_.', '').replace('_', '')
     if (lodashFunctions[method.toLowerCase()]) {
-      let cmd = lodashFunctions[method.toLowerCase()]
-      if (cmd.dontShow) return resolve({ type: channel, messages: [`<https://lodash.com/docs#${cmd.name}|lodash.com/docs#${cmd.name}>`] })
-      let msg = [`*Method:* _.${cmd.name}`,
+      let cmd = lodashFunctions[method.toLowerCase()];
+      let msg = cmd.dontShow ? [`<https://lodash.com/docs#${cmd.name}|lodash.com/docs#${cmd.name}>`] : [
+        `*Method:* _.${cmd.name}`,
         `*Command:* \`${cmd.command}\``,
         `*Since:* ${cmd.since}`,
         `*Description:* ${cmd.description}`,
