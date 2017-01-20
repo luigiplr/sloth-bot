@@ -76,27 +76,30 @@ class Slack extends RtmClient {
           else channel = channel.id.startsWith('D') ? channel : this.dataStore.getDMByName(user.name)
         }
 
-        console.log("OUT", channel.name ? channel.name : this.dataStore.users[channel.user].name + ':', (response.message ? response.message : response.messages))
+        let msg = response.messages ? response.messages.join('\n') : response.message
+        console.log("OUT", channel.name ? channel.name : this.dataStore.users[channel.user].name + ':', msg)
 
         if (response.message && response.message.attachments) {
           this._sendMessage(response.message.msg, channel.id, thread_ts, response.message.attachments, response.options)
         } else {
-          if (response.messages && response.multiLine) response.messages.forEach(message => this[`${thread_ts ? '_' : ''}sendMessage`](message, channel.id, thread_ts))
-          else if (response.messages) this._sendMessage(response.messages.join('\n'), channel.id, thread_ts, undefined, response.options)
-          else this._sendMessage(response.message, channel.id, thread_ts, undefined, response.options)
+          this._sendMessage(msg, channel.id, thread_ts, undefined, response.options)
         }
       }).catch(err => {
         if (!err) return
         console.error(`parseMsg Error: ${err}`)
-        if (typeof err === 'string') this[`${thread_ts ? '_' : ''}sendMessage`](err, channel.id, thread_ts)
+        if (typeof err === 'string') this._sendMessage(err, channel.id, thread_ts)
         else throw(err)
       })
     }
   }
 
+  // Custom sendMessage function to send through RTM or API
   _sendMessage(text, channel, thread_ts, attachments = [], options = {}) {
-    if (!attachments.length && !Object.keys(options).length && options !== true && !thread_ts) return this.sendMessage(text, channel)
-    console.log("Sending custom message")
+    // If we don't have any attachments or options and there is no thread_ts, send the message through RTM
+    if (!attachments.length && !Object.keys(options).length && options !== true && !thread_ts) {
+      this.sendMessage(text, channel)
+      return
+    }
     needle.post("https://slack.com/api/chat.postMessage", Object.assign({}, {
       channel, thread_ts, text,
       token: config.slackBotToken,
