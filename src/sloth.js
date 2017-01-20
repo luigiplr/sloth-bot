@@ -60,8 +60,9 @@ class Slack extends RtmClient {
   _handleMessage(message) {
     const user = this.dataStore.getUserById(message.user)
     let channel = this.dataStore.getChannelGroupOrDMById(message.channel)
-    const { text, ts, subtype, type } = message
+    const { text, ts, subtype, type, thread_ts } = message
     if (type === 'message' && text && channel && !subtype) {
+      if (config.logMessages) console.log(`#${channel.name || user.name || 'Unknown'}: ${text}`)
       parseMsg(user, channel, text, ts).then(response => {
         if (!response) return
 
@@ -78,30 +79,29 @@ class Slack extends RtmClient {
         console.log("OUT", channel.name ? channel.name : this.dataStore.users[channel.user].name + ':', (response.message ? response.message : response.messages))
 
         if (response.message && response.message.attachments) {
-          this._sendMessage(response.message.msg, channel.id, response.message.attachments, response.options)
+          this._sendMessage(response.message.msg, channel.id, thread_ts, response.message.attachments, response.options)
         } else {
-          if (response.messages && response.multiLine) response.messages.forEach(message => this.sendMessage(message, channel.id))
-          else if (response.messages) this._sendMessage(response.messages.join('\n'), channel.id, undefined, response.options)
-          else this._sendMessage(response.message, channel.id, undefined, response.options)
+          if (response.messages && response.multiLine) response.messages.forEach(message => this[`${thread_ts ? '_' : ''}sendMessage`](message, channel.id, thread_ts))
+          else if (response.messages) this._sendMessage(response.messages.join('\n'), channel.id, thread_ts, undefined, response.options)
+          else this._sendMessage(response.message, channel.id, thread_ts, undefined, response.options)
         }
       }).catch(err => {
         if (!err) return
         console.error(`parseMsg Error: ${err}`)
-        if (typeof err === 'string') this.sendMessage(err, channel.id)
+        if (typeof err === 'string') this[`${thread_ts ? '_' : ''}sendMessage`](err, channel.id, thread_ts)
         else throw(err)
       })
     }
   }
 
-  _sendMessage(text, channelID, attachments = [], options = {}) {
-    if (!attachments.length && !Object.keys(options).length && options !== true) return this.sendMessage(text, channelID)
+  _sendMessage(text, channel, thread_ts, attachments = [], options = {}) {
+    if (!attachments.length && !Object.keys(options).length && options !== true && !thread_ts) return this.sendMessage(text, channel)
     console.log("Sending custom message")
     needle.post("https://slack.com/api/chat.postMessage", Object.assign({}, {
-      channel: channelID,
+      channel, thread_ts, text,
       token: config.slackBotToken,
-      as_user: true,
-      attachments: typeof attachments == 'string' ? attachments : JSON.stringify(attachments),
-      text
+      as_user: options.as_user || true,
+      attachments: typeof attachments == 'string' ? attachments : JSON.stringify(attachments)
     }, options), (err, resp, body) => {
       if (err || !body.ok) console.error("_sendMessageError", err, body)
     })
