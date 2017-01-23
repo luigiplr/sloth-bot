@@ -1,11 +1,11 @@
 import Promise from 'bluebird'
-import { kick, deleteLastMessage, enableOrDisableUser } from './utils/slack'
+import { kick, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
 import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache } from '../../slack.js'
-import { InviteUsers } from '../../database'
 import moment from 'moment'
 import { filter } from 'lodash'
 import perms from '../../permissions'
 import config from '../../../config.json'
+import { InviteUsers } from '../../database'
 
 export const plugin_info = [{
   alias: ['kick'],
@@ -104,16 +104,10 @@ export function whoInvited(user, channel, input) {
     if (!input) return resolve({ type: 'dm', message: "Usage: whoinvited <user> - Returns information for who invited user if it's available" })
     user = findUser(input)
     if (!user) return reject("Found no user by that name")
-    InviteUsers.findOneByInvitedUser(user.name).then(resp => {
-      if (resp) return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
-
-      InviteUsers.findOneByEmail(user.profile.email).then(resp => {
-        if (!resp) return reject("I don't have invite data for this user :(")
-        resp.invitedUser = user.name
-        resp.Persist()
-        return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
-      })
-    })
+    getInviteForUser(user).then(resp => {
+      if (!resp) return reject("I don't have invite data for this user :(")
+      return resolve({ type: 'channel', message: `_${resp.invitedUser}_ was invited by *${resp.inviter}* ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` })
+    }).catch(reject)
   })
 }
 
@@ -216,7 +210,7 @@ export function whois(user, channel, input) {
     if (!u) return reject("Couldn't find a user matching input")
 
     let p = perms.getAll
-    InviteUsers.findOneByInvitedUser(u.name).then(resp => {
+    getInviteForUser(u).then(resp => {
       let invited = resp ? `- They were invited by ${resp.inviter} ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` : "- I don't know when they were invited to the team"
 
       let name = `*${u.name}* ${u.real_name ? 'or otherwise known as ' + u.real_name : ''}`
@@ -227,7 +221,7 @@ export function whois(user, channel, input) {
       let ignored = p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null
       let botAdmin = p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
 
-      return resolve(filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n'))
+      return resolve({ type: 'channel', message: filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n') })
     })
   })
 }
@@ -272,7 +266,7 @@ export function reconnect(user, channel, input) {
         enableOrDisableUser(1, u).then(() => {
           return resolve("Dun")
         }).catch(reject)
-      }, 4500);
+      }, 5000);
     }).catch(reject)
   })
 }

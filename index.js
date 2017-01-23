@@ -15,7 +15,7 @@ var errors = 0;
 // Override default log function to add timestamps
 ["log", "error"].forEach(function(method) {
   let oldMethod = console[method].bind(console)
-  console[method] = function() { oldMethod.apply(console, [`<${moment().format('YY-MM-DD HH:mm:ssSS')}>`, ...arguments]) }
+  console[method] = function() { oldMethod.apply(console, [`<${moment().format('YY-MM-DD HH:mm:ssSSS')}>`, ...arguments]) }
 })
 
 // Reboot the bot on crashes

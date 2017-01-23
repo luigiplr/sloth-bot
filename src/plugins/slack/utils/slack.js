@@ -4,6 +4,21 @@ import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, s
 import config from '../../../../config.json'
 import request from 'request'
 import moment from 'moment'
+import { InviteUsers } from '../../../database'
+
+export function getInviteForUser(user) {
+  return new Promise(resolve => {
+    InviteUsers.findOneByInvitedUser(user.name).then(u => {
+      if (u) return resolve(u)
+      InviteUsers.findOneByEmail(user.profile.email).then(data => {
+        if (!data) return resolve(false)
+        data.invitedUser = user.name
+        data.Persist()
+        return resolve(data)
+      })
+    })
+  })
+}
 
 export function kick(user, channel, input) {
   return new Promise((resolve, reject) => {
