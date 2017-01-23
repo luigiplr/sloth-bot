@@ -7,3 +7,5 @@ npm-debug.log
 schema-version.json
 databases
 config.js
+err.log
+out.log
