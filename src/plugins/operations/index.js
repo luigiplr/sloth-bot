@@ -70,25 +70,25 @@ export function uptime() {
 
 export function update(user, channel, input) {
   return new Promise((resolve, reject) => {
-    let updatecmd = 'git pull && npm run build'
-
     if (updating) return reject('Update already in process')
-
     sendMessage(channel.id, 'Updating...')
-
     updating = true;
-    execCmd(updatecmd, { timeout: 60000 }, (error, stdout, stderr) => {
-      updating = false
-      if (!error && stdout) {
-        if (config.debugChannel) sendMessage(config.debugChannel, '```' + stdout + '```')
-        if (stdout.indexOf('Already up-to-date') > -1) return reject("Repo is already up-to-date")
-        if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Executing script: build") > -1) {
-          if (input == 1) {
-            this.restart();
-            return resolve({ type: 'channel', message: "Successfully fetched and installed new updates, restarting" })
-          } else return resolve({ type: 'channel', message: "Successfully fetched and installed new updates" })
-        } else return reject("Possible error while fetching and installing new updates?");
-      } else return reject("Error while fetching and installing updates ```" + stdout + stderr + error + '```')
+    execCmd('git pull', { timeout: 30000 }, (error1, stdout1, stderr1) => {
+      if (!error1 && stdout1) {
+        if (stdout1.indexOf('Already up-to-date') > -1) return reject("Repo is already up-to-date")
+        execCmd('npm run build', { timeout: 30000 }, (error, stdout, stderr) => {
+          updating = false
+          if (!error && stdout) {
+            if (config.debugChannel) sendMessage(config.debugChannel, '```' + stdout + '```')
+            if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Executing script: build") > -1) {
+              if (!input) {
+                this.restart()
+                return resolve({ type: 'channel', message: "Successfully fetched and installed new updates, restarting" })
+              } else return resolve({ type: 'channel', message: "Successfully fetched and installed new updates" })
+            } else return reject("Possible error while fetching and installing new updates?");
+          } else return reject("Error while fetching and installing updates ```" + stdout + stderr + error + '```')
+        })
+      } else return reject("Error pulling updates ```" + stdout1 + stderr1 + error1 + '```')
     })
   })
 }
