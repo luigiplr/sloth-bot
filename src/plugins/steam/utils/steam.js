@@ -122,7 +122,7 @@ export function getAppInfo(appid, cc = 'US', playersOnly) {
   return new Promise((resolve, reject) => {
     const isAppID = appid.match(/^\d+$/)
     searchForApp(appid, isAppID).then(id => {
-      Promise.all([getAppDetails(id, cc), getPlayersForApp(id)], ([app, players]) => {
+      Promise.all([getAppDetails(id, cc), getPlayersForApp(id)]).then(([app, players]) => {
         if (playersOnly) {
           players.name = app.name
           return resolve(players)
