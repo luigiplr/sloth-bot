@@ -82,7 +82,7 @@ export function update(user, channel, input) {
       if (!error && stdout) {
         if (config.debugChannel) sendMessage(config.debugChannel, '```' + stdout + '```')
         if (stdout.indexOf('Already up-to-date') > -1) return reject("Repo is already up-to-date")
-        if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Finished 'build'") > -1) {
+        if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Executing script: build") > -1) {
           if (input == 1) {
             this.restart();
             return resolve({ type: 'channel', message: "Successfully fetched and installed new updates, restarting" })
