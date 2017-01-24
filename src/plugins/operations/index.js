@@ -72,10 +72,13 @@ export function update(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (updating) return reject('Update already in process')
     sendMessage(channel.id, 'Updating...')
-    updating = true;
+    updating = true
     execCmd('git pull', { timeout: 30000 }, (error1, stdout1, stderr1) => {
       if (!error1 && stdout1) {
-        if (stdout1.indexOf('Already up-to-date') > -1) return reject("Repo is already up-to-date")
+        if (stdout1.indexOf('Already up-to-date') > -1) {
+          updating = false
+          return reject("Repo is already up-to-date")
+        }
         execCmd('npm run build', { timeout: 30000 }, (error, stdout, stderr) => {
           updating = false
           if (!error && stdout) {
