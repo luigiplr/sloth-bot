@@ -16,7 +16,7 @@ export const plugin_info = [{
   usage: 'shutdown',
   userLevel: ['superadmin']
 }, {
-  alias: ['restart'],
+  alias: ['restart', 'reboot'],
   command: 'restart',
   usage: 'restart',
   userLevel: ['admin', 'superadmin']
@@ -83,12 +83,10 @@ export function update(user, channel, input) {
           updating = false
           if (!error && stdout) {
             if (config.debugChannel) sendMessage(config.debugChannel, '```' + stdout + '```')
-            if (stdout.indexOf('Updating') === 0 && stdout.indexOf("Executing script: build") > -1) {
-              if (!input) {
-                this.restart()
-                return resolve({ type: 'channel', message: "Successfully fetched and installed new updates, restarting" })
-              } else return resolve({ type: 'channel', message: "Successfully fetched and installed new updates" })
-            } else return reject("Possible error while fetching and installing new updates?");
+            if (!input) {
+              this.restart()
+              return resolve({ type: 'channel', message: "Successfully fetched and installed new updates, restarting" })
+            } else return resolve({ type: 'channel', message: "Successfully fetched and installed new updates" })
           } else return reject("Error while fetching and installing updates ```" + stdout + stderr + error + '```')
         })
       } else return reject("Error pulling updates ```" + stdout1 + stderr1 + error1 + '```')
