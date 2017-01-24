@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { includes } from 'lodash'
 import permissions from '../../../permissions'
 import { findUser } from '../../../slack'

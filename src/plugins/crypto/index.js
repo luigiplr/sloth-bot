@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { slice, includes } from 'lodash'
 import crypto from 'crypto'
 

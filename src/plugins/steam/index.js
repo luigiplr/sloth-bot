@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import needle from 'needle'
 import { filter, capitalize, truncate } from 'lodash'
 import { getProfileInfo, getAppInfo, getSteamIDInfo } from './utils/steam'

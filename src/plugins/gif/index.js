@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import Giphy from 'giphy'
 
 const giphy = new Giphy('dc6zaTOxFJmzC')

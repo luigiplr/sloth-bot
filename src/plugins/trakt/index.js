@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { filter, truncate, capitalize, floor } from 'lodash'
 import moment from 'moment'
 import config from '../../../config.json'

@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import needle from 'needle'
 import _ from 'lodash'
 import moment from 'moment'

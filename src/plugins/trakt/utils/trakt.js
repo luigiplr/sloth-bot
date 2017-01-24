@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import needle from 'needle'
 
 const token = require('./../../../../config.json').traktAPIKey

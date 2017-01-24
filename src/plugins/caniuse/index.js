@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { map } from 'lodash'
 var canIUse = require('caniuse-api')
 

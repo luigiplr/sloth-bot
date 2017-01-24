@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import ytSearch from 'youtube-search'
 import needle from 'needle'
 import config from '../../../config.json'

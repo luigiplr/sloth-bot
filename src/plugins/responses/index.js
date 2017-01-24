@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import ateball from 'eightball'
 import nodeMorse from 'morse-node'
 import spinsult from 'shakespeare-insult'

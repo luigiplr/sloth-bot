@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import permissions from '../../permissions'
 import permsUtil from './utils/permUtil'
 

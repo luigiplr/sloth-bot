@@ -10,6 +10,13 @@
 var cluster = require('cluster');
 var moment = require('moment');
 
+global.__DEVELOPMENT__ = process.env.NODE_ENV !== 'production'
+
+if (__DEVELOPMENT__) {
+  require('piping')()
+}
+
+
 var errors = 0;
 
 // Override default log function to add timestamps
@@ -40,5 +47,5 @@ if (cluster.isMaster) {
     }
   });
 } else {
-  module.exports = require('./build/sloth.js');
+  module.exports = require(__DEVELOPMENT__ ? './src/sloth.js' : './build/sloth.js');
 }

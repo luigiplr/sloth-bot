@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import MetaInspector from 'node-metainspector'
 
 export const plugin_info = [{

@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import _ from 'lodash'
 import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, setInactive, setRegular, updateUsersCache, usersCache } from '../../../slack.js';
 import config from '../../../../config.json'

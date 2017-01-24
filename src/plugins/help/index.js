@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { flatten } from 'lodash'
 import config from '../../../config.json'
 import { sendMessage } from '../../slack'

@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import scrapeMDN from 'scrape-mdn'
 import { find } from 'lodash'
 

@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { getQuote, grabQuote } from './utils/quote'
 
 export const plugin_info = [{

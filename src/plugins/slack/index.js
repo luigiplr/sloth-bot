@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { kick, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
 import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache } from '../../slack.js'
 import moment from 'moment'

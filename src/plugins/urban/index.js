@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { unescape } from 'lodash'
 import Urban from 'urban'
 

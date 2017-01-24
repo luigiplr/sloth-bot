@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import lodashFunctions from './utils/lodash'
 
 export const plugin_info = [{

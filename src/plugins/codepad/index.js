@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { unescape } from 'lodash'
 import codepad from 'codepad'
 import striptags from 'striptags'

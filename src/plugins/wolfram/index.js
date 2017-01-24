@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { query } from './utils/wolfram'
 
 export const plugin_info = [{

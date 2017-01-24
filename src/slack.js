@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { forEach, delay, find, get } from 'lodash'
 import needle from 'needle'
 import config from '../config.json'

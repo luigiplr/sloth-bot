@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { find } from 'lodash'
 import permissions from './permissions'
 import config from '../config.json'

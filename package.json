@@ -15,11 +15,36 @@
     }
   ],
   "scripts": {
-    "forever": "NODE_ENV=production forever start -a -o out.log -e err.log -m 1 index.js",
-    "debug": "gulp build && node-debug build/sloth.js",
-    "dev": "gulp start-dev",
-    "start": "gulp build && set NODE_ENV=production&& node index.js",
-    "build": "gulp build"
+    "dev": "better-npm-run start-dev",
+    "build": "better-npm-run build",
+    "start": "better-npm-run start",
+    "forever": "better-npm-run forever"
+  },
+  "betterScripts": {
+    "start-dev": {
+      "command": "node -r babel-register ./index.js",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "build": {
+      "command": "babel src --out-dir build",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "start": {
+      "command": "node ./build/sloth.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "forever": {
+      "command": "forever start -a -o out.log -e err.log -m 1 index.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
   },
   "repository": {
     "type": "git",
@@ -33,7 +58,6 @@
   "dependencies": {
     "@slack/client": "^3.8.1",
     "async": "^2.1.4",
-    "bluebird": "^3.4.7",
     "caniuse-api": "^1.5.2",
     "cleverbot-node": "^0.2.5",
     "codepad": "^0.1.1",
@@ -57,18 +81,12 @@
     "youtube-search": "^1.0.7"
   },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "^6.21.0",
     "babel-preset-node6": "^11.0.0",
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.11.6",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-develop-server": "^0.5.2",
-    "gulp-nodemon": "^2.1.0",
-    "gulp-plumber": "^1.1.0",
-    "gulp-rimraf": "^0.2.1",
-    "gulp-util": "^3.0.8",
-    "rimraf": "^2.5.4",
-    "run-sequence": "^1.2.2"
+    "better-npm-run": "0.0.13",
+    "piping": "^1.0.0-rc.4"
   }
 }

@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { includes } from 'lodash'
 import MetaInspector from 'node-metainspector'
 import moment from 'moment'

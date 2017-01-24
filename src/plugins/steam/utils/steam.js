@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { capitalize, get } from 'lodash'
 import needle from 'needle'
 import SteamID from 'steamid'
@@ -98,7 +97,7 @@ export function getProfileInfo(id) {
   return new Promise((resolve, reject) => formatProfileID(id).then(newID => needle.get(getUrl('profileSummary', newID), (err, resp, body) => {
     if (!err && body) {
       let profile = body.response.players[0];
-      Promise.join(getUserLevel(newID), getUserBans(newID), getUserGames(newID), (level, bans, games) => {
+      Promise.all([getUserLevel(newID), getUserBans(newID), getUserGames(newID)]).then(([level, bans, games]) => {
         profile.user_level = level
         profile.bans = bans
         profile.totalgames = games.game_count || '0'
@@ -123,7 +122,7 @@ export function getAppInfo(appid, cc = 'US', playersOnly) {
   return new Promise((resolve, reject) => {
     const isAppID = appid.match(/^\d+$/)
     searchForApp(appid, isAppID).then(id => {
-      Promise.join(getAppDetails(id, cc), getPlayersForApp(id), (app, players) => {
+      Promise.all([getAppDetails(id, cc), getPlayersForApp(id)], ([app, players]) => {
         if (playersOnly) {
           players.name = app.name
           return resolve(players)

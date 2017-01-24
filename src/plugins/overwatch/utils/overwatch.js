@@ -1,6 +1,5 @@
-import Promise from 'bluebird'
 import needle from 'needle'
-import {get } from 'lodash'
+import { get } from 'lodash'
 
 const apiUrl = 'https://owapi-1368.appspot.com/api/u'
 

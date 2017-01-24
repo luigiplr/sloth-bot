@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { sendMessage } from '../../slack'
 import moment from 'moment'
 import config from '../../../config.json'

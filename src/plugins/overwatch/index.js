@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch.js'
 import { filter, capitalize, isEmpty, uniq, compact } from 'lodash'
 

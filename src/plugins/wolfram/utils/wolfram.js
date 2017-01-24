@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import needle from 'needle'
 import config from '../../../../config.json'
 import { result } from 'lodash'

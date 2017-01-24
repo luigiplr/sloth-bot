@@ -1,5 +1,3 @@
-import Promise from 'bluebird'
-
 export const plugin_info = [{
   alias: ['rip', 'gravestone'],
   command: 'rip',
