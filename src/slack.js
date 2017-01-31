@@ -70,7 +70,7 @@ export function sendPMThroughSlackbot(channel, input) {
  * @return array of messages
  */
 export function getHistory(channel, limit = 100) {
-  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] == 'C' ? 'channels.history' : 'groups.history'}`, {
+  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] == 'C' ? 'channels.history' : channel[0] == 'G' ? 'groups.history' : 'im.history'}`, {
     channel: channel,
     token: config.slackBotToken,
     count: limit
@@ -103,9 +103,10 @@ export function kickUser(channel, user) {
  * @return user object
  */
 export function findUser(user) {
+  if (!user) return undefined
   let userID = user.slice(0, 2) == "<@" ? user.slice(2, -1).toUpperCase() : false
   let member = usersCache[userID ? userID : userNamesCache[user.toLowerCase()]]
-  return member
+  return member || usersCache[user]
 }
 
 /**

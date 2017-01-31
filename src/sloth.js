@@ -103,7 +103,7 @@ class Slack extends RtmClient {
     needle.post("https://slack.com/api/chat.postMessage", Object.assign({}, {
       channel, thread_ts, text,
       token: config.slackBotToken,
-      as_user: options.as_user || true,
+      as_user: true,
       attachments: typeof attachments == 'string' ? attachments : JSON.stringify(attachments)
     }, options), (err, resp, body) => {
       if (err || !body.ok) console.error("_sendMessageError", err, body)

@@ -1,7 +1,7 @@
 import { find } from 'lodash'
 import permissions from './permissions'
 import config from '../config.json'
-import { deleteMessage } from './slack'
+import { deleteMessage, getHistory, findUser } from './slack'
 import { getPlugins as plugins } from './plugins'
 
 const getUserlevel = user => {
@@ -19,6 +19,27 @@ export function parse(user, channel, text, ts) {
     if (permissions.muted.indexOf(username) > -1 && userLevel != 'superadmin') {
       deleteMessage(channel.id, ts)
       return resolve(false)
+    }
+
+    if (text.startsWith('s/')) {
+      var split = text.split('/')
+      if (split.length >= 3) {
+        var [, word, replacement, who] = split
+        who = who ? findUser(who) : undefined
+        getHistory(channel.id, 35).then(messages => {
+          var matchedMessage = find(messages, m => ((!who || (who && who.id == m.user && m.user !== config.botid && !m.bot_id)) && m.ts != ts && m.text && m.text.includes(word)))
+          if (!matchedMessage) return reject("Found no matching word in recent messages")
+          var rx = new RegExp(word, 'g')
+          var whoSaid = findUser(matchedMessage.user) || {}
+          var newMessage = matchedMessage.text.replace(rx, replacement)
+          return resolve({ type: 'channel', message: newMessage, options: {
+            as_user: false,
+            username: whoSaid.name,
+            icon_url: whoSaid.profile.image_72
+          }})
+        })
+      }
+      return
     }
 
     if (text.charAt(0) !== config.prefix) return resolve(false);
