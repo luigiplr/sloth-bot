@@ -28,8 +28,8 @@ export function parse(user, channel, text, ts) {
         who = who ? findUser(who) : undefined
         getHistory(channel.id, 35).then(messages => {
           var matchedMessage = find(messages, m => (
-            (!who || (who && who.id == m.user && m.user !== config.botid)) &&
-            !m.bot_id && m.ts != ts && m.text && m.text.includes(word)
+            (!who || (who && who.id == m.user)) &&
+            !m.bot_id && m.user !== config.botid && m.ts != ts && m.text && m.text.includes(word)
           ))
           if (!matchedMessage) return reject("Found no matching word in recent messages")
           var rx = new RegExp(word, 'g')
