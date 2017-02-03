@@ -44,13 +44,9 @@ const getSeasonInfo = serie => new Promise((resolve, reject) => {
 
 export function getMovieDetails(input) {
   return getShowORMovieWithSlughOrSearch(input, 'movie')
-          .then(Promise.resolve)
-          .catch(Promise.reject)
 }
 
 export function getSerieDetails(input) {
-  return getShowORMovieWithSlughOrSearch(input, 'serie')
-          .then(getSeasonInfo)
-          .then(Promise.resolve)
-          .catch(Promise.reject)
+  return getShowORMovieWithSlughOrSearch(input, 'serie').then(getSeasonInfo)
+
 }
