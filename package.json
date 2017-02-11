@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "dev": "better-npm-run start-dev",
+    "debug": "better-npm-run start-dev-inspector",
     "build": "better-npm-run build",
     "start": "better-npm-run start",
     "forever": "better-npm-run forever"
@@ -23,6 +24,12 @@
   "betterScripts": {
     "start-dev": {
       "command": "node -r babel-register ./index.js",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "start-dev-inspector": {
+      "command": "node --inspect -r babel-register ./index.js",
       "env": {
         "NODE_ENV": "development"
       }

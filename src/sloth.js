@@ -7,7 +7,7 @@ import { parse as parseMsg } from './parseMessage'
 var errors = 0
 var firstStart = true;
 
-const DEVMODE = process.argv[2] == '--dev' ? true : false
+const DEVMODE = process.env.NODE_ENV == 'development'
 
 if (!config.prefix || !config.slackAPIToken || !config.slackBotToken) {
   console.error("Invalid config, please fill in the first 3 required config fields")
