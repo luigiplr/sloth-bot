@@ -1,6 +1,7 @@
 import { sendMessage } from '../../slack'
 import moment from 'moment'
 import config from '../../../config.json'
+import fs from 'fs'
 import { exec as execCmd } from 'child_process'
 
 try {
@@ -37,7 +38,31 @@ export const plugin_info = [{
   alias: ['ip'],
   command: 'ip',
   userLevel: ['admin', 'superadmin']
+}, {
+  alias: 'config',
+  command: 'setConfig',
+  userLevel: ['superadmin']
 }]
+
+export function setConfig(user, channel, input = '') {
+  return new Promise((resolve, reject) => {
+    if (!config.viewConfigs || !config.viewConfigs.includes(user.id)) return reject("*Access DENIED!!1!111!!eleven!*")
+    const params = input.split(' ')
+    const key = params[0]
+    let value = params.slice(1).join(' ')
+
+    if (!key || !value) return reject("Usage: `config <key> <value>` - Updates config key with value")
+
+    try {
+      value = JSON.parse(value)
+    } catch(e) {} //eslint-disable-line
+
+    const oldValue = config[key]
+    config[key] = value
+
+    return resolve({ type: 'dm', message: `*New Value:* \`${JSON.stringify(value)}\` \`(${typeof value})\`\n*Old Value:* \`${JSON.stringify(oldValue)}\` \`(${typeof oldValue})\`` })
+  })
+}
 
 export function shutdown() {
   return new Promise(resolve => {
@@ -112,7 +137,7 @@ export function info() {
 export function ip(user) {
   return new Promise((resolve, reject) => {
     if (!getIP) return reject("Missing `external-ip` NPM Module")
-    if (!config.viewIP || !config.viewIP.includes(user.id)) return reject("*Access DENIED!!1!111!!eleven!*")
+    if (!config.viewConfigs || !config.viewConfigs.includes(user.id)) return reject("*Access DENIED!!1!111!!eleven!*")
     getIP()((err, ip) => {
       return resolve({ type: 'dm', message: err ? 'Unable to find IP :(' : `My IP is ${ip}`})
     })
