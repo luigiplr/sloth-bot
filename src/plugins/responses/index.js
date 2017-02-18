@@ -146,7 +146,7 @@ export function insult(user, channel, input) {
   return new Promise(resolve => {
     if (!input) return resolve({ type: 'channel', message: 'Who am I insulting?' })
 
-    new normalinsult((meanMessage) => resolve({ type: 'channel', message: `${input}: ${meanMessage}` }))
+    new normalinsult((meanMessage) => resolve({ type: 'channel', message: `${input}: ${meanMessage || 'you suk'}` }))
   })
 }
 
