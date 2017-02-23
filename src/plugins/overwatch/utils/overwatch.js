@@ -24,16 +24,11 @@ export function getUserInfo(user, region, platform) {
   }))
 }
 
-export function getUserStats(user, region, platform, getHeroes) {
+export function getUserStats(user, region, platform) {
   return new Promise((resolve, reject) => needle.get(getURL('stats', user, region, platform), (err, resp, body) => {
     if (!err && body) {
       if (!body.ok) return reject(`Error: ${body.error || ''} ${body.message || ''}`)
-      if (getHeroes) {
-        getHeroesPlaytime(user, region, platform).then(heroes => {
-          body.data.heroes = heroes
-          return resolve(body.data)
-        }).catch(reject)
-      } else return resolve(body.data)
+      return resolve(body.data)
     } else return reject(`getUserStatsErr: ${err}`)
   }))
 }

@@ -54,7 +54,7 @@ export function userInfo(user, channel, input) {
         }).catch(reject)
         break;
       case 'stats':
-        getUserStats(battletag, region, platform, true).then(stats => {
+        getUserStats(battletag, region, platform).then(stats => {
           if (!stats) return reject("Error: No stats returned?")
           return resolve({ type: 'channel', 'message': generateStatsResp(stats, version) })
         }).catch(reject)
@@ -90,7 +90,7 @@ const generateInfoResp = player => {
         `*Region*: ${player.region.toUpperCase()}`,
         `*Platform*: ${player.platform.toUpperCase()}`,
         `*Level*: ${level}`,
-        `*Competitive Rank*: ${player.comprank || 'None'}`
+        `*Competitive Rank*: ${player.comprank || 'None'} (${player.compteir || 'N/A'})`
       ].join('\n')
     }]
   }
@@ -98,7 +98,7 @@ const generateInfoResp = player => {
 }
 
 const generateHeroesResp = (heroes, battletag) => {
-  if (!heroes.quickplay && !heroes.competitive) return `${battletag} has no hero stats`
+  if (!heroes.quickplay.length && !heroes.competitive.length) return `${battletag} has no hero stats`
   return {
     attachments: [{
       "color": "#ff9c00",
@@ -118,13 +118,13 @@ const generateHeroesResp = (heroes, battletag) => {
 
 const generateStatsResp = (data, version = 'quickplay') => {
   data.stats = data.stats[version]
-  data.heroes = data.heroes[version]
-  if (version == 'competitive' && (!data.stats || !data.heroes)) return `I have no competitive stats for this user`
-  if (data && data.player && data.stats && data.heroes) {
-    let { player, stats, heroes } = data
+  if (version == 'competitive' && data.stats.is_empty) return `I have no competitive stats for this user`
+  if (data && data.player && data.stats) {
+    const { player, stats } = data
     player.region = player.platform == 'pc' ? player.region : 'n/a'
-    var level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
-    let out = {
+    const level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
+    const topHeroes = stats.playtimes.filter(h => h.time !== '0')
+    const out = {
       attachments: [{
         "fallback": `Overwatch Stats for ${player.battletag}, Level: ${level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
         "mrkdwn_in": ["fields"],
@@ -151,8 +151,8 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''}` : "Unknown",
       "short": true
     }, {
-      "title": `Top ${heroes.slice(0, 10).length} Heroes`,
-      "value": heroes ? heroes.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n') : "Unknown",
+      "title": `Top ${topHeroes.slice(0, 10).length} Heroes`,
+      "value": topHeroes.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n'),
       "short": true
     }, {
       "title": "Detailed Stats",
@@ -164,11 +164,11 @@ const generateStatsResp = (data, version = 'quickplay') => {
 }
 
 const generateHeroResp = (hero, version = 'quickplay', battletag) => {
-  hero.stats = hero[version]
-  if (version == 'competitive' && !hero.stats) return `I have no competitive stats for this hero`
+  hero.stats = hero.stats[version]
+  if (version == 'competitive' && hero.stats.is_empty) return `I have no competitive stats for this hero`
   if (hero.stats && hero.name) {
-    let { stats } = hero
-    let out = {
+    const { stats } = hero
+    const out = {
       attachments: [{
         "fallback": `Overwatch Data for ${hero.name}`,
         "mrkdwn_in": ["text", "fields"],
@@ -182,7 +182,7 @@ const generateHeroResp = (hero, version = 'quickplay', battletag) => {
       "short": true
     }, {
       "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate + '%)' : ''} ${stats.overall_stats.games ? 'out of ' + stats.overall_stats.games + ' games': ''}` : "Unknown",
+      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''} ${stats.overall_stats.games ? 'out of ' + stats.overall_stats.games + ' games': ''}` : "Unknown",
       "short": true
     }, {
       "title": "Detailed Stats",
