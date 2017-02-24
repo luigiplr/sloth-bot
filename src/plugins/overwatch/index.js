@@ -28,10 +28,10 @@ export function userInfo(user, channel, input) {
     if (!input) return resolve({ type: 'dm', messages: usage })
 
     const split = input.split(' ')
-    if (split.length < 2) return resolve({ type: 'dm', messages: usage })
+    if (split.length < 1) return resolve({ type: 'dm', messages: usage })
 
     const battletag = split[0].replace('#', '-')
-    const type = split[1]
+    const type = split[1] || 'info'
     if (!validTypes.includes(type.toLowerCase())) return reject("Invalid type, valid types are " + validTypes.join(', '))
 
     const hero = split[2]
@@ -123,7 +123,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
     const { player, stats } = data
     player.region = player.platform == 'pc' ? player.region : 'n/a'
     const level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
-    const topHeroes = stats.playtimes.filter(h => h.time !== '0')
+    const topHeroes = stats.playtimes.filter(h => h.time != '0')
     const out = {
       attachments: [{
         "fallback": `Overwatch Stats for ${player.battletag}, Level: ${level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
@@ -148,7 +148,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "short": true
     }, {
       "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''}` : "Unknown",
+      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''}` : stats.overall_stats.wins || "Unknown",
       "short": true
     }, {
       "title": `Top ${topHeroes.slice(0, 10).length} Heroes`,
@@ -182,7 +182,7 @@ const generateHeroResp = (hero, version = 'quickplay', battletag) => {
       "short": true
     }, {
       "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''} ${stats.overall_stats.games ? 'out of ' + stats.overall_stats.games + ' games': ''}` : "Unknown",
+      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''} ${stats.overall_stats.games ? 'out of ' + stats.overall_stats.games + ' games': ''}` : stats.overall_stats.wins || "Unknown",
       "short": true
     }, {
       "title": "Detailed Stats",
