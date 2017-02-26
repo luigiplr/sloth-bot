@@ -116,27 +116,35 @@ const generateHeroesResp = (heroes, battletag) => {
   }
 }
 
+const getOverallStats = (overall_stats, isHero) => {
+  const { losses, ties, wins, win_rate, games } = overall_stats
+  if (wins !== null && losses !== null) {
+    return `${wins}/${losses}/${ties}` + (win_rate !== null ? ` (${win_rate*100}%)` : '') + (isHero ? ` out of ${games} games` : '')
+  }
+  return wins !== null ? wins : "Unknown"
+}
+
 const generateStatsResp = (data, version = 'quickplay') => {
   data.stats = data.stats[version]
   if (version == 'competitive' && data.stats.is_empty) return `I have no competitive stats for this user`
   if (data && data.player && data.stats) {
-    const { player, stats } = data
-    player.region = player.platform == 'pc' ? player.region : 'n/a'
+    const { player, stats: { featured_stats, overall_stats, playtimes } } = data
+    player.region = player.platform == 'pc' ? player.region.toUpperCase() : 'N/A'
     const level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
-    const topHeroes = stats.playtimes.filter(h => h.time != '0')
+    const topHeroes = playtimes.filter(h => h.time != '0')
     const out = {
       attachments: [{
-        "fallback": `Overwatch Stats for ${player.battletag}, Level: ${level}. Overall Stats: Wins: ${stats.overall_stats.wins || 'N/A'} | Losses ${stats.overall_stats.losses || 'N/A'} out of ${stats.overall_stats.games || 'N/A'} games`,
+        "fallback": `Overwatch Stats for ${player.battletag}, Level: ${level}. Overall Stats: Wins: ${overall_stats.wins || 'N/A'} | Losses ${overall_stats.losses || 'N/A'} out of ${overall_stats.games || 'N/A'} games`,
         "mrkdwn_in": ["fields"],
         "color": "#ff9c00",
-        "author_name": `${player.battletag} (${player.region.toUpperCase()}) (${capitalize(version)})`,
+        "author_name": `${player.battletag} (${player.region}) (${capitalize(version)})`,
         "author_icon": player.avatar,
         "author_link": `${pageURL}/${player.platform}${player.platform == 'pc' ? '/' + player.region : ''}/${player.battletag}`
       }]
     }
     out.attachments[0].fields = [{
       "title": "Region / Platform",
-      "value": `Region: ${player.region.toUpperCase()}\nPlatform: ${player.platform.toUpperCase()}`,
+      "value": `Region: ${player.region}\nPlatform: ${player.platform.toUpperCase()}`,
       "short": true
     }, {
       "title": "Level",
@@ -144,11 +152,11 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "short": true
     }, {
       "title": "Games Played",
-      "value": stats.overall_stats.games ? stats.overall_stats.games : "Unknown",
+      "value": overall_stats.games ? overall_stats.games : "Unknown",
       "short": true
     }, {
-      "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''}` : stats.overall_stats.wins || "Unknown",
+      "title": version == 'quickplay' ? "Wins" : "Wins/Losses/Ties",
+      "value": getOverallStats(overall_stats),
       "short": true
     }, {
       "title": `Top ${topHeroes.slice(0, 10).length} Heroes`,
@@ -156,7 +164,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
+      "value": featured_stats.length ? featured_stats.map(stat => `*${capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
       "short": true
     }]
     return out
@@ -167,7 +175,7 @@ const generateHeroResp = (hero, version = 'quickplay', battletag) => {
   hero.stats = hero.stats[version]
   if (version == 'competitive' && hero.stats.is_empty) return `I have no competitive stats for this hero`
   if (hero.stats && hero.name) {
-    const { stats } = hero
+    const { stats: { general_stats, featured_stats, hero_stats, overall_stats } } = hero
     const out = {
       attachments: [{
         "fallback": `Overwatch Data for ${hero.name}`,
@@ -178,19 +186,19 @@ const generateHeroResp = (hero, version = 'quickplay', battletag) => {
     }
     out.attachments[0].fields = [{
       "title": "Time Played",
-      "value": stats.general_stats.time_played ? stats.general_stats.time_played : "Unknown",
+      "value": general_stats.time_played ? general_stats.time_played : "Unknown",
       "short": true
     }, {
-      "title": "Wins / Losses",
-      "value": stats.overall_stats.wins && stats.overall_stats.losses ? `${stats.overall_stats.wins} / ${stats.overall_stats.losses} ${stats.overall_stats.win_rate ? '(' + stats.overall_stats.win_rate * 100 + '%)' : ''} ${stats.overall_stats.games ? 'out of ' + stats.overall_stats.games + ' games': ''}` : stats.overall_stats.wins || "Unknown",
+      "title": version == 'quickplay' ? "Wins" : "Wins/Losses/Ties",
+      "value": getOverallStats(overall_stats, true),
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": stats.featured_stats.length ? stats.featured_stats.map(stat => `*${capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
+      "value": featured_stats.length ? featured_stats.map(stat => `*${capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
       "short": true
     }, {
       "title": "Hero Specific Stats",
-      "value": isEmpty(stats.hero_stats) ? "Unknown" : Object.keys(stats.hero_stats).map(stat => `*${capitalize(stat).replace(/_/g, ' ')}*: ${stats.hero_stats[stat]}`).join('\n'),
+      "value": isEmpty(hero_stats) ? "Unknown" : Object.keys(hero_stats).map(stat => `*${capitalize(stat).replace(/_/g, ' ')}*: ${hero_stats[stat]}`).join('\n'),
       "short": true
     }]
     return out
