@@ -116,8 +116,7 @@ const generateHeroesResp = (heroes, battletag) => {
   }
 }
 
-const getOverallStats = (overall_stats, isHero) => {
-  const { losses, ties, wins, win_rate, games } = overall_stats
+const getOverallStats = ({ losses, ties, wins, win_rate, games }, isHero) => {
   if (wins !== null && losses !== null) {
     return `${wins}/${losses}/${ties}` + (win_rate !== null ? ` (${win_rate*100}%)` : '') + (isHero ? ` out of ${games} games` : '')
   }
