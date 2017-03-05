@@ -154,7 +154,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "value": overall_stats.games ? overall_stats.games : "Unknown",
       "short": true
     }, {
-      "title": version == 'quickplay' ? "Wins" : "Wins/Losses/Ties",
+      "title": "Wins/Losses/Ties",
       "value": getOverallStats(overall_stats),
       "short": true
     }, {
@@ -188,7 +188,7 @@ const generateHeroResp = (hero, version = 'quickplay', battletag) => {
       "value": general_stats.time_played ? general_stats.time_played : "Unknown",
       "short": true
     }, {
-      "title": version == 'quickplay' ? "Wins" : "Wins/Losses/Ties",
+      "title": "Wins/Losses/Ties",
       "value": getOverallStats(overall_stats, true),
       "short": true
     }, {
