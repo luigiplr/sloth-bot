@@ -108,7 +108,7 @@ export function getProfileInfo(id) {
       Promise.all([getUserLevel(newID), getUserBans(newID), getUserGames(newID), getUserRecentlyPlayedGames(newID)]).then(([level, bans, games, recentlyPlayed]) => {
         profile.user_level = level
         profile.bans = bans
-        profile.totalgames = games.game_count || '0'
+        profile.totalgames = games.game_count || undefined
         profile.recentlyPlayed = recentlyPlayed.games && recentlyPlayed.games.length ? recentlyPlayed.games : undefined
         if (!games || !games.games) {
           profile.mostplayed = {}

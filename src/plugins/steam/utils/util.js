@@ -18,7 +18,9 @@ const formatTimeCreated = time => {
 
 const formatLastOnline = time => {
   if (!time) return 'Unknown'
-  return moment(time * 1000).format('Do MMM Y, h:MMa')
+  const lastOnline = moment(time * 1000)
+  const diff = moment().diff(lastOnline, 'm')
+  return `${lastOnline.format('Do MMM Y, h:MMa')} _(${moment.duration(-diff, 'm').humanize(true)})_`
 }
 
 const getGameTime = game => {
@@ -41,7 +43,7 @@ export function generateProfileResponse(profile) {
     `*Level:* ${profile.user_level} | *Status:* ${status}`,
     status == 'Offline' ? `*Last Online:* ${formatLastOnline(profile.lastlogoff)}` : null,
     joined ? `*Joined Steam:* ${joined}` : null,
-    `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}`,
+    profile.totalgames ? `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}` : null,
     profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
     profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
   ]
