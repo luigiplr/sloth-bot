@@ -109,7 +109,7 @@ export function getProfileInfo(id) {
         profile.user_level = level
         profile.bans = bans
         profile.totalgames = games.game_count || '0'
-        profile.recentlyPlayed = recentlyPlayed.games.length ? recentlyPlayed.games : undefined
+        profile.recentlyPlayed = recentlyPlayed.games && recentlyPlayed.games.length ? recentlyPlayed.games : undefined
         if (!games || !games.games) {
           profile.mostplayed = {}
           return resolve(profile)
