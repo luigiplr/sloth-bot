@@ -1,6 +1,6 @@
 import { getProfileInfo, getAppInfo, getSteamIDInfo } from './utils/steam'
-import { generatePlayersResponse, generateProfileResponse, generateAppDetailsResponse, getSaleTime } from './utils/util.js'
-import getNextSale from './utils/sales'
+import { generatePlayersResponse, generateProfileResponse, generateAppDetailsResponse } from './utils/util.js'
+import { getNextSale, getSaleTime } from './utils/sales'
 import moment from 'moment'
 
 export const plugin_info = [{

@@ -3,12 +3,6 @@ import needle from 'needle'
 import { filter, capitalize, truncate } from 'lodash'
 var AUDRate;
 
-export function _getSaleTime(time) {
-  const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
-  const getTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds || '0 seconds'}` : seconds
-  return `in approximately ${getTime(['months', 'days', 'hours', 'minutes'].map(duration).filter(Boolean).join(', '), duration('seconds'))}`
-}
-
 const formatTimeCreated = time => {
   if (!time) return null
   const timeCreated = moment(time * 1000)
