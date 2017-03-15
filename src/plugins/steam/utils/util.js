@@ -64,8 +64,8 @@ export function generateProfileResponse(profile) {
     "title": "",
     "value": msg.filter(Boolean).join('\n')
   }, {
-    "title": `${profile.recentlyPlayed ? profile.recentlyPlayed.slice(0, 4).length : ''} Most Recently Played Games (Last 2 weeks)`,
-    "value": profile.recentlyPlayed ? profile.recentlyPlayed.map(g => ` - ${g.name} - ${getGameTime(g)}`).slice(0, 4).join('\n') : null
+    "title": `${profile.recentlyPlayed ? profile.recentlyPlayed.slice(0, 3).length : ''} Most Recently Played Games (Last 2 weeks)`,
+    "value": profile.recentlyPlayed ? profile.recentlyPlayed.map(g => ` - ${g.name} - ${getGameTime(g)}`).slice(0, 3).join('\n') : null
   }], 'value')
   return out
 }
