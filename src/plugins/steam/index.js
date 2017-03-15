@@ -25,8 +25,6 @@ export const plugin_info = [{
   usage: 'steamsale - tells u wen da sale is, durh'
 }]
 
-
-
 export function steamProfile(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information' })
