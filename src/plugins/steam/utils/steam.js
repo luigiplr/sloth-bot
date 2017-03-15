@@ -9,6 +9,7 @@ const endpoints = {
   profileSummary: `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${token}&steamids=%q%`,
   miniProfile: `http://steamcommunity.com/miniprofile/%q%`, // Unused
   gameSummary: `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${token}&steamid=%q%&include_played_free_games=1`,
+  gameRecent: `http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${token}&steamid=%q%`,
   appDetailsBasic: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic`,
   appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=${filters}&cc=%cc%`,
   packageDetails: `http://store.steampowered.com/api/packagedetails/?packageids=%q%&cc=us`, // Unused
@@ -65,6 +66,13 @@ const getUserGames = id => {
   }))
 }
 
+const getUserRecentlyPlayedGames = id => {
+  return new Promise((resolve, reject) => needle.get(getUrl('gameRecent', id), (err, resp, body) => {
+    if (!err && body && body.response) return resolve(body.response)
+    else return reject('Error retrieving user recently played games')
+  }))
+}
+
 const getAppDetails = (appid, cc, basic) => {
   return new Promise((resolve, reject) => needle.get(getUrl(basic ? 'appDetailsBasic' : 'appDetails', appid, cc), (err, resp, body) => {
     if (!err && body)
@@ -97,10 +105,11 @@ export function getProfileInfo(id) {
   return new Promise((resolve, reject) => formatProfileID(id).then(newID => needle.get(getUrl('profileSummary', newID), (err, resp, body) => {
     if (!err && body) {
       let profile = body.response.players[0];
-      Promise.all([getUserLevel(newID), getUserBans(newID), getUserGames(newID)]).then(([level, bans, games]) => {
+      Promise.all([getUserLevel(newID), getUserBans(newID), getUserGames(newID), getUserRecentlyPlayedGames(newID)]).then(([level, bans, games, recentlyPlayed]) => {
         profile.user_level = level
         profile.bans = bans
         profile.totalgames = games.game_count || '0'
+        profile.recentlyPlayed = recentlyPlayed.games.length ? recentlyPlayed.games : undefined
         if (!games || !games.games) {
           profile.mostplayed = {}
           return resolve(profile)
