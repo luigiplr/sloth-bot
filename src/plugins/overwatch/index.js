@@ -125,7 +125,7 @@ const getOverallStats = ({ losses, ties, wins, win_rate, games }, isHero) => {
 
 const generateStatsResp = (data, version = 'quickplay') => {
   data.stats = data.stats[version]
-  if (version == 'competitive' && data.stats.is_empty) return `I have no competitive stats for this user`
+  if (data.stats.is_empty) return `I have no ${version} stats for this user`
   if (data && data.player && data.stats) {
     const { player, stats: { featured_stats, overall_stats, playtimes } } = data
     player.region = player.platform == 'pc' ? player.region.toUpperCase() : 'N/A'
@@ -172,7 +172,7 @@ const generateStatsResp = (data, version = 'quickplay') => {
 
 const generateHeroResp = (hero, version = 'quickplay', battletag) => {
   hero.stats = hero.stats[version]
-  if (version == 'competitive' && hero.stats.is_empty) return `I have no competitive stats for this hero`
+  if (hero.stats.is_empty) return `I have no ${version} stats for this hero`
   if (hero.stats && hero.name) {
     const { stats: { general_stats, featured_stats, hero_stats, overall_stats } } = hero
     const out = {
