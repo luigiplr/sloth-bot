@@ -5,37 +5,11 @@ import CRUD from 'createreadupdatedelete.js'
 const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot')
 const dbFile = path.join(dbDir, 'database.sqlite')
 
-if (!fs.existsSync(dbDir))
+if (!fs.existsSync(dbDir))  {
   fs.mkdirSync(dbDir)
-
-export function SwearUsers() {
-  CRUD.Entity.call(this)
 }
 
-CRUD.define(SwearUsers, {
-  table: 'SwearUser',
-  primary: 'swearUserId',
-  fields: ['swearUserId', 'user', 'lastUpdated'],
-  createStatement: 'CREATE TABLE SwearUser (swearUserId INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) NOT NULL, lastUpdated DATETIME)'
-})
-
-export function SwearCommits() {
-  CRUD.Entity.call(this)
-}
-
-CRUD.define(SwearCommits, {
-  table: 'SwearCommit',
-  primary: 'swearCommitId',
-  fields: [
-    'swearCommitId',
-    'message',
-    'url',
-    'sha',
-    'user',
-    'repo'
-  ],
-  createStatement: 'CREATE TABLE SwearCommit (swearCommitId INTEGER PRIMARY KEY NOT NULL, message VARCHAR(1024) NOT NULL, url VARCHAR(512) NOT NULL, sha VARCHAR(128), user VARCHAR(256) NOT NULL, repo VARCHAR(256) NOT NULL)'
-})
+export default CRUD
 
 export function Quotes() {
   CRUD.Entity.call(this)
@@ -69,15 +43,15 @@ CRUD.define(InviteUsers, {
   createStatement: 'CREATE TABLE InviteUsers (inviteUserId INTEGER PRIMARY KEY NOT NULL, inviter VARCHAR(128) DEFAULT (NULL), email VARCHAR(128) DEFAULT (NULL), invitedUser VARCHAR(128) DEFAULT (NULL), date DATETIME)'
 })
 
-export function RSSFeeds() {
+export function Aliases() {
   CRUD.Entity.call(this)
 }
 
-CRUD.define(RSSFeeds, {
-  table: 'RSSFeeds',
-  primary: 'feedId',
-  fields: ['feedId', 'guid'],
-  createStatement: 'CREATE TABLE RSSFeeds (feedId INTEGER PRIMARY KEY NOT NULL, guid VARCHAR(256) DEFAULT (NULL))'
+CRUD.define(Aliases, {
+  table: 'Aliases',
+  primary: 'aliasID',
+  fields: ['aliasID', 'user', 'alias', 'service'],
+  createStatement: 'CREATE TABLE Aliases (aliasID INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) DEFAULT (NULL), alias VARCHAR(128) DEFAULT (NULL), service VARCHAR(128) DEFAULT (NULL))'
 })
 
 CRUD.setAdapter(new CRUD.SQLiteAdapter(dbFile, {
