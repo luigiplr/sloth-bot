@@ -1,22 +1,12 @@
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch.js'
 import { filter, capitalize, isEmpty, uniq, compact } from 'lodash'
-import CRUD from '../../database'
+import { getUserAliases } from '../../database'
 
 export const plugin_info = [{
   alias: ['overwatch'],
   command: 'userInfo',
   usage: 'overwatch <battletag> <type> [hero] [version] [-r us] [-p pc]'
 }]
-
-const findUserAlias = user => {
-  return new Promise((resolve, reject) => {
-    if (user.slice(0, 2) != "<@") return resolve(user)
-    return CRUD.Find('Aliases', { user: user.slice(2, -1), service: 'overwatch' }).then(data => {
-      if (data[0]) return resolve(data[0].alias)
-      return reject("User has no alias set, set one with the alias command")
-    })
-  })
-}
 
 const pageURL = 'https://playoverwatch.com/en-us/career'
 const validHeroes = ["ana", "bastion", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "orisa", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "sombra", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
@@ -41,7 +31,7 @@ export function userInfo(user, channel, input) {
     const split = input.split(' ')
     if (split.length < 1) return resolve({ type: 'dm', messages: usage })
 
-    findUserAlias(split[0]).then(newName => {
+    getUserAliases(split[0]).then(newName => {
       const battletag = newName.replace('#', '-')
       const type = split[1] || 'info'
       if (!validTypes.includes(type.toLowerCase())) return reject("Invalid type, valid types are " + validTypes.join(', '))

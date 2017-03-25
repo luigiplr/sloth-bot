@@ -47,6 +47,24 @@ export function Aliases() {
   CRUD.Entity.call(this)
 }
 
+export function _getUserAliases(user, service) {
+  return CRUD.Find('Aliases', Object.assign({}, { user }, service ? { service } : {}))
+}
+
+export function getUserAliases(user, service) {
+  return new Promise((resolve, reject) => {
+    if (user.startsWith('@')) {
+      user = user.slice(1)
+    } else if (user.startsWith('<@')) {
+      user = user.slice(2, -1)
+    } else return resolve(user)
+    return _getUserAliases(user, service).then(data => {
+      if (!data[0]) return reject("User has no alias set, set one with the alias command") 
+      return resolve(data[0].alias)
+    }, reject)
+  })
+}
+
 CRUD.define(Aliases, {
   table: 'Aliases',
   primary: 'aliasID',

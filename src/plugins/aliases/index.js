@@ -1,4 +1,4 @@
-import CRUD, { Aliases } from '../../database'
+import { _getUserAliases, Aliases } from '../../database'
 import { findUser } from '../../slack.js'
 import { capitalize } from 'lodash'
 
@@ -9,10 +9,6 @@ export const plugin_info = [{
 }]
 
 const validServices = ['steam', 'overwatch']
-
-function getUserAliases(user, service) {
-  return CRUD.Find('Aliases', Object.assign({}, { user: user.id }, service ? { service } : {}))
-}
 
 export function alias(sender, channel, input, ts, plugins, userLevel) {
   return new Promise((resolve, reject) => {
@@ -25,15 +21,20 @@ export function alias(sender, channel, input, ts, plugins, userLevel) {
       method = username
     }
     service = service ? service.toLowerCase() : undefined
-    const user = findUser(usernameIsNotName ? sender.id : username)
-    if (!user) return reject("Couldn't find a user by that name")
+    var user = findUser(usernameIsNotName ? sender.id : username)
+    if (!user && username.startsWith('@')) {
+      username = username.slice(1)
+      user = { name: username, id: username }
+    } else if (!user) {
+      return reject("Invalid username specified, `@name` is required")
+    }
     if (service && !validServices.includes(service)) return reject(`Invalid service, valid services are ${validServices.join('|')}`)
     switch (method) {
       case 'set':
         if (sender.id !== user.id && userLevel !== 'superadmin') return reject("You can't edit other peoples aliases")
         if (!service) return reject("You need to specify a service (steam, overwatch, etc..)")
         if (!userAlias) return reject("You need to specify an alias")
-        getUserAliases(user, service).then(data => {
+        _getUserAliases(user.id, service).then(data => {
           var previousAlias
           if (data[0]) {
             previousAlias = data[0].alias
@@ -51,19 +52,11 @@ export function alias(sender, channel, input, ts, plugins, userLevel) {
           return reject("Error: sumfin went wrong")
         })
         break
-      case 'view':
-        getUserAliases(user).then(data => {
-          return resolve({ type: 'channel', message: `*Aliases found for ${user.name}:*\n` + data.map(a => ` > ${capitalize(a.service)} - ${a.alias}`).join('\n')})
-        }).catch(err => {
-          console.error(err)
-          return reject("Error: sumfin went wrong")
-        })
-        break
       case 'delete':
       case 'del':
         if (sender.id !== user.id && userLevel !== 'superadmin') return reject("You can't delete other peoples aliases")
         if (!service) return reject("You need to specify a service (steam, overwatch, etc..)")
-        getUserAliases(user, service).then(data => {
+        _getUserAliases(user.id, service).then(data => {
           if (!data[0]) return reject("User has no alias for this service")
           return data[0].Delete().then(() => {
             resolve({ type: 'channel', message: `Successfully removed users alias for \`${service}\``})
@@ -74,7 +67,15 @@ export function alias(sender, channel, input, ts, plugins, userLevel) {
         })
         break
       default:
-        return reject("Invalid method, valid methods are set|view|delete")
+      case 'view':
+        _getUserAliases(user.id).then(data => {
+          if (!data.length) return reject("User has no aliases set")
+          return resolve({ type: 'channel', message: `*Aliases found for ${user.name}:*\n` + data.map(a => ` > ${capitalize(a.service)} - ${a.alias}`).join('\n')})
+        }).catch(err => {
+          console.error(err)
+          return reject("Error: sumfin went wrong")
+        })
+        break
     }
       
   })
