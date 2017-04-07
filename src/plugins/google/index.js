@@ -1,8 +1,13 @@
 import ytSearch from 'youtube-search'
 import needle from 'needle'
 import config from '../../../config.json'
+import { last } from 'lodash'
 
 export const plugin_info = [{
+  alias: ['g', 'google'],
+  command: 'googleSearch',
+  usage: 'google <query> [-i] - returns first or specified google result for query'
+}, {
   alias: ['yt', 'youtube'],
   command: 'youtubeSearch',
   usage: 'youtube <query> - returns first youtube result for query'
@@ -20,19 +25,44 @@ const ytOpts = {
   safeSearch: 'none'
 }
 
-export function googleImage(user, channel, input) {
+const baseURL = `https://www.googleapis.com/customsearch/v1?num=5&start=1&hl=en&safe=off&key=${config.googleAPIKey}`
+
+export function googleSearch(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 5 images returned for query' })
+    if (!input) return resolve({ type: 'dm', message: 'Usage: google <query> [-i] - Returns the first or specified result from Google' })
+    if (!config.googleAPIKey || !config.cseSearchID) return reject("Error: Google API Key and CSE Key are required to use this function")
 
-    if (!config.googleAPIKey || !config.cseID) return reject("Error: Google API Key and CSE Key are required to use this function")
+    const lastWord = last(input.split(' '))
+    const index = lastWord.startsWith('-') ? parseInt(lastWord.slice(1)) || 0  : 0
 
-    let url = `https://www.googleapis.com/customsearch/v1?q=${input}&num=5&searchType=image&start=1&key=${config.googleAPIKey}&cx=${config.cseID}`
+    const url = `${baseURL}&q=${input}&cx=${config.cseSearchID}`
 
     needle.get(url, (err, resp, body) => {
       if (!err && body && !body.error) {
         if (body.items) {
-          let chosen = body.items[Math.floor(Math.random() * body.queries.request[0].count)].link + `#${Math.floor(Math.random() * 1000)}`
-          return resolve({ type: 'channel', message: chosen });
+          const chosen = (body.items[index] || body.items[0])
+          return resolve({ type: 'channel', message: chosen.link })
+        } else return reject("No results found")
+      } else {
+        console.error(`googleImgError: ${err || body.error.message}`)
+        reject(`googleImgError: ${err || body.error.message}`)
+      }
+    })
+  })
+}
+
+export function googleImage(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return resolve({ type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 5 images returned for query' })
+    if (!config.googleAPIKey || !config.cseImageID) return reject("Error: Google API Key and CSE Key are required to use this function")
+
+    const url = `${baseURL}&q=${input}&cx=${config.cseImageID}&searchType=image`
+
+    needle.get(url, (err, resp, body) => {
+      if (!err && body && !body.error) {
+        if (body.items) {
+          const chosen = body.items[Math.floor(Math.random() * body.queries.request[0].count)].link + `#${Math.floor(Math.random() * 1000)}`
+          return resolve({ type: 'channel', message: chosen })
         } else return reject("No results found")
       } else {
         console.error(`googleImgError: ${err || body.error.message}`)

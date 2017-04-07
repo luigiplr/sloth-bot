@@ -39,7 +39,7 @@ export const plugin_info = [{
   command: 'ip',
   userLevel: ['admin', 'superadmin']
 }, {
-  alias: 'config',
+  alias: ['config'],
   command: 'setConfig',
   userLevel: ['superadmin']
 }]
