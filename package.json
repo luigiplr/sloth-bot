@@ -73,6 +73,7 @@
     "giphy": "0.0.4",
     "insultgenerator": "0.0.2",
     "lodash": "^4.17.4",
+    "mineping": "^0.1.0",
     "moment": "^2.17.1",
     "morse-node": "^0.1.1",
     "needle": "^1.4.3",
