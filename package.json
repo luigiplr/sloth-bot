@@ -68,6 +68,7 @@
     "caniuse-api": "^1.5.2",
     "codepad": "^0.1.1",
     "createreadupdatedelete.js": "^0.8.0",
+    "did-you-mean": "0.0.1",
     "eightball": "^1.0.1",
     "giphy": "0.0.4",
     "insultgenerator": "0.0.2",

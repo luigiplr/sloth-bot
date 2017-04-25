@@ -1,10 +1,15 @@
 import ramdaFunctions from './utils/ramda'
+import Matcher from 'did-you-mean'
 
 export const plugin_info = [{
   alias: ['ramda'],
   command: 'ramda',
   usage: 'ramda <command> - returns info for command'
 }]
+
+const matcher = new Matcher(Object.keys(ramdaFunctions).join(' '))
+matcher.ignoreCase()
+matcher.setThreshold(2)
 
 export function ramda(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -22,7 +27,10 @@ export function ramda(user, channel, input) {
         `http://ramdajs.com/docs/#${cmd.name}`
       ];
       return resolve({ type: 'channel', messages: msg, options: { unfurl_links: false }})
-    } else reject("No function with that name")
-
+    } else {
+      var match = matcher.get(method)
+      if (match) return resolve({ type: 'message', message: `No function by that name, did you mean \`${match}\`?`})
+      else return reject('No function by that name')
+    }
   })
 }
