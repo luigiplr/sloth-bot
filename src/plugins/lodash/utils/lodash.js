@@ -1,5 +1,5 @@
 // Last Updated 25/04/2017 v4.17.4
-const lodashFunctions = {
+module.exports = {
   "chunk": {
     "name": "chunk",
     "command": "_.chunk(array, [size=1])",
@@ -1887,5 +1887,3 @@ const lodashFunctions = {
     "since": "Unknown"
   }
 }
-
-module.exports = lodashFunctions
