@@ -5,7 +5,7 @@ module.exports = {
     "command": "__",
     "category": "Function",
     "since": "v0.6.0",
-    "description": "A special placeholder value used to specify \"gaps\" within curried functions, allowing partial application of any combination of arguments, regardless of their positions. If g is a curried ternary function and _ is R.__, the following are equivalent: g(1, 2, 3) g(_, 2, 3)(1) g(_, _, 3)(1)(2) g(_, _, 3)(1, 2) g(_, 2, _)(1, 3) g(_, 2)(1)(3) g(_, 2)(1, 3) g(_, 2)(_, 3)(1)"
+    "description": "A special placeholder value used to specify \"gaps\" within curried functions, allowing partial application of any combination of arguments, regardless of their positions. If `g` is a curried ternary function and `_` is `R.__`, the following are equivalent: `g(1, 2, 3)` `g(_, 2, 3)(1)` `g(_, _, 3)(1)(2)` `g(_, _, 3)(1, 2)` `g(_, 2, _)(1, 3)` `g(_, 2)(1)(3)` `g(_, 2)(1, 3)` `g(_, 2)(_, 3)(1)`"
   },
   "add": {
     "name": "add",
@@ -19,7 +19,7 @@ module.exports = {
     "command": "((a … → b) … → [a] → *) → (a …, Int, [a] → b) … → [a] → *)",
     "category": "Function",
     "since": "v0.15.0",
-    "description": "Creates a new list iteration function from an existing one by adding two new parameters to its callback function: the current index, and the entire list. This would turn, for instance, Ramda's simple map function into one that more closely resembles Array.prototype.map. Note that this will only work for functions in which the iteration callback function is the first parameter, and where the list is the last parameter. (This latter might be unimportant if the list parameter is not used.)"
+    "description": "Creates a new list iteration function from an existing one by adding two new parameters to its callback function: the current index, and the entire list. This would turn, for instance, Ramda's simple `map` function into one that more closely resembles `Array.prototype.map`. Note that this will only work for functions in which the iteration callback function is the first parameter, and where the list is the last parameter. (This latter might be unimportant if the list parameter is not used.)"
   },
   "adjust": {
     "name": "adjust",
@@ -33,7 +33,7 @@ module.exports = {
     "command": "(a → Boolean) → [a] → Boolean",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns true if all elements of the list match the predicate, false if there are any that don't. Dispatches to the all method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns `true` if all elements of the list match the predicate, `false` if there are any that don't. Dispatches to the `all` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "allpass": {
     "name": "allPass",
@@ -47,21 +47,21 @@ module.exports = {
     "command": "a → (* → a)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Returns a function that always returns the given value. Note that for non-primitives the value returned is a reference to the original value. This function is known as const, constant, or K (for K combinator) in other languages and libraries."
+    "description": "Returns a function that always returns the given value. Note that for non-primitives the value returned is a reference to the original value. This function is known as `const`, `constant`, or `K` (for K combinator) in other languages and libraries."
   },
   "and": {
     "name": "and",
     "command": "a → b → a | b",
     "category": "Logic",
     "since": "v0.1.0",
-    "description": "Returns true if both arguments are true; false otherwise."
+    "description": "Returns `true` if both arguments are `true`; `false` otherwise."
   },
   "any": {
     "name": "any",
     "command": "(a → Boolean) → [a] → Boolean",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns true if at least one of elements of the list match the predicate, false otherwise. Dispatches to the any method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns `true` if at least one of elements of the list match the predicate, `false` otherwise. Dispatches to the `any` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "anypass": {
     "name": "anyPass",
@@ -75,14 +75,14 @@ module.exports = {
     "command": "[a → b] → [a] → [b]",
     "category": "Function",
     "since": "v0.3.0",
-    "description": "ap applies a list of functions to a list of values. Dispatches to the ap method of the second argument, if present. Also treats curried functions as applicatives."
+    "description": "ap applies a list of functions to a list of values. Dispatches to the `ap` method of the second argument, if present. Also treats curried functions as applicatives."
   },
   "aperture": {
     "name": "aperture",
     "command": "Number → [a] → [[a]]",
     "category": "List",
     "since": "v0.12.0",
-    "description": "Returns a new list, composed of n-tuples of consecutive elements If n is greater than the length of the list, an empty list is returned. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns a new list, composed of n-tuples of consecutive elements If `n` is greater than the length of the list, an empty list is returned. Acts as a transducer if a transformer is given in list position."
   },
   "append": {
     "name": "append",
@@ -96,7 +96,7 @@ module.exports = {
     "command": "(*… → a) → [*] → a",
     "category": "Function",
     "since": "v0.7.0",
-    "description": "Applies function fn to the argument list args. This is useful for creating a fixed-arity function from a variadic function. fn should be a bound function if context is significant."
+    "description": "Applies function `fn` to the argument list `args`. This is useful for creating a fixed-arity function from a variadic function. `fn` should be a bound function if context is significant."
   },
   "applyspec": {
     "name": "applySpec",
@@ -110,7 +110,7 @@ module.exports = {
     "command": "Ord b => (a → b) → a → a → Number",
     "category": "Function",
     "since": "v0.23.0",
-    "description": "Makes an ascending comparator function out of a function that returns a value that can be compared with < and >."
+    "description": "Makes an ascending comparator function out of a function that returns a value that can be compared with `<` and `>`."
   },
   "assoc": {
     "name": "assoc",
@@ -138,28 +138,28 @@ module.exports = {
     "command": "(* → *) → {*} → (* → *)",
     "category": "Function",
     "since": "v0.6.0",
-    "description": "Creates a function that is bound to a context. Note: R.bind does not provide the additional argument-binding capabilities of Function.prototype.bind."
+    "description": "Creates a function that is bound to a context. Note: `R.bind` does not provide the additional argument-binding capabilities of Function.prototype.bind."
   },
   "both": {
     "name": "both",
     "command": "(*… → Boolean) → (*… → Boolean) → (*… → Boolean)",
     "category": "Logic",
     "since": "v0.12.0",
-    "description": "A function which calls the two provided functions and returns the && of the results. It returns the result of the first function if it is false-y and the result of the second function otherwise. Note that this is short-circuited, meaning that the second function will not be invoked if the first returns a false-y value. In addition to functions, R.both also accepts any fantasy-land compatible applicative functor."
+    "description": "A function which calls the two provided functions and returns the `&&` of the results. It returns the result of the first function if it is false-y and the result of the second function otherwise. Note that this is short-circuited, meaning that the second function will not be invoked if the first returns a false-y value. In addition to functions, `R.both` also accepts any fantasy-land compatible applicative functor."
   },
   "call": {
     "name": "call",
     "command": "(*… → a),*… → a",
     "category": "Function",
     "since": "v0.9.0",
-    "description": "Returns the result of calling its first argument with the remaining arguments. This is occasionally useful as a converging function for R.converge: the left branch can produce a function while the right branch produces a value to be passed to that function as an argument."
+    "description": "Returns the result of calling its first argument with the remaining arguments. This is occasionally useful as a converging function for `R.converge`: the left branch can produce a function while the right branch produces a value to be passed to that function as an argument."
   },
   "chain": {
     "name": "chain",
     "command": "Chain m => (a → m b) → m a → m b",
     "category": "List",
     "since": "v0.3.0",
-    "description": "chain maps a function over a list and concatenates the results. chain is also known as flatMap in some libraries Dispatches to the chain method of the second argument, if present, according to the FantasyLand Chain spec."
+    "description": "`chain` maps a function over a list and concatenates the results. `chain` is also known as `flatMap` in some libraries Dispatches to the `chain` method of the second argument, if present, according to the FantasyLand Chain spec."
   },
   "clamp": {
     "name": "clamp",
@@ -173,7 +173,7 @@ module.exports = {
     "command": "{*} → {*}",
     "category": "Object",
     "since": "v0.1.0",
-    "description": "Creates a deep copy of the value which may contain (nested) Arrays and Objects, Numbers, Strings, Booleans and Dates. Functions are assigned by reference rather than copied Dispatches to a clone method if present."
+    "description": "Creates a deep copy of the value which may contain (nested) `Array`s and `Object`s, `Number`s, `String`s, `Boolean`s and `Date`s. `Function`s are assigned by reference rather than copied Dispatches to a `clone` method if present."
   },
   "comparator": {
     "name": "comparator",
@@ -187,7 +187,7 @@ module.exports = {
     "command": "(*… → *) → (*… → Boolean)",
     "category": "Logic",
     "since": "v0.12.0",
-    "description": "Takes a function f and returns a function g such that if called with the same arguments when f returns a \"truthy\" value, g returns false and when f returns a \"falsy\" value g returns true. R.complement may be applied to any functor"
+    "description": "Takes a function `f` and returns a function `g` such that if called with the same arguments when `f` returns a \"truthy\" value, `g` returns `false` and when `f` returns a \"falsy\" value `g` returns `true`. `R.complement` may be applied to any functor"
   },
   "compose": {
     "name": "compose",
@@ -201,7 +201,7 @@ module.exports = {
     "command": "Chain m => ((y → m z), (x → m y), …, (a → m b)) → (a → m z)",
     "category": "Function",
     "since": "v0.16.0",
-    "description": "Returns the right-to-left Kleisli composition of the provided functions, each of which must return a value of a type supported by chain. R.composeK(h, g, f) is equivalent to R.compose(R.chain(h), R.chain(g), R.chain(f))."
+    "description": "Returns the right-to-left Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.composeK(h, g, f)` is equivalent to `R.compose(R.chain(h), R.chain(g), R.chain(f))`."
   },
   "composep": {
     "name": "composeP",
@@ -215,14 +215,14 @@ module.exports = {
     "command": "[a] → [a] → [a]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns the result of concatenating the given lists or strings. Note: R.concat expects both arguments to be of the same type, unlike the native Array.prototype.concat method. It will throw an error if you concat an Array with a non-Array value. Dispatches to the concat method of the first argument, if present."
+    "description": "Returns the result of concatenating the given lists or strings. Note: `R.concat` expects both arguments to be of the same type, unlike the native `Array.prototype.concat` method. It will throw an error if you `concat` an Array with a non-Array value. Dispatches to the `concat` method of the first argument, if present."
   },
   "cond": {
     "name": "cond",
     "command": "[[(*… → Boolean),(*… → *)]] → (*… → *)",
     "category": "Logic",
     "since": "v0.6.0",
-    "description": "Returns a function, fn, which encapsulates if/else, if/else, ... logic. R.cond takes a list of [predicate, transformer] pairs. All of the arguments to fn are applied to each of the predicates in turn until one returns a \"truthy\" value, at which point fn returns the result of applying its arguments to the corresponding transformer. If none of the predicates matches, fn returns undefined."
+    "description": "Returns a function, `fn`, which encapsulates `if/else, if/else, ...` logic. `R.cond` takes a list of [predicate, transformer] pairs. All of the arguments to `fn` are applied to each of the predicates in turn until one returns a \"truthy\" value, at which point `fn` returns the result of applying its arguments to the corresponding transformer. If none of the predicates matches, `fn` returns undefined."
   },
   "construct": {
     "name": "construct",
@@ -243,7 +243,7 @@ module.exports = {
     "command": "a → [a] → Boolean",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns true if the specified value is equal, in R.equals terms, to at least one element of the given list; false otherwise."
+    "description": "Returns `true` if the specified value is equal, in `R.equals` terms, to at least one element of the given list; `false` otherwise."
   },
   "converge": {
     "name": "converge",
@@ -257,21 +257,21 @@ module.exports = {
     "command": "(a → String) → [a] → {*}",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Counts the elements of a list according to how many match each value of a key generated by the supplied function. Returns an object mapping the keys produced by fn to the number of occurrences in the list. Note that all keys are coerced to strings because of how JavaScript objects work. Acts as a transducer if a transformer is given in list position."
+    "description": "Counts the elements of a list according to how many match each value of a key generated by the supplied function. Returns an object mapping the keys produced by `fn` to the number of occurrences in the list. Note that all keys are coerced to strings because of how JavaScript objects work. Acts as a transducer if a transformer is given in list position."
   },
   "curry": {
     "name": "curry",
     "command": "(* → a) → (* → a)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Returns a curried equivalent of the provided function. The curried function has two unusual capabilities. First, its arguments needn't be provided one at a time. If f is a ternary function and g is R.curry(f), the following are equivalent: g(1)(2)(3) g(1)(2, 3) g(1, 2)(3) g(1, 2, 3) Secondly, the special placeholder value R.__ may be used to specify \"gaps\", allowing partial application of any combination of arguments, regardless of their positions. If g is as above and _ is R.__, the following are equivalent: g(1, 2, 3) g(_, 2, 3)(1) g(_, _, 3)(1)(2) g(_, _, 3)(1, 2) g(_, 2)(1)(3) g(_, 2)(1, 3) g(_, 2)(_, 3)(1)"
+    "description": "Returns a curried equivalent of the provided function. The curried function has two unusual capabilities. First, its arguments needn't be provided one at a time. If `f` is a ternary function and `g` is `R.curry(f)`, the following are equivalent: `g(1)(2)(3)` `g(1)(2, 3)` `g(1, 2)(3)` `g(1, 2, 3)` Secondly, the special placeholder value `R.__` may be used to specify \"gaps\", allowing partial application of any combination of arguments, regardless of their positions. If `g` is as above and `_` is `R.__`, the following are equivalent: `g(1, 2, 3)` `g(_, 2, 3)(1)` `g(_, _, 3)(1)(2)` `g(_, _, 3)(1, 2)` `g(_, 2)(1)(3)` `g(_, 2)(1, 3)` `g(_, 2)(_, 3)(1)`"
   },
   "curryn": {
     "name": "curryN",
     "command": "Number → (* → a) → (* → a)",
     "category": "Function",
     "since": "v0.5.0",
-    "description": "Returns a curried equivalent of the provided function, with the specified arity. The curried function has two unusual capabilities. First, its arguments needn't be provided one at a time. If g is R.curryN(3, f), the following are equivalent: g(1)(2)(3) g(1)(2, 3) g(1, 2)(3) g(1, 2, 3) Secondly, the special placeholder value R.__ may be used to specify \"gaps\", allowing partial application of any combination of arguments, regardless of their positions. If g is as above and _ is R.__, the following are equivalent: g(1, 2, 3) g(_, 2, 3)(1) g(_, _, 3)(1)(2) g(_, _, 3)(1, 2) g(_, 2)(1)(3) g(_, 2)(1, 3) g(_, 2)(_, 3)(1)"
+    "description": "Returns a curried equivalent of the provided function, with the specified arity. The curried function has two unusual capabilities. First, its arguments needn't be provided one at a time. If `g` is `R.curryN(3, f)`, the following are equivalent: `g(1)(2)(3)` `g(1)(2, 3)` `g(1, 2)(3)` `g(1, 2, 3)` Secondly, the special placeholder value `R.__` may be used to specify \"gaps\", allowing partial application of any combination of arguments, regardless of their positions. If `g` is as above and `_` is `R.__`, the following are equivalent: `g(1, 2, 3)` `g(_, 2, 3)(1)` `g(_, _, 3)(1)(2)` `g(_, _, 3)(1, 2)` `g(_, 2)(1)(3)` `g(_, 2)(1, 3)` `g(_, 2)(_, 3)(1)`"
   },
   "dec": {
     "name": "dec",
@@ -285,14 +285,14 @@ module.exports = {
     "command": "a → b → a | b",
     "category": "Logic",
     "since": "v0.10.0",
-    "description": "Returns the second argument if it is not null, undefined or NaN otherwise the first argument is returned."
+    "description": "Returns the second argument if it is not `null`, `undefined` or `NaN` otherwise the first argument is returned."
   },
   "descend": {
     "name": "descend",
     "command": "Ord b => (a → b) → a → a → Number",
     "category": "Function",
     "since": "v0.23.0",
-    "description": "Makes a descending comparator function out of a function that returns a value that can be compared with < and >."
+    "description": "Makes a descending comparator function out of a function that returns a value that can be compared with `<` and `>`."
   },
   "difference": {
     "name": "difference",
@@ -313,7 +313,7 @@ module.exports = {
     "command": "String → {k: v} → {k: v}",
     "category": "Object",
     "since": "v0.10.0",
-    "description": "Returns a new object that does not contain a prop property."
+    "description": "Returns a new object that does not contain a `prop` property."
   },
   "dissocpath": {
     "name": "dissocPath",
@@ -327,35 +327,35 @@ module.exports = {
     "command": "Number → Number → Number",
     "category": "Math",
     "since": "v0.1.0",
-    "description": "Divides two numbers. Equivalent to a / b."
+    "description": "Divides two numbers. Equivalent to `a / b`."
   },
   "drop": {
     "name": "drop",
     "command": "Number → [a] → [a]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns all but the first n elements of the given list, string, or transducer/transformer (or object with a drop method). Dispatches to the drop method of the second argument, if present."
+    "description": "Returns all but the first `n` elements of the given list, string, or transducer/transformer (or object with a `drop` method). Dispatches to the `drop` method of the second argument, if present."
   },
   "droplast": {
     "name": "dropLast",
     "command": "Number → [a] → [a]",
     "category": "List",
     "since": "v0.16.0",
-    "description": "Returns a list containing all but the last n elements of the given list."
+    "description": "Returns a list containing all but the last `n` elements of the given `list`."
   },
   "droplastwhile": {
     "name": "dropLastWhile",
     "command": "(a → Boolean) → [a] → [a]",
     "category": "List",
     "since": "v0.16.0",
-    "description": "Returns a new list excluding all the tailing elements of a given list which satisfy the supplied predicate function. It passes each value from the right to the supplied predicate function, skipping elements until the predicate function returns a falsy value. The predicate function is applied to one argument: (value)."
+    "description": "Returns a new list excluding all the tailing elements of a given list which satisfy the supplied predicate function. It passes each value from the right to the supplied predicate function, skipping elements until the predicate function returns a `falsy` value. The predicate function is applied to one argument: (value)."
   },
   "droprepeats": {
     "name": "dropRepeats",
     "command": "[a] → [a]",
     "category": "List",
     "since": "v0.14.0",
-    "description": "Returns a new list without any consecutively repeating elements. R.equals is used to determine equality. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns a new list without any consecutively repeating elements. `R.equals` is used to determine equality. Acts as a transducer if a transformer is given in list position."
   },
   "droprepeatswith": {
     "name": "dropRepeatsWith",
@@ -369,91 +369,91 @@ module.exports = {
     "command": "(a → Boolean) → [a] → [a]",
     "category": "List",
     "since": "v0.9.0",
-    "description": "Returns a new list excluding the leading elements of a given list which satisfy the supplied predicate function. It passes each value to the supplied predicate function, skipping elements while the predicate function returns true. The predicate function is applied to one argument: (value). Dispatches to the dropWhile method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns a new list excluding the leading elements of a given list which satisfy the supplied predicate function. It passes each value to the supplied predicate function, skipping elements while the predicate function returns `true`. The predicate function is applied to one argument: (value). Dispatches to the `dropWhile` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "either": {
     "name": "either",
     "command": "(*… → Boolean) → (*… → Boolean) → (*… → Boolean)",
     "category": "Logic",
     "since": "v0.12.0",
-    "description": "A function wrapping calls to the two functions in an || operation, returning the result of the first function if it is truth-y and the result of the second function otherwise. Note that this is short-circuited, meaning that the second function will not be invoked if the first returns a truth-y value. In addition to functions, R.either also accepts any fantasy-land compatible applicative functor."
+    "description": "A function wrapping calls to the two functions in an `||` operation, returning the result of the first function if it is truth-y and the result of the second function otherwise. Note that this is short-circuited, meaning that the second function will not be invoked if the first returns a truth-y value. In addition to functions, `R.either` also accepts any fantasy-land compatible applicative functor."
   },
   "empty": {
     "name": "empty",
     "command": "a → a",
     "category": "Function",
     "since": "v0.3.0",
-    "description": "Returns the empty value of its argument's type. Ramda defines the empty value of Array ([]), Object ({}), String (''), and Arguments. Other types are supported if they define <Type>.empty and/or <Type>.prototype.empty. Dispatches to the empty method of the first argument, if present."
+    "description": "Returns the empty value of its argument's type. Ramda defines the empty value of Array (`[]`), Object (`{}`), String (`''`), and Arguments. Other types are supported if they define `<Type>.empty` and/or `<Type>.prototype.empty`. Dispatches to the `empty` method of the first argument, if present."
   },
   "eqby": {
     "name": "eqBy",
     "command": "(a → b) → a → a → Boolean",
     "category": "Relation",
     "since": "v0.18.0",
-    "description": "Takes a function and two values in its domain and returns true if the values map to the same value in the codomain; false otherwise."
+    "description": "Takes a function and two values in its domain and returns `true` if the values map to the same value in the codomain; `false` otherwise."
   },
   "eqprops": {
     "name": "eqProps",
     "command": "k → {k: v} → {k: v} → Boolean",
     "category": "Object",
     "since": "v0.1.0",
-    "description": "Reports whether two objects have the same value, in R.equals terms, for the specified property. Useful as a curried predicate."
+    "description": "Reports whether two objects have the same value, in `R.equals` terms, for the specified property. Useful as a curried predicate."
   },
   "equals": {
     "name": "equals",
     "command": "a → b → Boolean",
     "category": "Relation",
     "since": "v0.15.0",
-    "description": "Returns true if its arguments are equivalent, false otherwise. Handles cyclical data structures. Dispatches symmetrically to the equals methods of both arguments, if present."
+    "description": "Returns `true` if its arguments are equivalent, `false` otherwise. Handles cyclical data structures. Dispatches symmetrically to the `equals` methods of both arguments, if present."
   },
   "evolve": {
     "name": "evolve",
     "command": "{k: (v → v)} → {k: v} → {k: v}",
     "category": "Object",
     "since": "v0.9.0",
-    "description": "Creates a new object by recursively evolving a shallow copy of object, according to the transformation functions. All non-primitive properties are copied by reference. A transformation function will not be invoked if its corresponding key does not exist in the evolved object."
+    "description": "Creates a new object by recursively evolving a shallow copy of `object`, according to the `transformation` functions. All non-primitive properties are copied by reference. A `transformation` function will not be invoked if its corresponding key does not exist in the evolved object."
   },
   "f": {
     "name": "F",
     "command": "* → Boolean",
     "category": "Function",
     "since": "v0.9.0",
-    "description": "A function that always returns false. Any passed in parameters are ignored."
+    "description": "A function that always returns `false`. Any passed in parameters are ignored."
   },
   "filter": {
     "name": "filter",
     "command": "Filterable f => (a → Boolean) → f a → f a",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Takes a predicate and a \"filterable\", and returns a new filterable of the same type containing the members of the given filterable which satisfy the given predicate. Dispatches to the filter method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Takes a predicate and a \"filterable\", and returns a new filterable of the same type containing the members of the given filterable which satisfy the given predicate. Dispatches to the `filter` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "find": {
     "name": "find",
     "command": "(a → Boolean) → [a] → a | undefined",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns the first element of the list which matches the predicate, or undefined if no element matches. Dispatches to the find method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns the first element of the list which matches the predicate, or `undefined` if no element matches. Dispatches to the `find` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "findindex": {
     "name": "findIndex",
     "command": "(a → Boolean) → [a] → Number",
     "category": "List",
     "since": "v0.1.1",
-    "description": "Returns the index of the first element of the list which matches the predicate, or -1 if no element matches. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns the index of the first element of the list which matches the predicate, or `-1` if no element matches. Acts as a transducer if a transformer is given in list position."
   },
   "findlast": {
     "name": "findLast",
     "command": "(a → Boolean) → [a] → a | undefined",
     "category": "List",
     "since": "v0.1.1",
-    "description": "Returns the last element of the list which matches the predicate, or undefined if no element matches. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns the last element of the list which matches the predicate, or `undefined` if no element matches. Acts as a transducer if a transformer is given in list position."
   },
   "findlastindex": {
     "name": "findLastIndex",
     "command": "(a → Boolean) → [a] → Number",
     "category": "List",
     "since": "v0.1.1",
-    "description": "Returns the index of the last element of the list which matches the predicate, or -1 if no element matches. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns the index of the last element of the list which matches the predicate, or `-1` if no element matches. Acts as a transducer if a transformer is given in list position."
   },
   "flatten": {
     "name": "flatten",
@@ -474,14 +474,14 @@ module.exports = {
     "command": "(a → *) → [a] → [a]",
     "category": "List",
     "since": "v0.1.1",
-    "description": "Iterate over an input list, calling a provided function fn for each element in the list. fn receives one argument: (value). Note: R.forEach does not skip deleted or unassigned indices (sparse arrays), unlike the native Array.prototype.forEach method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach#Description Also note that, unlike Array.prototype.forEach, Ramda's forEach returns the original array. In some libraries this function is named each. Dispatches to the forEach method of the second argument, if present."
+    "description": "Iterate over an input `list`, calling a provided function `fn` for each element in the list. `fn` receives one argument: (value). Note: `R.forEach` does not skip deleted or unassigned indices (sparse arrays), unlike the native `Array.prototype.forEach` method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach#Description Also note that, unlike `Array.prototype.forEach`, Ramda's `forEach` returns the original array. In some libraries this function is named `each`. Dispatches to the `forEach` method of the second argument, if present."
   },
   "foreachobjindexed": {
     "name": "forEachObjIndexed",
     "command": "((a, String, StrMap a) → Any) → StrMap a → StrMap a",
     "category": "Object",
     "since": "v0.23.0",
-    "description": "Iterate over an input object, calling a provided function fn for each key and value in the object. fn receives three argument: (value, key, obj)."
+    "description": "Iterate over an input `object`, calling a provided function `fn` for each key and value in the object. `fn` receives three argument: (value, key, obj)."
   },
   "frompairs": {
     "name": "fromPairs",
@@ -495,7 +495,7 @@ module.exports = {
     "command": "(a → String) → [a] → {String: [a]}",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Splits a list into sub-lists stored in an object, based on the result of calling a String-returning function on each element, and grouping the results according to values returned. Dispatches to the groupBy method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Splits a list into sub-lists stored in an object, based on the result of calling a String-returning function on each element, and grouping the results according to values returned. Dispatches to the `groupBy` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "groupwith": {
     "name": "groupWith",
@@ -509,14 +509,14 @@ module.exports = {
     "command": "Ord a => a → a → Boolean",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Returns true if the first argument is greater than the second; false otherwise."
+    "description": "Returns `true` if the first argument is greater than the second; `false` otherwise."
   },
   "gte": {
     "name": "gte",
     "command": "Ord a => a → a → Boolean",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Returns true if the first argument is greater than or equal to the second; false otherwise."
+    "description": "Returns `true` if the first argument is greater than or equal to the second; `false` otherwise."
   },
   "has": {
     "name": "has",
@@ -537,14 +537,14 @@ module.exports = {
     "command": "[a] → a | Undefined",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns the first element of the given list or string. In some libraries this function is named first."
+    "description": "Returns the first element of the given list or string. In some libraries this function is named `first`."
   },
   "identical": {
     "name": "identical",
     "command": "a → a → Boolean",
     "category": "Relation",
     "since": "v0.15.0",
-    "description": "Returns true if its arguments are identical, false otherwise. Values are identical if they reference the same memory. NaN is identical to NaN; 0 and -0 are not identical."
+    "description": "Returns true if its arguments are identical, false otherwise. Values are identical if they reference the same memory. `NaN` is identical to `NaN`; `0` and `-0` are not identical."
   },
   "identity": {
     "name": "identity",
@@ -558,7 +558,7 @@ module.exports = {
     "command": "(*… → Boolean) → (*… → *) → (*… → *) → (*… → *)",
     "category": "Logic",
     "since": "v0.8.0",
-    "description": "Creates a function that will process either the onTrue or the onFalse function depending upon the result of the condition predicate."
+    "description": "Creates a function that will process either the `onTrue` or the `onFalse` function depending upon the result of the `condition` predicate."
   },
   "inc": {
     "name": "inc",
@@ -579,7 +579,7 @@ module.exports = {
     "command": "a → [a] → Number",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns the position of the first occurrence of an item in an array, or -1 if the item is not included in the array. R.equals is used to determine equality."
+    "description": "Returns the position of the first occurrence of an item in an array, or -1 if the item is not included in the array. `R.equals` is used to determine equality."
   },
   "init": {
     "name": "init",
@@ -593,14 +593,14 @@ module.exports = {
     "command": "Number → a → [a] → [a]",
     "category": "List",
     "since": "v0.2.2",
-    "description": "Inserts the supplied element into the list, at index index. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
+    "description": "Inserts the supplied element into the list, at index `index`. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
   },
   "insertall": {
     "name": "insertAll",
     "command": "Number → [a] → [a] → [a]",
     "category": "List",
     "since": "v0.9.0",
-    "description": "Inserts the sub-list into the list, at index index. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
+    "description": "Inserts the sub-list into the list, at index `index`. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
   },
   "intersection": {
     "name": "intersection",
@@ -621,7 +621,7 @@ module.exports = {
     "command": "a → [a] → [a]",
     "category": "List",
     "since": "v0.14.0",
-    "description": "Creates a new list with the separator interposed between elements. Dispatches to the intersperse method of the second argument, if present."
+    "description": "Creates a new list with the separator interposed between elements. Dispatches to the `intersperse` method of the second argument, if present."
   },
   "into": {
     "name": "into",
@@ -649,14 +649,14 @@ module.exports = {
     "command": "Number → String → (a → b → … → n → Object → *)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Turns a named method with a specified arity into a function that can be called directly supplied with arguments and a target object. The returned function is curried and accepts arity + 1 parameters where the final parameter is the target object."
+    "description": "Turns a named method with a specified arity into a function that can be called directly supplied with arguments and a target object. The returned function is curried and accepts `arity + 1` parameters where the final parameter is the target object."
   },
   "is": {
     "name": "is",
     "command": "(* → {*}) → a → Boolean",
     "category": "Type",
     "since": "v0.3.0",
-    "description": "See if an object (val) is an instance of the supplied constructor. This function will check up the inheritance chain, if any."
+    "description": "See if an object (`val`) is an instance of the supplied constructor. This function will check up the inheritance chain, if any."
   },
   "isarraylike": {
     "name": "isArrayLike",
@@ -670,21 +670,21 @@ module.exports = {
     "command": "a → Boolean",
     "category": "Logic",
     "since": "v0.1.0",
-    "description": "Returns true if the given value is its type's empty value; false otherwise."
+    "description": "Returns `true` if the given value is its type's empty value; `false` otherwise."
   },
   "isnil": {
     "name": "isNil",
     "command": "* → Boolean",
     "category": "Type",
     "since": "v0.9.0",
-    "description": "Checks if the input value is null or undefined."
+    "description": "Checks if the input value is `null` or `undefined`."
   },
   "join": {
     "name": "join",
     "command": "String → [a] → String",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a string made by inserting the separator between each element and concatenating all the elements into a single string."
+    "description": "Returns a string made by inserting the `separator` between each element and concatenating all the elements into a single string."
   },
   "juxt": {
     "name": "juxt",
@@ -719,14 +719,14 @@ module.exports = {
     "command": "a → [a] → Number",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns the position of the last occurrence of an item in an array, or -1 if the item is not included in the array. R.equals is used to determine equality."
+    "description": "Returns the position of the last occurrence of an item in an array, or -1 if the item is not included in the array. `R.equals` is used to determine equality."
   },
   "length": {
     "name": "length",
     "command": "[a] → Number",
     "category": "List",
     "since": "v0.3.0",
-    "description": "Returns the number of elements in the array by returning list.length."
+    "description": "Returns the number of elements in the array by returning `list.length`."
   },
   "lens": {
     "name": "lens",
@@ -775,21 +775,21 @@ module.exports = {
     "command": "Ord a => a → a → Boolean",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Returns true if the first argument is less than the second; false otherwise."
+    "description": "Returns `true` if the first argument is less than the second; `false` otherwise."
   },
   "lte": {
     "name": "lte",
     "command": "Ord a => a → a → Boolean",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Returns true if the first argument is less than or equal to the second; false otherwise."
+    "description": "Returns `true` if the first argument is less than or equal to the second; `false` otherwise."
   },
   "map": {
     "name": "map",
     "command": "Functor f => (a → b) → f a → f b",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Takes a function and a functor, applies the function to each of the functor's values, and returns a functor of the same shape. Ramda provides suitable map implementations for Array and Object, so this function may be applied to [1, 2, 3] or {x: 1, y: 2, z: 3}. Dispatches to the map method of the second argument, if present. Acts as a transducer if a transformer is given in list position. Also treats functions as functors and will compose them together."
+    "description": "Takes a function and a functor, applies the function to each of the functor's values, and returns a functor of the same shape. Ramda provides suitable `map` implementations for `Array` and `Object`, so this function may be applied to `[1, 2, 3]` or `{x: 1, y: 2, z: 3}`. Dispatches to the `map` method of the second argument, if present. Acts as a transducer if a transformer is given in list position. Also treats functions as functors and will compose them together."
   },
   "mapaccum": {
     "name": "mapAccum",
@@ -803,28 +803,28 @@ module.exports = {
     "command": "(x→ acc → (y, acc)) → acc → [x] → ([y], acc)",
     "category": "List",
     "since": "v0.10.0",
-    "description": "The mapAccumRight function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from right to left, and returning a final value of this accumulator together with the new list. Similar to mapAccum, except moves through the input list from the right to the left. The iterator function receives two arguments, value and acc, and should return a tuple [value, acc]."
+    "description": "The mapAccumRight function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from right to left, and returning a final value of this accumulator together with the new list. Similar to `mapAccum`, except moves through the input list from the right to the left. The iterator function receives two arguments, value and acc, and should return a tuple [value, acc]."
   },
   "mapobjindexed": {
     "name": "mapObjIndexed",
     "command": "((*, String, Object) → *) → Object → Object",
     "category": "Object",
     "since": "v0.9.0",
-    "description": "An Object-specific version of map. The function is applied to three arguments: (value, key, obj). If only the value is significant, use map instead."
+    "description": "An Object-specific version of `map`. The function is applied to three arguments: (value, key, obj). If only the value is significant, use `map` instead."
   },
   "match": {
     "name": "match",
     "command": "RegExp → String → [String | Undefined]",
     "category": "String",
     "since": "v0.1.0",
-    "description": "Tests a regular expression against a String. Note that this function will return an empty array when there are no matches. This differs from String.prototype.match which returns null when there are no matches."
+    "description": "Tests a regular expression against a String. Note that this function will return an empty array when there are no matches. This differs from `String.prototype.match` which returns `null` when there are no matches."
   },
   "mathmod": {
     "name": "mathMod",
     "command": "Number → Number → Number",
     "category": "Math",
     "since": "v0.3.0",
-    "description": "mathMod behaves like the modulo operator should mathematically, unlike the % operator (and by extension, R.modulo). So while \"-17 % 5\" is -2, mathMod(-17, 5) is 3. mathMod requires Integer arguments, and returns NaN when the modulus is zero or negative."
+    "description": "mathMod behaves like the modulo operator should mathematically, unlike the `%` operator (and by extension, R.modulo). So while \"-17 % 5\" is -2, mathMod(-17, 5) is 3. mathMod requires Integer arguments, and returns NaN when the modulus is zero or negative."
   },
   "max": {
     "name": "max",
@@ -859,7 +859,7 @@ module.exports = {
     "command": "(*… → a) → (*… → a)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Creates a new function that, when invoked, caches the result of calling fn for a given argument set and returns the result. Subsequent calls to the memoized fn with the same argument set will not result in an additional call to fn; instead, the cached result for that set of arguments will be returned."
+    "description": "Creates a new function that, when invoked, caches the result of calling `fn` for a given argument set and returns the result. Subsequent calls to the memoized `fn` with the same argument set will not result in an additional call to `fn`; instead, the cached result for that set of arguments will be returned."
   },
   "merge": {
     "name": "merge",
@@ -880,14 +880,14 @@ module.exports = {
     "command": "(a → a → a) → {a} → {a} → {a}",
     "category": "Object",
     "since": "v0.19.0",
-    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the values associated with the key in each object, with the result being used as the value associated with the key in the returned object. The key will be excluded from the returned object if the resulting value is undefined."
+    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the values associated with the key in each object, with the result being used as the value associated with the key in the returned object. The key will be excluded from the returned object if the resulting value is `undefined`."
   },
   "mergewithkey": {
     "name": "mergeWithKey",
     "command": "(String → a → a → a) → {a} → {a} → {a}",
     "category": "Object",
     "since": "v0.19.0",
-    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the key and the values associated with the key in each object, with the result being used as the value associated with the key in the returned object. The key will be excluded from the returned object if the resulting value is undefined."
+    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the key and the values associated with the key in each object, with the result being used as the value associated with the key in the returned object. The key will be excluded from the returned object if the resulting value is `undefined`."
   },
   "min": {
     "name": "min",
@@ -908,21 +908,21 @@ module.exports = {
     "command": "Number → Number → Number",
     "category": "Math",
     "since": "v0.1.1",
-    "description": "Divides the first parameter by the second and returns the remainder. Note that this function preserves the JavaScript-style behavior for modulo. For mathematical modulo see mathMod."
+    "description": "Divides the first parameter by the second and returns the remainder. Note that this function preserves the JavaScript-style behavior for modulo. For mathematical modulo see `mathMod`."
   },
   "multiply": {
     "name": "multiply",
     "command": "Number → Number → Number",
     "category": "Math",
     "since": "v0.1.0",
-    "description": "Multiplies two numbers. Equivalent to a * b but curried."
+    "description": "Multiplies two numbers. Equivalent to `a * b` but curried."
   },
   "nary": {
     "name": "nAry",
     "command": "Number → (* → a) → (* → a)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Wraps a function of any arity (including nullary) in a function that accepts exactly n parameters. Any extraneous parameters will not be passed to the supplied function."
+    "description": "Wraps a function of any arity (including nullary) in a function that accepts exactly `n` parameters. Any extraneous parameters will not be passed to the supplied function."
   },
   "negate": {
     "name": "negate",
@@ -936,14 +936,14 @@ module.exports = {
     "command": "(a → Boolean) → [a] → Boolean",
     "category": "List",
     "since": "v0.12.0",
-    "description": "Returns true if no elements of the list match the predicate, false otherwise. Dispatches to the any method of the second argument, if present."
+    "description": "Returns `true` if no elements of the list match the predicate, `false` otherwise. Dispatches to the `any` method of the second argument, if present."
   },
   "not": {
     "name": "not",
     "command": "* → Boolean",
     "category": "Logic",
     "since": "v0.1.0",
-    "description": "A function that returns the ! of its argument. It will return true when passed false-y value, and false when passed a truth-y one."
+    "description": "A function that returns the `!` of its argument. It will return `true` when passed false-y value, and `false` when passed a truth-y one."
   },
   "nth": {
     "name": "nth",
@@ -971,7 +971,7 @@ module.exports = {
     "command": "a → [a]",
     "category": "Function",
     "since": "v0.3.0",
-    "description": "Returns a singleton array containing the value provided. Note this of is different from the ES6 of; See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/of"
+    "description": "Returns a singleton array containing the value provided. Note this `of` is different from the ES6 `of`; See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/of"
   },
   "omit": {
     "name": "omit",
@@ -985,14 +985,14 @@ module.exports = {
     "command": "(a… → b) → (a… → b)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Accepts a function fn and returns a function that guards invocation of fn such that fn can only ever be called once, no matter how many times the returned function is invoked. The first value calculated is returned in subsequent invocations."
+    "description": "Accepts a function `fn` and returns a function that guards invocation of `fn` such that `fn` can only ever be called once, no matter how many times the returned function is invoked. The first value calculated is returned in subsequent invocations."
   },
   "or": {
     "name": "or",
     "command": "a → b → a | b",
     "category": "Logic",
     "since": "v0.1.0",
-    "description": "Returns true if one or both of its arguments are true. Returns false if both arguments are false."
+    "description": "Returns `true` if one or both of its arguments are `true`. Returns `false` if both arguments are `false`."
   },
   "over": {
     "name": "over",
@@ -1006,21 +1006,21 @@ module.exports = {
     "command": "a → b → (a,b)",
     "category": "List",
     "since": "v0.18.0",
-    "description": "Takes two arguments, fst and snd, and returns [fst, snd]."
+    "description": "Takes two arguments, `fst` and `snd`, and returns `[fst, snd]`."
   },
   "partial": {
     "name": "partial",
     "command": "((a, b, c, …, n) → x) → [a, b, c, …] → ((d, e, f, …, n) → x)",
     "category": "Function",
     "since": "v0.10.0",
-    "description": "Takes a function f and a list of arguments, and returns a function g. When applied, g returns the result of applying f to the arguments provided initially followed by the arguments provided to g."
+    "description": "Takes a function `f` and a list of arguments, and returns a function `g`. When applied, `g` returns the result of applying `f` to the arguments provided initially followed by the arguments provided to `g`."
   },
   "partialright": {
     "name": "partialRight",
     "command": "((a, b, c, …, n) → x) → [d, e, f, …, n] → ((a, b, c, …) → x)",
     "category": "Function",
     "since": "v0.10.0",
-    "description": "Takes a function f and a list of arguments, and returns a function g. When applied, g returns the result of applying f to the arguments provided to g followed by the arguments provided initially."
+    "description": "Takes a function `f` and a list of arguments, and returns a function `g`. When applied, `g` returns the result of applying `f` to the arguments provided to `g` followed by the arguments provided initially."
   },
   "partition": {
     "name": "partition",
@@ -1041,7 +1041,7 @@ module.exports = {
     "command": "[Idx] → a → {a} → Boolean",
     "category": "Relation",
     "since": "v0.7.0",
-    "description": "Determines whether a nested path on an object has a specific value, in R.equals terms. Most likely used to filter a list."
+    "description": "Determines whether a nested path on an object has a specific value, in `R.equals` terms. Most likely used to filter a list."
   },
   "pathor": {
     "name": "pathOr",
@@ -1055,7 +1055,7 @@ module.exports = {
     "command": "(a → Boolean) → [Idx] → {a} → Boolean",
     "category": "Logic",
     "since": "v0.19.0",
-    "description": "Returns true if the specified object property at given path satisfies the given predicate; false otherwise."
+    "description": "Returns `true` if the specified object property at given path satisfies the given predicate; `false` otherwise."
   },
   "pick": {
     "name": "pick",
@@ -1069,7 +1069,7 @@ module.exports = {
     "command": "[k] → {k: v} → {k: v}",
     "category": "Object",
     "since": "v0.1.0",
-    "description": "Similar to pick except that this one includes a key: undefined pair for properties that don't exist."
+    "description": "Similar to `pick` except that this one includes a `key: undefined` pair for properties that don't exist."
   },
   "pickby": {
     "name": "pickBy",
@@ -1083,14 +1083,14 @@ module.exports = {
     "command": "(((a, b, …, n) → o), (o → p), …, (x → y), (y → z)) → ((a, b, …, n) → z)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Performs left-to-right function composition. The leftmost function may have any arity; the remaining functions must be unary. In some libraries this function is named sequence. Note: The result of pipe is not automatically curried."
+    "description": "Performs left-to-right function composition. The leftmost function may have any arity; the remaining functions must be unary. In some libraries this function is named `sequence`. Note: The result of pipe is not automatically curried."
   },
   "pipek": {
     "name": "pipeK",
     "command": "Chain m => ((a → m b), (b → m c), …, (y → m z)) → (a → m z)",
     "category": "Function",
     "since": "v0.16.0",
-    "description": "Returns the left-to-right Kleisli composition of the provided functions, each of which must return a value of a type supported by chain. R.pipeK(f, g, h) is equivalent to R.pipe(R.chain(f), R.chain(g), R.chain(h))."
+    "description": "Returns the left-to-right Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.pipeK(f, g, h)` is equivalent to `R.pipe(R.chain(f), R.chain(g), R.chain(h))`."
   },
   "pipep": {
     "name": "pipeP",
@@ -1125,7 +1125,7 @@ module.exports = {
     "command": "[k] → [{k: v}] → [{k: v}]",
     "category": "Object",
     "since": "v0.1.0",
-    "description": "Reasonable analog to SQL select statement."
+    "description": "Reasonable analog to SQL `select` statement."
   },
   "prop": {
     "name": "prop",
@@ -1139,14 +1139,14 @@ module.exports = {
     "command": "String → a → Object → Boolean",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Returns true if the specified object property is equal, in R.equals terms, to the given value; false otherwise."
+    "description": "Returns `true` if the specified object property is equal, in `R.equals` terms, to the given value; `false` otherwise."
   },
   "propis": {
     "name": "propIs",
     "command": "Type → String → Object → Boolean",
     "category": "Type",
     "since": "v0.16.0",
-    "description": "Returns true if the specified object property is of the given type; false otherwise."
+    "description": "Returns `true` if the specified object property is of the given type; `false` otherwise."
   },
   "propor": {
     "name": "propOr",
@@ -1160,35 +1160,35 @@ module.exports = {
     "command": "[k] → {k: v} → [v]",
     "category": "Object",
     "since": "v0.1.0",
-    "description": "Acts as multiple prop: array of keys in, array of values out. Preserves order."
+    "description": "Acts as multiple `prop`: array of keys in, array of values out. Preserves order."
   },
   "propsatisfies": {
     "name": "propSatisfies",
     "command": "(a → Boolean) → String → {String: a} → Boolean",
     "category": "Logic",
     "since": "v0.16.0",
-    "description": "Returns true if the specified object property satisfies the given predicate; false otherwise."
+    "description": "Returns `true` if the specified object property satisfies the given predicate; `false` otherwise."
   },
   "range": {
     "name": "range",
     "command": "Number → Number → [Number]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a list of numbers from from (inclusive) to to (exclusive)."
+    "description": "Returns a list of numbers from `from` (inclusive) to `to` (exclusive)."
   },
   "reduce": {
     "name": "reduce",
     "command": "((a, b) → a) → a → [b] → a",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It may use R.reduced to shortcut the iteration. The arguments' order of reduceRight's iterator function is (value, acc). Note: R.reduce does not skip deleted or unassigned indices (sparse arrays), unlike the native Array.prototype.reduce method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce#Description Dispatches to the reduce method of the third argument, if present."
+    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It may use `R.reduced` to shortcut the iteration. The arguments' order of `reduceRight`'s iterator function is (value, acc). Note: `R.reduce` does not skip deleted or unassigned indices (sparse arrays), unlike the native `Array.prototype.reduce` method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce#Description Dispatches to the `reduce` method of the third argument, if present."
   },
   "reduceby": {
     "name": "reduceBy",
     "command": "((a, b) → a) → a → (b → String) → [b] → {String: a}",
     "category": "List",
     "since": "v0.20.0",
-    "description": "Groups the elements of the list according to the result of calling the String-returning function keyFn on each element and reduces the elements of each group to a single value via the reducer function valueFn. This function is basically a more general groupBy function. Acts as a transducer if a transformer is given in list position."
+    "description": "Groups the elements of the list according to the result of calling the String-returning function `keyFn` on each element and reduces the elements of each group to a single value via the reducer function `valueFn`. This function is basically a more general `groupBy` function. Acts as a transducer if a transformer is given in list position."
   },
   "reduced": {
     "name": "reduced",
@@ -1202,35 +1202,35 @@ module.exports = {
     "command": "(a, b → b) → b → [a] → b",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. Similar to reduce, except moves through the input list from the right to the left. The iterator function receives two values: (value, acc), while the arguments' order of reduce's iterator function is (acc, value). Note: R.reduceRight does not skip deleted or unassigned indices (sparse arrays), unlike the native Array.prototype.reduce method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight#Description"
+    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. Similar to `reduce`, except moves through the input list from the right to the left. The iterator function receives two values: (value, acc), while the arguments' order of `reduce`'s iterator function is (acc, value). Note: `R.reduceRight` does not skip deleted or unassigned indices (sparse arrays), unlike the native `Array.prototype.reduce` method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight#Description"
   },
   "reducewhile": {
     "name": "reduceWhile",
     "command": "((a, b) → Boolean) → ((a, b) → a) → a → [b] → a",
     "category": "List",
     "since": "v0.22.0",
-    "description": "Like reduce, reduceWhile returns a single item by iterating through the list, successively calling the iterator function. reduceWhile also takes a predicate that is evaluated before each step. If the predicate returns false, it \"short-circuits\" the iteration and returns the current value of the accumulator."
+    "description": "Like `reduce`, `reduceWhile` returns a single item by iterating through the list, successively calling the iterator function. `reduceWhile` also takes a predicate that is evaluated before each step. If the predicate returns `false`, it \"short-circuits\" the iteration and returns the current value of the accumulator."
   },
   "reject": {
     "name": "reject",
     "command": "Filterable f => (a → Boolean) → f a → f a",
     "category": "List",
     "since": "v0.1.0",
-    "description": "The complement of filter. Acts as a transducer if a transformer is given in list position."
+    "description": "The complement of `filter`. Acts as a transducer if a transformer is given in list position."
   },
   "remove": {
     "name": "remove",
     "command": "Number → Number → [a] → [a]",
     "category": "List",
     "since": "v0.2.2",
-    "description": "Removes the sub-list of list starting at index start and containing count elements. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
+    "description": "Removes the sub-list of `list` starting at index `start` and containing `count` elements. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
   },
   "repeat": {
     "name": "repeat",
     "command": "a → n → [a]",
     "category": "List",
     "since": "v0.1.1",
-    "description": "Returns a fixed list of size n containing a specified identical value."
+    "description": "Returns a fixed list of size `n` containing a specified identical value."
   },
   "replace": {
     "name": "replace",
@@ -1258,7 +1258,7 @@ module.exports = {
     "command": "(Applicative f, Traversable t) => (a → f a) → t (f a) → f (t a)",
     "category": "List",
     "since": "v0.19.0",
-    "description": "Transforms a Traversable of Applicative into an Applicative of Traversable. Dispatches to the sequence method of the second argument, if present."
+    "description": "Transforms a Traversable of Applicative into an Applicative of Traversable. Dispatches to the `sequence` method of the second argument, if present."
   },
   "set": {
     "name": "set",
@@ -1272,7 +1272,7 @@ module.exports = {
     "command": "Number → Number → [a] → [a]",
     "category": "List",
     "since": "v0.1.4",
-    "description": "Returns the elements of the given list or string (or object with a slice method) from fromIndex (inclusive) to toIndex (exclusive). Dispatches to the slice method of the third argument, if present."
+    "description": "Returns the elements of the given list or string (or object with a `slice` method) from `fromIndex` (inclusive) to `toIndex` (exclusive). Dispatches to the `slice` method of the third argument, if present."
   },
   "sort": {
     "name": "sort",
@@ -1356,42 +1356,42 @@ module.exports = {
     "command": "* → Boolean",
     "category": "Function",
     "since": "v0.9.0",
-    "description": "A function that always returns true. Any passed in parameters are ignored."
+    "description": "A function that always returns `true`. Any passed in parameters are ignored."
   },
   "tail": {
     "name": "tail",
     "command": "[a] → [a]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns all but the first element of the given list or string (or object with a tail method). Dispatches to the slice method of the first argument, if present."
+    "description": "Returns all but the first element of the given list or string (or object with a `tail` method). Dispatches to the `slice` method of the first argument, if present."
   },
   "take": {
     "name": "take",
     "command": "Number → [a] → [a]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns the first n elements of the given list, string, or transducer/transformer (or object with a take method). Dispatches to the take method of the second argument, if present."
+    "description": "Returns the first `n` elements of the given list, string, or transducer/transformer (or object with a `take` method). Dispatches to the `take` method of the second argument, if present."
   },
   "takelast": {
     "name": "takeLast",
     "command": "Number → [a] → [a]",
     "category": "List",
     "since": "v0.16.0",
-    "description": "Returns a new list containing the last n elements of the given list. If n > list.length, returns a list of list.length elements."
+    "description": "Returns a new list containing the last `n` elements of the given list. If `n > list.length`, returns a list of `list.length` elements."
   },
   "takelastwhile": {
     "name": "takeLastWhile",
     "command": "(a → Boolean) → [a] → [a]",
     "category": "List",
     "since": "v0.16.0",
-    "description": "Returns a new list containing the last n elements of a given list, passing each value to the supplied predicate function, and terminating when the predicate function returns false. Excludes the element that caused the predicate function to fail. The predicate function is passed one argument: (value)."
+    "description": "Returns a new list containing the last `n` elements of a given list, passing each value to the supplied predicate function, and terminating when the predicate function returns `false`. Excludes the element that caused the predicate function to fail. The predicate function is passed one argument: (value)."
   },
   "takewhile": {
     "name": "takeWhile",
     "command": "(a → Boolean) → [a] → [a]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a new list containing the first n elements of a given list, passing each value to the supplied predicate function, and terminating when the predicate function returns false. Excludes the element that caused the predicate function to fail. The predicate function is passed one argument: (value). Dispatches to the takeWhile method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns a new list containing the first `n` elements of a given list, passing each value to the supplied predicate function, and terminating when the predicate function returns `false`. Excludes the element that caused the predicate function to fail. The predicate function is passed one argument: (value). Dispatches to the `takeWhile` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "tap": {
     "name": "tap",
@@ -1412,7 +1412,7 @@ module.exports = {
     "command": "(Number → a) → Number → [a]",
     "category": "List",
     "since": "v0.2.3",
-    "description": "Calls an input function n times, returning an array containing the results of those function calls. fn is passed one argument: The current value of n, which begins at 0 and is gradually incremented to n - 1."
+    "description": "Calls an input function `n` times, returning an array containing the results of those function calls. `fn` is passed one argument: The current value of `n`, which begins at `0` and is gradually incremented to `n - 1`."
   },
   "tolower": {
     "name": "toLower",
@@ -1440,7 +1440,7 @@ module.exports = {
     "command": "* → String",
     "category": "String",
     "since": "v0.14.0",
-    "description": "Returns the string representation of the given value. eval'ing the output should result in a value equivalent to the input value. Many of the built-in toString methods do not satisfy this requirement. If the given value is an [object Object] with a toString method other than Object.prototype.toString, this method is invoked with no arguments to produce the return value. This means user-defined constructor functions can provide a suitable toString method. For example: function Point(x, y) {   this.x = x;   this.y = y; } Point.prototype.toString = function() {   return 'new Point(' + this.x + ', ' + this.y + ')'; }; R.toString(new Point(1, 2)); //=> 'new Point(1, 2)'"
+    "description": "Returns the string representation of the given value. `eval`'ing the output should result in a value equivalent to the input value. Many of the built-in `toString` methods do not satisfy this requirement. If the given value is an `[object Object]` with a `toString` method other than `Object.prototype.toString`, this method is invoked with no arguments to produce the return value. This means user-defined constructor functions can provide a suitable `toString` method. For example: `function Point(x, y) {   this.x = x;   this.y = y; } Point.prototype.toString = function() {   return 'new Point(' + this.x + ', ' + this.y + ')'; }; R.toString(new Point(1, 2)); //=> 'new Point(1, 2)' `"
   },
   "toupper": {
     "name": "toUpper",
@@ -1454,21 +1454,21 @@ module.exports = {
     "command": "(c → c) → (a,b → a) → a → [b] → a",
     "category": "List",
     "since": "v0.12.0",
-    "description": "Initializes a transducer using supplied iterator function. Returns a single item by iterating through the list, successively calling the transformed iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It will be wrapped as a transformer to initialize the transducer. A transformer can be passed directly in place of an iterator function. In both cases, iteration may be stopped early with the R.reduced function. A transducer is a function that accepts a transformer and returns a transformer and can be composed directly. A transformer is an an object that provides a 2-arity reducing iterator function, step, 0-arity initial value function, init, and 1-arity result extraction function, result. The step function is used as the iterator function in reduce. The result function is used to convert the final accumulator into the return type and in most cases is R.identity. The init function can be used to provide an initial accumulator, but is ignored by transduce. The iteration is performed with R.reduce after initializing the transducer."
+    "description": "Initializes a transducer using supplied iterator function. Returns a single item by iterating through the list, successively calling the transformed iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It will be wrapped as a transformer to initialize the transducer. A transformer can be passed directly in place of an iterator function. In both cases, iteration may be stopped early with the `R.reduced` function. A transducer is a function that accepts a transformer and returns a transformer and can be composed directly. A transformer is an an object that provides a 2-arity reducing iterator function, step, 0-arity initial value function, init, and 1-arity result extraction function, result. The step function is used as the iterator function in reduce. The result function is used to convert the final accumulator into the return type and in most cases is R.identity. The init function can be used to provide an initial accumulator, but is ignored by transduce. The iteration is performed with R.reduce after initializing the transducer."
   },
   "transpose": {
     "name": "transpose",
     "command": "[[a]] → [[a]]",
     "category": "List",
     "since": "v0.19.0",
-    "description": "Transposes the rows and columns of a 2D list. When passed a list of n lists of length x, returns a list of x lists of length n."
+    "description": "Transposes the rows and columns of a 2D list. When passed a list of `n` lists of length `x`, returns a list of `x` lists of length `n`."
   },
   "traverse": {
     "name": "traverse",
     "command": "(Applicative f, Traversable t) => (a → f a) → (a → f b) → t a → f (t b)",
     "category": "List",
     "since": "v0.19.0",
-    "description": "Maps an Applicative-returning function over a Traversable, then uses sequence to transform the resulting Traversable of Applicative into an Applicative of Traversable. Dispatches to the sequence method of the third argument, if present."
+    "description": "Maps an Applicative-returning function over a Traversable, then uses `sequence` to transform the resulting Traversable of Applicative into an Applicative of Traversable. Dispatches to the `sequence` method of the third argument, if present."
   },
   "trim": {
     "name": "trim",
@@ -1482,7 +1482,7 @@ module.exports = {
     "command": "(…x → a) → ((e, …x) → a) → (…x → a)",
     "category": "Function",
     "since": "v0.20.0",
-    "description": "tryCatch takes two functions, a tryer and a catcher. The returned function evaluates the tryer; if it does not throw, it simply returns the result. If the tryer does throw, the returned function evaluates the catcher function and returns its result. Note that for effective composition with this function, both the tryer and catcher functions must return the same type of results."
+    "description": "`tryCatch` takes two functions, a `tryer` and a `catcher`. The returned function evaluates the `tryer`; if it does not throw, it simply returns the result. If the `tryer` does throw, the returned function evaluates the `catcher` function and returns its result. Note that for effective composition with this function, both the `tryer` and `catcher` functions must return the same type of results."
   },
   "type": {
     "name": "type",
@@ -1496,7 +1496,7 @@ module.exports = {
     "command": "([*…] → a) → (*… → a)",
     "category": "Function",
     "since": "v0.8.0",
-    "description": "Takes a function fn, which takes a single array argument, and returns a function which: takes any number of positional arguments; passes these arguments to fn as an array; and returns the result. In other words, R.unapply derives a variadic function from a function which takes an array. R.unapply is the inverse of R.apply."
+    "description": "Takes a function `fn`, which takes a single array argument, and returns a function which: takes any number of positional arguments; passes these arguments to `fn` as an array; and returns the result. In other words, R.unapply derives a variadic function from a function which takes an array. R.unapply is the inverse of R.apply."
   },
   "unary": {
     "name": "unary",
@@ -1510,7 +1510,7 @@ module.exports = {
     "command": "Number → (a → b) → (a → c)",
     "category": "Function",
     "since": "v0.14.0",
-    "description": "Returns a function of arity n from a (manually) curried function."
+    "description": "Returns a function of arity `n` from a (manually) curried function."
   },
   "unfold": {
     "name": "unfold",
@@ -1538,14 +1538,14 @@ module.exports = {
     "command": "[a] → [a]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a new list containing only one copy of each element in the original list. R.equals is used to determine equality."
+    "description": "Returns a new list containing only one copy of each element in the original list. `R.equals` is used to determine equality."
   },
   "uniqby": {
     "name": "uniqBy",
     "command": "(a → b) → [a] → [a]",
     "category": "List",
     "since": "v0.16.0",
-    "description": "Returns a new list containing only one copy of each element in the original list, based upon the value returned by applying the supplied function to each list element. Prefers the first item if the supplied function produces the same value on two items. R.equals is used for comparison."
+    "description": "Returns a new list containing only one copy of each element in the original list, based upon the value returned by applying the supplied function to each list element. Prefers the first item if the supplied function produces the same value on two items. `R.equals` is used for comparison."
   },
   "uniqwith": {
     "name": "uniqWith",
@@ -1559,14 +1559,14 @@ module.exports = {
     "command": "(a → Boolean) → (a → a) → a → a",
     "category": "Logic",
     "since": "v0.18.0",
-    "description": "Tests the final argument by passing it to the given predicate function. If the predicate is not satisfied, the function will return the result of calling the whenFalseFn function with the same argument. If the predicate is satisfied, the argument is returned as is."
+    "description": "Tests the final argument by passing it to the given predicate function. If the predicate is not satisfied, the function will return the result of calling the `whenFalseFn` function with the same argument. If the predicate is satisfied, the argument is returned as is."
   },
   "unnest": {
     "name": "unnest",
     "command": "Chain c => c (c a) → c a",
     "category": "List",
     "since": "v0.3.0",
-    "description": "Shorthand for R.chain(R.identity), which removes one level of nesting from any Chain."
+    "description": "Shorthand for `R.chain(R.identity)`, which removes one level of nesting from any Chain."
   },
   "until": {
     "name": "until",
@@ -1587,7 +1587,7 @@ module.exports = {
     "command": "(x1 → x2 → … → z) → [(a → x1), (b → x2), …] → (a → b → … → z)",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Accepts a function fn and a list of transformer functions and returns a new curried function. When the new function is invoked, it calls the function fn with parameters consisting of the result of calling each supplied handler on successive arguments to the new function. If more arguments are passed to the returned function than transformer functions, those arguments are passed directly to fn as additional parameters. If you expect additional arguments that don't need to be transformed, although you can ignore them, it's best to pass an identity function so that the new function reports the correct arity."
+    "description": "Accepts a function `fn` and a list of transformer functions and returns a new curried function. When the new function is invoked, it calls the function `fn` with parameters consisting of the result of calling each supplied handler on successive arguments to the new function. If more arguments are passed to the returned function than transformer functions, those arguments are passed directly to `fn` as additional parameters. If you expect additional arguments that don't need to be transformed, although you can ignore them, it's best to pass an identity function so that the new function reports the correct arity."
   },
   "values": {
     "name": "values",
@@ -1615,28 +1615,28 @@ module.exports = {
     "command": "(a → Boolean) → (a → a) → a → a",
     "category": "Logic",
     "since": "v0.18.0",
-    "description": "Tests the final argument by passing it to the given predicate function. If the predicate is satisfied, the function will return the result of calling the whenTrueFn function with the same argument. If the predicate is not satisfied, the argument is returned as is."
+    "description": "Tests the final argument by passing it to the given predicate function. If the predicate is satisfied, the function will return the result of calling the `whenTrueFn` function with the same argument. If the predicate is not satisfied, the argument is returned as is."
   },
   "where": {
     "name": "where",
     "command": "{String: (* → Boolean)} → {String: *} → Boolean",
     "category": "Object",
     "since": "v0.1.1",
-    "description": "Takes a spec object and a test object; returns true if the test satisfies the spec. Each of the spec's own properties must be a predicate function. Each predicate is applied to the value of the corresponding property of the test object. where returns true if all the predicates return true, false otherwise. where is well suited to declaratively expressing constraints for other functions such as filter and find."
+    "description": "Takes a spec object and a test object; returns true if the test satisfies the spec. Each of the spec's own properties must be a predicate function. Each predicate is applied to the value of the corresponding property of the test object. `where` returns true if all the predicates return true, false otherwise. `where` is well suited to declaratively expressing constraints for other functions such as `filter` and `find`."
   },
   "whereeq": {
     "name": "whereEq",
     "command": "{String: *} → {String: *} → Boolean",
     "category": "Object",
     "since": "v0.14.0",
-    "description": "Takes a spec object and a test object; returns true if the test satisfies the spec, false otherwise. An object satisfies the spec if, for each of the spec's own properties, accessing that property of the object gives the same value (in R.equals terms) as accessing that property of the spec. whereEq is a specialization of where."
+    "description": "Takes a spec object and a test object; returns true if the test satisfies the spec, false otherwise. An object satisfies the spec if, for each of the spec's own properties, accessing that property of the object gives the same value (in `R.equals` terms) as accessing that property of the spec. `whereEq` is a specialization of `where`."
   },
   "without": {
     "name": "without",
     "command": "[a] → [a] → [a]",
     "category": "List",
     "since": "v0.19.0",
-    "description": "Returns a new list without values in the first argument. R.equals is used to determine equality. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns a new list without values in the first argument. `R.equals` is used to determine equality. Acts as a transducer if a transformer is given in list position."
   },
   "xprod": {
     "name": "xprod",
@@ -1650,14 +1650,14 @@ module.exports = {
     "command": "[a] → [b] → [[a,b]]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Creates a new list out of the two supplied by pairing up equally-positioned items from both lists. The returned list is truncated to the length of the shorter of the two input lists. Note: zip is equivalent to zipWith(function(a, b) { return [a, b] })."
+    "description": "Creates a new list out of the two supplied by pairing up equally-positioned items from both lists. The returned list is truncated to the length of the shorter of the two input lists. Note: `zip` is equivalent to `zipWith(function(a, b) { return [a, b] })`."
   },
   "zipobj": {
     "name": "zipObj",
     "command": "[String] → [*] → {String: *}",
     "category": "List",
     "since": "v0.3.0",
-    "description": "Creates a new object out of a list of keys and a list of values. Key/value pairing is truncated to the length of the shorter of the two lists. Note: zipObj is equivalent to pipe(zipWith(pair), fromPairs)."
+    "description": "Creates a new object out of a list of keys and a list of values. Key/value pairing is truncated to the length of the shorter of the two lists. Note: `zipObj` is equivalent to `pipe(zipWith(pair), fromPairs)`."
   },
   "zipwith": {
     "name": "zipWith",
