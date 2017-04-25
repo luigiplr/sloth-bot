@@ -1,4 +1,4 @@
-// Last Updated 17/11/16 v4.17.2
+// Last Updated 25/04/2017 v4.17.4
 const lodashFunctions = {
   "chunk": {
     "name": "chunk",
@@ -801,7 +801,7 @@ const lodashFunctions = {
   "isequal": {
     "name": "isEqual",
     "command": "_.isEqual(value, other)",
-    "description": "Performs a deep comparison between two values to determine if they are equivalent. Note: This method supports comparing arrays, array buffers, booleans, date objects, error objects, maps, numbers, Object objects, regexes, sets, strings, symbols, and typed arrays. Object objects are compared by their own, not inherited, enumerable properties. Functions and DOM nodes are not supported.",
+    "description": "Performs a deep comparison between two values to determine if they are equivalent. Note: This method supports comparing arrays, array buffers, booleans, date objects, error objects, maps, numbers, Object objects, regexes, sets, strings, symbols, and typed arrays. Object objects are compared by their own, not inherited, enumerable properties. Functions and DOM nodes are compared by strict equality, i.e. ===.",
     "since": "0.1.0"
   },
   "isequalwith": {
@@ -1387,7 +1387,7 @@ const lodashFunctions = {
     "since": "3.0.0"
   },
   "_": {
-    "name": "lodash",
+    "name": "_",
     "dontShow": true
   },
   "chain": {
@@ -1410,7 +1410,7 @@ const lodashFunctions = {
   },
   "prototype-symbol-iterator": {
     "name": "prototype-Symbol-iterator",
-    "command": "_.prototype",
+    "command": "_.prototype[Symbol.iterator]()",
     "description": "Enables the wrapper to be iterable.",
     "since": "4.0.0"
   },
@@ -1847,7 +1847,7 @@ const lodashFunctions = {
   "templatesettings": {
     "name": "templateSettings",
     "command": "_.templateSettings",
-    "description": "(Object): By default, the template delimiters used by lodash are like those in embedded Ruby (ERB). Change the following template settings to use alternative delimiters.",
+    "description": "(Object): By default, the template delimiters used by lodash are like those in embedded Ruby (ERB) as well as ES2015 template strings. Change the following template settings to use alternative delimiters.",
     "since": "Unknown"
   },
   "templatesettings-escape": {
