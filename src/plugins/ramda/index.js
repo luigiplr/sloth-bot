@@ -10,7 +10,7 @@ export function ramda(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: ramda <command> | Searches for ramda function' })
 
-    let method = input == '__' ? input : input.replace('R.', '').replace('__', '')
+    let method = input == '__' ? input : input.replace('R.', '')
     if (ramdaFunctions[method.toLowerCase()]) {
       let cmd = ramdaFunctions[method.toLowerCase()];
       let msg = [
