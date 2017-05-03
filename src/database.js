@@ -1,8 +1,10 @@
 import path from 'path'
 import fs from 'fs'
 import CRUD from 'createreadupdatedelete.js'
+import config from '../config'
 
-const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot')
+const dirName = config.saveName || '.Sloth-Bot'
+const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], dirName)
 const dbFile = path.join(dbDir, 'database.sqlite')
 
 if (!fs.existsSync(dbDir))  {

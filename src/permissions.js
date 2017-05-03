@@ -1,7 +1,9 @@
 import fs from 'fs'
 import path from 'path'
+import config from '../config'
 
-const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.Sloth-Bot')
+const dirName = config.saveName || '.Sloth-Bot'
+const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], dirName)
 const permsFile = path.join(dbDir, 'permissions.json')
 
 const fileExists = filePath => {
