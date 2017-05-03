@@ -89,7 +89,7 @@ export function getHistory(channel, limit = 100) {
 export function kickUser(channel, user) {
   return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] == 'C' ? 'channels.kick' : 'groups.kick'}`, {
     channel: channel,
-    token: config.slackAPIToken,
+    token: config.slackAPIToken || config.slackBotToken,
     user: user
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('kickUserErr', err || error))
@@ -152,7 +152,7 @@ export function getUsers(noCache) {
  */
 export function addLoadingMsg(message) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/team.loading.addMsg', {
-    token: config.slackAPIToken,
+    token: config.slackAPIToken || config.slackBotToken,
     message: message
   }, (err, resp, { error, id }) => {
     if (err || error) return reject(_logErr('addLoadingMsgErr', err || error))
@@ -167,7 +167,7 @@ export function addLoadingMsg(message) {
  */
 export function deleteLoadingMsg(id) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/team.loading.deleteMsg', {
-    token: config.slackAPIToken,
+    token: config.slackAPIToken || config.slackBotToken,
     id: id
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('delLoadingMsgErr', err || error))
@@ -183,7 +183,7 @@ export function deleteLoadingMsg(id) {
 export function invite(email) {
   return new Promise((resolve, reject) => needle.post('https://slack.com/api/users.admin.invite', {
     email: email,
-    token: config.slackAPIToken,
+    token: config.slackAPIToken || config.slackBotToken,
     set_active: true
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('inviteErr', err || error))
@@ -235,7 +235,7 @@ export function deleteMessage(channel, ts) {
 const deleteQueue = queue((task, cb) => {
   needle.post('https://slack.com/api/chat.delete', {
     channel: task.channel,
-    token: config.slackAPIToken,
+    token: config.slackAPIToken || config.slackBotToken,
     ts: task.ts
   }, (err, resp, { error }) => {
     if (err || error) console.error(`Error deleting message ${err || error}`)

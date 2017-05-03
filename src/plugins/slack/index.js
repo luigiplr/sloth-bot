@@ -72,8 +72,12 @@ export const plugin_info = [{
   userLevel: ['admin', 'superadmin']
 }]
 
+const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.length > 0
+const adminErr = '`missing admin api key, cannot perform admin commands`'
+
 export function kickUser(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return resolve({ type: 'dm', message: 'Usage: kick <username> [reason]> - Kicks a user from the channel' })
 
     kick(user, channel, input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
@@ -82,6 +86,7 @@ export function kickUser(user, channel, input) {
 
 export function inviteUser(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return resolve({ type: 'dm', message: 'Usage: invite <email> - invites a person to the slack channel' })
     let email = input.substr(8).split('|')[0]
 
@@ -177,6 +182,7 @@ export function delLast(user, channel, input, ts) {
 
 export function addLoadMessage(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return resolve({ type: 'dm', message: 'Usage: addloadingmessage <message> - Adds a loading message to the slack team' })
 
     addLoadingMsg(input).then(id => resolve({ type: 'channel', message: `Successfully added message with id ${id}` })).catch(reject)
@@ -185,6 +191,7 @@ export function addLoadMessage(user, channel, input) {
 
 export function delLoadMessage(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input)
       return resolve({ type: 'dm', message: 'Usage: removeloadingmessage <id> - Remove a loading message from the team - ID is required and can only be viewed within the Slack Admin Page' });
 
@@ -227,6 +234,7 @@ export function whois(user, channel, input) {
 
 export function enableUser(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return reject("Please specify a user")
 
     let u = findUser(input)
@@ -241,6 +249,7 @@ const cantDisable = u => u.id == config.botid || perms.superadmins.includes(u.na
 
 export function disableUser(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return reject("Please specify a user")
 
     let u = findUser(input)
@@ -253,6 +262,7 @@ export function disableUser(user, channel, input) {
 
 export function reconnect(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return reject("Please specify a user")
 
     let u = findUser(input)
@@ -273,6 +283,7 @@ export function reconnect(user, channel, input) {
 // Soon
 export function ban(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return reject("Please specify a user")
     let split = input.split(' ')
     if (split.length != 2) return resolve({ type: 'dm', message: 'Usage: ban <user> [duration] - bans user for duration in minutes or 5 minutes' })

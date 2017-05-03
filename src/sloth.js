@@ -9,8 +9,8 @@ var firstStart = true;
 
 const DEVMODE = process.env.NODE_ENV == 'development'
 
-if (!config.prefix || !config.slackAPIToken || !config.slackBotToken) {
-  console.error("Invalid config, please fill in the first 3 required config fields")
+if (!config.prefix || !config.slackBotToken) {
+  console.error("Invalid config, please fill in the first 2 required config fields")
   process.exit()
 }
 

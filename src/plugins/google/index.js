@@ -25,7 +25,7 @@ const ytOpts = {
   safeSearch: 'none'
 }
 
-const baseURL = `https://www.googleapis.com/customsearch/v1?num=5&start=1&hl=en&safe=off&key=${config.googleAPIKey}`
+const baseURL = `https://www.googleapis.com/customsearch/v1?num=5&start=1&hl=en&safe=${config.googleSafeSearch || 'off'}&key=${config.googleAPIKey}`
 
 export function googleSearch(user, channel, input) {
   return new Promise((resolve, reject) => {

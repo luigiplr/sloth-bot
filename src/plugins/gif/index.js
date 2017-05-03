@@ -1,4 +1,5 @@
 import Giphy from 'giphy'
+import config from '../../../config'
 
 const giphy = new Giphy('dc6zaTOxFJmzC')
 
@@ -15,7 +16,7 @@ export function gif(user, channel, input = false) {
     giphy.search({
       q: input.replace(' ', '+'),
       limit: 4,
-      rating: 'r',
+      rating: config.giphyRating || 'r',
       fmt: 'json'
     }, (err, res) => {
       if (res.pagination.count > 0)
