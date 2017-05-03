@@ -66,6 +66,7 @@
     "@slack/client": "^3.8.1",
     "async": "^2.1.4",
     "caniuse-api": "^1.5.2",
+    "cheerio": "^0.22.0",
     "codepad": "^0.1.1",
     "createreadupdatedelete.js": "^0.8.0",
     "did-you-mean": "0.0.1",

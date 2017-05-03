@@ -1,32 +1,22 @@
 import needle from 'needle'
-import _ from 'lodash'
 import moment from 'moment'
+import cheerio from 'cheerio'
 
-try {
-  var { salesAPI: [url, auth, key] } = require('../../../../config.json')
-} catch(e) {
-  var noWorkie = true
-}
-
-const options = {
-  headers: {
-    Authorization: auth,
-    ApiKey: key
-  }
-}
-
-var sales = undefined
+var gCurrentSale = undefined
 var nextUpdate = undefined
 
 function getSaleData() {
+  console.log("Fetching sale data")
   return new Promise((resolve, reject) => {
-    if (noWorkie) return reject("Unable to use this function")
-    needle.get(url, options, (err, resp, body) => {
-      if (!err && body) {
-        nextUpdate = moment().add(2, 'd')
-        return resolve(typeof body == 'string' ? JSON.parse(body) : body)
+    needle.get('http://www.whenisthenextsteamsale.com/', (err, resp, body) => {
+      if (err || !body) return reject("Error fetching data")
+      try {
+        const $ = cheerio.load(body)
+        const value = $('#hdnNextSale').attr().value
+        return resolve(JSON.parse(value))
+      } catch (e) {
+        return reject("Error parsing data")
       }
-      return reject("Error fetching data")
     })
   })
 }
@@ -39,22 +29,11 @@ function formatDate(date) {
   return UTCDate
 }
 
-function formatDates(data) {
-  return _.map(data, ({ name, date, enddate, confirmed }) => {
-    date = formatDate(date)
-    enddate = formatDate(enddate)
-    return { name, date, enddate, confirmed: (confirmed === 'true' ? true : false) }
-  })
-}
-
-function findNextSale(sales) {
-  let currentTime = new Date().getTime()
-  let nextSale = undefined
-  sales.forEach(sale => {
-    let diff = sale.enddate.getTime() - currentTime
-    if (diff > 0 && (!nextSale || nextSale.date.getTime() - currentTime > diff)) nextSale = sale
-  })
-  return nextSale
+function formatData({ date, enddate, confirmed, name }) {
+  date = formatDate(date)
+  enddate = formatDate(enddate)
+  confirmed = (confirmed === 'true' ? true : false)
+  return { name, enddate, date, confirmed }
 }
 
 export function getSaleTime(time) {
@@ -65,10 +44,11 @@ export function getSaleTime(time) {
 
 export function getNextSale() {
   return new Promise((resolve, reject) => {
-    if (sales && nextUpdate && moment().isBefore(nextUpdate)) return resolve(findNextSale(sales))
-    getSaleData().then(data => {
-      sales = formatDates(data)
-      return resolve(findNextSale(sales))
+    if (gCurrentSale && nextUpdate && moment().isBefore(nextUpdate)) return resolve(gCurrentSale)
+    getSaleData().then(nextSale => {
+      nextUpdate = moment().add(2, 'd')
+      gCurrentSale = formatData(nextSale)
+      return resolve(gCurrentSale)
     }).catch(reject)
   })
 }
