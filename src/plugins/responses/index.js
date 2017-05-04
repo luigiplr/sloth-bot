@@ -88,8 +88,11 @@ const morseConvert = nodeMorse.create('ITU')
 export function morse(user, channel, input) {
   return new Promise(resolve => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: Morse <morse code> - Translates morse code into English. Words should be seperated by a /' })
-
-    resolve({ 'type': 'channel', 'message': "Translation: " + morseConvert.decode(input) })
+    if (input.match(/[A-Z0-9]/ig)) {
+      return resolve({ 'type': 'channel', 'message': 'Invalid Morse Code, this function can only convert morse code to text.' })
+    }
+    const message = morseConvert.decode(input).trim()
+    resolve({ 'type': 'channel', 'message': message.length ? `Translation: ${message}` : `Unable to decode. Words need to be seperated with a \`/\`` })
   })
 }
 
