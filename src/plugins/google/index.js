@@ -22,7 +22,7 @@ const ytOpts = {
   key: config.googleAPIKey,
   type: 'video',
   videoEmbeddable: true,
-  safeSearch: 'none'
+  safeSearch: config.youtubeSafeSerch || 'none'
 }
 
 const baseURL = `https://www.googleapis.com/customsearch/v1?num=5&start=1&hl=en&safe=${config.googleSafeSearch || 'off'}&key=${config.googleAPIKey}`

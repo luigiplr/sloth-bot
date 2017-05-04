@@ -9,3 +9,4 @@ databases
 config.js
 err.log
 out.log
+.history/
