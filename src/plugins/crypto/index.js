@@ -20,7 +20,7 @@ export function encrypt(user, channel, input) {
     let type = input.split(' ')[0].toLowerCase()
     let toHash = slice(input.split(' '), 1).join(' ')
 
-    if (!includes(cryptoTypes, type)) return reject("Error: Unsupported algorithm")
+    if (!includes(cryptoTypes, type)) return reject(`Error: Unsupported algorithm. Valid algorithms are ${cryptoTypes.join(', ')}`)
     if (!toHash) return reject("Error: I need something to hash")
     if (toHash.length > 90) return reject("Input must be <= 90")
 
