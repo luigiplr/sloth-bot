@@ -80,6 +80,7 @@
     "needle": "^1.4.3",
     "node-metainspector": "https://github.com/jaruba/node-metainspector/tarball/master",
     "node-uuid": "^1.4.7",
+    "pad-left": "^2.1.0",
     "request": "^2.79.0",
     "scrape-mdn": "^1.0.2",
     "shakespeare-insult": "^1.0.0",

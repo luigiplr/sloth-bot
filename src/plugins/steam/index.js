@@ -2,6 +2,7 @@ import { getProfileInfo, getAppInfo, getSteamIDInfo, getUserWishlist } from './u
 import { generatePlayersResponse, generateProfileResponse, generateAppDetailsResponse } from './utils/util.js'
 import { getNextSale, getSaleTime } from './utils/sales'
 import moment from 'moment'
+import pad from 'pad-left' // lmao
 
 export const plugin_info = [{
   alias: ['sp', 'steamprofile'],
@@ -86,7 +87,7 @@ export function wishlist(user, channel, input) {
       const msg = [
         `*Top ${games.length} games in wishlist for ${input}*`,
         '```',
-        ...games.map(({ name, id, index }) => ` ${index < 10 ? ' ' : ''}${index}. ${('[' + id + ']').padStart(8, ' ')} ${name}`),
+        ...games.map(({ name, id, index }) => ` ${index < 10 ? ' ' : ''}${index}. ${pad('[' + id + ']', 8, ' ')} ${name}`),
         '```',
         resp.length > 10 ? `_Plus ${resp.length - 10} more games not shown_` : void 0
       ].filter(Boolean).join('\n')
