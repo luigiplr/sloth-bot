@@ -1,6 +1,7 @@
 import { capitalize, get } from 'lodash'
 import needle from 'needle'
 import SteamID from 'steamid'
+import cheerio from 'cheerio'
 
 const filters = ['basic', 'price_overview', 'release_date', 'metacritic', 'developers', 'genres', 'demos'].join(',')
 const token = require('./../../../../config.json').steamAPIKey
@@ -18,7 +19,8 @@ const endpoints = {
   userBans: `http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=${token}&steamids=%q%`,
   appList: `http://api.steampowered.com/ISteamApps/GetAppList/v0002/`, // Unused
   userLevel: `https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${token}&steamid=%q%`,
-  resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`
+  resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`,
+  userWishList: `https://steamcommunity.com/profiles/%q%/wishlist/`
 }
 
 const getUrl = (type, param, cc) => {
@@ -99,6 +101,28 @@ const getPlayersForApp = appid => {
       else return reject('Unable to view player counts for this app')
     else return reject('Error retrieving player counts')
   }))
+}
+
+export function getUserWishlist(id) {
+  return new Promise((resolve, reject) => formatProfileID(id).then(newID => {
+    needle.get(getUrl('userWishList', newID), { follow_max: 3 }, (err, resp, body) => {
+      if (!err && body) {
+        try {
+          const $ = cheerio.load(body)
+          const data = $('#wishlist_items .wishlistRow').map((i, elm) => {
+            const $elm = $(elm)
+            const name = ($elm.find('h4').text() || '').trim()
+            const id = ($elm.attr('id') || '').split('_')[1]
+            return { name, id, index: i + 1 }
+          }).get()
+
+          return resolve(data)
+        } catch (e) {
+          return reject('Error parsing users wishlist')
+        }
+      } else return reject('Error retrieving users wishlist')
+    })
+  }).catch(reject))
 }
 
 export function getProfileInfo(id) {

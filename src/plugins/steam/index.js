@@ -1,4 +1,4 @@
-import { getProfileInfo, getAppInfo, getSteamIDInfo } from './utils/steam'
+import { getProfileInfo, getAppInfo, getSteamIDInfo, getUserWishlist } from './utils/steam'
 import { generatePlayersResponse, generateProfileResponse, generateAppDetailsResponse } from './utils/util.js'
 import { getNextSale, getSaleTime } from './utils/sales'
 import moment from 'moment'
@@ -23,6 +23,10 @@ export const plugin_info = [{
   alias: ['steamsale'],
   command: 'steamSale',
   usage: 'steamsale - tells u wen da sale is, durh'
+}, {
+  alias: ['wishlist'],
+  command: 'wishlist',
+  usage: 'wishlist <steamid/vanityid> - returns a users wishlist'
 }]
 
 export function steamProfile(user, channel, input) {
@@ -73,3 +77,21 @@ export function steamSale() {
   })
 }
 
+export function wishlist(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return resolve({ type: 'dm', message: 'Usage: wishlist <steamid/vanityid> - Returns top 10 games in users wishlist, id can be any form of SteamID' })
+
+    getUserWishlist(input).then((resp = []) => {
+      const games = resp.slice(0, 10)
+      const msg = [
+        `*Top ${games.length} games in wishlist for ${input}*`,
+        '```',
+        ...games.map(({ name, id, index }) => ` ${index < 10 ? ' ' : ''}${index}. ${('[' + id + ']').padStart(8, ' ')} ${name}`),
+        '```',
+        resp.length > 10 ? `_Plus ${resp.length - 10} more games not shown_` : void 0
+      ].filter(Boolean).join('\n')
+
+      return resolve({ type: 'channel', message: msg })
+    }).catch(reject)
+  })
+}
