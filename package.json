@@ -65,6 +65,7 @@
   "dependencies": {
     "@slack/client": "^3.10.0",
     "async": "^2.4.1",
+    "builtin-status-codes": "^3.0.0",
     "caniuse-api": "^2.0.0",
     "cheerio": "^0.22.0",
     "codepad": "^0.1.1",

@@ -2,6 +2,7 @@ import ateball from 'eightball'
 import nodeMorse from 'morse-node'
 import spinsult from 'shakespeare-insult'
 import normalinsult from 'insultgenerator'
+import statusCodes from 'builtin-status-codes'
 import { sendMessage, findUser } from '../../slack'
 import data from './utils/data'
 
@@ -45,6 +46,10 @@ export const plugin_info = [{
   alias: ['sinsult', 'shakespeareinsult'],
   command: 'oldinsult',
   usage: 'sinsult <person>'
+}, {
+  alias: ['statuscode'],
+  command: 'status',
+  usage: 'statuscode <code> - Returns what the status code is'
 }]
 
 const _cleanInput = input => {
@@ -52,6 +57,15 @@ const _cleanInput = input => {
   if (input.slice(0, 2) == "<@") return findUser(input).name || input
   if (input.includes('<http:')) return input.split('|')[1].slice(0, -1)
   return input
+}
+
+export function status(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) return reject('Usage: statuscode <code> - Returns info for status code')
+    const code = statusCodes[input]
+
+    return resolve({ type: 'channel', message: code ? `[${input}]: ${code}` : "Couldn't find any details for that code" })
+  })
 }
 
 export function ddos(user, channel, input) {
