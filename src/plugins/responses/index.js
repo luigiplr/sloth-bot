@@ -2,9 +2,11 @@ import ateball from 'eightball'
 import nodeMorse from 'morse-node'
 import spinsult from 'shakespeare-insult'
 import normalinsult from 'insultgenerator'
-import statusCodes from 'builtin-status-codes'
+import { STATUS_CODES } from 'http'
 import { sendMessage, findUser } from '../../slack'
 import data from './utils/data'
+
+const statusCodes = Object.assign({}, STATUS_CODES, data.statusCodes)
 
 export const plugin_info = [{
   alias: ['ddos'],
