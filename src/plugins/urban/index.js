@@ -13,13 +13,34 @@ export const plugin_info = [{
 
 export function urbandictionary(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return reject('Specify a word pls')
+    if (!input) {
+      return reject('Specify a word pls')
+    }
 
-    new Urban(input).first((definition) => {
-      if (!definition) return reject("No results found")
+    let indexMatch = input.match(/( \d\d?)$/)
+    let index = 0
+    if (indexMatch) {
+      index = +indexMatch[1].trim() - 1
+      input = input.replace(/( \d\d?)$/, '')
+    }
+    
+    new Urban(input).results((results = []) => {
+      if (!results || results.length === 0) return reject("No results found")
+
+      index = index > results.length - 1 ? results.length - 1 : +index
+
+      const { word, permalink, definition, thumbs_up = 'N/A', thumbs_down = 'N/A' } = results[index]
       return resolve({
         type: 'channel',
-        message: unescape(`[${definition.thumbs_up || 'N/A'} :thumbsup: | ${definition.thumbs_down || 'N/A'} :thumbsdown: ] ${definition.permalink}`)
+        message: {
+          attachments: [{
+            title: word,
+            title_link: permalink,
+            color: '#1d2439',
+            text: `[${thumbs_up} :thumbsup: | ${thumbs_down} :thumbsdown:] ${unescape(definition)}`,
+            footer: `${index + 1}/${results.length} results`
+          }]
+        }
       })
     })
   })
