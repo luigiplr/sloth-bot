@@ -20,7 +20,7 @@ export function urbandictionary(user, channel, input) {
     let indexMatch = input.match(/( \d\d?)$/)
     let index = 0
     if (indexMatch) {
-      index = +indexMatch[1].trim() < 0 ? 0 : +indexMatch[1].trim()
+      index = +indexMatch[1].trim() < 0 ? 0 : +indexMatch[1].trim() - 1
       input = input.replace(/( \d\d?)$/, '')
     }
     
