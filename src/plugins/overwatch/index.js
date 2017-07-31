@@ -9,7 +9,7 @@ export const plugin_info = [{
 }]
 
 const pageURL = 'https://playoverwatch.com/en-us/career'
-const validHeroes = ["ana", "bastion", "dva", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "orisa", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "sombra", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
+const validHeroes = ["ana", "bastion", "dva", "doomfist", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "orisa", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "sombra", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
 const validTypes = ["info", "stats", "hero", "heroes"]
 const validRegs = ["us", "eu", "kr"]
 const validPlats = ["pc", "xbl", "psn"]
