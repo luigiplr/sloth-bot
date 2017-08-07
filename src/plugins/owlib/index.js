@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { FileTypes } from './utils/owlib'
+import { FileTypes, FileInfo } from './utils/owlib'
 
 export const plugin_info = [{
   alias: ['owtype'],
@@ -26,9 +26,24 @@ export function owtype(user, channel, input) {
       return resolve({ type: 'channel', message: 'Couldn\'t find anything for that code'})
     }
 
+    const SWP = FileTypes.SWP[index]
+    const BE = FileTypes.BE[index]
+    const LE = FileTypes.LE[index]
+    const name = FileInfo[SWP].name
+    const desc = FileInfo[SWP].desc
+
     return resolve({ 
       type: 'channel',
-      message: `\`\`\`Data for ${input}:\n  BE: ${FileTypes.BE[index]}\n  LE: ${FileTypes.LE[index]}\n SWP: ${FileTypes.SWP[index]}\`\`\``
+      messages: [
+        '```',
+        `Info for ${input}:`,
+        name ? ` Name: ${name}` : null,
+        desc ? ` Desc: ${desc}` : null,
+        `   BE: ${BE}`,
+        `   LE: ${LE}`,
+        `  SWP: ${SWP}`,
+        '```'
+      ].filter(Boolean)
     })
   })
 }
