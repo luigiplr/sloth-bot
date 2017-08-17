@@ -7,7 +7,7 @@ export const FileTypes = {
 
 export const FileInfo = {
   "002": { "name": "Map Data", "desc": null },
-  "003": { "name": "Game Logic", "desc": null },
+  "003": { "name": "StateScript Component", "desc": null },
   "004": { "name": "Texture", "desc": "Has a corresponding 04D file" },
   "006": { "name": "Animation", "desc": null },
   "007": { "name": "Skeleton", "desc": "Only has a lksm chunk" },
@@ -29,7 +29,7 @@ export const FileInfo = {
   "024": { "name": null, "desc": null },
   "025": { "name": null, "desc": null },
   "02A": { "name": null, "desc": null },
-  "02B": { "name": null, "desc": null },
+  "02B": { "name": null, "desc": "Removed since 1.14.0.2" },
   "02C": { "name": "Soundbank Master", "desc": null },
   "02D": { "name": null, "desc": null },
   "02E": { "name": "Sound Switch", "desc": null },
@@ -37,7 +37,7 @@ export const FileInfo = {
   "030": { "name": null, "desc": null },
   "031": { "name": null, "desc": null },
   "032": { "name": null, "desc": null },
-  "033": { "name": null, "desc": null },
+  "033": { "name": null, "desc": "Removed since 1.14.0.2" },
   "034": { "name": "Thumbnail", "desc": "Removed" },
   "036": { "name": "Native Reference", "desc": "Mostly blank?" },
   "039": { "name": null, "desc": null },
@@ -135,7 +135,8 @@ export const FileInfo = {
   "0CF": { "name": "Lootbox Metadata", "desc": null },
   "0D0": { "name": null, "desc": null },
   "0D5": { "name": "STUD/Description", "desc": null },
-  "0D9": { "name": "Brawl Name", "desc": null }
+  "0D9": { "name": "Brawl Name", "desc": null },
+  "0DF": { "name": null, "desc": null }
 }
 
 /**
@@ -158,7 +159,7 @@ document.body.innerText
  * 
 var out = {}
 
-$0.querySelectorAll('tr').forEach((e, i) => {
+document.querySelector('#mw-content-text .wikitable').querySelectorAll('tr').forEach((e, i) => {
   if (i == 0) return
   const type = e.querySelector('td').innerText.trim()
   const name = e.querySelector('td:nth-of-type(2)').innerText
