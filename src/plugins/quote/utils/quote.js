@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
-import { Quotes } from '../../../database'
+import CRUD, { Quotes } from '../../../database'
 import { getHistory, findUser } from '../../../slack.js'
 import config from '../../../../config.json'
 
@@ -22,6 +22,25 @@ export function getQuote(user, quotenum = 0) {
         }
       }
     }).catch(reject)
+  })
+}
+
+export function getRandomQuote(user) {
+  return new Promise((resolve, reject) => {
+    if (user) {
+      user = findUser(user)
+      if (!user) return reject("Couldn't find a user by that name")
+    }
+
+    CRUD.executeQuery(user ? `SELECT * from Quote WHERE quotedUser = ${user.name}` : 'SELECT * from Quote').then(result => {
+      const rows = _.get(result, ['rs', 'rows', '_array'], [])
+      if (rows.length > 0) {
+        const quote = rows[Math.floor(Math.random() * rows.length)]
+        return resolve(urlify(`<${quote.quotedUser}> ${quote.message}`))
+      } else {
+        return reject("Couldn't find any quotes :(")
+      }
+    })
   })
 }
 
