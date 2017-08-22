@@ -47,6 +47,6 @@ export function quotes(user, channel, input) {
 
 export function randomQuote(user, channel, input) {
   return new Promise((resolve, reject) => {
-    getRandomQuote(input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
+    getRandomQuote(input).then(resp => resolve({ type: 'channel', message: resp, options: { unfurl_links: false } })).catch(reject)
   })
 }
