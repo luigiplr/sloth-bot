@@ -55,7 +55,7 @@ export function bonjourmadame(user, channel, input) {
 
 export function bonjourmonsieur(user, channel, input) {
   return new Promise((resolve, reject) => {
-    const url = 'http://russbutler.tumblr.com/random'
+    const url = 'https://sexymenonline.tumblr.com/random'
 
     let client = new MetaInspector(url, { timeout: 5000 })
 
