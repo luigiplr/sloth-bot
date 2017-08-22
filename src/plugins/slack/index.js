@@ -279,21 +279,3 @@ export function reconnect(user, channel, input) {
     }).catch(reject)
   })
 }
-
-// Soon
-export function ban(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!canPerformAdminCommands) return reject(adminErr)
-    if (!input) return reject("Please specify a user")
-    let split = input.split(' ')
-    if (split.length != 2) return resolve({ type: 'dm', message: 'Usage: ban <user> [duration] - bans user for duration in minutes or 5 minutes' })
-
-    let u = findUser(split[0])
-    if (!u) return reject("Found no user by that name")
-    if (u.deleted) return reject(`${u.name} is a disabled account`)
-    if (cantDisable(u)) return reject("Error: Bitch. No.")
-
-    let time = parseInt(input[1])
-    if (!time) return reject("Invalid time, time must be a number in minutes")
-  })
-}

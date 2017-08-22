@@ -74,6 +74,21 @@ CRUD.define(Aliases, {
   createStatement: 'CREATE TABLE Aliases (aliasID INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) DEFAULT (NULL), alias VARCHAR(128) DEFAULT (NULL), service VARCHAR(128) DEFAULT (NULL))'
 })
 
+export function Remembers() {
+  CRUD.Entity.call(this)
+}
+
+
+CRUD.define(Remembers, {
+  table: 'Remembers',
+  primary: 'id',
+  fields: ['id', 'user', 'text', 'date', 'word'],
+  orderProperty: 'date',
+  orderDirection: 'DESC',
+  createStatement: 'CREATE TABLE Remembers (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) DEFAULT (NULL), text VARCHAR(4000) DEFAULT (NULL), date DATETIME DEFAULT CURRENT_TIMESTAMP, word VARCHAR(128) DEFAULT (NULL))'
+})
+
+
 CRUD.setAdapter(new CRUD.SQLiteAdapter(dbFile, {
   estimatedSize: 25 * 1024 * 1024
 }))

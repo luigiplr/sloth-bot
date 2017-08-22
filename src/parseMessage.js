@@ -3,6 +3,7 @@ import permissions from './permissions'
 import config from '../config.json'
 import { deleteMessage, getHistory, findUser } from './slack'
 import { getPlugins as plugins } from './plugins'
+import { Remembers } from './database'
 
 const getUserlevel = user => {
   if ((permissions.superadmins.indexOf(user) > -1)) return 'superadmin'
@@ -52,6 +53,20 @@ export function parse(user, channel, text, ts) {
           } else return resolve({ type: 'channel', message: newMessage })
         })
       }
+      return
+    }
+
+    if (!config.disableRemember && text.startsWith('?')) {
+      const word = text.slice(1).trim()
+      Remembers.findOneByWord(word).then(resp => {
+        if (resp) {
+          resolve({ type: 'channel', message: resp.text, options: {
+            unfurl_links: true,
+            unfurl_media: true
+          } })
+        }
+      })
+      
       return
     }
 

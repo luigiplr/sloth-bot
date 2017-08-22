@@ -60,7 +60,7 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
       .map('text')
       .value()[0]
 
-    if (!uID) return reject("Something went wrong")
+    if (!uID) return reject("Couldn't find any quotes from user")
 
     var dbQuote = new Quotes()
     dbQuote.quotedUser = user.name
