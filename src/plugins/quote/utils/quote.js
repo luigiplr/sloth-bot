@@ -32,10 +32,11 @@ export function getRandomQuote(user) {
       if (!user) return reject("Couldn't find a user by that name")
     }
 
-    CRUD.executeQuery(user ? `SELECT * FROM Quote WHERE quotedUser = '${user.name}'` : 'SELECT * FROM Quote').then(result => {
+    const query = 'SELECT * FROM Quote WHERE quoteId IN (SELECT quoteId FROM Quote' + (user ? ` WHERE quotedUser = '${user.name}'` : '') + ' ORDER BY RANDOM() LIMIT 1)'
+    CRUD.executeQuery(query).then(result => {
       const rows = _.get(result, ['rs', 'rows', '_array'], [])
       if (rows.length > 0) {
-        const quote = rows[Math.floor(Math.random() * rows.length)]
+        const quote = rows[0]
         return resolve(urlify(`<${quote.quotedUser}>\n${quote.message}`))
       } else {
         return reject("Couldn't find any quotes :(")
