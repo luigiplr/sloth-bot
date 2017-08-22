@@ -12,8 +12,10 @@ export function maybensfw() {
     let client = new MetaInspector(url, { timeout: 5000 })
 
     client.on('fetch', () => {
-      if (client.images && !client.images[1].match(/logo|avatar/i)) return resolve({ type: 'channel', message: client.images[1] })
-      else return reject('No picture found')
+      if (client.images && !client.images[1].match(/logo|avatar/i)) {
+        const url = client.images[1]
+        return resolve({ type: 'channel', message: `${url}#${Math.floor(Math.random() * 1000)}` })
+      } else return reject('No picture found')
     })
 
     client.on('error', () => reject('Error loading page'))
