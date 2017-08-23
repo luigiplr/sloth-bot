@@ -19,7 +19,7 @@ export function rememberList(user, channel, input) {
       CRUD.executeQuery(`SELECT DISTINCT word from Remembers ORDER BY word`).then(res => {
         const words = _.get(res, ['rs', 'rows', '_array'], []).map((w = {}) => w.word)
         if (words.length) {
-          return resolve({ type: 'channel', message: `Remembered words: \`\`\`${words.join('\n')}\`\`\``})
+          return resolve({ type: 'channel', message: `Remembered words: \`\`\`${words.join(' | ')}\`\`\``})
         } else {
           return reject('No words have been saved')
         }
@@ -41,7 +41,7 @@ export function rememberList(user, channel, input) {
       return resolve({
         type: 'channel',
         messages: [
-          `Rememebrs saved for ${input}:`,
+          `Rememebers saved for \`${input}\`:`,
           '```',
           ...resp.map(r => {
             let date = moment(r.date)
