@@ -1,12 +1,59 @@
-import { Remembers } from '../../database'
+import CRUD, { Remembers } from '../../database'
 import { sendMessage } from '../../slack'
 import moment from 'moment'
+import _ from 'lodash'
 
 export const plugin_info = [{
   alias: ['remember'],
   command: 'remember',
   usage: 'remember <word> <what> - Remembers a phrase and returns its saved meaning'
+}, {
+  alias: ['remembers'],
+  command: 'rememberList',
+  usage: 'remembers [word] - returns a list of words and messages for word'
 }]
+
+export function rememberList(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) {
+      CRUD.executeQuery(`SELECT DISTINCT word from Remembers ORDER BY word`).then(res => {
+        const words = _.get(res, ['rs', 'rows', '_array'], []).map((w = {}) => w.word)
+        if (words.length) {
+          return resolve({ type: 'channel', message: `Remembered words: \`\`\`${words.join('\n')}\`\`\``})
+        } else {
+          return reject('No words have been saved')
+        }
+      })
+      return
+    }
+
+    if (!input.match(/^[A-z0-9]*$/)) {
+      return reject('Only letters and numbers are allowed')
+    }
+
+    Remembers.findByWord(input).then((resp = []) => {
+      if (resp.length === 0) {
+        return reject('Nothing has been rememebred with that word')
+      }
+
+      console.log(resp)
+
+      return resolve({
+        type: 'channel',
+        messages: [
+          `Rememebrs saved for ${input}:`,
+          '```',
+          ...resp.map(r => {
+            let date = moment(r.date)
+            date = date.isValid ? (date.format('YY-MM-DD HH:mm') + ' UTC') : 'Unknown'
+            return `[${r.user || 'Unknown'} at ${date}]: ${r.text}`
+          }),
+          '```'
+        ]
+      })
+    })
+  })
+}
 
 export function remember(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -17,6 +64,10 @@ export function remember(user, channel, input) {
     const split = input.split(' ')
     const word = split[0].trim()
     const what = split.slice(1).join(' ').trim()
+
+    if (!word.match(/^[A-z0-9]*$/)) {
+      return reject('Only letters and numbers are allowed')
+    }
 
     Remembers.findOneByWord(word).then(existing => {
       const newRemember = new Remembers()
