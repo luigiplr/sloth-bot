@@ -23,7 +23,7 @@ export function parse(user, channel, text, ts) {
     }
 
     // Sedbot
-    if (!config.disableSed && text.startsWith('s/')) {
+    if (!config.sed.disabled && text.startsWith('s/')) {
       var split = text.split('/')
       if (split.length >= 3) {
         var [, word, replacement, who] = split
@@ -44,10 +44,10 @@ export function parse(user, channel, text, ts) {
           }
           var whoSaid = findUser(matchedMessage.user)
           var newMessage = matchedMessage.text.replace(rx, replacement)
-          if (whoSaid && whoSaid.name) {
+          if (whoSaid && (whoSaid.real_name || whoSaid.name)) {
             return resolve({ type: 'channel', message: newMessage, options: {
               as_user: false,
-              username: whoSaid.name,
+              username: config.sed.realname ? whoSaid.real_name || whoSaid.name : whoSaid.name,
               icon_url: get(whoSaid, 'profile.image_72', '')
             }})
           } else return resolve({ type: 'channel', message: newMessage })
