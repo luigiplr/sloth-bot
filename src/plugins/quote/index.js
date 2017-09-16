@@ -41,12 +41,22 @@ export function quote(user, channel, input) {
 export function quotes(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: quotes <username> - lists all saved quotes for the user' })
-    getQuote(input, 'all').then(resp => resolve({ type: 'channel', messages: resp })).catch(reject)
+    getQuote(input, 'all').then(resp => 
+      resolve({ 
+        type: 'channel',
+        messages: resp,
+        options: {
+          unfurl_links: false,
+          unfurl_media: false,
+          link_names: false
+        }
+      })
+    ).catch(reject)
   })
 }
 
 export function randomQuote(user, channel, input) {
   return new Promise((resolve, reject) => {
-    getRandomQuote(input).then(resp => resolve({ type: 'channel', message: resp, options: { unfurl_links: false, unfurl_media: false } })).catch(reject)
+    getRandomQuote(input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
   })
 }
