@@ -47,7 +47,7 @@ export function parse(user, channel, text, ts) {
           if (whoSaid && (whoSaid.real_name || whoSaid.name)) {
             return resolve({ type: 'channel', message: newMessage, options: {
               as_user: false,
-              username: config.sed.realname ? whoSaid.real_name || whoSaid.name : whoSaid.name,
+              username: config.sed.realnames ? whoSaid.real_name || whoSaid.name : whoSaid.name,
               icon_url: get(whoSaid, 'profile.image_72', '')
             }})
           } else return resolve({ type: 'channel', message: newMessage })
