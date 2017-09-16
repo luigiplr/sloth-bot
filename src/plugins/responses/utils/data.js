@@ -1,5 +1,23 @@
 export default {
   statusCodes: {
+    // nginx Codes
+    "444": "No Response",
+    "495": "SSL Certificate Error",
+    "496": "SSL Certificate Required",
+    "497": "HTTP Request Sent to HTTPS Port",
+    "499": "Client Closed Request",
+
+    // Cloudflare Codes
+    "520": "Unknown Error",
+    "521": "Web Server Is Down",
+    "522": "Connection Timed Out",
+    "523": "Origin Is Unreachable",
+    "524": "A Timeout Occurred",
+    "525": "SSL Handshake Failed",
+    "526": "Invalid SSL Certificate",
+    "527": "Railgun Error",
+
+    // Memes
     "701": "Meh",
     "702": "Emacs",
     "703": "Explosion",
