@@ -7,21 +7,46 @@ import config from '../../../../config.json'
 export function getQuote(user, quotenum = 0) {
   return new Promise((resolve, reject) => {
     user = findUser(user)
-    if (!user) return reject("Couldn't find a user by that name")
+    if (!user) {
+      return reject("Couldn't find a user by that name")
+    }
+
     Quotes.findByQuotedUser(user.name).then(quotes => {
-      if (quotenum === 'all') {
-        let total = [`<${user.name}> Quotes (${quotes.length}):`]
-        quotes.forEach((quotenums, i) => total.push(urlify(`[${i}] (${moment(quotenums.date).format("DD-MM-YYYY")}) ${quotenums.message}`)))
-        return resolve(total)
-      } else {
-        let quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
-        if (quotes[quoteindex]) return resolve(urlify(`<${user.name}> ${quotes[quoteindex].message}`))
-        else {
-          if (quotes.length > 0) return reject("I don't have quotes that far back for " + user.name);
-          else return reject(`No quotes found for ${user.name}, grab a quote via \`${config.prefix}grab <username>\``)
-        }
+      const quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
+      if (quotes[quoteindex]) return resolve(urlify(`<${user.name}> ${quotes[quoteindex].message}`))
+      else {
+        if (quotes.length > 0) return reject("I don't have quotes that far back for " + user.name);
+        else return reject(`No quotes found for ${user.name}, grab a quote via \`${config.prefix}grab <username>\``)
       }
     }).catch(reject)
+  })
+}
+
+export function getQuotes(user, page = 1) {
+  return new Promise((resolve, reject) => {
+    user = findUser(user)
+    if (!user) {
+      return reject("Couldn't find a user by that name")
+    }
+
+    page = _.isNumber(+page) && !_.isNaN(+page) ? page <= 0 ? 1 : +page : 1
+    const offset = 15 * page - 15
+
+    const query = `SELECT * from Quote where quotedUser = '${user.name}' ORDER BY DATE(date) DESC LIMIT 15 OFFSET ${offset}`
+    CRUD.executeQuery(query).then(results => {
+      const rows = _.get(results, ['rs', 'rows', '_array'], [])
+      if (rows.length > 0) {
+        const quotes = [`<${user.name}> Quotes (Page ${page}):`]
+
+        rows.forEach((quote, i) => {
+          quotes.push(urlify(`[${i + offset}] (${moment(quote.date).format("DD-MM-YYYY")}) ${quote.message}`))
+        })
+
+        return resolve(quotes)
+      } else {
+        return reject(page === 1 ? 'User has no quotes' : 'User has no more quotes')
+      }
+    })
   })
 }
 

@@ -1,4 +1,4 @@
-import { getQuote, grabQuote, getRandomQuote } from './utils/quote'
+import { getQuote, getQuotes, grabQuote, getRandomQuote } from './utils/quote'
 
 export const plugin_info = [{
   alias: ['grab'],
@@ -40,8 +40,10 @@ export function quote(user, channel, input) {
 
 export function quotes(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: quotes <username> - lists all saved quotes for the user' })
-    getQuote(input, 'all').then(resp => 
+    if (!input) return resolve({ type: 'dm', message: 'Usage: quotes <username> [index] - lists all saved quotes for the user' })
+
+    const [user, page] = input.split(' ')
+    getQuotes(user, page).then(resp => 
       resolve({ 
         type: 'channel',
         messages: resp,
