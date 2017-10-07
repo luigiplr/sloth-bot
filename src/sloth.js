@@ -46,7 +46,7 @@ class Slack extends RtmClient {
       this._sendErrorToDebugChannel(null, 'Successfully reconnected to Slack', true)
     })
 
-    this.on(RTM_EVENTS.MESSAGE, ::this._handleMessage)
+    this.on(RTM_EVENTS.MESSAGE, this._handleMessage)
 
     this.on(RTM_EVENTS.TEAM_JOIN, () => updateUsersCache())
 

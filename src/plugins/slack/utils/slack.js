@@ -39,10 +39,8 @@ export function deleteLastMessage(channel, messagets) {
   return new Promise((resolve, reject) => {
     deleteMessage(channel, messagets)
     getHistory(channel, 16).then(messages => {
-      let ts = _(messages)
-        .filter(message => message.user === config.botid)
-        .map('ts')
-        .value()[0]
+      let ts = messages.filter(message => message.user === config.botid)
+        .map(a => a.ts)[0]
 
       if (!ts) return resolve(false);
 

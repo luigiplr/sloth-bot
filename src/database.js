@@ -21,15 +21,24 @@ CRUD.define(Quotes, {
   table: 'Quote',
   primary: 'quoteId',
   fields: [
-    'quoteId',
-    'quotedUser',
+    'id',
+    'user',
     'message',
-    'grabUser',
-    'date'
+    'grabbed_by',
+    'grabbed_at',
+    'message_id'
   ],
   orderProperty: 'date',
   orderDirection: 'DESC',
-  createStatement: 'CREATE TABLE Quote (quoteId INTEGER PRIMARY KEY NOT NULL, quotedUser VARCHAR(128) NOT NULL, message VARCHAR(4000) NOT NULL, grabUser VARCHAR(128), date DATETIME)'
+  createStatement: 'CREATE TABLE Quote (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) NOT NULL, message VARCHAR(4000) NOT NULL, grabbed_by VARCHAR(128), grabbed_at DATETIME, message_id NUMERIC UNIQUE)',
+  migrations: {
+    3: [
+      'ALTER TABLE Quote RENAME TO Quote_bak',
+      'CREATE TABLE Quote (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) NOT NULL, message VARCHAR(4000) NOT NULL, grabbed_by VARCHAR(128), grabbed_at DATETIME, message_id NUMERIC UNIQUE)',
+      'INSERT OR IGNORE INTO Quote (id, user, message, grabbed_by, grabbed_at) SELECT quoteId, quotedUser, message, grabUser, date FROM Quote_bak',
+      'DROP TABLE Quote_bak'
+    ]
+  }
 })
 
 export function InviteUsers() {

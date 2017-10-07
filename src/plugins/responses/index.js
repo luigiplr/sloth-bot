@@ -1,7 +1,6 @@
 import ateball from 'eightball'
 import nodeMorse from 'morse-node'
 import spinsult from 'shakespeare-insult'
-import normalinsult from 'insultgenerator'
 import { STATUS_CODES } from 'http'
 import { sendMessage, findUser } from '../../slack'
 import data from './utils/data'
@@ -165,7 +164,7 @@ export function insult(user, channel, input) {
   return new Promise(resolve => {
     if (!input) return resolve({ type: 'channel', message: 'Who am I insulting?' })
 
-    new normalinsult((meanMessage) => resolve({ type: 'channel', message: `${input}: ${meanMessage || 'you suk'}` }))
+    return resolve({ type: 'channel', message: `you suk` })
   })
 }
 
