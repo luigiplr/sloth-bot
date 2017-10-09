@@ -11,7 +11,7 @@ export function getQuote(user, quotenum = 0) {
       return reject("Couldn't find a user by that name")
     }
 
-    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${user.name}'`).then(rows => {
+    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY grabbed_at DESC`).then(rows => {
       const quotes = _.get(rows, ['rs', 'rows', '_array'], [])
       const quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
       if (quotes[quoteindex]) return resolve(urlify(`<${user.name}> ${quotes[quoteindex].message}`))
@@ -94,12 +94,12 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
     dbQuote.grabbed_at = moment().utc().format()
     dbQuote.message_id = message.ts
 
-    dbQuote.Persist().then(err => {
-      if (err) {
-        if (err.code === 'SQLITE_CONSTRAINT') {
+    dbQuote.Persist().then(resp => {
+      if (resp.error || resp.code) {
+        if (resp.code === 'SQLITE_CONSTRAINT') {
           return reject('Error: Quote has already been grabbed')
         }
-        return reject(`Error grabbing quote: ${err.code || err}`)
+        return reject(`Error grabbing quote: ${resp.code || resp}`)
       }
 
       resolve(`Successfully grabbed a quote for ${user.name}`)
