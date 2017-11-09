@@ -1,4 +1,4 @@
-import { kick, kickall, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
+import { kick, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
 import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw } from '../../slack.js'
 import moment from 'moment'
 import { filter } from 'lodash'
@@ -7,12 +7,12 @@ import config from '../../../config.json'
 import { InviteUsers } from '../../database'
 
 export const plugin_info = [{
-  alias: ['kall'],
+  alias: ['kick'],
   command: 'kickUser',
   usage: 'kick <username> [reason] - kicks user from channel',
   userLevel: ['admin', 'superadmin']
 }, {
-  alias: ['kickall', 'ka'],
+  alias: ['kickall'],
   command: 'kickAllUser',
   usage: 'kickall <username> - kicks user from all their channel',
   userLevel: ['superadmin']
@@ -79,28 +79,32 @@ export const plugin_info = [{
 
 const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.length > 0
 const adminErr = '`missing admin api key, cannot perform admin commands`'
+const cantDisable = u => u.id === config.botid || perms.superadmins.includes(u.name) || (config.noDisable && config.noDisable.includes(u.id))
 
 export function kickAllUser(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return resolve({ type: 'dm', message: 'Usage: kickall <username> - Kicks a user from all their channel' })
 
-    const user = findUser(input.split(' ')[0].toLowerCase())
+    const u = findUser(input)
+    if (!u) return reject('Found no user matching input')
+    if (cantDisable(u)) return reject('Error: Bitch. No.')
 
     getChannelsList()
       .then(channels => {
         let channelsWasKicked = 0
 
         for (let channel of channels) {
-          if (channel.members.includes(user.id)) {
-            kickUserRaw(channel.id, user.id)
+          if (channel.is_general) continue
+          if (channel.members.includes(u.id)) {
+            kickUserRaw(channel.id, u.id)
             channelsWasKicked++
           }
         }
 
-        resolve({ type: 'channel', message: `Kicked: ${user.name} from ${channelsWasKicked - 1} channels` })
+        resolve({ type: 'channel', message: `Kicked: ${u.name} from ${channelsWasKicked - 1} channels` })
       })
-  }) 
+  })
 }
 
 export function kickUser(user, channel, input) {
@@ -272,8 +276,6 @@ export function enableUser(user, channel, input) {
     enableOrDisableUser(1, u).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
   })
 }
-
-const cantDisable = u => u.id == config.botid || perms.superadmins.includes(u.name) || (config.noDisable && config.noDisable.includes(u.id))
 
 export function disableUser(user, channel, input) {
   return new Promise((resolve, reject) => {

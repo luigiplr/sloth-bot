@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { findUser, getChannelsList, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, setInactive, setRegular, updateUsersCache, usersCache } from '../../../slack.js';
+import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, setInactive, setRegular, updateUsersCache, usersCache } from '../../../slack.js';
 import config from '../../../../config.json'
 import request from 'request'
 import moment from 'moment'
@@ -20,22 +20,6 @@ export function getInviteForUser(user) {
 }
 
 export function kick(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    let user = findUser(input.split(' ')[0].toLowerCase())
-    let reason = _.slice(input.split(' '), 1).join(' ')
-
-    if (!user) return reject("Found no user by that name")
-
-    if (user.name == config.botname || user.id === config.botid) return reject('Error: Bitch. No.')
-
-    kickUser(channel.id, user.id).then(() => {
-      sendPMThroughSlackbot(user.name, `You were kicked from #${channel.name} ${reason || 'for no reason'}`)
-      return resolve(`*Kicked: ${user.name}* ${reason || 'for no reason.'}`)
-    }).catch(reject)
-  })
-}
-
-export function kickall(user) {
   return new Promise((resolve, reject) => {
     let user = findUser(input.split(' ')[0].toLowerCase())
     let reason = _.slice(input.split(' '), 1).join(' ')

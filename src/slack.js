@@ -37,7 +37,7 @@ export function sendMessage(channel, input, attachments) {
     as_user: 'true',
     token: config.slackBotToken,
     icon_url: config.imageURL,
-    attachments: typeof attachments == 'string' ? attachments : JSON.stringify(attachments)
+    attachments: typeof attachments === 'string' ? attachments : JSON.stringify(attachments)
   }, (err, resp, { error }) => {
     if (err || error) return reject(_logErr('sendMsgErr', err || error))
     resolve()
@@ -70,7 +70,7 @@ export function sendPMThroughSlackbot(channel, input) {
  * @return array of messages
  */
 export function getHistory(channel, limit = 100) {
-  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] == 'C' ? 'channels.history' : channel[0] == 'G' ? 'groups.history' : 'im.history'}`, {
+  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] === 'C' ? 'channels.history' : channel[0] === 'G' ? 'groups.history' : 'im.history'}`, {
     channel: channel,
     token: config.slackBotToken,
     count: limit
@@ -87,7 +87,7 @@ export function getHistory(channel, limit = 100) {
  * @return true or an error
  */
 export function kickUser(channel, user) {
-  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] == 'C' ? 'channels.kick' : 'groups.kick'}`, {
+  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] === 'C' ? 'channels.kick' : 'groups.kick'}`, {
     channel: channel,
     token: config.slackAPIToken || config.slackBotToken,
     user: user
@@ -104,8 +104,8 @@ export function kickUser(channel, user) {
  */
 export function findUser(user) {
   if (!user) return undefined
-  let userID = user.slice(0, 2) == "<@" ? user.slice(2, -1).toUpperCase() : false
-  let member = usersCache[userID ? userID : userNamesCache[user.toLowerCase()]]
+  let userID = user.slice(0, 2) === '<@' ? user.slice(2, -1).toUpperCase() : false
+  let member = usersCache[userID || userNamesCache[user.toLowerCase()]]
   return member || usersCache[user]
 }
 
@@ -118,12 +118,12 @@ export function findUser(user) {
  */
 export function findUserByParam(what, equals) {
   // Switch to ID if the username is a SlackID <@UDJHF739J>
-  if (what == 'name' && equals.slice(0, 2) == "<@") {
+  if (what === 'name' && equals.slice(0, 2) === '<@') {
     what = 'id'
     equals = equals.slice(2, -1)
   }
   return find(usersCache, user => {
-    return get(user, what, 0) == equals
+    return get(user, what, 0) === equals
   })
 }
 
@@ -138,7 +138,7 @@ export function getUsers(noCache) {
     needle.post('https://slack.com/api/users.list', {
       token: config.slackBotToken
     }, (err, resp, body) => {
-      if (!body) return reject(_logErr('getUsersErr', "No body?"))
+      if (!body) return reject(_logErr('getUsersErr', 'No body?'))
       if (err || body.error) return reject(_logErr('getUsersErr', err || body.error))
       return resolve(body.members)
     })
@@ -224,6 +224,19 @@ export function setRegular(user, token) {
 }
 
 /**
+ * Returns a list of all channels
+ */
+export function getChannelsList() {
+  return new Promise((resolve, reject) => needle.post('https://slack.com/api/channels.list', {
+    token: config.slackAPIToken || config.slackBotToken,
+    exclude_archived: true
+  }, (err, resp, { error }) => {
+    if (err || error) return reject(_logErr('getChannelsListErr', err || error))
+    resolve(resp.body.channels)
+  }))
+}
+
+/**
  * Deletes a message in a channel
  * @param id of the channel
  * @param ts (timestamp) of the message
@@ -246,19 +259,4 @@ const deleteQueue = queue((task, cb) => {
 const _logErr = (type, err) => {
   console.error(type, ':', err)
   return `${type}: ${err}`
-}
-
-export function getChannelsList() {
-  return new Promise((resolve, reject) => {
-    needle.post('https://slack.com/api/channels.list', {
-      token: config.slackAPIToken || config.slackBotToken,
-      exclude_archived: true
-    }, (err, resp, { error }) => {
-      if (err || error) {
-        return reject(_logErr('getChannelsListErr', err || error))
-      }
-
-      resolve(resp.body.channels)
-    })
-  })
 }
