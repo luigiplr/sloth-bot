@@ -247,3 +247,18 @@ const _logErr = (type, err) => {
   console.error(type, ':', err)
   return `${type}: ${err}`
 }
+
+export function getChannelsList() {
+  return new Promise((resolve, reject) => {
+    needle.post('https://slack.com/api/channels.list', {
+      token: config.slackAPIToken || config.slackBotToken,
+      exclude_archived: true
+    }, (err, resp, { error }) => {
+      if (err || error) {
+        return reject(_logErr('getChannelsListErr', err || error))
+      }
+
+      resolve(resp.body.channels)
+    })
+  })
+}

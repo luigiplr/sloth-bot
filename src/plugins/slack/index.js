@@ -1,5 +1,5 @@
-import { kick, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
-import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache } from '../../slack.js'
+import { kick, kickall, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
+import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw } from '../../slack.js'
 import moment from 'moment'
 import { filter } from 'lodash'
 import perms from '../../permissions'
@@ -7,10 +7,15 @@ import config from '../../../config.json'
 import { InviteUsers } from '../../database'
 
 export const plugin_info = [{
-  alias: ['kick'],
+  alias: ['kall'],
   command: 'kickUser',
   usage: 'kick <username> [reason] - kicks user from channel',
   userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['kickall', 'ka'],
+  command: 'kickAllUser',
+  usage: 'kickall <username> - kicks user from all their channel',
+  userLevel: ['superadmin']
 }, {
   alias: ['invite'],
   command: 'inviteUser',
@@ -74,6 +79,29 @@ export const plugin_info = [{
 
 const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.length > 0
 const adminErr = '`missing admin api key, cannot perform admin commands`'
+
+export function kickAllUser(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
+    if (!input) return resolve({ type: 'dm', message: 'Usage: kickall <username> - Kicks a user from all their channel' })
+
+    const user = findUser(input.split(' ')[0].toLowerCase())
+
+    getChannelsList()
+      .then(channels => {
+        let channelsWasKicked = 0
+
+        for (let channel of channels) {
+          if (channel.members.includes(user.id)) {
+            kickUserRaw(channel.id, user.id)
+            channelsWasKicked++
+          }
+        }
+
+        resolve({ type: 'channel', message: `Kicked: ${user.name} from ${channelsWasKicked - 1} channels` })
+      })
+  }) 
+}
 
 export function kickUser(user, channel, input) {
   return new Promise((resolve, reject) => {
