@@ -6,6 +6,7 @@ import { parse as parseMsg } from './parseMessage'
 
 var errors = 0
 var firstStart = true;
+var sentErrorSpamAlert = false
 
 const DEVMODE = process.env.NODE_ENV == 'development'
 
@@ -133,11 +134,15 @@ class Slack extends RtmClient {
         if (errors > 0) errors--;
       }, 20000)
     } else {
-      console.error("Warning! Error spam, stopping bot")
-      if (config.debugChannel) sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
-      setTimeout(() => {
-        process.exit()
-      }, 1500)
+      if (!sentErrorSpamAlert) {
+        console.error("Warning! Error spam, stopping bot")
+        if (config.debugChannel) sendMessage(config.debugChannel, "Warning! Error spam, stopping bot")
+        setTimeout(() => {
+          process.exit()
+        }, 1000)
+        sentErrorSpamAlert = true
+      }
+
       return
     }
 
