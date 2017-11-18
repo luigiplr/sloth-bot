@@ -69,10 +69,10 @@ export function steamSale() {
   return new Promise((resolve, reject) => {
     getNextSale().then(sale => {
       const currentTime = moment()
-      const saleDate = moment(sale.date)
+      const saleDate = moment.utc(sale.StartDate)
       const isActive = saleDate.isBefore(currentTime)
-      const time = getSaleTime(moment.duration((isActive ? moment(sale.enddate) : saleDate).diff(currentTime)))
-      const msg = `The Steam ${sale.name} ${isActive ? 'is here! It ends' : 'starts'} ${time}${sale.confirmed ? '' : ', I think.'}`
+      const time = getSaleTime(moment.duration((isActive ? moment.utc(sale.EndDate) : saleDate).diff(currentTime)))
+      const msg = `The Steam ${sale.Name} ${isActive ? 'is here! It ends' : 'starts'} ${time}${sale.IsConfirmed ? '' : ', I think.'}`
       return resolve({ type: 'channel', message: msg })
     }).catch(reject)
   })

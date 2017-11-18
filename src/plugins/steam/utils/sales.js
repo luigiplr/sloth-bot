@@ -1,15 +1,16 @@
-import needle from 'needle'
 import moment from 'moment'
 import cheerio from 'cheerio'
+import request from 'request'
 
-var gCurrentSale = undefined
-var nextUpdate = undefined
+var gCurrentSale
+var nextUpdate
 
 function getSaleData() {
   console.log("Fetching sale data")
   return new Promise((resolve, reject) => {
-    needle.get('http://www.whenisthenextsteamsale.com/', (err, resp, body) => {
-      if (err || !body) return reject("Error fetching data")
+    request({ method: 'GET', url: 'http://www.whenisthenextsteamsale.com/' }, function (error, response, body) {
+      if (error || !body) return reject("Error fetching data")
+
       try {
         const $ = cheerio.load(body)
         const value = $('#hdnNextSale').attr().value
@@ -47,7 +48,7 @@ export function getNextSale() {
     if (gCurrentSale && nextUpdate && moment().isBefore(nextUpdate)) return resolve(gCurrentSale)
     getSaleData().then(nextSale => {
       nextUpdate = moment().add(2, 'd')
-      gCurrentSale = formatData(nextSale)
+      gCurrentSale = nextSale
       return resolve(gCurrentSale)
     }).catch(reject)
   })
