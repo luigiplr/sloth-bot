@@ -44,7 +44,7 @@ export function quotes(user, channel, input) {
 
     const [user, page] = input.split(' ')
     getQuotes(user, page).then(resp => 
-      resolve({ 
+      resolve({
         type: 'channel',
         messages: resp,
         options: {

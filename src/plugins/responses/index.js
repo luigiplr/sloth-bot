@@ -51,11 +51,15 @@ export const plugin_info = [{
   alias: ['statuscode'],
   command: 'status',
   usage: 'statuscode <code> - Returns what the status code is'
+}, {
+  alias: ['pug', 'hellopug'],
+  command: 'pug',
+  usage: 'hellopug - Returns a pug'
 }]
 
 const _cleanInput = input => {
   if (input.includes('<mailto:')) return input.substr(8).split('|')[0]
-  if (input.slice(0, 2) == "<@") return findUser(input).name || input
+  if (input.slice(0, 2) === "<@") return findUser(input).name || input
   if (input.includes('<http:')) return input.split('|')[1].slice(0, -1)
   return input
 }
@@ -141,7 +145,7 @@ export function clap(user, channel, input) {
           message: (clapee ? `(${clapee})` : '') + data.clap.insincere[Math.floor(Math.random() * data.clap.insincere.length)]
         })
       default:
-        clapee = type;
+        clapee = type
         return resolve({
           type: 'channel',
           message: (clapee ? `(${clapee})` : '') + data.clap.sincere[Math.floor(Math.random() * data.clap.sincere.length)]
@@ -152,7 +156,7 @@ export function clap(user, channel, input) {
 
 export function flirt(user, channel, input) {
   return new Promise(resolve => {
-    input = input ? (input.slice(0, 2) == "<@" ? findUser(input).name : input) : user.name
+    input = input ? (input.slice(0, 2) === "<@" ? findUser(input).name : input) : user.name
     return resolve({
       type: 'channel',
       message: data.flirts[Math.floor(Math.random() * data.flirts.length)].replace('%s', input)
@@ -173,5 +177,16 @@ export function oldinsult(user, channel, input) {
     if (!input) return resolve({ type: 'channel', message: 'Who am I insulting?' })
 
     return resolve({ type: 'channel', message: `_ ${input} you're a ${spinsult.random()}_` })
+  })
+}
+
+// Idea and pug images from Gravebot
+// https://github.com/Gravebot/Gravebot/blob/master/src/data/pugs.json
+export function pug() {
+  return new Promise(resolve => {
+    return resolve({
+      type: 'channel',
+      message: data.pugs[Math.floor(Math.random() * data.flirts.length)] + `#${Math.floor(Math.random() * 1000)}`
+    })
   })
 }
