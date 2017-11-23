@@ -186,7 +186,7 @@ export function pug() {
   return new Promise(resolve => {
     return resolve({
       type: 'channel',
-      message: data.pugs[Math.floor(Math.random() * data.flirts.length)] + `#${Math.floor(Math.random() * 1000)}`
+      message: data.pugs[Math.floor(Math.random() * data.pugs.length)] + `#${Math.floor(Math.random() * 1000)}`
     })
   })
 }
