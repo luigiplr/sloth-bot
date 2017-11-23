@@ -1,5 +1,6 @@
 import CRUD, { Remembers } from '../../database'
 import { sendMessage } from '../../slack'
+import { table, getBorderCharacters } from 'table'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -8,9 +9,14 @@ export const plugin_info = [{
   command: 'remember',
   usage: 'remember <word> <what> - Remembers a phrase and returns its saved meaning'
 }, {
-  alias: ['remembers'],
+  alias: ['remembers', 'remembered'],
   command: 'rememberList',
   usage: 'remembers [word] - returns a list of words and messages for word'
+}, {
+  alias: ['delremember'],
+  command: 'removeRemember',
+  usage: 'removeRemember <word> - removes a remembered word',
+  userLevel: ['admin', 'superadmin']
 }]
 
 export function rememberList(user, channel, input) {
@@ -19,7 +25,16 @@ export function rememberList(user, channel, input) {
       CRUD.executeQuery(`SELECT DISTINCT word from Remembers ORDER BY word`).then(res => {
         const words = _.get(res, ['rs', 'rows', '_array'], []).map((w = {}) => w.word)
         if (words.length) {
-          return resolve({ type: 'channel', message: `Remembered words: \`\`\`${words.join(' | ')}\`\`\``})
+          const data = table(_.chunk(words, 5).map(a => {
+            if (a.length < 5) {
+              return [...a, ..._.times(5 - a.length, _.constant(''))]
+            }
+            return a
+          }), {
+            border: getBorderCharacters('norc')
+          })
+
+          return resolve({ type: 'channel', message: `Remembered words: \`\`\`${data}\`\`\`` })
         } else {
           return reject('No words have been saved')
         }
@@ -28,15 +43,13 @@ export function rememberList(user, channel, input) {
     }
 
     if (!input.match(/^[A-z0-9]*$/)) {
-      return reject('Only letters and numbers are allowed')
+      return reject('Only letters and numbers are allowed for remembered words')
     }
 
     Remembers.findByWord(input).then((resp = []) => {
       if (resp.length === 0) {
         return reject('Nothing has been rememebred with that word')
       }
-
-      console.log(resp)
 
       return resolve({
         type: 'channel',
@@ -50,6 +63,26 @@ export function rememberList(user, channel, input) {
           }),
           '```'
         ]
+      })
+    })
+  })
+}
+
+export function removeRemember(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!input) {
+      return reject('Usage: delremember <word> - Removes a saved word from the remembered list')
+    }
+
+    Remembers.findOneByWord(input.trim()).then(word => {
+      if (!word) {
+        return reject('Word does not exist')
+      }
+
+      word.Delete().then(() => {
+        resolve({ type: 'channel', message: 'Successfully deleted' })
+      }, err => {
+        reject(`Error deleting! ${err}`)
       })
     })
   })
@@ -76,7 +109,7 @@ export function remember(user, channel, input) {
       newRemember.text = what
       newRemember.Persist().then(() => {
         resolve({ type: 'channel', message: `Successfully remembered \`${word}\`. Value: \`\`\`${what}\`\`\`` })
-        
+
         if (existing) {
           let oldDate = moment(existing.date)
           oldDate = oldDate.isValid ? (oldDate.format('YYYY-MM-DD HH:mm') + ' UTC') : 'Unknown'

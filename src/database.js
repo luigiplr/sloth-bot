@@ -4,10 +4,10 @@ import CRUD from 'createreadupdatedelete.js'
 import config from '../config'
 
 const dirName = config.saveName || '.Sloth-Bot'
-const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], dirName)
+const dbDir = path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], dirName)
 const dbFile = path.join(dbDir, 'database.sqlite')
 
-if (!fs.existsSync(dbDir))  {
+if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir)
 }
 
@@ -70,7 +70,7 @@ export function getUserAliases(user, service) {
       user = user.slice(2, -1)
     } else return resolve(user)
     return _getUserAliases(user, service).then(data => {
-      if (!data[0]) return reject("User has no alias set, set one with the alias command") 
+      if (!data[0]) return reject("User has no alias set, set one with the alias command")
       return resolve(data[0].alias)
     }, reject)
   })
@@ -87,7 +87,6 @@ export function Remembers() {
   CRUD.Entity.call(this)
 }
 
-
 CRUD.define(Remembers, {
   table: 'Remembers',
   primary: 'id',
@@ -96,7 +95,6 @@ CRUD.define(Remembers, {
   orderDirection: 'DESC',
   createStatement: 'CREATE TABLE Remembers (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) DEFAULT (NULL), text VARCHAR(4000) DEFAULT (NULL), date DATETIME DEFAULT CURRENT_TIMESTAMP, word VARCHAR(128) DEFAULT (NULL))'
 })
-
 
 CRUD.setAdapter(new CRUD.SQLiteAdapter(dbFile, {
   estimatedSize: 25 * 1024 * 1024
