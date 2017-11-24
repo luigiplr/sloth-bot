@@ -120,10 +120,17 @@ export async function doIOwn(user, channel, input) {
     if (!games || !games.games || games.games.length === 0) throw 'You have no games??!'
 
     const match = _.find(games.games, { appid: appinfo.steam_appid })
-    if (match) {
-      return { type: 'channel', message: `Success! Looks like you do own *${appinfo.name}* _(${appinfo.steam_appid})_ in your Steam library!` }
-    } else {
-      return { type: 'channel', message: `Hmm, doesn't look like you own *${appinfo.name}* _(${appinfo.steam_appid})_` }
+    const gameLink = `*<https://store.steampowered.com/app/${appinfo.steam_appid}|${appinfo.name}>* _(${appinfo.steam_appid})_`
+    const message = match ? `Success! Looks like you do own ${gameLink} in your Steam library!` : `Hmm, doesn't look like you own ${gameLink}`
+
+    return {
+      type: 'channel',
+      message: {
+        attachments: [{
+          pretext: message,
+          mrkdwn_in: ['pretext']
+        }]
+      }
     }
   } catch (e) {
     console.error(e)
