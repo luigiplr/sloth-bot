@@ -67,12 +67,12 @@ class Slack extends RtmClient {
       parseMsg(user, channel, text, ts).then(response => {
         if (!response) return
 
-        if (typeof response == 'string' || (!response.type == 'dm' || !response.type == 'channel')) {
+        if (typeof response === 'string' || (!response.type === 'dm' || !response.type === 'channel')) {
           response = { type: 'channel', message: response }
           console.warn("No response type, assuming channel response")
         }
 
-        if (response.type == 'dm') {
+        if (response.type === 'dm') {
           if (response.user) channel = this.dataStore.getDMByName(response.user.name ? response.user.name : response.user)
           else channel = channel.id.startsWith('D') ? channel : this.dataStore.getDMByName(user.name)
         }
@@ -89,7 +89,7 @@ class Slack extends RtmClient {
         if (!err) return
         console.error(`parseMsg Error: ${err}`)
         if (typeof err === 'string') this._sendMessage(err, channel.id, thread_ts)
-        else throw(err)
+        else throw err
       })
     }
   }
