@@ -1,7 +1,9 @@
-import { getProfileInfo, getAppInfo, getSteamIDInfo, getUserWishlist } from './utils/steam'
+import { getProfileInfo, getAppInfo, getSteamIDInfo, getUserWishlist, getGamesForUser } from './utils/steam'
 import { generatePlayersResponse, generateProfileResponse, generateAppDetailsResponse } from './utils/util.js'
 import { getNextSale, getSaleTime } from './utils/sales'
+import { getUserAliases } from '../../database'
 import moment from 'moment'
+import _ from 'lodash'
 import pad from 'pad-left' // lmao
 
 export const plugin_info = [{
@@ -28,6 +30,10 @@ export const plugin_info = [{
   alias: ['wishlist'],
   command: 'wishlist',
   usage: 'wishlist <steamid/vanityid> - returns a users wishlist'
+}, {
+  alias: ['doiown', 'dio'],
+  command: 'doIOwn',
+  usage: 'doiown <game|appid> - checks if you own a steam game'
 }]
 
 export function steamProfile(user, channel, input) {
@@ -95,4 +101,32 @@ export function wishlist(user, channel, input) {
       return resolve({ type: 'channel', message: msg })
     }).catch(reject)
   })
+}
+
+export async function doIOwn(user, channel, input) {
+  if (!input) return 'Specify a game or appid pls'
+
+  let userAlias
+  try {
+    userAlias = await getUserAliases(user.id, 'steam', true)
+  } catch (e) {
+    throw 'You must set an alias for steam before you can use this command. Use the `alias` command to set an alias.'
+  }
+
+  try {
+    const [ games, appinfo ] = await Promise.all([getGamesForUser(userAlias), getAppInfo(input)])
+
+    if (!appinfo) throw `Where's the app??!`
+    if (!games || !games.games || games.games.length === 0) throw 'You have no games??!'
+
+    const match = _.find(games.games, { appid: appinfo.steam_appid })
+    if (match) {
+      return { type: 'channel', message: `Success! Looks like you do own *${appinfo.name}* _(${appinfo.steam_appid})_ in your Steam library!` }
+    } else {
+      return { type: 'channel', message: `Hmm, doesn't look like you own *${appinfo.name}* _(${appinfo.steam_appid})_` }
+    }
+  } catch (e) {
+    console.error(e)
+    return { type: 'channel', message: typeof e === 'string' ? e : 'Something went wrong' }
+  }
 }

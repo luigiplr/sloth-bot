@@ -151,6 +151,15 @@ export function getProfileInfo(id) {
   })).catch(reject))
 }
 
+export function getGamesForUser(id) {
+  return new Promise((resolve, reject) => {
+    formatProfileID(id)
+      .then(getUserGames)
+      .then(resolve)
+      .catch(reject)
+  })
+}
+
 export function getAppInfo(appid, cc = 'US', playersOnly) {
   return new Promise((resolve, reject) => {
     const isAppID = appid.match(/^\d+$/)
