@@ -13,7 +13,7 @@ export const plugin_info = [{
   command: 'rememberList',
   usage: 'remembers [word] - returns a list of words and messages for word'
 }, {
-  alias: ['delremember'],
+  alias: ['forget'],
   command: 'removeRemember',
   usage: 'removeRemember <word> - removes a remembered word',
   userLevel: ['admin', 'superadmin']
