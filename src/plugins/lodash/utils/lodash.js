@@ -1489,7 +1489,7 @@ module.exports = {
   "escaperegexp": {
     "name": "escapeRegExp",
     "command": "_.escapeRegExp([string=''])",
-    "description": "Escapes the RegExp special characters \"^\", \"$\", \"\", \".\", \"*\", \"+\", \"?\", \"(\", \")\", \"[\", \"]\", \"{\", \"}\", and \"|\" in string.",
+    "description": "Escapes the RegExp special characters \"^\", \"$\", \"\\\", \".\", \"*\", \"+\", \"?\", \"(\", \")\", \"[\", \"]\", \"{\", \"}\", and \"|\" in string.",
     "since": "3.0.0"
   },
   "kebabcase": {

@@ -19,7 +19,7 @@ module.exports = {
     "command": "((a … → b) … → [a] → *) → (a …, Int, [a] → b) … → [a] → *)",
     "category": "Function",
     "since": "v0.15.0",
-    "description": "Creates a new list iteration function from an existing one by adding two new parameters to its callback function: the current index, and the entire list. This would turn, for instance, Ramda's simple `map` function into one that more closely resembles `Array.prototype.map`. Note that this will only work for functions in which the iteration callback function is the first parameter, and where the list is the last parameter. (This latter might be unimportant if the list parameter is not used.)"
+    "description": "Creates a new list iteration function from an existing one by adding two new parameters to its callback function: the current index, and the entire list. This would turn, for instance, `R.map` function into one that more closely resembles `Array.prototype.map`. Note that this will only work for functions in which the iteration callback function is the first parameter, and where the list is the last parameter. (This latter might be unimportant if the list parameter is not used.)"
   },
   "adjust": {
     "name": "adjust",
@@ -82,7 +82,7 @@ module.exports = {
     "command": "Number → [a] → [[a]]",
     "category": "List",
     "since": "v0.12.0",
-    "description": "Returns a new list, composed of n-tuples of consecutive elements If `n` is greater than the length of the list, an empty list is returned. Acts as a transducer if a transformer is given in list position."
+    "description": "Returns a new list, composed of n-tuples of consecutive elements. If `n` is greater than the length of the list, an empty list is returned. Acts as a transducer if a transformer is given in list position."
   },
   "append": {
     "name": "append",
@@ -104,6 +104,13 @@ module.exports = {
     "category": "Function",
     "since": "v0.20.0",
     "description": "Given a spec object recursively mapping properties to functions, creates a function producing an object of the same structure, by mapping each property to the result of calling its associated function with the supplied arguments."
+  },
+  "applyto": {
+    "name": "applyTo",
+    "command": "a → (a → b) → b",
+    "category": "Function",
+    "since": "v0.25.0",
+    "description": "Takes a value and applies a function to it. This function is also known as the `thrush` combinator."
   },
   "ascend": {
     "name": "ascend",
@@ -152,7 +159,7 @@ module.exports = {
     "command": "(*… → a),*… → a",
     "category": "Function",
     "since": "v0.9.0",
-    "description": "Returns the result of calling its first argument with the remaining arguments. This is occasionally useful as a converging function for `R.converge`: the left branch can produce a function while the right branch produces a value to be passed to that function as an argument."
+    "description": "Returns the result of calling its first argument with the remaining arguments. This is occasionally useful as a converging function for `R.converge`: the first branch can produce a function while the remaining branches produce values to be passed to that function as its arguments."
   },
   "chain": {
     "name": "chain",
@@ -177,7 +184,7 @@ module.exports = {
   },
   "comparator": {
     "name": "comparator",
-    "command": "(a, b → Boolean) → (a, b → Number)",
+    "command": "((a, b) → Boolean) → ((a, b) → Number)",
     "category": "Function",
     "since": "v0.1.0",
     "description": "Makes a comparator function out of a function that reports whether the first element is less than the second."
@@ -201,7 +208,7 @@ module.exports = {
     "command": "Chain m => ((y → m z), (x → m y), …, (a → m b)) → (a → m z)",
     "category": "Function",
     "since": "v0.16.0",
-    "description": "Returns the right-to-left Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.composeK(h, g, f)` is equivalent to `R.compose(R.chain(h), R.chain(g), R.chain(f))`."
+    "description": "Returns the right-to-left Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.composeK(h, g, f)` is equivalent to `R.compose(R.chain(h), R.chain(g), f)`."
   },
   "composep": {
     "name": "composeP",
@@ -215,7 +222,7 @@ module.exports = {
     "command": "[a] → [a] → [a]",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns the result of concatenating the given lists or strings. Note: `R.concat` expects both arguments to be of the same type, unlike the native `Array.prototype.concat` method. It will throw an error if you `concat` an Array with a non-Array value. Dispatches to the `concat` method of the first argument, if present."
+    "description": "Returns the result of concatenating the given lists or strings. Note: `R.concat` expects both arguments to be of the same type, unlike the native `Array.prototype.concat` method. It will throw an error if you `concat` an Array with a non-Array value. Dispatches to the `concat` method of the first argument, if present. Can also concatenate two members of a fantasy-land compatible semigroup."
   },
   "cond": {
     "name": "cond",
@@ -247,7 +254,7 @@ module.exports = {
   },
   "converge": {
     "name": "converge",
-    "command": "(x1 → x2 → … → z) → [(a → b → … → x1), (a → b → … → x2), …] → (a → b → … → z)",
+    "command": "((x1, x2, …) → z) → [((a, b, …) → x1), ((a, b, …) → x2), …] → (a → b → … → z)",
     "category": "Function",
     "since": "v0.4.2",
     "description": "Accepts a converging function and a list of branching functions and returns a new function. When invoked, this new function is applied to some arguments, each branching function is applied to those same arguments. The results of each branching function are passed as arguments to the converging function to produce the return value."
@@ -285,7 +292,7 @@ module.exports = {
     "command": "a → b → a | b",
     "category": "Logic",
     "since": "v0.10.0",
-    "description": "Returns the second argument if it is not `null`, `undefined` or `NaN` otherwise the first argument is returned."
+    "description": "Returns the second argument if it is not `null`, `undefined` or `NaN`; otherwise the first argument is returned."
   },
   "descend": {
     "name": "descend",
@@ -299,7 +306,7 @@ module.exports = {
     "command": "[*] → [*] → [*]",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Finds the set (i.e. no duplicates) of all elements in the first list not contained in the second list. Objects and Arrays are compared are compared in terms of value equality, not reference equality."
+    "description": "Finds the set (i.e. no duplicates) of all elements in the first list not contained in the second list. Objects and Arrays are compared in terms of value equality, not reference equality."
   },
   "differencewith": {
     "name": "differenceWith",
@@ -317,7 +324,7 @@ module.exports = {
   },
   "dissocpath": {
     "name": "dissocPath",
-    "command": "[String] → {k: v} → {k: v}",
+    "command": "[Idx] → {k: v} → {k: v}",
     "category": "Object",
     "since": "v0.11.0",
     "description": "Makes a shallow clone of an object, omitting the property at the given path. Note that this copies and flattens prototype properties onto the new object as well. All non-primitive properties are copied by reference."
@@ -359,7 +366,7 @@ module.exports = {
   },
   "droprepeatswith": {
     "name": "dropRepeatsWith",
-    "command": "(a, a → Boolean) → [a] → [a]",
+    "command": "((a, a) → Boolean) → [a] → [a]",
     "category": "List",
     "since": "v0.14.0",
     "description": "Returns a new list without any consecutively repeating elements. Equality is determined by applying the supplied predicate to each pair of consecutive elements. The first element in a series of equal elements will be preserved. Acts as a transducer if a transformer is given in list position."
@@ -383,7 +390,14 @@ module.exports = {
     "command": "a → a",
     "category": "Function",
     "since": "v0.3.0",
-    "description": "Returns the empty value of its argument's type. Ramda defines the empty value of Array (`[]`), Object (`{}`), String (`''`), and Arguments. Other types are supported if they define `<Type>.empty` and/or `<Type>.prototype.empty`. Dispatches to the `empty` method of the first argument, if present."
+    "description": "Returns the empty value of its argument's type. Ramda defines the empty value of Array (`[]`), Object (`{}`), String (`''`), and Arguments. Other types are supported if they define `<Type>.empty`, `<Type>.prototype.empty` or implement the FantasyLand Monoid spec. Dispatches to the `empty` method of the first argument, if present."
+  },
+  "endswith": {
+    "name": "endsWith",
+    "command": "[a] → Boolean",
+    "category": "List",
+    "since": "v0.24.0",
+    "description": "Checks if a list ends with the provided values"
   },
   "eqby": {
     "name": "eqBy",
@@ -425,7 +439,7 @@ module.exports = {
     "command": "Filterable f => (a → Boolean) → f a → f a",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Takes a predicate and a \"filterable\", and returns a new filterable of the same type containing the members of the given filterable which satisfy the given predicate. Dispatches to the `filter` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
+    "description": "Takes a predicate and a `Filterable`, and returns a new filterable of the same type containing the members of the given filterable which satisfy the given predicate. Filterable objects include plain objects or any object that has a filter method such as `Array`. Dispatches to the `filter` method of the second argument, if present. Acts as a transducer if a transformer is given in list position."
   },
   "find": {
     "name": "find",
@@ -464,7 +478,7 @@ module.exports = {
   },
   "flip": {
     "name": "flip",
-    "command": "(a → b → c → … → z) → (b → a → c → … → z)",
+    "command": "((a, b, c, …) → z) → (b → a → c → … → z)",
     "category": "Function",
     "since": "v0.1.0",
     "description": "Returns a new function much like the supplied one, except that the first two arguments' order is reversed."
@@ -502,7 +516,7 @@ module.exports = {
     "command": "((a, a) → Boolean) → [a] → [[a]]",
     "category": "List",
     "since": "v0.21.0",
-    "description": "Takes a list and returns a list of lists where each sublist's elements are all \"equal\" according to the provided equality function."
+    "description": "Takes a list and returns a list of lists where each sublist's elements are all satisfied pairwise comparison according to the provided function. Only adjacent elements are passed to the comparison function."
   },
   "gt": {
     "name": "gt",
@@ -588,19 +602,26 @@ module.exports = {
     "since": "v0.9.0",
     "description": "Returns all but the last element of the given list or string."
   },
+  "innerjoin": {
+    "name": "innerJoin",
+    "command": "((a, b) → Boolean) → [a] → [b] → [a]",
+    "category": "Relation",
+    "since": "v0.24.0",
+    "description": "Takes a predicate `pred`, a list `xs`, and a list `ys`, and returns a list `xs'` comprising each of the elements of `xs` which is equal to one or more elements of `ys` according to `pred`. `pred` must be a binary function expecting an element from each list. `xs`, `ys`, and `xs'` are treated as sets, semantically, so ordering should not be significant, but since `xs'` is ordered the implementation guarantees that its values are in the same order as they appear in `xs`. Duplicates are not removed, so `xs'` may contain duplicates if `xs` contains duplicates."
+  },
   "insert": {
     "name": "insert",
     "command": "Number → a → [a] → [a]",
     "category": "List",
     "since": "v0.2.2",
-    "description": "Inserts the supplied element into the list, at index `index`. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
+    "description": "Inserts the supplied element into the list, at the specified `index`. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
   },
   "insertall": {
     "name": "insertAll",
     "command": "Number → [a] → [a] → [a]",
     "category": "List",
     "since": "v0.9.0",
-    "description": "Inserts the sub-list into the list, at index `index`. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
+    "description": "Inserts the sub-list into the list, at the specified `index`. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function."
   },
   "intersection": {
     "name": "intersection",
@@ -608,13 +629,6 @@ module.exports = {
     "category": "Relation",
     "since": "v0.1.0",
     "description": "Combines two lists into a set (i.e. no duplicates) composed of those elements common to both lists."
-  },
-  "intersectionwith": {
-    "name": "intersectionWith",
-    "command": "((a, a) → Boolean) → [a] → [a] → [a]",
-    "category": "Relation",
-    "since": "v0.1.0",
-    "description": "Combines two lists into a set (i.e. no duplicates) composed of those elements common to both lists. Duplication is determined according to the value returned by applying the supplied predicate to two list elements."
   },
   "intersperse": {
     "name": "intersperse",
@@ -628,14 +642,14 @@ module.exports = {
     "command": "a → (b → b) → [c] → a",
     "category": "List",
     "since": "v0.12.0",
-    "description": "Transforms the items of the list with the transducer and appends the transformed items to the accumulator using an appropriate iterator function based on the accumulator type. The accumulator can be an array, string, object or a transformer. Iterated items will be appended to arrays and concatenated to strings. Objects will be merged directly or 2-item arrays will be merged as key, value pairs. The accumulator can also be a transformer object that provides a 2-arity reducing iterator function, step, 0-arity initial value function, init, and 1-arity result extraction function result. The step function is used as the iterator function in reduce. The result function is used to convert the final accumulator into the return type and in most cases is R.identity. The init function is used to provide the initial accumulator. The iteration is performed with R.reduce after initializing the transducer."
+    "description": "Transforms the items of the list with the transducer and appends the transformed items to the accumulator using an appropriate iterator function based on the accumulator type. The accumulator can be an array, string, object or a transformer. Iterated items will be appended to arrays and concatenated to strings. Objects will be merged directly or 2-item arrays will be merged as key, value pairs. The accumulator can also be a transformer object that provides a 2-arity reducing iterator function, step, 0-arity initial value function, init, and 1-arity result extraction function result. The step function is used as the iterator function in reduce. The result function is used to convert the final accumulator into the return type and in most cases is R.identity. The init function is used to provide the initial accumulator. The iteration is performed with `R.reduce` after initializing the transducer."
   },
   "invert": {
     "name": "invert",
     "command": "{s: x} → {x: [ s, … ]}",
     "category": "Object",
     "since": "v0.9.0",
-    "description": "Same as R.invertObj, however this accounts for objects with duplicate values by putting the values into an array."
+    "description": "Same as `R.invertObj`, however this accounts for objects with duplicate values by putting the values into an array."
   },
   "invertobj": {
     "name": "invertObj",
@@ -657,13 +671,6 @@ module.exports = {
     "category": "Type",
     "since": "v0.3.0",
     "description": "See if an object (`val`) is an instance of the supplied constructor. This function will check up the inheritance chain, if any."
-  },
-  "isarraylike": {
-    "name": "isArrayLike",
-    "command": "isArrayLike",
-    "category": "Type",
-    "since": "v0.5.0",
-    "description": "Tests whether or not an object is similar to an array."
   },
   "isempty": {
     "name": "isEmpty",
@@ -793,17 +800,17 @@ module.exports = {
   },
   "mapaccum": {
     "name": "mapAccum",
-    "command": "(acc → x → (acc, y)) → acc → [x] → (acc, [y])",
+    "command": "((acc, x) → (acc, y)) → acc → [x] → (acc, [y])",
     "category": "List",
     "since": "v0.10.0",
-    "description": "The mapAccum function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from left to right, and returning a final value of this accumulator together with the new list. The iterator function receives two arguments, acc and value, and should return a tuple [acc, value]."
+    "description": "The `mapAccum` function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from left to right, and returning a final value of this accumulator together with the new list. The iterator function receives two arguments, acc and value, and should return a tuple [acc, value]."
   },
   "mapaccumright": {
     "name": "mapAccumRight",
-    "command": "(x→ acc → (y, acc)) → acc → [x] → ([y], acc)",
+    "command": "((x, acc) → (y, acc)) → acc → [x] → ([y], acc)",
     "category": "List",
     "since": "v0.10.0",
-    "description": "The mapAccumRight function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from right to left, and returning a final value of this accumulator together with the new list. Similar to `mapAccum`, except moves through the input list from the right to the left. The iterator function receives two arguments, value and acc, and should return a tuple [value, acc]."
+    "description": "The `mapAccumRight` function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from right to left, and returning a final value of this accumulator together with the new list. Similar to `mapAccum`, except moves through the input list from the right to the left. The iterator function receives two arguments, value and acc, and should return a tuple [value, acc]."
   },
   "mapobjindexed": {
     "name": "mapObjIndexed",
@@ -824,7 +831,7 @@ module.exports = {
     "command": "Number → Number → Number",
     "category": "Math",
     "since": "v0.3.0",
-    "description": "mathMod behaves like the modulo operator should mathematically, unlike the `%` operator (and by extension, R.modulo). So while \"-17 % 5\" is -2, mathMod(-17, 5) is 3. mathMod requires Integer arguments, and returns NaN when the modulus is zero or negative."
+    "description": "`mathMod` behaves like the modulo operator should mathematically, unlike the `%` operator (and by extension, `R.modulo`). So while `-17 % 5` is `-2`, `mathMod(-17, 5)` is `3`. `mathMod` requires Integer arguments, and returns NaN when the modulus is zero or negative."
   },
   "max": {
     "name": "max",
@@ -856,10 +863,17 @@ module.exports = {
   },
   "memoize": {
     "name": "memoize",
-    "command": "(*… → a) → (*… → a)",
+    "command": "memoize",
     "category": "Function",
     "since": "v0.1.0",
     "description": "Creates a new function that, when invoked, caches the result of calling `fn` for a given argument set and returns the result. Subsequent calls to the memoized `fn` with the same argument set will not result in an additional call to `fn`; instead, the cached result for that set of arguments will be returned."
+  },
+  "memoizewith": {
+    "name": "memoizeWith",
+    "command": "(*… → String) → (*… → a) → (*… → a)",
+    "category": "Function",
+    "since": "v0.24.0",
+    "description": "A customisable version of `R.memoize`. `memoizeWith` takes an additional function that will be applied to a given argument set and used to create the cache key under which the results of the function to be memoized will be stored. Care must be taken when implementing key generation to avoid clashes that may overwrite previous entries erroneously."
   },
   "merge": {
     "name": "merge",
@@ -875,19 +889,47 @@ module.exports = {
     "since": "v0.10.0",
     "description": "Merges a list of objects together into one object."
   },
+  "mergedeepleft": {
+    "name": "mergeDeepLeft",
+    "command": "{a} → {a} → {a}",
+    "category": "Object",
+    "since": "v0.24.0",
+    "description": "Creates a new object with the own properties of the first object merged with the own properties of the second object. If a key exists in both objects: and both values are objects, the two values will be recursively merged otherwise the value from the first object will be used."
+  },
+  "mergedeepright": {
+    "name": "mergeDeepRight",
+    "command": "{a} → {a} → {a}",
+    "category": "Object",
+    "since": "v0.24.0",
+    "description": "Creates a new object with the own properties of the first object merged with the own properties of the second object. If a key exists in both objects: and both values are objects, the two values will be recursively merged otherwise the value from the second object will be used."
+  },
+  "mergedeepwith": {
+    "name": "mergeDeepWith",
+    "command": "((a, a) → a) → {a} → {a} → {a}",
+    "category": "Object",
+    "since": "v0.24.0",
+    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects: and both associated values are also objects then the values will be recursively merged. otherwise the provided function is applied to associated values using the resulting value as the new value associated with the key. If a key only exists in one object, the value will be associated with the key of the resulting object."
+  },
+  "mergedeepwithkey": {
+    "name": "mergeDeepWithKey",
+    "command": "((String, a, a) → a) → {a} → {a} → {a}",
+    "category": "Object",
+    "since": "v0.24.0",
+    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects: and both associated values are also objects then the values will be recursively merged. otherwise the provided function is applied to the key and associated values using the resulting value as the new value associated with the key. If a key only exists in one object, the value will be associated with the key of the resulting object."
+  },
   "mergewith": {
     "name": "mergeWith",
-    "command": "(a → a → a) → {a} → {a} → {a}",
+    "command": "((a, a) → a) → {a} → {a} → {a}",
     "category": "Object",
     "since": "v0.19.0",
-    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the values associated with the key in each object, with the result being used as the value associated with the key in the returned object. The key will be excluded from the returned object if the resulting value is `undefined`."
+    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the values associated with the key in each object, with the result being used as the value associated with the key in the returned object."
   },
   "mergewithkey": {
     "name": "mergeWithKey",
-    "command": "(String → a → a → a) → {a} → {a} → {a}",
+    "command": "((String, a, a) → a) → {a} → {a} → {a}",
     "category": "Object",
     "since": "v0.19.0",
-    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the key and the values associated with the key in each object, with the result being used as the value associated with the key in the returned object. The key will be excluded from the returned object if the resulting value is `undefined`."
+    "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects, the provided function is applied to the key and the values associated with the key in each object, with the result being used as the value associated with the key in the returned object."
   },
   "min": {
     "name": "min",
@@ -959,6 +1001,13 @@ module.exports = {
     "since": "v0.9.0",
     "description": "Returns a function which returns its nth argument."
   },
+  "o": {
+    "name": "o",
+    "command": "(b → c) → (a → b) → a → c",
+    "category": "Function",
+    "since": "v0.24.0",
+    "description": "`o` is a curried composition function that returns a unary function. Like `compose`, `o` performs right-to-left function composition. Unlike `compose`, the rightmost function passed to `o` will be invoked with only one argument."
+  },
   "objof": {
     "name": "objOf",
     "command": "String → a → {String:a}",
@@ -1027,7 +1076,7 @@ module.exports = {
     "command": "Filterable f => (a → Boolean) → f a → [f a, f a]",
     "category": "List",
     "since": "v0.1.4",
-    "description": "Takes a predicate and a list or other \"filterable\" object and returns the pair of filterable objects of the same type of elements which do and do not satisfy, the predicate, respectively."
+    "description": "Takes a predicate and a list or other `Filterable` object and returns the pair of filterable objects of the same type of elements which do and do not satisfy, the predicate, respectively. Filterable objects include plain objects or any object that has a filter method such as `Array`."
   },
   "path": {
     "name": "path",
@@ -1073,7 +1122,7 @@ module.exports = {
   },
   "pickby": {
     "name": "pickBy",
-    "command": "(v, k → Boolean) → {k: v} → {k: v}",
+    "command": "((v, k) → Boolean) → {k: v} → {k: v}",
     "category": "Object",
     "since": "v0.8.0",
     "description": "Returns a partial copy of an object containing only the keys that satisfy the supplied predicate."
@@ -1090,7 +1139,7 @@ module.exports = {
     "command": "Chain m => ((a → m b), (b → m c), …, (y → m z)) → (a → m z)",
     "category": "Function",
     "since": "v0.16.0",
-    "description": "Returns the left-to-right Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.pipeK(f, g, h)` is equivalent to `R.pipe(R.chain(f), R.chain(g), R.chain(h))`."
+    "description": "Returns the left-to-right Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.pipeK(f, g, h)` is equivalent to `R.pipe(f, R.chain(g), R.chain(h))`."
   },
   "pipep": {
     "name": "pipeP",
@@ -1101,10 +1150,10 @@ module.exports = {
   },
   "pluck": {
     "name": "pluck",
-    "command": "k → [{k: v}] → [v]",
+    "command": "Functor f => k → f {k: v} → f v",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a new list by plucking the same named property off all objects in the list supplied."
+    "description": "Returns a new list by plucking the same named property off all objects in the list supplied. `pluck` will work on any functor in addition to arrays, as it is equivalent to `R.map(R.prop(k), f)`."
   },
   "prepend": {
     "name": "prepend",
@@ -1139,7 +1188,7 @@ module.exports = {
     "command": "String → a → Object → Boolean",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Returns `true` if the specified object property is equal, in `R.equals` terms, to the given value; `false` otherwise."
+    "description": "Returns `true` if the specified object property is equal, in `R.equals` terms, to the given value; `false` otherwise. You can test multiple properties with `R.where`."
   },
   "propis": {
     "name": "propIs",
@@ -1167,7 +1216,7 @@ module.exports = {
     "command": "(a → Boolean) → String → {String: a} → Boolean",
     "category": "Logic",
     "since": "v0.16.0",
-    "description": "Returns `true` if the specified object property satisfies the given predicate; `false` otherwise."
+    "description": "Returns `true` if the specified object property satisfies the given predicate; `false` otherwise. You can test multiple properties with `R.where`."
   },
   "range": {
     "name": "range",
@@ -1181,7 +1230,7 @@ module.exports = {
     "command": "((a, b) → a) → a → [b] → a",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It may use `R.reduced` to shortcut the iteration. The arguments' order of `reduceRight`'s iterator function is (value, acc). Note: `R.reduce` does not skip deleted or unassigned indices (sparse arrays), unlike the native `Array.prototype.reduce` method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce#Description Dispatches to the `reduce` method of the third argument, if present."
+    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It may use `R.reduced` to shortcut the iteration. The arguments' order of `reduceRight`'s iterator function is (value, acc). Note: `R.reduce` does not skip deleted or unassigned indices (sparse arrays), unlike the native `Array.prototype.reduce` method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce#Description Dispatches to the `reduce` method of the third argument, if present. When doing so, it is up to the user to handle the `R.reduced` shortcuting, as this is not implemented by `reduce`."
   },
   "reduceby": {
     "name": "reduceBy",
@@ -1195,14 +1244,14 @@ module.exports = {
     "command": "a → *",
     "category": "List",
     "since": "v0.15.0",
-    "description": "Returns a value wrapped to indicate that it is the final value of the reduce and transduce functions. The returned value should be considered a black box: the internal structure is not guaranteed to be stable. Note: this optimization is unavailable to functions not explicitly listed above. For instance, it is not currently supported by reduceRight."
+    "description": "Returns a value wrapped to indicate that it is the final value of the reduce and transduce functions. The returned value should be considered a black box: the internal structure is not guaranteed to be stable. Note: this optimization is unavailable to functions not explicitly listed above. For instance, it is not currently supported by `reduceRight`."
   },
   "reduceright": {
     "name": "reduceRight",
-    "command": "(a, b → b) → b → [a] → b",
+    "command": "((a, b) → b) → b → [a] → b",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. Similar to `reduce`, except moves through the input list from the right to the left. The iterator function receives two values: (value, acc), while the arguments' order of `reduce`'s iterator function is (acc, value). Note: `R.reduceRight` does not skip deleted or unassigned indices (sparse arrays), unlike the native `Array.prototype.reduce` method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight#Description"
+    "description": "Returns a single item by iterating through the list, successively calling the iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. Similar to `reduce`, except moves through the input list from the right to the left. The iterator function receives two values: (value, acc), while the arguments' order of `reduce`'s iterator function is (acc, value). Note: `R.reduceRight` does not skip deleted or unassigned indices (sparse arrays), unlike the native `Array.prototype.reduceRight` method. For more details on this behavior, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight#Description"
   },
   "reducewhile": {
     "name": "reduceWhile",
@@ -1216,7 +1265,7 @@ module.exports = {
     "command": "Filterable f => (a → Boolean) → f a → f a",
     "category": "List",
     "since": "v0.1.0",
-    "description": "The complement of `filter`. Acts as a transducer if a transformer is given in list position."
+    "description": "The complement of `filter`. Acts as a transducer if a transformer is given in list position. Filterable objects include plain objects or any object that has a filter method such as `Array`."
   },
   "remove": {
     "name": "remove",
@@ -1248,10 +1297,10 @@ module.exports = {
   },
   "scan": {
     "name": "scan",
-    "command": "(a,b → a) → a → [b] → [a]",
+    "command": "((a, b) → a) → a → [b] → [a]",
     "category": "List",
     "since": "v0.10.0",
-    "description": "Scan is similar to reduce, but returns a list of successively reduced values from the left"
+    "description": "Scan is similar to `reduce`, but returns a list of successively reduced values from the left"
   },
   "sequence": {
     "name": "sequence",
@@ -1276,7 +1325,7 @@ module.exports = {
   },
   "sort": {
     "name": "sort",
-    "command": "(a,a → Number) → [a] → [a]",
+    "command": "((a, a) → Number) → [a] → [a]",
     "category": "List",
     "since": "v0.1.0",
     "description": "Returns a copy of the list, sorted according to the comparator function, which should accept two values at a time and return a negative number if the first value is smaller, a positive number if it's larger, and zero if they are equal. Please note that this is a copy of the list. It does not modify the original."
@@ -1290,7 +1339,7 @@ module.exports = {
   },
   "sortwith": {
     "name": "sortWith",
-    "command": "[a → a → Number] → [a] → [a]",
+    "command": "[(a, a) → Number] → [a] → [a]",
     "category": "Relation",
     "since": "v0.23.0",
     "description": "Sorts a list according to a list of comparators."
@@ -1322,6 +1371,13 @@ module.exports = {
     "category": "List",
     "since": "v0.19.0",
     "description": "Takes a list and a predicate and returns a pair of lists with the following properties: the result of concatenating the two output lists is equivalent to the input list; none of the elements of the first output list satisfies the predicate; and if the second output list is non-empty, its first element satisfies the predicate."
+  },
+  "startswith": {
+    "name": "startsWith",
+    "command": "[a] → Boolean",
+    "category": "List",
+    "since": "v0.24.0",
+    "description": "Checks if a list starts with the provided values"
   },
   "subtract": {
     "name": "subtract",
@@ -1398,7 +1454,7 @@ module.exports = {
     "command": "(a → *) → a → a",
     "category": "Function",
     "since": "v0.1.0",
-    "description": "Runs the given function with the supplied object, then returns the object."
+    "description": "Runs the given function with the supplied object, then returns the object. Acts as a transducer if a transformer is given as second parameter."
   },
   "test": {
     "name": "test",
@@ -1451,10 +1507,10 @@ module.exports = {
   },
   "transduce": {
     "name": "transduce",
-    "command": "(c → c) → (a,b → a) → a → [b] → a",
+    "command": "(c → c) → ((a, b) → a) → a → [b] → a",
     "category": "List",
     "since": "v0.12.0",
-    "description": "Initializes a transducer using supplied iterator function. Returns a single item by iterating through the list, successively calling the transformed iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It will be wrapped as a transformer to initialize the transducer. A transformer can be passed directly in place of an iterator function. In both cases, iteration may be stopped early with the `R.reduced` function. A transducer is a function that accepts a transformer and returns a transformer and can be composed directly. A transformer is an an object that provides a 2-arity reducing iterator function, step, 0-arity initial value function, init, and 1-arity result extraction function, result. The step function is used as the iterator function in reduce. The result function is used to convert the final accumulator into the return type and in most cases is R.identity. The init function can be used to provide an initial accumulator, but is ignored by transduce. The iteration is performed with R.reduce after initializing the transducer."
+    "description": "Initializes a transducer using supplied iterator function. Returns a single item by iterating through the list, successively calling the transformed iterator function and passing it an accumulator value and the current value from the array, and then passing the result to the next call. The iterator function receives two values: (acc, value). It will be wrapped as a transformer to initialize the transducer. A transformer can be passed directly in place of an iterator function. In both cases, iteration may be stopped early with the `R.reduced` function. A transducer is a function that accepts a transformer and returns a transformer and can be composed directly. A transformer is an an object that provides a 2-arity reducing iterator function, step, 0-arity initial value function, init, and 1-arity result extraction function, result. The step function is used as the iterator function in reduce. The result function is used to convert the final accumulator into the return type and in most cases is `R.identity`. The init function can be used to provide an initial accumulator, but is ignored by transduce. The iteration is performed with `R.reduce` after initializing the transducer."
   },
   "transpose": {
     "name": "transpose",
@@ -1468,7 +1524,7 @@ module.exports = {
     "command": "(Applicative f, Traversable t) => (a → f a) → (a → f b) → t a → f (t b)",
     "category": "List",
     "since": "v0.19.0",
-    "description": "Maps an Applicative-returning function over a Traversable, then uses `sequence` to transform the resulting Traversable of Applicative into an Applicative of Traversable. Dispatches to the `sequence` method of the third argument, if present."
+    "description": "Maps an Applicative-returning function over a Traversable, then uses `sequence` to transform the resulting Traversable of Applicative into an Applicative of Traversable. Dispatches to the `traverse` method of the third argument, if present."
   },
   "trim": {
     "name": "trim",
@@ -1496,7 +1552,7 @@ module.exports = {
     "command": "([*…] → a) → (*… → a)",
     "category": "Function",
     "since": "v0.8.0",
-    "description": "Takes a function `fn`, which takes a single array argument, and returns a function which: takes any number of positional arguments; passes these arguments to `fn` as an array; and returns the result. In other words, R.unapply derives a variadic function from a function which takes an array. R.unapply is the inverse of R.apply."
+    "description": "Takes a function `fn`, which takes a single array argument, and returns a function which: takes any number of positional arguments; passes these arguments to `fn` as an array; and returns the result. In other words, `R.unapply` derives a variadic function from a function which takes an array. `R.unapply` is the inverse of `R.apply`."
   },
   "unary": {
     "name": "unary",
@@ -1528,7 +1584,7 @@ module.exports = {
   },
   "unionwith": {
     "name": "unionWith",
-    "command": "(a → a → Boolean) → [*] → [*] → [*]",
+    "command": "((a, a) → Boolean) → [*] → [*] → [*]",
     "category": "Relation",
     "since": "v0.1.0",
     "description": "Combines two lists into a set (i.e. no duplicates) composed of the elements of each list. Duplication is determined according to the value returned by applying the supplied predicate to two list elements."
@@ -1549,7 +1605,7 @@ module.exports = {
   },
   "uniqwith": {
     "name": "uniqWith",
-    "command": "(a, a → Boolean) → [a] → [a]",
+    "command": "((a, a) → Boolean) → [a] → [a]",
     "category": "List",
     "since": "v0.2.0",
     "description": "Returns a new list containing only one copy of each element in the original list, based upon the value returned by applying the supplied predicate to two list elements. Prefers the first item if two items compare equal based on the predicate."
@@ -1584,7 +1640,7 @@ module.exports = {
   },
   "usewith": {
     "name": "useWith",
-    "command": "(x1 → x2 → … → z) → [(a → x1), (b → x2), …] → (a → b → … → z)",
+    "command": "((x1, x2, …) → z) → [(a → x1), (b → x2), …] → (a → b → … → z)",
     "category": "Function",
     "since": "v0.1.0",
     "description": "Accepts a function `fn` and a list of transformer functions and returns a new curried function. When the new function is invoked, it calls the function `fn` with parameters consisting of the result of calling each supplied handler on successive arguments to the new function. If more arguments are passed to the returned function than transformer functions, those arguments are passed directly to `fn` as additional parameters. If you expect additional arguments that don't need to be transformed, although you can ignore them, it's best to pass an identity function so that the new function reports the correct arity."
@@ -1657,11 +1713,11 @@ module.exports = {
     "command": "[String] → [*] → {String: *}",
     "category": "List",
     "since": "v0.3.0",
-    "description": "Creates a new object out of a list of keys and a list of values. Key/value pairing is truncated to the length of the shorter of the two lists. Note: `zipObj` is equivalent to `pipe(zipWith(pair), fromPairs)`."
+    "description": "Creates a new object out of a list of keys and a list of values. Key/value pairing is truncated to the length of the shorter of the two lists. Note: `zipObj` is equivalent to `pipe(zip, fromPairs)`."
   },
   "zipwith": {
     "name": "zipWith",
-    "command": "(a,b → c) → [a] → [b] → [c]",
+    "command": "((a, b) → c) → [a] → [b] → [c]",
     "category": "List",
     "since": "v0.1.0",
     "description": "Creates a new list out of the two supplied by applying the function to each equally-positioned pair in the lists. The returned list is truncated to the length of the shorter of the two input lists."
