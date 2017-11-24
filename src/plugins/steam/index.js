@@ -1,7 +1,7 @@
 import { getProfileInfo, getAppInfo, getSteamIDInfo, getUserWishlist, getGamesForUser } from './utils/steam'
 import { generatePlayersResponse, generateProfileResponse, generateAppDetailsResponse } from './utils/util.js'
 import { getNextSale, getSaleTime } from './utils/sales'
-import { getUserAliases } from '../../database'
+import { getUserAliases, tryGetUserAlias } from '../../database'
 import moment from 'moment'
 import _ from 'lodash'
 import pad from 'pad-left' // lmao
@@ -36,12 +36,13 @@ export const plugin_info = [{
   usage: 'doiown <game|appid> - checks if you own a steam game'
 }]
 
-export function steamProfile(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information' })
+export async function steamProfile(user, channel, input) {
+  if (!input) return { type: 'dm', message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information' }
 
-    getProfileInfo(input).then(resp => resolve({ type: 'channel', message: generateProfileResponse(resp) })).catch(reject)
-  })
+  const userAlias = await tryGetUserAlias(input)
+  const profile = await getProfileInfo(userAlias || input)
+
+  return { type: 'channel', message: generateProfileResponse(profile) }
 }
 
 export function players(user, channel, input) {
@@ -84,23 +85,23 @@ export function steamSale() {
   })
 }
 
-export function wishlist(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: wishlist <steamid/vanityid> - Returns top 10 games in users wishlist, id can be any form of SteamID' })
+export async function wishlist(user, channel, input) {
+  if (!input) return { type: 'dm', message: 'Usage: wishlist <steamid/vanityid> - Returns top 10 games in users wishlist, id can be any form of SteamID' }
 
-    getUserWishlist(input).then((resp = []) => {
-      const games = resp.slice(0, 10)
-      const msg = [
-        `*Top ${games.length} games in wishlist for ${input}*`,
-        '```',
-        ...games.map(({ name, id, index }) => ` ${index < 10 ? ' ' : ''}${index}. ${pad('[' + id + ']', 8, ' ')} ${name}`),
-        '```',
-        resp.length > 10 ? `_Plus ${resp.length - 10} more games not shown_` : void 0
-      ].filter(Boolean).join('\n')
+  const userAlias = await tryGetUserAlias(input, 'steam')
 
-      return resolve({ type: 'channel', message: msg })
-    }).catch(reject)
-  })
+  const wishlist = await getUserWishlist(userAlias || input)
+  const games = wishlist.slice(0, 10)
+
+  const msg = [
+    `*Top ${games.length} games in wishlist for ${input}*`,
+    '```',
+    ...games.map(({ name, id, index }) => ` ${index < 10 ? ' ' : ''}${index}. ${pad('[' + id + ']', 8, ' ')} ${name}`),
+    '```',
+    wishlist.length > 10 ? `_Plus ${wishlist.length - 10} more games not shown_` : void 0
+  ].filter(Boolean).join('\n')
+
+  return { type: 'channel', message: msg }
 }
 
 export async function doIOwn(user, channel, input) {

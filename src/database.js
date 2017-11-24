@@ -79,6 +79,14 @@ export function getUserAliases(user, service, isID) {
   })
 }
 
+export async function tryGetUserAlias(user, service, isID) {
+  try {
+    return getUserAliases(user, service, isID)
+  } catch (e) {
+    return null
+  }
+}
+
 CRUD.define(Aliases, {
   table: 'Aliases',
   primary: 'aliasID',
