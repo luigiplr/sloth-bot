@@ -1,6 +1,6 @@
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch.js'
 import { filter, capitalize, isEmpty, uniq, compact } from 'lodash'
-import { getUserAliases } from '../../database'
+import { tryGetUserAlias } from '../../database'
 
 export const plugin_info = [{
   alias: ['overwatch'],
@@ -9,7 +9,7 @@ export const plugin_info = [{
 }]
 
 const pageURL = 'https://playoverwatch.com/en-us/career'
-const validHeroes = ["ana", "bastion", "dva", "doomfist", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "orisa", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "sombra", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
+const validHeroes = ["ana", "bastion", "dva", "doomfist", "genji", "hanzo", "junkrat", "lucio", "mccree", "mei", "mercy", "moira", "orisa", "pharah", "reaper", "reinhardt", "roadhog", "soldier76", "sombra", "symmetra", "torbjorn", "tracer", "widowmaker", "winston", "zarya", "zenyatta"]
 const validTypes = ["info", "stats", "hero", "heroes"]
 const validRegs = ["us", "eu", "kr"]
 const validPlats = ["pc", "xbl", "psn"]
@@ -24,58 +24,61 @@ const usage = [
   "-p platfm - Platform of th user, defaults to 'pc', valid platforms are 'pc', 'xbl', 'psn' (optional)```"
 ]
 
-export function userInfo(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', messages: usage })
+export async function userInfo(user, channel, input) {
+  if (!input) return ({ type: 'dm', messages: usage })
 
-    const split = input.split(' ')
-    if (split.length < 1) return resolve({ type: 'dm', messages: usage })
+  const split = compact(input.split(' '))
+  if (split.length < 1) return ({ type: 'dm', messages: usage })
 
-    getUserAliases(split[0]).then(newName => {
-      const battletag = newName.replace('#', '-')
-      const type = split[1] || 'info'
-      if (!validTypes.includes(type.toLowerCase())) return reject("Invalid type, valid types are " + validTypes.join(', '))
+  const userAlias = await tryGetUserAlias(split[0], 'overwatch')
+  const battletag = (userAlias || split[0]).replace('#', '-')
 
-      const hero = split[2]
-      if (type == 'hero' && (!hero || (hero && !validHeroes.includes(hero)))) return reject("Invalid hero, valid heroes are: " + validHeroes.join(', '))
+  console.log(split)
 
-      const version = input.includes('quickplay') ? 'quickplay' : (input.includes('competitive') || input.includes('competetive')) ? 'competitive' : undefined
+  const type = split[1] || 'info'
+  if (!validTypes.includes(type.toLowerCase())) {
+    return ({ type: 'channel', message: `Invalid type, valid types are: ${validTypes.join(', ')}` })
+  }
 
-      const regionRegex = /-r (..)/g
-      const platformRegex = /-p (...?)/g
-      const region = (regionRegex.exec(input) || [])[1]
-      const platform = (platformRegex.exec(input) || [])[1]
-      if (region && !validRegs.includes(region.toLowerCase())) return reject("Invalid region, valid regions are " + validRegs.join(', '))
-      if (platform && !validPlats.includes(platform.toLowerCase())) return reject("Invalid platform, valid platforms are " + validPlats.join(', '))
+  const hero = split[2]
+  if (type === 'hero' && (!hero || (hero && !validHeroes.includes(hero)))) {
+    return ({ type: 'channel', message: `Invalid hero, valid heroes are: ${validHeroes.join(', ')}` })
+  }
 
-      switch (type) {
-        case 'info':
-          getUserInfo(battletag, region, platform).then(info => {
-            if (!info) return reject("Error: No info returned?")
-            return resolve({ type: 'channel', message: generateInfoResp(info) })
-          }).catch(reject)
-          break;
-        case 'stats':
-          getUserStats(battletag, region, platform).then(stats => {
-            if (!stats) return reject("Error: No stats returned?")
-            return resolve({ type: 'channel', 'message': generateStatsResp(stats, version) })
-          }).catch(reject)
-          break;
-        case 'hero':
-          getHero(battletag, region, platform, hero).then(stats => {
-            if (!stats) return reject("Error: No hero stats returned?")
-            return resolve({ type: 'channel', message: generateHeroResp(stats, version, battletag) })
-          }).catch(reject)
-          break;
-        case 'heroes':
-          getHeroesPlaytime(battletag, region, platform).then(heroes => {
-            if (!heroes) return reject("Error: No heroes returned?")
-            return resolve({ type: 'channel', message: generateHeroesResp(heroes, battletag) })
-          }).catch(reject)
-          break;
-      }
-    }).catch(reject)
-  })
+  const version = input.includes('quickplay') ? 'quickplay' : (input.includes('competitive') || input.includes('competetive')) ? 'competitive' : undefined
+
+  const regionRegex = /-r (..)/g
+  const platformRegex = /-p (...?)/g
+  const region = (regionRegex.exec(input) || [])[1]
+  const platform = (platformRegex.exec(input) || [])[1]
+
+  if (region && !validRegs.includes(region.toLowerCase())) {
+    return ({ type: 'channel', message: `Invalid region, valid regions are: ${validRegs.join(', ')}` })
+  }
+
+  if (platform && !validPlats.includes(platform.toLowerCase())) {
+    return ({ type: 'channel', message: `Invalid platform, valid platforms are: ${validPlats.join(', ')}` })
+  }
+
+  let data
+  switch (type) {
+    case 'info':
+      data = await getUserInfo(battletag, region, platform)
+      if (!data) throw 'Error: No info returned?'
+      return { type: 'channel', message: generateInfoResp(data) }
+    case 'stats':
+      data = await getUserStats(battletag, region, platform)
+      if (!data) throw 'Error: No stats returned?'
+      return { type: 'channel', 'message': generateStatsResp(data, version) }
+    case 'hero':
+      data = await getHero(battletag, region, platform, hero)
+      if (!data) throw 'Error: No hero stats returned?'
+      return { type: 'channel', message: generateHeroResp(data, version, battletag) }
+    case 'heroes':
+      data = await getHeroesPlaytime(battletag, region, platform)
+      if (!data) throw 'Error: No heroes returned?'
+      return { type: 'channel', message: generateHeroesResp(data, battletag) }
+  }
 }
 
 const generateInfoResp = player => {

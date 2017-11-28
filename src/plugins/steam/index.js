@@ -39,7 +39,7 @@ export const plugin_info = [{
 export async function steamProfile(user, channel, input) {
   if (!input) return { type: 'dm', message: 'Usage: steamprofile <SteamID/64 or VanityURL ID> - Returns a users basic Steam Information' }
 
-  const userAlias = await tryGetUserAlias(input)
+  const userAlias = await tryGetUserAlias(input, 'steam')
   const profile = await getProfileInfo(userAlias || input)
 
   return { type: 'channel', message: generateProfileResponse(profile) }
