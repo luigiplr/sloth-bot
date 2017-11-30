@@ -1,7 +1,7 @@
 import { filter, truncate, capitalize, floor } from 'lodash'
 import moment from 'moment'
 import config from '../../../config.json'
-import { getSerieDetails, getMovieDetails } from './utils/trakt'
+import { getSerieDetails, getMovieDetails, getImageFromTmdb } from './utils/trakt'
 
 if (!config.traktAPIKey) console.error("Error: Trakt Plugin requires traktAPIKey")
 
@@ -57,6 +57,7 @@ const generateMovieResponse = movie => {
       "title": `${movie.title} (${movie.year || 'Unknown'})`,
       "title_link": `https://trakt.tv/shows/${movie.ids.slug}`,
       "fallback": `${movie.title} (${movie.year}) - https://trakt.tv/shows/${movie.ids.slug}`,
+      "image_url": getImageFromTmdb(movie.ids.tmdb, 'movie'),
       "text": movie.tagline,
       "mrkdwn_in": ["text", "pretext", "fields"],
       "color": "#c61017"
@@ -108,6 +109,7 @@ const generateShowResponse = serie => {
       "title": `${serie.title} (${serie.year || 'Unknown'})`,
       "title_link": `https://trakt.tv/shows/${serie.ids.slug}`,
       "fallback": `${serie.title} (${serie.year})`,
+      "image_url": getImageFromTmdb(serie.ids.tmdb, 'show'),
       "mrkdwn_in": ["text", "pretext", "fields"],
       "color": "#c61017"
     }]

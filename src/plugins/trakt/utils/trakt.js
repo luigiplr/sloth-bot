@@ -1,9 +1,9 @@
 import needle from 'needle'
 
-const token = require('./../../../../config.json').traktAPIKey
+const { traktAPIKey, tmdbAPIKey } = require('./../../../../config.json')
 const APIUrl = "https://api.trakt.tv/"
 
-const options = { headers: { "trakt-api-key": token } }
+const options = { headers: { "trakt-api-key": traktAPIKey } }
 
 const endpoints = {
   serie: 'shows/%s?extended=full',
@@ -26,11 +26,11 @@ const getShowORMovieWithSlughOrSearch = (input, type) => {
     let isID = input.includes('-s')
     let name = isID ? input.replace('-s', '').trim() : input
     needle.get(getURL(isID ? type : 'search', name, type), options, (err, resp, body) => {
-      if (resp.statusCode == 404) return reject("No results found")
+      if (resp.statusCode === 404) return reject("No results found")
       if (err || !body) return reject("Error fetching data from Trakt.tv")
       if (isID) return resolve(body)
       if (!body.length) return reject("No results found")
-      resolve(body[0][type == 'movie' ? 'movie' : 'show'])
+      resolve(body[0][type === 'movie' ? 'movie' : 'show'])
     })
   })
 }
@@ -48,5 +48,22 @@ export function getMovieDetails(input) {
 
 export function getSerieDetails(input) {
   return getShowORMovieWithSlughOrSearch(input, 'serie').then(getSeasonInfo)
+}
 
+const imgBaseUrl = 'https://image.tmdb.org/t/p/w185'
+export function getImageFromTmdb(type, id) {
+  return new Promise(resolve => {
+    if (!tmdbAPIKey || !id) {
+      return resolve(undefined)
+    }
+
+    const t = type === 'movie' ? 'movies' : 'tv'
+    needle.get(`https://api.themoviedb.org/3/${t}/${id}`, (err, resp, body) => {
+      if (err || !body) {
+        return resolve(undefined)
+      }
+
+      return resolve(body.poster_path ? `${imgBaseUrl}/${body.poster_path}` : void 0)
+    })
+  })
 }
