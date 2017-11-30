@@ -44,26 +44,31 @@ const getSeasonInfo = serie => new Promise((resolve, reject) => {
 
 export function getMovieDetails(input) {
   return getShowORMovieWithSlughOrSearch(input, 'movie')
+    .then(d => getImageFromTmdb(d, 'movie'))
 }
 
 export function getSerieDetails(input) {
-  return getShowORMovieWithSlughOrSearch(input, 'serie').then(getSeasonInfo)
+  return getShowORMovieWithSlughOrSearch(input, 'serie')
+    .then(getSeasonInfo)
+    .then(d => getImageFromTmdb(d, 'show'))
 }
 
-const imgBaseUrl = 'https://image.tmdb.org/t/p/w185'
-export function getImageFromTmdb(type, id) {
+const imgBaseUrl = 'https://image.tmdb.org/t/p/w154'
+function getImageFromTmdb(data, type) {
   return new Promise(resolve => {
-    if (!tmdbAPIKey || !id) {
-      return resolve(undefined)
+    const id = data.ids.tmdb
+    const t = type === 'movie' ? 'movies' : 'tv'
+
+    if (!id || !tmdbAPIKey) {
+      return resolve(data)
     }
 
-    const t = type === 'movie' ? 'movies' : 'tv'
-    needle.get(`https://api.themoviedb.org/3/${t}/${id}`, (err, resp, body) => {
+    needle.get(`https://api.themoviedb.org/3/${t}/${id}?api_key=${tmdbAPIKey}`, (err, resp, body) => {
       if (err || !body) {
-        return resolve(undefined)
+        return resolve(data)
       }
 
-      return resolve(body.poster_path ? `${imgBaseUrl}/${body.poster_path}` : void 0)
+      return resolve({ ...data, image: body.poster_path ? `${imgBaseUrl}/${body.poster_path}` : void 0 })
     })
   })
 }
