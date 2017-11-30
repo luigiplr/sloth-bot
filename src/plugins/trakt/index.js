@@ -44,11 +44,6 @@ export function redirect() {
   return new Promise(resolve => resolve({ type: 'dm', message: `You can use the ${config.prefix}movie or ${config.prefix}tvshow commands to fetch movie/show information` }))
 }
 
-const getImgUrl = id => {
-  if (!id || !config.traktImageProxy) return undefined
-  return config.traktImageProxy.replace('%s', id)
-}
-
 const generateMovieResponse = movie => {
   if (!movie) return 'Error: Missing movie data while generating response'
   if (movie.runtime) {
@@ -62,7 +57,6 @@ const generateMovieResponse = movie => {
       "title": `${movie.title} (${movie.year || 'Unknown'})`,
       "title_link": `https://trakt.tv/shows/${movie.ids.slug}`,
       "fallback": `${movie.title} (${movie.year}) - https://trakt.tv/shows/${movie.ids.slug}`,
-      "image_url": getImgUrl(movie.ids.imdb),
       "text": movie.tagline,
       "mrkdwn_in": ["text", "pretext", "fields"],
       "color": "#c61017"
@@ -114,7 +108,6 @@ const generateShowResponse = serie => {
       "title": `${serie.title} (${serie.year || 'Unknown'})`,
       "title_link": `https://trakt.tv/shows/${serie.ids.slug}`,
       "fallback": `${serie.title} (${serie.year})`,
-      "image_url": getImgUrl(serie.ids.imdb),
       "mrkdwn_in": ["text", "pretext", "fields"],
       "color": "#c61017"
     }]
