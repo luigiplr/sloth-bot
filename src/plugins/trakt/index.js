@@ -102,8 +102,8 @@ const generateMovieResponse = movie => {
 
 const generateShowResponse = serie => {
   if (!serie) return 'Error: Missing serie data while generating response'
-  if (serie.seasons[0].number == 0) serie.seasons.shift() // Don't count specials season
-  if (serie.seasons[serie.seasons.length-1].aired_episodes == 0) serie.seasons.pop() // Ignore last season if no aired episodes
+  if (serie.seasons[0].number === 0) serie.seasons.shift() // Don't count specials season
+  if (serie.seasons[serie.seasons.length - 1].aired_episodes === 0) serie.seasons.pop() // Ignore last season if no aired episodes
   let out = {
     attachments: [{
       "title": `${serie.title} (${serie.year || 'Unknown'})`,
@@ -129,7 +129,7 @@ const generateShowResponse = serie => {
     "short": true
   }, {
     "title": "Aired Episodes",
-    "value": `${serie.aired_episodes} Episode${serie.aired_episodes == 1 ? '' : 's'} | ${serie.seasons.length} Season${serie.seasons.length == 1 ? '' : 's'}`,
+    "value": `${serie.aired_episodes} Episode${serie.aired_episodes == 1 ? '' : 's'} | ${serie.seasons.length} Season${serie.seasons.length === 1 ? '' : 's'}`,
     "short": true
   }, {
     "title": "Genres",

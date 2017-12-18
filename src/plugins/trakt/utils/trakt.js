@@ -50,20 +50,19 @@ export function getMovieDetails(input) {
 export function getSerieDetails(input) {
   return getShowORMovieWithSlughOrSearch(input, 'serie')
     .then(getSeasonInfo)
-    .then(d => getImageFromTmdb(d, 'show'))
+    .then(d => getImageFromTmdb(d, 'tv'))
 }
 
 const imgBaseUrl = 'https://image.tmdb.org/t/p/w154'
 function getImageFromTmdb(data, type) {
   return new Promise(resolve => {
     const id = data.ids.tmdb
-    const t = type === 'movie' ? 'movies' : 'tv'
 
     if (!id || !tmdbAPIKey) {
       return resolve(data)
     }
 
-    needle.get(`https://api.themoviedb.org/3/${t}/${id}?api_key=${tmdbAPIKey}`, (err, resp, body) => {
+    needle.get(`https://api.themoviedb.org/3/${type}/${id}?api_key=${tmdbAPIKey}`, (err, resp, body) => {
       if (err || !body) {
         return resolve(data)
       }
