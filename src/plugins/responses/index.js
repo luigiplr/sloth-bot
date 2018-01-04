@@ -48,9 +48,9 @@ export const plugin_info = [{
   command: 'oldinsult',
   usage: 'sinsult <person>'
 }, {
-  alias: ['statuscode'],
+  alias: ['statuscode', 'status'],
   command: 'status',
-  usage: 'statuscode <code> - Returns what the status code is'
+  usage: 'status <code> - Returns what the status code is'
 }, {
   alias: ['pug', 'hellopug'],
   command: 'pug',

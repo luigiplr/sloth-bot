@@ -71,6 +71,42 @@ export function getRandomQuote(user) {
   })
 }
 
+export async function getQuoteInfo(user, index) {
+  user = findUser(user)
+  if (!user) throw "Couldn't find a user by that name"
+
+  index = _.isNumber(+index) && !_.isNaN(+index) ? +index : 0
+  let offset = index
+  const total = _.get(await CRUD.executeQuery(`SELECT count(*) as c FROM Quote WHERE user = '${user.name}'`), ['rs', 'rows', '_array', 0, 'c'])
+  if (!total) throw 'Error getting total quotes'
+
+  if (index < 0) {
+    offset = total + offset
+    if (offset < 0) {
+      throw 'Offset is greater than total quotes'
+    }
+  }
+
+  const query = `SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY grabbed_at DESC LIMIT 1 OFFSET ${offset}`
+  const data = await CRUD.executeQuery(query)
+  const quote = _.get(data, ['rs', 'rows', '_array', 0])
+
+  if (!quote) {
+    throw 'Offset is greater than total quotes'
+  }
+
+  return [
+    '```',
+    `    Offset: ${offset - total}`,
+    `  Quote ID: ${quote.id}`,
+    `Grabbed By: ${quote.grabbed_by}`,
+    `Grabbed At: ${quote.grabbed_at}`,
+    `Quote User: ${quote.user}`,
+    `     Quote: ${quote.message}`,
+    '```'
+  ].join('\n')
+}
+
 export function grabQuote(grabee, channel, index = 0, grabber) {
   return new Promise((resolve, reject) => getHistory(channel.id).then(messages => {
     const user = findUser(grabee)
