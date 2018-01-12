@@ -55,7 +55,7 @@ const generateMovieResponse = movie => {
   let out = {
     attachments: [{
       "title": `${movie.title} (${movie.year || 'Unknown'})`,
-      "title_link": `https://trakt.tv/shows/${movie.ids.slug}`,
+      "title_link": `https://trakt.tv/movies/${movie.ids.slug}`,
       "fallback": `${movie.title} (${movie.year}) - https://trakt.tv/shows/${movie.ids.slug}`,
       "image_url": movie.image,
       "text": movie.tagline,
