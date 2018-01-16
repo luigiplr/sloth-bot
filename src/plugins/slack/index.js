@@ -10,17 +10,17 @@ export const plugin_info = [{
   alias: ['kick'],
   command: 'kickUser',
   usage: 'kick <username> [reason] - kicks user from channel',
-  userLevel: ['admin', 'superadmin']
+  userLevel: []
 }, {
   alias: ['inviteall'],
   command: 'inviteAllUser',
   usage: 'inviteall <username> - invites user to all channels',
-  userLevel: ['superadmin']
+  userLevel: []
 }, {
   alias: ['kickall'],
   command: 'kickAllUser',
   usage: 'kickall <username> - kicks user from all their channel',
-  userLevel: ['superadmin']
+  userLevel: []
 }, {
   alias: ['invite'],
   command: 'inviteUser',
@@ -129,7 +129,7 @@ export function inviteAllUser(user, channel, input) {
 
         for (let channel of channels) {
           if (channel.is_general) continue
-          if (channel.members.includes(u.id)) {
+          if (!channel.members.includes(u.id)) {
             inviteUserRAW(channel.id, u.id)
             channelsWasKicked++
           }
