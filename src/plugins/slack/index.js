@@ -10,17 +10,14 @@ export const plugin_info = [{
   alias: ['kick'],
   command: 'kickUser',
   usage: 'kick <username> [reason] - kicks user from channel',
-  userLevel: []
 }, {
   alias: ['inviteall'],
   command: 'inviteAllUser',
-  usage: 'inviteall <username> - invites user to all channels',
-  userLevel: []
+  usage: 'inviteall <username> - invites user to all channels'
 }, {
   alias: ['kickall'],
   command: 'kickAllUser',
-  usage: 'kickall <username> - kicks user from all their channel',
-  userLevel: []
+  usage: 'kickall <username> - kicks user from all their channel'
 }, {
   alias: ['invite'],
   command: 'inviteUser',
