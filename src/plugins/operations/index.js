@@ -1,7 +1,6 @@
 import { sendMessage } from '../../slack'
 import moment from 'moment'
 import config from '../../../config.json'
-import fs from 'fs'
 import { exec as execCmd } from 'child_process'
 
 try {
@@ -9,7 +8,7 @@ try {
 } catch(e) {} // eslint-disable-line
 
 var version = require('../../../package.json').version
-var updating;
+var updating
 
 export const plugin_info = [{
   alias: ['shutdown'],
@@ -28,7 +27,7 @@ export const plugin_info = [{
 }, {
   alias: ['update'],
   command: 'update',
-  usage: 'update <optional restart 1/0> - updates the bot from github',
+  usage: 'update - updates the bot from github',
   userLevel: ['superadmin']
 }, {
   alias: ['version'],
@@ -95,6 +94,7 @@ export function uptime() {
 
 export function update(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (user.id !== config.owner) return reject("*Access DENIED!!1!111!!eleven!*")
     if (updating) return reject('Update already in process')
     sendMessage(channel.id, 'Updating...')
     updating = true
@@ -139,7 +139,7 @@ export function ip(user) {
     if (!getIP) return reject("Missing `external-ip` NPM Module")
     if (!config.viewConfigs || !config.viewConfigs.includes(user.id)) return reject("*Access DENIED!!1!111!!eleven!*")
     getIP()((err, ip) => {
-      return resolve({ type: 'dm', message: err ? 'Unable to find IP :(' : `My IP is ${ip}`})
+      return resolve({ type: 'dm', message: err ? 'Unable to find IP :(' : `My IP is ${ip}` })
     })
   })
 }
