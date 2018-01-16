@@ -98,6 +98,24 @@ export function kickUser(channel, user) {
 }
 
 /**
+ * Kicks a user from a channel
+ * @param id of the channel
+ * @param id of the user
+ * @return true or an error
+ */
+export function inviteUser(channel, user) {
+  return new Promise((resolve, reject) => needle.post(`https://slack.com/api/${channel[0] === 'C' ? 'channels.invite' : 'groups.invite'}`, {
+    channel: channel,
+    token: config.slackAPIToken || config.slackBotToken,
+    user: user
+  }, (err, resp, { error }) => {
+    if (err || error) return reject(_logErr('kickUserErr', err || error))
+    resolve()
+  }))
+}
+
+
+/**
  * Returns a user object for user name or slack id
  * @param user name or slack id
  * @return user object

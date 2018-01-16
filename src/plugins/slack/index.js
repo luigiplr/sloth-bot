@@ -1,5 +1,5 @@
 import { kick, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
-import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw } from '../../slack.js'
+import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw, inviteUser as inviteUserRAW } from '../../slack.js'
 import moment from 'moment'
 import { filter } from 'lodash'
 import perms from '../../permissions'
@@ -11,6 +11,11 @@ export const plugin_info = [{
   command: 'kickUser',
   usage: 'kick <username> [reason] - kicks user from channel',
   userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['inviteall'],
+  command: 'inviteAllUser',
+  usage: 'inviteall <username> - invites user to all channels',
+  userLevel: ['superadmin']
 }, {
   alias: ['kickall'],
   command: 'kickAllUser',
@@ -103,6 +108,34 @@ export function kickAllUser(user, channel, input) {
         }
 
         resolve({ type: 'channel', message: `Kicked: ${u.name} from ${channelsWasKicked - 1} channels` })
+      })
+  })
+}
+
+export function inviteAllUser(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    if (!canPerformAdminCommands) return reject(adminErr)
+    if (!input) {
+      return resolve({ type: 'dm', message: 'Usage: inviteall <username>' })
+    }
+
+    const u = findUser(input)
+    if (!u) return reject('Found no user matching input')
+    if (cantDisable(u)) return reject('Error: Bitch. No.')
+
+    getChannelsList()
+      .then(channels => {
+        let channelsWasKicked = 0
+
+        for (let channel of channels) {
+          if (channel.is_general) continue
+          if (channel.members.includes(u.id)) {
+            inviteUserRAW(channel.id, u.id)
+            channelsWasKicked++
+          }
+        }
+
+        resolve({ type: 'channel', message: `Invited: ${u.name} to ${channels.length - 1} channels` })
       })
   })
 }
