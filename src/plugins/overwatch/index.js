@@ -1,11 +1,17 @@
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch.js'
-import { filter, capitalize, isEmpty, uniq, compact } from 'lodash'
+import _ from 'lodash'
 import { tryGetUserAlias } from '../../database'
+import { getStandings } from './utils/owl'
+import moment from 'moment'
 
 export const plugin_info = [{
   alias: ['overwatch'],
   command: 'userInfo',
   usage: 'overwatch <battletag> <type> [hero] [version] [-r us] [-p pc]'
+}, {
+  alias: ['owl'],
+  command: 'owl',
+  usage: 'overwatch <what> - returns overwatch league stuff'
 }]
 
 const pageURL = 'https://playoverwatch.com/en-us/career'
@@ -27,13 +33,11 @@ const usage = [
 export async function userInfo(user, channel, input) {
   if (!input) return ({ type: 'dm', messages: usage })
 
-  const split = compact(input.split(' '))
+  const split = _.compact(input.split(' '))
   if (split.length < 1) return ({ type: 'dm', messages: usage })
 
   const userAlias = await tryGetUserAlias(split[0], 'overwatch')
   const battletag = (userAlias || split[0]).replace('#', '-')
-
-  console.log(split)
 
   const type = split[1] || 'info'
   if (!validTypes.includes(type.toLowerCase())) {
@@ -82,14 +86,14 @@ export async function userInfo(user, channel, input) {
 }
 
 const generateInfoResp = player => {
-  player.region = player.platform == 'pc' ? player.region : 'n/a'
+  player.region = player.platform === 'pc' ? player.region : 'n/a'
   var level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
   let out = {
     attachments: [{
       "title": player.battletag,
       "fallback": `Overwatch Info for ${player.battletag}, Region: ${player.region.toUpperCase()}, Platform: ${player.platform.toUpperCase()}, Level: ${player.rank || ''}${player.level}, Competitive Rank: ${player.comprank || 'None'}`,
       "color": "#ff9c00",
-      "title_link": `${pageURL}/${player.platform}${player.platform == 'pc' ? '/' + player.region : ''}/${player.battletag}`,
+      "title_link": `${pageURL}/${player.platform}${player.platform === 'pc' ? '/' + player.region : ''}/${player.battletag}`,
       "thumb_url": player.avatar,
       "mrkdwn_in": ["text"],
       text: [
@@ -109,13 +113,13 @@ const generateHeroesResp = (heroes, battletag) => {
     attachments: [{
       "color": "#ff9c00",
       "mrkdwn_in": ["fields"],
-      "fields": filter([{
+      "fields": _.filter([{
         "title": "Quickplay",
-        "value": uniq(compact(heroes.quickplay.map(hero => hero.name.includes('.guid') ? null : `*${capitalize(hero.name)}*: ${hero.time == '0' ? '--' : hero.time}`))).join('\n'),
+        "value": _.uniq(_.compact(heroes.quickplay.map(hero => hero.name.includes('.guid') ? null : `*${_.capitalize(hero.name)}*: ${hero.time === '0' ? '--' : hero.time}`))).join('\n'),
         short: true
       }, {
         "title": "Competitive",
-        "value": heroes.competitive ? uniq(compact(heroes.competitive.map(hero => hero.name.includes('.guid') ? null : `*${capitalize(hero.name)}*: ${hero.time == '0' ? '--' : hero.time}`))).join('\n') : null,
+        "value": heroes.competitive ? _.uniq(_.compact(heroes.competitive.map(hero => hero.name.includes('.guid') ? null : `*${_.capitalize(hero.name)}*: ${hero.time === '0' ? '--' : hero.time}`))).join('\n') : null,
         "short": true
       }], 'value')
     }]
@@ -124,7 +128,7 @@ const generateHeroesResp = (heroes, battletag) => {
 
 const getOverallStats = ({ losses, ties, wins, win_rate, games }, isHero) => {
   if (wins !== null && losses !== null) {
-    return `${wins}/${losses}/${ties}` + (win_rate !== null ? ` (${win_rate*100}%)` : '') + (isHero ? ` out of ${games} games` : '')
+    return `${wins}/${losses}/${ties}` + (win_rate !== null ? ` (${win_rate * 100}%)` : '') + (isHero ? ` out of ${games} games` : '')
   }
   return wins !== null ? wins : "Unknown"
 }
@@ -134,17 +138,17 @@ const generateStatsResp = (data, version = 'quickplay') => {
   if (data.stats.is_empty) return `I have no ${version} stats for this user`
   if (data && data.player && data.stats) {
     const { player, stats: { featured_stats, overall_stats, playtimes } } = data
-    player.region = player.platform == 'pc' ? player.region.toUpperCase() : 'N/A'
+    player.region = player.platform === 'pc' ? player.region.toUpperCase() : 'N/A'
     const level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
-    const topHeroes = playtimes.filter(h => h.time != '0')
+    const topHeroes = playtimes._.filter(h => h.time !== '0')
     const out = {
       attachments: [{
         "fallback": `Overwatch Stats for ${player.battletag}, Level: ${level}. Overall Stats: Wins: ${overall_stats.wins || 'N/A'} | Losses ${overall_stats.losses || 'N/A'} out of ${overall_stats.games || 'N/A'} games`,
         "mrkdwn_in": ["fields"],
         "color": "#ff9c00",
-        "author_name": `${player.battletag} (${player.region}) (${capitalize(version)})`,
+        "author_name": `${player.battletag} (${player.region}) (${_.capitalize(version)})`,
         "author_icon": player.avatar,
-        "author_link": `${pageURL}/${player.platform}${player.platform == 'pc' ? '/' + player.region : ''}/${player.battletag}`
+        "author_link": `${pageURL}/${player.platform}${player.platform === 'pc' ? '/' + player.region : ''}/${player.battletag}`
       }]
     }
     out.attachments[0].fields = [{
@@ -165,11 +169,11 @@ const generateStatsResp = (data, version = 'quickplay') => {
       "short": true
     }, {
       "title": `Top ${topHeroes.slice(0, 10).length} Heroes`,
-      "value": topHeroes.map(hero => `*${capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n'),
+      "value": topHeroes.map(hero => `*${_.capitalize(hero.name)}*: ${hero.time}`).slice(0, 10).join('\n'),
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": featured_stats.length ? featured_stats.map(stat => `*${capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
+      "value": featured_stats.length ? featured_stats.map(stat => `*${_.capitalize(stat.name.replace('spent ', ''))}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
       "short": true
     }]
     return out
@@ -186,7 +190,7 @@ const generateHeroResp = (hero, version = 'quickplay', battletag) => {
         "fallback": `Overwatch Data for ${hero.name}`,
         "mrkdwn_in": ["text", "fields"],
         "color": "#ff9c00",
-        "text": `Overwatch Hero Data for ${hero.name} - ${battletag} _(${capitalize(version)})_`,
+        "text": `Overwatch Hero Data for ${hero.name} - ${battletag} _(${_.capitalize(version)})_`
       }]
     }
     out.attachments[0].fields = [{
@@ -199,13 +203,54 @@ const generateHeroResp = (hero, version = 'quickplay', battletag) => {
       "short": true
     }, {
       "title": "Detailed Stats",
-      "value": featured_stats.length ? featured_stats.map(stat => `*${capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
+      "value": featured_stats.length ? featured_stats.map(stat => `*${_.capitalize(stat.name)}*: ${stat.value} - avg. ${stat.avg}`).join('\n') : "Unknown",
       "short": true
     }, {
       "title": "Hero Specific Stats",
-      "value": isEmpty(hero_stats) ? "Unknown" : Object.keys(hero_stats).map(stat => `*${capitalize(stat).replace(/_/g, ' ')}*: ${hero_stats[stat]}`).join('\n'),
+      "value": _.isEmpty(hero_stats) ? "Unknown" : Object.keys(hero_stats).map(stat => `*${_.capitalize(stat).replace(/_/g, ' ')}*: ${hero_stats[stat]}`).join('\n'),
       "short": true
     }]
     return out
   } else return 'Error parsing player data'
+}
+
+export async function owl(user, channel, input) {
+  if (!input) return { type: 'dm', message: 'Usage: owl <what> - valid options include `standings`' }
+
+  const [ type ] = input.split(' ')
+
+  switch (type) {
+    case 'standings':
+    case 'scores':
+    case 'score':
+      return await generateStandingsResponse()
+    default:
+      return { type: 'channel', message: 'Invalid option specified. Valid options include `standings`' }
+  }
+}
+
+async function generateStandingsResponse() {
+  let data
+  try {
+    data = await getStandings()
+  } catch (e) {
+    return { type: 'channel', message: 'Error fetching data' }
+  }
+
+  const { data: standings, updated } = data
+  const offset = _.sortBy(standings.map(a => a.name), 'length').reverse()[0].length + 1
+
+  return {
+    type: 'channel',
+    messages: [
+      '```',
+      ` ${new Array(offset).join(' ')}  Wins  -  Losses`,
+      ...standings.map(team => {
+        const pad = new Array(offset - team.name.length).join(' ')
+        return ` ${pad}${team.name}:    ${team.wins}  -  ${team.losses}`
+      }),
+      `\n Updated ${moment(updated).from(Date.now())}`,
+      '```'
+    ]
+  }
 }
