@@ -94,10 +94,10 @@ export async function getStandings() {
       const record = rank.records[0]
       return {
         name: team.name,
-        color: team.primaryColor,
-        wins: record.matchWin,
-        losses: record.matchLoss,
-        ties: record.matchDraw
+        match_wins: record.matchWin,
+        match_losses: record.matchLoss,
+        map_wins: record.gameWin,
+        map_losses: record.gameLoss
       }
     })
 
