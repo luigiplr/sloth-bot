@@ -22,8 +22,8 @@ export const plugin_info = [{
 export function rememberList(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) {
-      CRUD.executeQuery(`SELECT DISTINCT word from Remembers ORDER BY word`).then(res => {
-        const words = _.get(res, ['rs', 'rows', '_array'], []).map((w = {}) => w.word)
+      CRUD.executeQuery(`SELECT DISTINCT word from Remembers`).then(res => {
+        const words = _.sortBy(_.get(res, ['rs', 'rows', '_array'], []).map((w = {}) => w.word), a => a.toLowerCase())
         if (words.length) {
           const data = table(_.chunk(words, 7).map(a => {
             if (a.length < 7) {
