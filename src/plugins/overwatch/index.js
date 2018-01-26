@@ -2,6 +2,7 @@ import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/o
 import _ from 'lodash'
 import { tryGetUserAlias } from '../../database'
 import { getStandings } from './utils/owl'
+const CliTable = require("cli-table")
 import moment from 'moment'
 
 export const plugin_info = [{
@@ -238,18 +239,26 @@ async function generateStandingsResponse() {
   }
 
   const { data: standings, updated } = data
-  const offset = _.sortBy(standings.map(a => a.name), 'length').reverse()[0].length + 1
+  const standingsTable = new CliTable({
+    head: [ 'Team', 'Wins', 'Losses', 'Map Wins', 'Map Losses' ],
+    colAligns: [ 'left', 'middle', 'middle', 'middle', 'middle' ],
+    style: {
+      head: [],
+      border: []
+    }
+  })
+
+  const tableData = standings.map(team => [
+    team.name, team.match_wins, team.match_losses, team.map_wins, team.map_losses
+  ])
+  standingsTable.push(...tableData)
 
   return {
     type: 'channel',
     messages: [
       '```',
-      ` ${new Array(offset).join(' ')}  Wins  -  Losses`,
-      ...standings.map(team => {
-        const pad = new Array(offset - team.name.length).join(' ')
-        return ` ${pad}${team.name}:    ${team.wins}  -  ${team.losses}`
-      }),
-      `\n Updated ${moment(updated).from(Date.now())}`,
+      standingsTable.toString(),
+      `Updated ${moment(updated).from(Date.now())}`,
       '```'
     ]
   }

@@ -127,6 +127,7 @@
  * @property {Number} matchDraw
  * @property {Number} matchBye
  * @property {Number} gameWin
+ * @property {Number} gameLoss
  * @property {Number} gameTie
  * @property {Number} gamePointsFor
  * @property {Number} gamePointsAgainst
