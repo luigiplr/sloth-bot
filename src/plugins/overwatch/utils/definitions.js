@@ -27,6 +27,22 @@
  */
 
 /**
+ * WeekDays
+ * @typedef WeekDays
+ * @property {string} date
+ * @property {number} timestamp
+ * @property {DayDisplayDate} displayDate
+ * @property {[Match]} matches
+ */
+
+/**
+ * DayDisplayDate
+ * @typedef DayDisplayDate
+ * @property {string} dayOfWeek
+ * @property {string} monthAndDay
+ */
+
+/**
  * Match
  * @typedef Match
  * @property {Number} id
