@@ -50,3 +50,11 @@ export function getHero(user, region, platform, hero) {
     } else return reject(`getHeroErr: ${err}`)
   }))
 }
+
+export const getOverallStats = ({ losses, ties, wins, win_rate, games }, isHero) => {
+  if (wins !== null && losses !== null) {
+    return `${wins}/${losses}/${ties}` + (win_rate !== null ? ` (${win_rate * 100}%)` : '') + (isHero ? ` out of ${games} games` : '')
+  }
+
+  return wins !== null ? wins : "Unknown"
+}

@@ -125,6 +125,7 @@ const getDaysForWeek = weekMatches => {
   }, [])
 }
 
+/* eslint-disable */
 /**
  * @param {[Stage]} stages 
  */
@@ -137,6 +138,7 @@ const mapData = stages => {
 }
 
 // mapData(data.data.stages)
+/* eslint-enable */
 
 export async function getLiveMatch(channelId) {
   const browser = await puppeteer.launch()
@@ -147,7 +149,7 @@ export async function getLiveMatch(channelId) {
   await page.waitForFunction(`document.querySelector('.LiveStream-info').offsetHeight > 200`, { timeout: 2000 })
 
   const liveInfoElm = await page.evaluate(selector => {
-    const element = document.querySelector(selector)
+    const element = document.querySelector(selector) // eslint-disable-line no-undef
     const { x, y, width, height } = element.getBoundingClientRect()
     return { left: x, top: y, width, height }
   }, '.LiveStream-info')
@@ -204,8 +206,10 @@ export async function getStandings() {
         name: team.name,
         match_wins: record.matchWin,
         match_losses: record.matchLoss,
+        match_win_percent: record.matchWin / (record.matchLoss + record.matchWin),
         map_wins: record.gameWin,
-        map_losses: record.gameLoss
+        map_losses: record.gameLoss,
+        map_win_percent: record.gameWin / (record.gameLoss + record.gameWin)
       }
     })
 
@@ -226,7 +230,7 @@ async function _getStandings() {
 const cache = {}
 const cacheTs = {}
 async function _request(what, noCache = false) {
-  if (!noCache && cache[what] && +moment(cacheTs[what]).add(5, 'minutes') > Date.now()) {
+  if (!noCache && cache[what] && +moment(cacheTs[what]).add(6, 'minutes') > Date.now()) {
     return cache[what]
   }
 
