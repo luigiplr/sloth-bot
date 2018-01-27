@@ -141,12 +141,16 @@ const mapData = stages => {
 /* eslint-enable */
 
 export async function getLiveMatch(channelId) {
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox'],
+    headless: true
+  })
   const page = await browser.newPage()
-  page.setViewport({ width: 500, height: 800 })
+  await makePuppeteerUndetectable(page)
+  page.setViewport({ width: 400, height: 700 })
   await page.goto('https://overwatchleague.com/en-us/', { waitUntil: 'domcontentloaded' })
-  await page.waitForSelector('.LiveStream-info', { timeout: 4000 })
-  await page.waitForFunction(`document.querySelector('.LiveStream-info').offsetHeight > 200`, { timeout: 2000 })
+  await page.waitForSelector('.LiveStream-info', { timeout: 3000 })
+  await page.waitForFunction(`document.querySelector('.LiveStream-info').offsetHeight > 200`, { timeout: 1500 })
 
   const liveInfoElm = await page.evaluate(selector => {
     const element = document.querySelector(selector) // eslint-disable-line no-undef
@@ -246,5 +250,43 @@ async function _request(what, noCache = false) {
   }, err => {
     console.error('[OWL] Error getting data', err)
     return Promise.reject()
+  })
+}
+
+const makePuppeteerUndetectable = async (page) => {
+  const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36'
+  await page.setUserAgent(userAgent)
+
+  await page.evaluateOnNewDocument(() => {
+    Object.defineProperty(navigator, 'webdriver', { // eslint-disable-line no-undef
+      get: () => false
+    })
+  })
+
+  await page.evaluateOnNewDocument(() => {
+    window.navigator.chrome = { // eslint-disable-line no-undef
+      runtime: {}
+    }
+  })
+
+  await page.evaluateOnNewDocument(() => {
+    const originalQuery = window.navigator.permissions.query // eslint-disable-line no-undef
+    return window.navigator.permissions.query = parameters => (  // eslint-disable-line
+      parameters.name === 'notifications'
+        ? Promise.resolve({ state: Notification.permission }) // eslint-disable-line no-undef
+        : originalQuery(parameters)
+    )
+  })
+
+  await page.evaluateOnNewDocument(() => {
+    Object.defineProperty(navigator, 'plugins', { // eslint-disable-line no-undef
+      get: () => [1, 2, 3, 4, 5]
+    })
+  })
+
+  await page.evaluateOnNewDocument(() => {
+    Object.defineProperty(navigator, 'languages', { // eslint-disable-line no-undef
+      get: () => ['en-US', 'en']
+    })
   })
 }

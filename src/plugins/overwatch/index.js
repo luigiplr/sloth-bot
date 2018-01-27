@@ -117,6 +117,7 @@ async function _getLiveMatch(channel) {
     await getLiveMatch(channel.id)
     loadCache[channel.id] = false
   } catch (e) {
+    console.error(e)
     loadCache[channel.id] = false
     return { type: 'channel', message: 'Error fetching live stats! Are we live?' }
   }
