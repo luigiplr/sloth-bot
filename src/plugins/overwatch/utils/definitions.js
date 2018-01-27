@@ -149,3 +149,22 @@
  * @property {Number} gamePointsAgainst
  */
 
+/**
+ * MappedStandings
+ * @typedef MappedStandings
+ * @property {[MappedStandingsScores]} data
+ * @property {Number} updated
+ */
+
+/**
+ * MappedStandingsScores
+ * @typedef MappedStandingsScores
+ * @property {string} name
+ * @property {Number} match_wins
+ * @property {Number} match_losses
+ * @property {Number} match_win_percent
+ * @property {Number} map_wins
+ * @property {Number} map_losses
+ * @property {Number} map_ties
+ * @property {Number} map_win_percent
+ */

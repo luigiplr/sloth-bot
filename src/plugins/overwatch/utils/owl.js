@@ -1,15 +1,8 @@
 const _ = require('lodash')
 const moment = require('moment')
-const needle = require('needle')
-const request = require('request')
 const puppeteer = require('puppeteer')
-const config = require('../../../../config.json')
+import { _getStandings, makePuppeteerUndetectable, uploadImageToSlack, cacheTs } from './helpers'
 require('./definitions')
-
-const baseUrl = 'https://api.overwatchleague.com'
-const urls = {
-  'standings': `${baseUrl}/standings`
-}
 
 /**
  * Generates list of weeks in each stage
@@ -141,66 +134,43 @@ const mapData = stages => {
 /* eslint-enable */
 
 export async function getLiveMatch(channelId) {
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox'],
-    headless: true
-  })
-  const page = await browser.newPage()
-  await makePuppeteerUndetectable(page)
-  page.setViewport({ width: 400, height: 700 })
-  await page.goto('https://overwatchleague.com/en-us/', { waitUntil: 'domcontentloaded' })
-  await page.waitForSelector('.LiveStream-info', { timeout: 3000 })
-  await page.waitForFunction(`document.querySelector('.LiveStream-info').offsetHeight > 200`, { timeout: 1500 })
-
-  const liveInfoElm = await page.evaluate(selector => {
-    const element = document.querySelector(selector) // eslint-disable-line no-undef
-    const { x, y, width, height } = element.getBoundingClientRect()
-    return { left: x, top: y, width, height }
-  }, '.LiveStream-info')
-
-  const screenshot = await page.screenshot({
-    clip: {
-      x: liveInfoElm.left,
-      y: liveInfoElm.top,
-      width: liveInfoElm.width,
-      height: liveInfoElm.height
-    }
-  })
-
-  await browser.close()
-
   try {
-    await (new Promise(resolve => {
-      request.post('https://slack.com/api/files.upload', {
-        url: 'https://slack.com/api/files.upload',
-        qs: {
-          token: config.slackBotToken,
-          channels: channelId
-        },
-        formData: {
-          file: {
-            value: new Buffer(screenshot),
-            options: {
-              filename: 'live-stats',
-              contentType: 'image/png'
-            }
-          }
-        }
-      }, function (err, response) {
-        if (!err) {
-          return resolve()
-        }
-        throw new Error(err)
-      })
-    }))
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox'],
+      headless: true
+    })
+    const page = await browser.newPage()
+    await makePuppeteerUndetectable(page)
+    page.setViewport({ width: 400, height: 700 })
+    await page.goto('https://overwatchleague.com/en-us/', { waitUntil: 'domcontentloaded' })
+    await page.waitForSelector('.LiveStream-info', { timeout: 3000 })
+    await page.waitForFunction(`document.querySelector('.LiveStream-info').offsetHeight > 200`, { timeout: 1500 })
+
+    const liveInfoElm = await page.evaluate(selector => {
+      const element = document.querySelector(selector) // eslint-disable-line no-undef
+      const { x, y, width, height } = element.getBoundingClientRect()
+      return { left: x, top: y, width, height }
+    }, '.LiveStream-info')
+
+    const screenshot = await page.screenshot({
+      clip: {
+        x: liveInfoElm.left,
+        y: liveInfoElm.top,
+        width: liveInfoElm.width,
+        height: liveInfoElm.height
+      }
+    })
+
+    await browser.close()
+    await uploadImageToSlack(screenshot, 'live-stats', channelId)
   } catch (e) {
-    console.error(e)
     throw e
   }
-
-  return
 }
 
+/**
+ * @returns {MappedStandings}
+ */
 export async function getStandings() {
   return _getStandings().then(data => {
     const rankData = data.ranks.map(rank => {
@@ -213,7 +183,8 @@ export async function getStandings() {
         match_win_percent: record.matchWin / (record.matchLoss + record.matchWin),
         map_wins: record.gameWin,
         map_losses: record.gameLoss,
-        map_win_percent: record.gameWin / (record.gameLoss + record.gameWin)
+        map_ties: record.gameTie,
+        map_win_percent: record.gameWin / (record.gameLoss + record.gameWin + record.gameTie)
       }
     })
 
@@ -224,69 +195,3 @@ export async function getStandings() {
   }, Promise.reject)
 }
 
-/**
- * @returns {Promise<Standings>}
- */
-async function _getStandings() {
-  return _request('standings')
-}
-
-const cache = {}
-const cacheTs = {}
-async function _request(what, noCache = false) {
-  if (!noCache && cache[what] && +moment(cacheTs[what]).add(6, 'minutes') > Date.now()) {
-    return cache[what]
-  }
-
-  return needle('GET', urls[what], { json: true }).then(response => {
-    if (response.statusCode === 200) {
-      cache[what] = response.body
-      cacheTs[what] = Date.now()
-      return response.body
-    }
-
-    console.error('[OWL] Error getting data', what)
-    return Promise.reject()
-  }, err => {
-    console.error('[OWL] Error getting data', err)
-    return Promise.reject()
-  })
-}
-
-const makePuppeteerUndetectable = async (page) => {
-  const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36'
-  await page.setUserAgent(userAgent)
-
-  await page.evaluateOnNewDocument(() => {
-    Object.defineProperty(navigator, 'webdriver', { // eslint-disable-line no-undef
-      get: () => false
-    })
-  })
-
-  await page.evaluateOnNewDocument(() => {
-    window.navigator.chrome = { // eslint-disable-line no-undef
-      runtime: {}
-    }
-  })
-
-  await page.evaluateOnNewDocument(() => {
-    const originalQuery = window.navigator.permissions.query // eslint-disable-line no-undef
-    return window.navigator.permissions.query = parameters => (  // eslint-disable-line
-      parameters.name === 'notifications'
-        ? Promise.resolve({ state: Notification.permission }) // eslint-disable-line no-undef
-        : originalQuery(parameters)
-    )
-  })
-
-  await page.evaluateOnNewDocument(() => {
-    Object.defineProperty(navigator, 'plugins', { // eslint-disable-line no-undef
-      get: () => [1, 2, 3, 4, 5]
-    })
-  })
-
-  await page.evaluateOnNewDocument(() => {
-    Object.defineProperty(navigator, 'languages', { // eslint-disable-line no-undef
-      get: () => ['en-US', 'en']
-    })
-  })
-}

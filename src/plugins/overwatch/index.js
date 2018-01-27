@@ -124,10 +124,8 @@ async function _getLiveMatch(channel) {
 }
 
 async function _getStandings() {
-  let data
-  try {
-    data = await getStandings()
-  } catch (e) {
+  const data = await getStandings()
+  if (!data) {
     return { type: 'channel', message: 'Error fetching data' }
   }
 
@@ -141,11 +139,11 @@ async function _getStandings() {
     }
   })
 
-  standingsTable.push(['Team', 'Win - Loss - Win %', 'Win - Loss - Win %'])
+  standingsTable.push(['Team', 'Win - Loss - Win %', 'Win - Loss - Tie - Win %'])
   standingsTable.push(...standings.map(team => [
     team.name,
     `${team.match_wins} - ${team.match_losses} - ${(team.match_win_percent * 100).toFixed(2) + '%'}`,
-    `${team.map_wins} - ${team.map_losses} - ${(team.map_win_percent * 100).toFixed(2) + '%'}`
+    `${team.map_wins} - ${team.map_losses} - ${team.map_ties} - ${(team.map_win_percent * 100).toFixed(2) + '%'}`
   ]))
 
   return {
