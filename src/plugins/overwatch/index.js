@@ -234,10 +234,18 @@ export async function owl(user, channel, input) {
   }
 }
 
+const loadCache = {}
 async function _getLiveMatch(channel) {
+  if (loadCache[channel.id]) {
+    return { type: 'channel', message: 'Already loading data!' }
+  }
+
+  loadCache[channel.id] = true
   try {
     await getLiveMatch(channel.id)
+    loadCache[channel.id] = false
   } catch (e) {
+    loadCache[channel.id] = false
     return { type: 'channel', message: 'Error fetching live stats' }
   }
 }
