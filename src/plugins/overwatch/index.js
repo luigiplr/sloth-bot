@@ -1,7 +1,7 @@
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch.js'
 import _ from 'lodash'
 import { tryGetUserAlias } from '../../database'
-import { getStandings } from './utils/owl'
+import { getStandings, getLiveMatch } from './utils/owl'
 const CliTable = require("cli-table")
 import moment from 'moment'
 
@@ -225,8 +225,20 @@ export async function owl(user, channel, input) {
     case 'scores':
     case 'score':
       return await generateStandingsResponse()
+    case 'live':
+    case 'live-match':
+    case 'current-match':
+      return await _getLiveMatch(channel)
     default:
       return { type: 'channel', message: 'Invalid option specified. Valid options include `standings`' }
+  }
+}
+
+async function _getLiveMatch(channel) {
+  try {
+    await getLiveMatch(channel.id)
+  } catch (e) {
+    return { type: 'channel', message: 'Error fetching live stats' }
   }
 }
 
