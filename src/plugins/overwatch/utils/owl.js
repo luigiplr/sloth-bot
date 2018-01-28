@@ -177,7 +177,7 @@ export async function getStandings() {
       const team = rank.competitor
       const record = rank.records[0]
       return {
-        name: team.name,
+        name: team.abbreviatedName,
         match_wins: record.matchWin,
         match_losses: record.matchLoss,
         match_win_percent: record.matchWin / (record.matchLoss + record.matchWin),
