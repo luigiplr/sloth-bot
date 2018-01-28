@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development node --expose-gc -r babel-register ./index.js",
     "build": "rimraf build && babel src --out-dir build --copy-files",
-    "start": "cross-env NODE_ENV=production node --expose-gc ./build/sloth.js",
+    "start": "cross-env NODE_ENV=production node --expose-gc ./index.js",
     "forever": "cross-env NODE_ENV=production forever start -a -o out.log -e err.log -m 1 index.js"
   },
   "repository": {
