@@ -134,8 +134,9 @@ const mapData = stages => {
 /* eslint-enable */
 
 export async function getLiveMatch(channelId) {
+  let browser
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       args: ['--no-sandbox'],
       headless: true
     })
@@ -164,6 +165,7 @@ export async function getLiveMatch(channelId) {
     await browser.close()
     await uploadImageToSlack(screenshot, 'live-stats', channelId)
   } catch (e) {
+    await browser.close()
     throw e
   }
 }
