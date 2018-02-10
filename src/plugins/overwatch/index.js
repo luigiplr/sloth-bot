@@ -1,10 +1,11 @@
 import _ from 'lodash'
-import CliTable from 'cli-table'
+import CliTable from 'cli-table2'
 import moment from 'moment'
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch'
 import { generateHeroesResp, generateHeroResp, generateInfoResp, generateStatsResp } from './utils/responseGenerators'
 import { getStandings, getLiveMatch } from './utils/owl'
 import { tryGetUserAlias } from '../../database'
+import { valuePadding as vp } from './utils/helpers'
 
 export const plugin_info = [{
   alias: ['overwatch'],
@@ -131,19 +132,29 @@ async function _getStandings() {
 
   const { data: standings, updated } = data
   const standingsTable = new CliTable({
-    head: [ '', 'Matches', 'Maps' ],
-    colAligns: [ 'left', 'middle', 'middle' ],
+    head: [],
     style: {
       head: [],
       border: []
     }
   })
 
-  standingsTable.push(['Team', 'Win - Loss - Win %', 'Win - Loss - Tie - Win %'])
+  standingsTable.push([
+    { content: '' },
+    { content: 'Matches', colSpan: 2, hAlign: 'center' },
+    { content: '' },
+    { content: 'Maps', colSpan: 2, hAlign: 'center' },
+    { content: '', hAlign: 'center' }
+  ])
+  standingsTable.push(['Team', 'Win - Loss', ' Win %', ' ', 'Win - Loss - Tie', 'Win %', 'Map +-'])
   standingsTable.push(...standings.map(team => [
     team.name,
-    `${team.match_wins} - ${team.match_losses} - ${(team.match_win_percent * 100).toFixed(2) + '%'}`,
-    `${team.map_wins} - ${team.map_losses} - ${team.map_ties} - ${(team.map_win_percent * 100).toFixed(2) + '%'}`
+    { content: `${vp(team.match_wins, 2)} - ${vp(team.match_losses, 2)}`, hAlign: 'center' },
+    `${vp((team.match_win_percent * 100).toFixed(2), 5) + '%'}`,
+    ' ',
+    { content: `${vp(team.map_wins, 2)} - ${vp(team.map_losses, 2)} - ${team.map_ties}`, hAlign: 'center' },
+    `${vp((team.map_win_percent * 100).toFixed(2), 5) + '%'}`,
+    { content: team.map_differential, hAlign: 'center' }
   ]))
 
   return {

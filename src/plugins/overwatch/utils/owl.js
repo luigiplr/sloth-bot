@@ -178,6 +178,7 @@ export async function getStandings() {
     const rankData = data.ranks.map(rank => {
       const team = rank.competitor
       const record = rank.records[0]
+
       return {
         name: team.abbreviatedName,
         match_wins: record.matchWin,
@@ -186,7 +187,8 @@ export async function getStandings() {
         map_wins: record.gameWin,
         map_losses: record.gameLoss,
         map_ties: record.gameTie,
-        map_win_percent: record.gameWin / (record.gameLoss + record.gameWin + record.gameTie)
+        map_win_percent: record.gameWin / (record.gameLoss + record.gameWin + record.gameTie),
+        map_differential: record.gameWin - record.gameLoss
       }
     })
 

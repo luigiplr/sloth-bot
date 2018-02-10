@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import moment from 'moment'
 import needle from 'needle'
 import request from 'request'
@@ -104,4 +105,9 @@ async function _request(what, noCache = false) {
     console.error('[OWL] Error getting data', err)
     return Promise.reject()
   })
+}
+
+export const valuePadding = (val, min) => {
+  val = _.isNumber(val) ? val.toString() : val
+  return val.length < min ? ` ${val}` : val
 }
