@@ -5,7 +5,7 @@ import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/o
 import { generateHeroesResp, generateHeroResp, generateInfoResp, generateStatsResp } from './utils/responseGenerators'
 import { getStandings, getLiveMatch } from './utils/owl'
 import { tryGetUserAlias } from '../../database'
-import { valuePadding as vp } from './utils/helpers'
+import { valuePadding as vp, diffFormater as df } from './utils/helpers'
 
 export const plugin_info = [{
   alias: ['overwatch'],
@@ -146,15 +146,15 @@ async function _getStandings() {
     { content: 'Maps', colSpan: 2, hAlign: 'center' },
     { content: '', hAlign: 'center' }
   ])
-  standingsTable.push(['Team', 'Win - Loss', ' Win %', ' ', 'Win - Loss - Tie', 'Win %', 'Map +-'])
+  standingsTable.push(['Team', 'Win - Loss', ' Win %', ' ', 'Win-Loss-Tie', 'Win %', 'Map +-'])
   standingsTable.push(...standings.map(team => [
     team.name,
     { content: `${vp(team.match_wins, 2)} - ${vp(team.match_losses, 2)}`, hAlign: 'center' },
-    `${vp((team.match_win_percent * 100).toFixed(2), 5) + '%'}`,
+    `${vp((team.match_win_percent * 100).toFixed(1), 4) + '%'}`,
     ' ',
-    { content: `${vp(team.map_wins, 2)} - ${vp(team.map_losses, 2)} - ${team.map_ties}`, hAlign: 'center' },
+    { content: `${vp(team.map_wins, 2)}-${vp(team.map_losses, 2)}-${team.map_ties}`, hAlign: 'center' },
     `${vp((team.map_win_percent * 100).toFixed(2), 5) + '%'}`,
-    { content: team.map_differential, hAlign: 'center' }
+    { content: df(team.map_differential), hAlign: 'center' }
   ]))
 
   return {
@@ -162,6 +162,7 @@ async function _getStandings() {
     messages: [
       '```',
       standingsTable.toString(),
+      'overwatchitemtracker.com/owl-standings/',
       `Updated ${moment(updated).from(Date.now())}`,
       '```'
     ]

@@ -111,3 +111,5 @@ export const valuePadding = (val, min) => {
   val = _.isNumber(val) ? val.toString() : val
   return val.length < min ? ` ${val}` : val
 }
+
+export const diffFormater = num => num > 0 ? `+${num}` : num
