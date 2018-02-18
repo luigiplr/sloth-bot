@@ -175,8 +175,8 @@ export async function getQuoteStats(input) {
     const table = new CliTable({ head: [], style: { head: [], border: [] } })
     table.push(
       { 'Overall': qs.total_quotes ? `${qs.total_quotes} quotes in total` : 'Unknown' },
-      { 'Most Grabbed': qs.most_grabbed ? `${qs.most_grabbed} with ${qs.most_grabbed_count} quotes` : 'Unknown' },
-      { 'Grabbed Most': qs.grabbed_most ? `${qs.grabbed_most} with ${qs.grabbed_most_count} grabs` : 'Unknown' },
+      { 'Most Quoted': qs.most_grabbed ? `${qs.most_grabbed} with ${qs.most_grabbed_count} quotes` : 'Unknown' },
+      { 'Grabs Most': qs.grabbed_most ? `${qs.grabbed_most} with ${qs.grabbed_most_count} grabs` : 'Unknown' },
       { 'Latest Quote': qs.recently_grabbed ? `${qs.recently_grabbed} ${moment(new Date(qs.recently_grabbed_at)).from(Date.now())}` : 'Unknown' }
     )
 
