@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
+import CliTable from 'cli-table2'
 import CRUD, { Quotes } from '../../../database'
 import { getHistory, findUser } from '../../../slack.js'
 import config from '../../../../config.json'
@@ -141,6 +142,51 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
       resolve(`Successfully grabbed a quote for ${user.name}`)
     })
   }).catch(reject))
+}
+
+const selectOverallQuoteStats = `
+SELECT count(*) AS total_quotes,
+  (SELECT grabbed_by FROM Quote GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most,
+  (SELECT count(*) FROM Quote GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most_count,
+  (SELECT user FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed,
+  (SELECT count(*) FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed_count,
+  (SELECT user FROM Quote ORDER BY grabbed_at DESC) AS recently_grabbed,
+  (SELECT grabbed_at FROM Quote ORDER BY grabbed_at DESC) AS recently_grabbed_at
+FROM Quote
+`
+
+export async function getQuoteStats(input) {
+  let user
+
+  if (input) {
+    user = findUser(input.split(' '))
+    if (!user) throw "Couldn't find a user by that name"
+  }
+
+  const query = user ? '' : selectOverallQuoteStats
+  const data = await CRUD.executeQuery(query)
+  const qs = _.get(data, ['rs', 'rows', '_array', 0])
+
+  if (!qs) throw 'Error getting quote stats'
+
+  if (user) {
+    return 'NOT IMPLEMENTED'
+  } else {
+    const table = new CliTable({ head: [], style: { head: [], border: [] } })
+    table.push(
+      { 'Overall': qs.total_quotes ? `${qs.total_quotes} quotes in total` : 'Unknown' },
+      { 'Most Grabbed': qs.most_grabbed ? `${qs.most_grabbed} with ${qs.most_grabbed_count} quotes` : 'Unknown' },
+      { 'Grabbed Most': qs.grabbed_most ? `${qs.grabbed_most} with ${qs.grabbed_most_count} grabs` : 'Unknown' },
+      { 'Latest Quote': qs.recently_grabbed ? `${qs.recently_grabbed} ${moment(new Date(qs.recently_grabbed_at)).from(Date.now())}` : 'Unknown' }
+    )
+
+    return [
+      '*Quote Statistics:*',
+      '```',
+      table.toString(),
+      '```'
+    ].join('\n')
+  }
 }
 
 const urlify = text => {

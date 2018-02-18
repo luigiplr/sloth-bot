@@ -1,4 +1,4 @@
-import { getQuote, getQuotes, grabQuote, getRandomQuote, getQuoteInfo } from './utils/quote'
+import { getQuote, getQuotes, grabQuote, getRandomQuote, getQuoteInfo, getQuoteStats } from './utils/quote'
 
 export const plugin_info = [{
   alias: ['grab'],
@@ -20,6 +20,10 @@ export const plugin_info = [{
   alias: ['qinfo'],
   command: 'quoteInfo',
   usage: 'qinfo <username> [index]'
+}, {
+  alias: ['qstats', 'quotestats'],
+  command: 'quoteStats',
+  usage: 'qstats [user] - returns overall or users quote stats'
 }]
 
 export function grab(user, channel, input) {
@@ -78,5 +82,11 @@ export async function quoteInfo(user, channel, input) {
     getQuoteInfo(user, index).then(quote => {
       return resolve({ type: 'channel', message: quote })
     }).catch(reject)
+  })
+}
+
+export function quoteStats(user, channel, input) {
+  return new Promise((resolve, reject) => {
+    getQuoteStats(input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
   })
 }
