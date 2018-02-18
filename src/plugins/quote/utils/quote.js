@@ -159,9 +159,11 @@ export async function getQuoteStats(input) {
   let user
 
   if (input) {
-    user = findUser(input.split(' '))
+    user = findUser(input.split(' ')[0])
     if (!user) throw "Couldn't find a user by that name"
   }
+
+  if (user) return 'NOT IMPLEMENTED'
 
   const query = user ? '' : selectOverallQuoteStats
   const data = await CRUD.executeQuery(query)
