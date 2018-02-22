@@ -139,7 +139,7 @@ async function _getStageStandings(stage) {
     { content: team.name, hAlign: 'center' },
     { content: team.match_wins, hAlign: 'center' },
     { content: team.match_losses, hAlign: 'center' },
-    { content: (team.match_win_percent * 100).toFixed(2), hAlign: 'center' },
+    { content: `${(team.match_win_percent * 100).toFixed(2)}%`, hAlign: 'center' },
     { content: team.map_wins, hAlign: 'center' }
   ]))
 
@@ -149,7 +149,7 @@ async function _getStageStandings(stage) {
       `*Standings for ${stage_name}*`,
       '```',
       standingsTable.toString(),
-      'stage specific data lacks detailed statistics',
+      'Stage specific data lacks detailed statistics.',
       `Updated ${moment(updated).from(Date.now())}`,
       '```'
     ]
