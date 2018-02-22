@@ -3,7 +3,7 @@ import CliTable from 'cli-table2'
 import moment from 'moment'
 import { getUserStats, getUserInfo, getHeroesPlaytime, getHero } from './utils/overwatch'
 import { generateHeroesResp, generateHeroResp, generateInfoResp, generateStatsResp } from './utils/responseGenerators'
-import { getStandings, getLiveMatch } from './utils/owl'
+import { getOverallStandaings, getStandingsForStage, getLiveMatch } from './utils/owl'
 import { tryGetUserAlias } from '../../database'
 import { valuePadding as vp, diffFormater as df } from './utils/helpers'
 
@@ -91,13 +91,13 @@ export async function owl(user, channel, input) {
   const help = 'Usage: owl <what> - valid options include `scores`, `live`'
   if (!input) return { type: 'dm', message: help }
 
-  const [ type ] = input.split(' ')
+  const [ type, param ] = input.split(' ')
 
   switch (type) {
     case 'standings':
     case 'scores':
     case 'score':
-      return await _getStandings()
+      return await (param ? _getStageStandings(param) : _getOverallStandings())
     case 'live':
     case 'live-match':
     case 'current-match':
@@ -124,8 +124,40 @@ async function _getLiveMatch(channel) {
   }
 }
 
-async function _getStandings() {
-  const data = await getStandings()
+async function _getStageStandings(stage) {
+  const data = await getStandingsForStage(stage)
+
+  if (!data) {
+    return { type: 'channel', message: 'Error fetching data' }
+  }
+
+  const { data: standings, stage_name, updated } = data
+  const standingsTable = new CliTable({ head: [], style: { head: [], border: [] } })
+
+  standingsTable.push([ 'Team', 'Wins', 'Losses', 'Win %', 'Map Wins' ])
+  standingsTable.push(...standings.map(team => [
+    { content: team.name, hAlign: 'center' },
+    { content: team.match_wins, hAlign: 'center' },
+    { content: team.match_losses, hAlign: 'center' },
+    { content: (team.match_win_percent * 100).toFixed(2), hAlign: 'center' },
+    { content: team.map_wins, hAlign: 'center' }
+  ]))
+
+  return {
+    type: 'channel',
+    messages: [
+      `*Standings for ${stage_name}*`,
+      '```',
+      standingsTable.toString(),
+      'stage specific data lacks detailed statistics',
+      `Updated ${moment(updated).from(Date.now())}`,
+      '```'
+    ]
+  }
+}
+
+async function _getOverallStandings() {
+  const data = await getOverallStandaings()
   if (!data) {
     return { type: 'channel', message: 'Error fetching data' }
   }
@@ -146,7 +178,7 @@ async function _getStandings() {
     { content: 'Maps', colSpan: 2, hAlign: 'center' },
     { content: '', hAlign: 'center' }
   ])
-  standingsTable.push(['Team', 'Win - Loss', ' Win %', ' ', 'Win-Loss-Tie', 'Win %', 'Map +-'])
+  standingsTable.push(['Team', 'Win - Loss', 'Win %', ' ', 'Win-Loss-Tie', 'Win %', 'Map +-'])
   standingsTable.push(...standings.map(team => [
     team.name,
     { content: `${vp(team.match_wins, 2)} - ${vp(team.match_losses, 2)}`, hAlign: 'center' },

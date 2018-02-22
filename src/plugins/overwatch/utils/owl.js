@@ -6,7 +6,7 @@ require('./definitions')
 
 /**
  * Generates list of weeks in each stage
- * @param {Stage} stage 
+ * @param {Stage} stage
  */
 const generateWeeksForStage = stage => {
   let week = 0
@@ -77,7 +77,7 @@ const getCurrentWeek = weeks => {
 
 /**
  * Returns matches for a stage in a week
- * @param {[Match]} matches 
+ * @param {[Match]} matches
  * @param {StageWeek} week
  * @returns {[Match]}
  */
@@ -89,7 +89,7 @@ const getMatchesForStageWeek = (matches, week) => {
 }
 
 /**
- * 
+ * Returns matches for each day in a week
  * @param {[Match]} weekMatches
  * @returns {[WeekDays]}
  */
@@ -173,7 +173,7 @@ export async function getLiveMatch(channelId) {
 /**
  * @returns {MappedStandings}
  */
-export async function getStandings() {
+export async function getOverallStandaings() {
   return _getStandings().then(data => {
     const rankData = data.ranks.map(rank => {
       const team = rank.competitor
@@ -199,3 +199,50 @@ export async function getStandings() {
   }, Promise.reject)
 }
 
+const stageMapping = {
+  'preseason': 0,
+  'playoffs': 5,
+  'grandfinal': 6,
+  'grandfinals': 6,
+  'allstar': 7
+}
+
+const stageNameMapping = {
+  0: 'The Preseason',
+  1: 'Stage 1',
+  2: 'Stage 2',
+  3: 'Stage 3',
+  4: 'Stage 4',
+  5: 'The Playoffs',
+  6: 'The Grand Finals',
+  7: 'All-Star Weekend'
+}
+
+export async function getStandingsForStage(stage) {
+  return _getStandings().then(data => {
+    const stageNum = stageMapping[stage.toString().replace(/[- ]g/, '')] || stage
+    const stageData = data.stages[stageNum]
+
+    if (!stageData) {
+      throw 'Invalid stage specified! Valid values are 0-7, preseason, playoffs, grandfinal, allstar'
+    }
+
+    const outStageData = stageData.teams.map(team => {
+      const standings = team.standings
+
+      return {
+        name: team.abbreviatedName,
+        match_wins: standings.wins,
+        match_losses: standings.losses,
+        match_win_percent: standings.wins / (standings.losses + standings.wins),
+        map_wins: standings.points
+      }
+    })
+
+    return {
+      data: outStageData,
+      stage_name: stageNameMapping[stageNum],
+      updated: cacheTs['standings']
+    }
+  }, Promise.reject)
+}
