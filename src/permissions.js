@@ -10,17 +10,19 @@ const fileExists = filePath => {
   try {
     return fs.statSync(filePath).isFile()
   } catch (err) {
-    return false;
+    return false
   }
-};
+}
 
 if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir)
 
-if (!fileExists(permsFile)) fs.writeFileSync(permsFile, JSON.stringify({
-  admins: [],
-  superadmins: [],
-  ignored: []
-}))
+if (!fileExists(permsFile)) {
+  fs.writeFileSync(permsFile, JSON.stringify({
+    admins: [],
+    superadmins: [],
+    ignored: []
+  }))
+}
 
 const readJson = (jsonPath) => {
   return new Promise((resolve, reject) => fs.readFile(jsonPath, 'utf8', (err, data) => {
@@ -80,32 +82,32 @@ class Perms {
       case 'superadmin':
         if (this.adminList.indexOf(username) > -1) this.adminList.splice(this.adminList.indexOf(username), 1)
         if (this.superadminList.indexOf(username) === -1) this.superadminList.push(username)
-        break;
+        break
       case 'admin':
         if (this.superadminList.indexOf(username) > -1) this.superadminList.splice(this.superadminList.indexOf(username), 1)
         if (this.adminList.indexOf(username) === -1) this.adminList.push(username)
-        break;
+        break
       case 'user':
         if (this.adminList.indexOf(username) > -1) this.adminList.splice(this.adminList.indexOf(username), 1)
         if (this.superadminList.indexOf(username) > -1) this.superadminList.splice(this.superadminList.indexOf(username), 1)
-        break;
+        break
       case 'permaignore':
         if (this.permaIgnoreList.indexOf(username) === -1) this.permaIgnoreList.push(username)
         if (this.ignoreList.indexOf(username) > -1) this.ignoreList.splice(this.ignoreList.indexOf(username), 1)
-        break;
+        break
       case 'ignore':
         if (this.ignoreList.indexOf(username) === -1) this.ignoreList.push(username)
-        break;
+        break
       case 'unignore':
         if (this.ignoreList.indexOf(username) > -1) this.ignoreList.splice(this.ignoreList.indexOf(username), 1)
         if (this.permaIgnoreList.indexOf(username) > -1) this.permaIgnoreList.splice(this.permaIgnoreList.indexOf(username), 1)
-        break;
+        break
       case 'mute':
         if (this.muteList.indexOf(username) === -1) this.muteList.push(username)
-        break;
+        break
       case 'unmute':
         if (this.muteList.indexOf(username) > -1) this.muteList.splice(this.muteList.indexOf(username), 1)
-        break;
+        break
       default:
         return false
     }

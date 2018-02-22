@@ -1,15 +1,14 @@
 import permissions from '../../permissions'
 import permsUtil from './utils/permUtil'
+import config from '../../../config'
 
 const getUserLevel = user => {
-  if ((permissions.superadmins.indexOf(user) > -1))
-    return 'superadmin'
-  else if ((permissions.admins.indexOf(user) > -1))
-    return 'admin'
-  else
-    return 'user'
+  if ((permissions.superadmins.indexOf(user) > -1)) return 'superadmin'
+  else if ((permissions.admins.indexOf(user) > -1)) return 'admin'
+  else return 'user'
 }
 
+const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.length > 0
 const setPermission = (user, channel, input, ts, plugin, adminLevel, action) => {
   return new Promise((resolve, reject) => permsUtil.doTheThing(input, action, adminLevel)
     .then(resp => resolve({ type: 'channel', message: resp }))
@@ -96,6 +95,7 @@ export function unmute(user, channel, input, ts, plugin, adminLevel) {
 }
 
 export function mute(user, channel, input, ts, plugin, adminLevel) {
+  if (!canPerformAdminCommands) return Promise.reject('`missing admin api key, cannot perform admin commands`')
   return setPermission(...arguments, 'mute')
 }
 
