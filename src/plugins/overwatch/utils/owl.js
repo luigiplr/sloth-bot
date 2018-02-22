@@ -229,12 +229,13 @@ export async function getStandingsForStage(stage) {
 
     const outStageData = stageData.teams.map(team => {
       const standings = team.standings
+      const winPercent = standings.wins / (standings.losses + standings.wins)
 
       return {
         name: team.abbreviatedName,
         match_wins: standings.wins,
         match_losses: standings.losses,
-        match_win_percent: standings.wins / (standings.losses + standings.wins),
+        match_win_percent: _.isNaN(winPercent) ? 0 : winPercent,
         map_wins: standings.points
       }
     })
