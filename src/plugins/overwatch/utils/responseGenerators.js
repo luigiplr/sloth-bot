@@ -2,10 +2,12 @@ import _ from 'lodash'
 import { getOverallStats } from './overwatch.js'
 
 const pageURL = 'https://playoverwatch.com/en-us/career'
+
 export const generateInfoResp = player => {
   player.region = player.platform === 'pc' ? player.region : 'n/a'
-  var level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
-  let out = {
+  const level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
+
+  const out = {
     attachments: [{
       "title": player.battletag,
       "fallback": `Overwatch Info for ${player.battletag}, Region: ${player.region.toUpperCase()}, Platform: ${player.platform.toUpperCase()}, Level: ${player.rank || ''}${player.level}, Competitive Rank: ${player.comprank || 'None'}`,
@@ -21,11 +23,13 @@ export const generateInfoResp = player => {
       ].join('\n')
     }]
   }
+
   return out
 }
 
 export const generateHeroesResp = (heroes, battletag) => {
   if (!heroes.quickplay.length && !heroes.competitive.length) return `${battletag} has no hero stats`
+
   return {
     attachments: [{
       "color": "#ff9c00",
@@ -45,12 +49,15 @@ export const generateHeroesResp = (heroes, battletag) => {
 
 export const generateStatsResp = (data, version = 'quickplay') => {
   data.stats = data.stats[version]
+
   if (data.stats.is_empty) return `I have no ${version} stats for this user`
+
   if (data && data.player && data.stats) {
     const { player, stats: { featured_stats, overall_stats, playtimes } } = data
-    player.region = player.platform === 'pc' ? player.region.toUpperCase() : 'N/A'
     const level = player.rank ? `${player.rank}${player.level < 10 ? '0' : ''}${player.level}` : player.level
-    const topHeroes = playtimes._.filter(h => h.time !== '0')
+    const topHeroes = playtimes.filter(h => h.time !== '0')
+    player.region = player.platform === 'pc' ? player.region.toUpperCase() : 'N/A'
+
     const out = {
       attachments: [{
         "fallback": `Overwatch Stats for ${player.battletag}, Level: ${level}. Overall Stats: Wins: ${overall_stats.wins || 'N/A'} | Losses ${overall_stats.losses || 'N/A'} out of ${overall_stats.games || 'N/A'} games`,
@@ -61,6 +68,7 @@ export const generateStatsResp = (data, version = 'quickplay') => {
         "author_link": `${pageURL}/${player.platform}${player.platform === 'pc' ? '/' + player.region : ''}/${player.battletag}`
       }]
     }
+
     out.attachments[0].fields = [{
       "title": "Region / Platform",
       "value": `Region: ${player.region}\nPlatform: ${player.platform.toUpperCase()}`,
@@ -92,7 +100,9 @@ export const generateStatsResp = (data, version = 'quickplay') => {
 
 export const generateHeroResp = (hero, version = 'quickplay', battletag) => {
   hero.stats = hero.stats[version]
+
   if (hero.stats.is_empty) return `I have no ${version} stats for this hero`
+
   if (hero.stats && hero.name) {
     const { stats: { general_stats, featured_stats, hero_stats, overall_stats } } = hero
     const out = {
@@ -103,6 +113,7 @@ export const generateHeroResp = (hero, version = 'quickplay', battletag) => {
         "text": `Overwatch Hero Data for ${hero.name} - ${battletag} _(${_.capitalize(version)})_`
       }]
     }
+
     out.attachments[0].fields = [{
       "title": "Time Played",
       "value": general_stats.time_played ? general_stats.time_played : "Unknown",
