@@ -3,6 +3,7 @@ import nodeMorse from 'morse-node'
 import spinsult from 'shakespeare-insult'
 import { STATUS_CODES } from 'http'
 import { sendMessage, findUser } from '../../slack'
+import config from '../../../config'
 import data from './utils/data'
 
 const statusCodes = Object.assign({}, STATUS_CODES, data.statusCodes)
@@ -55,6 +56,10 @@ export const plugin_info = [{
   alias: ['pug', 'hellopug'],
   command: 'pug',
   usage: 'hellopug - Returns a pug'
+}, {
+  alias: ['roast'],
+  command: 'roast',
+  usage: 'roast <user> - roasts a user'
 }]
 
 const _cleanInput = input => {
@@ -189,4 +194,17 @@ export function pug() {
       message: data.pugs[Math.floor(Math.random() * data.pugs.length)] + `#${Math.floor(Math.random() * 1000)}`
     })
   })
+}
+
+// Idea and roasts from toasy discord bot
+// https://github.com/cZollo/toasty/blob/master/src/data/roasts.json
+export async function roast(user, channel, input) {
+  if (!input) throw 'You need to tell me who to roast m8'
+
+  const u = findUser(input)
+  if (!u) throw 'Invalid user, m8'
+
+  if (u.id === config.botid) throw "I'm not going to roast myself, dumbass."
+
+  return { type: 'channel', 'message': `:fire: ${u.name}, ${data.roasts[Math.floor(Math.random() * data.roasts.length)]}` }
 }
