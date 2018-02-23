@@ -31,6 +31,10 @@ export const plugin_info = [{
   command: 'userid',
   usage: 'userid <user> - returns UserID for user'
 }, {
+  alias: ['avatar'],
+  command: 'avatar',
+  usage: 'userid <user> - returns avatar for a user'
+}, {
   alias: ['dellast', 'dellastmessage'],
   command: 'delLast',
   usage: 'dellast - deletes the last message from the bot'
@@ -337,4 +341,15 @@ export function reconnect(user, channel, input) {
       }, 5000)
     }).catch(reject)
   })
+}
+
+export async function avatar(user, channel, input) {
+  if (!input) return { type: 'dm', message: 'Usage: avatar <user> - returns a users avatar' }
+
+  const u = findUser(input)
+  if (!u) throw "Couldn't find user matching input"
+
+  if (!u.profile.image_original) throw `${u.name} has no avatar`
+
+  return { type: 'channel', message: `${u.name}'s avatar is: ${u.profile.image_original}` }
 }
