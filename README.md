@@ -27,12 +27,12 @@ config.json should resemble:
   "wolframAPIKey": "",
   "traktAPIKey": "",
   "f00pxAPIKey": "",
+  "tmdbAPIKey": "",
 
   "googleAPIKey": "",
   "cseSearchID": "",
   "cseImageID": "",
 
-  "traktImageProxy": "",
   "cookies": [ ],
 
   "noDisable": [ ],
