@@ -206,5 +206,5 @@ export async function roast(user, channel, input) {
 
   if (u.id === config.botid) throw "I'm not going to roast myself, dumbass."
 
-  return { type: 'channel', 'message': `:fire: ${u.name}, ${data.roasts[Math.floor(Math.random() * data.roasts.length)]}` }
+  return { type: 'channel', 'message': `:fire: ${u.real_name || u.name}, ${data.roasts[Math.floor(Math.random() * data.roasts.length)]}` }
 }
