@@ -75,6 +75,10 @@ export const plugin_info = [{
   alias: ['cn', 'chucknorris'],
   command: 'chucknorris',
   usage: 'chucknorris [user] - returns a chuck norris joke'
+}, {
+  alias: ['yomamma'],
+  command: 'yomamma',
+  usage: 'yomamma - returns a yo mamma joke'
 }]
 
 const _cleanInput = input => {
@@ -200,46 +204,6 @@ export function oldinsult(user, channel, input) {
   })
 }
 
-// Idea and pug images from Gravebot
-// https://github.com/Gravebot/Gravebot/blob/master/src/data/pugs.json
-export function pug() {
-  return new Promise(resolve => {
-    return resolve({
-      type: 'channel',
-      message: data.pugs[Math.floor(Math.random() * data.pugs.length)] + `#${Math.floor(Math.random() * 1000)}`
-    })
-  })
-}
-
-// Idea and roasts from toasy discord bot
-// https://github.com/cZollo/toasty/blob/master/src/data/roasts.json
-export async function roast(user, channel, input) {
-  if (!input) throw 'You need to tell me who to roast m8'
-
-  const u = findUser(input)
-  if (!u) throw 'Invalid user, m8'
-
-  if (u.id === config.botid) throw "I'm not going to roast myself, dumbass."
-
-  return { type: 'channel', 'message': `:fire: ${u.real_name || u.name}, ${data.roasts[Math.floor(Math.random() * data.roasts.length)]}` }
-}
-
-export async function dogfact() {
-  const data = await needle('get', 'https://dog-api.kinduff.com/api/facts', { }, { json: true })
-
-  if (data.statusCode !== 200 || !_.get(data.body, ['facts', 0])) throw 'Error fetching dog fact'
-
-  return { type: 'channel', message: `Dog Fact: ${data.body.facts[0]}` }
-}
-
-export async function catfact() {
-  const data = await needle('get', 'https://catfact.ninja/fact', { }, { json: true })
-
-  if (data.statusCode !== 200 || !data.body.fact) throw 'Error fetching cat fact'
-
-  return { type: 'channel', message: `Cat Fact: ${data.body.fact}` }
-}
-
 export async function chucknorris(user, channel, input) {
   let params = {
     escape: 'javascript'
@@ -259,4 +223,40 @@ export async function chucknorris(user, channel, input) {
   if (data.statusCode !== 200 || !_.get(data.body, 'value.joke')) throw 'Error fetching chuck norris data'
 
   return { type: 'channel', message: data.body.value.joke.replace(/ {2}/g, ' ') }
+}
+
+// Idea and pug images from Gravebot
+// https://github.com/Gravebot/Gravebot/blob/master/src/data/pugs.json
+export function pug() {
+  return new Promise(resolve => {
+    return resolve({
+      type: 'channel',
+      message: data.pugs[Math.floor(Math.random() * data.pugs.length)] + `#${Math.floor(Math.random() * 1000)}`
+    })
+  })
+}
+
+// Idea and roasts from toasy discord bot
+// https://github.com/cZollo/toasty/blob/master/src/data/roasts.json
+export async function roast(user, channel, input) {
+  if (!input) throw 'You need to tell me who to roast m8'
+
+  const u = findUser(input)
+
+  if (!u) throw 'Invalid user, m8'
+  if (u.id === config.botid) throw "I'm not going to roast myself, dumbass."
+
+  return { type: 'channel', 'message': `:fire: ${u.real_name || u.name}, ${data.roasts[Math.floor(Math.random() * data.roasts.length)]}` }
+}
+
+export async function dogfact() {
+  const data = await needle('get', 'https://dog-api.kinduff.com/api/facts')
+  if (data.statusCode !== 200 || !_.get(data.body, ['facts', 0])) throw 'Error fetching dog fact'
+  return { type: 'channel', message: `Dog Fact: ${data.body.facts[0]}` }
+}
+
+export async function catfact() {
+  const data = await needle('get', 'https://catfact.ninja/fact')
+  if (data.statusCode !== 200 || !data.body.fact) throw 'Error fetching cat fact'
+  return { type: 'channel', message: `Cat Fact: ${data.body.fact}` }
 }
