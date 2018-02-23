@@ -253,6 +253,9 @@ export async function roast(user, channel, input) {
   return { type: 'channel', 'message': `:fire: ${u.real_name || u.name}, ${data.roasts[Math.floor(Math.random() * data.roasts.length)]}` }
 }
 
+// All commands below here taken from WildBeast discord bot
+// https://github.com/TheSharks/WildBeast/blob/master/runtime/commands/fun.js
+
 export async function dogfact() {
   const data = await needle('get', 'https://dog-api.kinduff.com/api/facts')
 
