@@ -9,7 +9,7 @@ import { InviteUsers } from '../../database'
 export const plugin_info = [{
   alias: ['kick'],
   command: 'kickUser',
-  usage: 'kick <username> [reason] - kicks user from channel',
+  usage: 'kick <username> [reason] - kicks user from channel'
 }, {
   alias: ['inviteall'],
   command: 'inviteAllUser',
@@ -85,6 +85,7 @@ const cantDisable = u => u.id === config.botid || perms.superadmins.includes(u.n
 
 export function kickAllUser(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (user.id !== config.owner) return reject("*Access DENIED!!1!111!!eleven!*")
     if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) return resolve({ type: 'dm', message: 'Usage: kickall <username> - Kicks a user from all their channel' })
 
@@ -111,6 +112,7 @@ export function kickAllUser(user, channel, input) {
 
 export function inviteAllUser(user, channel, input) {
   return new Promise((resolve, reject) => {
+    if (user.id !== config.owner) return reject("*Access DENIED!!1!111!!eleven!*")
     if (!canPerformAdminCommands) return reject(adminErr)
     if (!input) {
       return resolve({ type: 'dm', message: 'Usage: inviteall <username>' })
@@ -122,13 +124,10 @@ export function inviteAllUser(user, channel, input) {
 
     getChannelsList()
       .then(channels => {
-        let channelsWasKicked = 0
-
         for (let channel of channels) {
           if (channel.is_general) continue
           if (!channel.members.includes(u.id)) {
             inviteUserRAW(channel.id, u.id)
-            channelsWasKicked++
           }
         }
 
@@ -155,7 +154,7 @@ export function inviteUser(user, channel, input) {
     invite(email).then(resp => {
       resolve({ type: 'channel', message: resp })
       InviteUsers.findOneByEmail(email).then(res => {
-        let newInv = res ? res : new InviteUsers()
+        let newInv = res || new InviteUsers()
         newInv.inviter = user.name
         newInv.email = email.toLowerCase()
         newInv.date = moment().utc().format()
@@ -205,7 +204,7 @@ export function modifyInvite(user, channel, input) {
     if (!email.includes('<mailto:')) return reject(`Invalid email recieved: ${email}`)
     if (moment(new Date(inviter)).isValid()) return reject("Invalid inviter")
     if (!moment(new Date(date)).isValid()) {
-      if (date == 'today') date = moment()
+      if (date === 'today') date = moment()
       else return reject("Invalid date")
     }
 
@@ -213,13 +212,13 @@ export function modifyInvite(user, channel, input) {
     date = moment(new Date(date))
 
     InviteUsers.findOneByEmail(email).then(resp => {
-      if (resp && type == 'add') return reject("Error: Email already in DB, if you wish to edit it you can use the `edit` type")
-      let newInv = type == 'add' ? new InviteUsers() : resp
+      if (resp && type === 'add') return reject("Error: Email already in DB, if you wish to edit it you can use the `edit` type")
+      let newInv = type === 'add' ? new InviteUsers() : resp
       newInv.inviter = inviter.toLowerCase()
       newInv.email = email
       newInv.date = date.utc().format()
       newInv.Persist()
-      return resolve({ type: 'channel', message: `Successfully ${type == 'add' ? 'added' : 'edited'} invite for: ${email}, invited by ${inviter} on ${date.format("dddd, Do MMM YYYY")}` })
+      return resolve({ type: 'channel', message: `Successfully ${type === 'add' ? 'added' : 'edited'} invite for: ${email}, invited by ${inviter} on ${date.format("dddd, Do MMM YYYY")}` })
     })
   })
 }
@@ -255,7 +254,7 @@ export function delLoadMessage(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!canPerformAdminCommands) return reject(adminErr)
     if (!input)
-      return resolve({ type: 'dm', message: 'Usage: removeloadingmessage <id> - Remove a loading message from the team - ID is required and can only be viewed within the Slack Admin Page' });
+      return resolve({ type: 'dm', message: 'Usage: removeloadingmessage <id> - Remove a loading message from the team - ID is required and can only be viewed within the Slack Admin Page' })
 
     deleteLoadingMsg(input).then(() => resolve({ type: 'channel', message: `Successfully removed message with id ${input}` })).catch(reject)
   })
@@ -335,7 +334,7 @@ export function reconnect(user, channel, input) {
         enableOrDisableUser(1, u).then(() => {
           return resolve("Dun")
         }).catch(reject)
-      }, 5000);
+      }, 5000)
     }).catch(reject)
   })
 }
