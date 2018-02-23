@@ -7,6 +7,7 @@ import { sendMessage, findUser } from '../../slack'
 import config from '../../../config'
 import data from './utils/data'
 import _ from 'lodash'
+import querystring from 'querystring'
 
 const statusCodes = Object.assign({}, STATUS_CODES, data.statusCodes)
 
@@ -70,6 +71,10 @@ export const plugin_info = [{
   alias: ['catfact'],
   command: 'catfact',
   usage: 'catfact - Returns a cat fact'
+}, {
+  alias: ['cn', 'chucknorris'],
+  command: 'chucknorris',
+  usage: 'chucknorris [user] - returns a chuck norris joke'
 }]
 
 const _cleanInput = input => {
@@ -233,4 +238,25 @@ export async function catfact() {
   if (data.statusCode !== 200 || !data.body.fact) throw 'Error fetching cat fact'
 
   return { type: 'channel', message: `Cat Fact: ${data.body.fact}` }
+}
+
+export async function chucknorris(user, channel, input) {
+  let params = {
+    escape: 'javascript'
+  }
+
+  const u = findUser(input)
+  if (input && !u) throw 'Invalid user'
+
+  if (u) {
+    params.firstName = u.profile.first_name || u.profile.real_name || u.profile.name
+    params.lastName = u.profile.last_name || ''
+  }
+
+  const qs = querystring.stringify(params)
+  const data = await needle('get', `http://api.icndb.com/jokes/random?${qs}`)
+
+  if (data.statusCode !== 200 || !_.get(data.body, 'value.joke')) throw 'Error fetching chuck norris data'
+
+  return { type: 'channel', message: data.body.value.joke.replace(/ {2}/g, ' ') }
 }
