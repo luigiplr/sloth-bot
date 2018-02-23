@@ -1,10 +1,12 @@
 import ateball from 'eightball'
 import nodeMorse from 'morse-node'
 import spinsult from 'shakespeare-insult'
+import needle from 'needle'
 import { STATUS_CODES } from 'http'
 import { sendMessage, findUser } from '../../slack'
 import config from '../../../config'
 import data from './utils/data'
+import _ from 'lodash'
 
 const statusCodes = Object.assign({}, STATUS_CODES, data.statusCodes)
 
@@ -60,6 +62,14 @@ export const plugin_info = [{
   alias: ['roast'],
   command: 'roast',
   usage: 'roast <user> - roasts a user'
+}, {
+  alias: ['dogfact'],
+  command: 'dogfact',
+  usage: 'dogfact - Returns a dog fact'
+}, {
+  alias: ['catfact'],
+  command: 'catfact',
+  usage: 'catfact - Returns a cat fact'
 }]
 
 const _cleanInput = input => {
@@ -207,4 +217,20 @@ export async function roast(user, channel, input) {
   if (u.id === config.botid) throw "I'm not going to roast myself, dumbass."
 
   return { type: 'channel', 'message': `:fire: ${u.real_name || u.name}, ${data.roasts[Math.floor(Math.random() * data.roasts.length)]}` }
+}
+
+export async function dogfact() {
+  const data = await needle('get', 'https://dog-api.kinduff.com/api/facts', { }, { json: true })
+
+  if (data.statusCode !== 200 || !_.get(data.body, ['facts', 0])) throw 'Error fetching dog fact'
+
+  return { type: 'channel', message: `Dog Fact: ${data.body.facts[0]}` }
+}
+
+export async function catfact() {
+  const data = await needle('get', 'https://catfact.ninja/fact', { }, { json: true })
+
+  if (data.statusCode !== 200 || !data.body.fact) throw 'Error fetching cat fact'
+
+  return { type: 'channel', message: `Cat Fact: ${data.body.fact}` }
 }
