@@ -251,12 +251,29 @@ export async function roast(user, channel, input) {
 
 export async function dogfact() {
   const data = await needle('get', 'https://dog-api.kinduff.com/api/facts')
+
   if (data.statusCode !== 200 || !_.get(data.body, ['facts', 0])) throw 'Error fetching dog fact'
+
   return { type: 'channel', message: `Dog Fact: ${data.body.facts[0]}` }
 }
 
 export async function catfact() {
   const data = await needle('get', 'https://catfact.ninja/fact')
+
   if (data.statusCode !== 200 || !data.body.fact) throw 'Error fetching cat fact'
+
   return { type: 'channel', message: `Cat Fact: ${data.body.fact}` }
+}
+
+export async function yomamma() {
+  const data = await needle('get', 'http://api.yomomma.info/')
+
+  if (data.statusCode !== 200) throw 'Error fetching joke'
+
+  try {
+    const { joke } = JSON.parse(data.body)
+    return { type: 'channel', message: joke }
+  } catch (e) {
+    throw 'Error parsing data'
+  }
 }
