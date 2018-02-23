@@ -79,6 +79,10 @@ export const plugin_info = [{
   alias: ['yomamma'],
   command: 'yomamma',
   usage: 'yomamma - returns a yo mamma joke'
+}, {
+  alias: ['advice'],
+  command: 'advice',
+  usage: 'advice - returns some advice'
 }]
 
 const _cleanInput = input => {
@@ -273,6 +277,19 @@ export async function yomamma() {
   try {
     const { joke } = JSON.parse(data.body)
     return { type: 'channel', message: joke }
+  } catch (e) {
+    throw 'Error parsing data'
+  }
+}
+
+export async function advice() {
+  const data = await needle('get', 'http://api.adviceslip.com/advice')
+
+  if (data.statusCode !== 200) throw 'Error fetching advice'
+
+  try {
+    const { slip: { advice } } = JSON.parse(data.body)
+    return { type: 'channel', message: advice }
   } catch (e) {
     throw 'Error parsing data'
   }
