@@ -83,6 +83,10 @@ export const plugin_info = [{
   alias: ['advice'],
   command: 'advice',
   usage: 'advice - returns some advice'
+}, {
+  alias: ['showerthought'],
+  command: 'showerthought',
+  usage: 'showerthought - returns a shower thought'
 }]
 
 const _cleanInput = input => {
@@ -206,6 +210,19 @@ export function oldinsult(user, channel, input) {
 
     return resolve({ type: 'channel', message: `_ ${input} you're a ${spinsult.random()}_` })
   })
+}
+
+export async function showerthought() {
+  const data = await needle('get', 'https://reddit.com/r/ShowerThoughts/random.json', null, { follow_max: 2 })
+
+  console.log(data.statusCode)
+
+  if (data.statusCode !== 200 || !data.body) throw 'Error loading data'
+
+  const title = _.get(data.body, [0, 'data', 'children', 0, 'data', 'title'])
+  if (!title) throw 'Error parsing data'
+
+  return { type: 'channel', message: `*Shower Thought:* ${title}` }
 }
 
 export async function chucknorris(user, channel, input) {
