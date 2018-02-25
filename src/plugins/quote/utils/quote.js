@@ -12,7 +12,7 @@ export function getQuote(user, quotenum = 0) {
       return reject("Couldn't find a user by that name")
     }
 
-    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY grabbed_at DESC`).then(rows => {
+    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATE(grabbed_at) DESC`).then(rows => {
       const quotes = _.get(rows, ['rs', 'rows', '_array'], [])
       const quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
       if (quotes[quoteindex]) return resolve(urlify(`<${user.name}> ${quotes[quoteindex].message}`))
