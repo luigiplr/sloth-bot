@@ -12,7 +12,7 @@ export function getQuote(user, quotenum = 0) {
       return reject("Couldn't find a user by that name")
     }
 
-    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATE(grabbed_at) DESC`).then(rows => {
+    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATETIME(grabbed_at) DESC`).then(rows => {
       const quotes = _.get(rows, ['rs', 'rows', '_array'], [])
       const quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
       if (quotes[quoteindex]) return resolve(urlify(`<${user.name}> ${quotes[quoteindex].message}`))
@@ -34,7 +34,7 @@ export function getQuotes(user, page = 1) {
     page = _.isNumber(+page) && !_.isNaN(+page) ? page <= 0 ? 1 : +page : 1
     const offset = 15 * page - 15
 
-    const query = `SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATE(grabbed_at) DESC LIMIT 15 OFFSET ${offset}`
+    const query = `SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATETIME(grabbed_at) DESC LIMIT 15 OFFSET ${offset}`
     CRUD.executeQuery(query).then(results => {
       const rows = _.get(results, ['rs', 'rows', '_array'], [])
       if (rows.length > 0) {
@@ -88,7 +88,7 @@ export async function getQuoteInfo(user, index) {
     }
   }
 
-  const query = `SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY grabbed_at DESC LIMIT 1 OFFSET ${offset}`
+  const query = `SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATETIME(grabbed_at) DESC LIMIT 1 OFFSET ${offset}`
   const data = await CRUD.executeQuery(query)
   const quote = _.get(data, ['rs', 'rows', '_array', 0])
 
@@ -151,7 +151,7 @@ SELECT count(*) AS total_quotes,
   (SELECT user FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed,
   (SELECT count(*) FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed_count,
   (SELECT user FROM Quote ORDER BY grabbed_at DESC) AS recently_grabbed,
-  (SELECT grabbed_at FROM Quote ORDER BY grabbed_at DESC) AS recently_grabbed_at
+  (SELECT grabbed_at FROM Quote ORDER BY DATETIME(grabbed_at) DESC) AS recently_grabbed_at
 FROM Quote
 `
 
