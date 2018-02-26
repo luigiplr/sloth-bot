@@ -5,7 +5,7 @@ import CRUD, { Quotes } from '../../../database'
 import { getHistory, findUser } from '../../../slack.js'
 import config from '../../../../config.json'
 
-export async function getQuote(user, quotenum = 0) {
+export async function getQuote(user, index = 0) {
   const u = findUser(user)
   if (!u) {
     throw "Couldn't find a user by that name"
@@ -19,10 +19,10 @@ export async function getQuote(user, quotenum = 0) {
   }
 
   const quotes = _.get(data, ['rs', 'rows', '_array'], [])
-  const quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
+  const qIndex = index < 0 ? quotes.length + index : index
 
-  if (quotes[quoteindex]) {
-    return urlify(`<${u.name}> ${quotes[quoteindex].message}`)
+  if (quotes[qIndex]) {
+    return urlify(`<${u.name}> ${quotes[qIndex].message}`)
   } else {
     throw quotes.length > 0
       ? `I don't have quotes that far back for ${u.name}`

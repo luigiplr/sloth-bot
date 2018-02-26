@@ -1,4 +1,5 @@
 import { getQuote, getQuotes, grabQuote, getRandomQuote, getQuoteInfo, getQuoteStats } from './utils/quote'
+import _ from 'lodash'
 
 export const plugin_info = [{
   alias: ['grab'],
@@ -44,7 +45,9 @@ export async function quote(user, channel, input) {
   if (!input) return { type: 'dm', message: 'Usage: quote <username> [index] - Retrives and displays a users most recent or specified quote' }
 
   const grabee = input.split(' ')[0].toLowerCase()
-  const index = input.split(' ')[1] ? input.split(' ')[1] : undefined
+  const index = input.split(' ')[1] ? +input.split(' ')[1] : undefined
+
+  if (_.isNaN(index)) throw 'Invalid index.'
 
   return { type: 'channel', message: await getQuote(grabee, index) }
 }
