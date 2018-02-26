@@ -1,4 +1,4 @@
-import { includes } from 'lodash'
+import _ from 'lodash'
 import MetaInspector from 'node-metainspector'
 import moment from 'moment'
 import needle from 'needle'
@@ -20,13 +20,15 @@ export const plugin_info = [{
 
 export function bonjourmadame(user, channel, input) {
   return new Promise((resolve, reject) => {
-    let url, diff, attempts = 0
+    let url
+    let diff
+    let attempts = 0
 
     if (input) {
-      if (input == 'today') {
+      if (input === 'today') {
         url = 'http://dites.bonjourmadame.fr/'
-      } else if (input.match(/[0-9\.-]/g)) {
-        diff = moment(new Date(input.match(/[0-9\.-]/g).join(''))).diff(moment(), 'days')
+      } else if (input.match(/[0-9.-]/g)) {
+        diff = moment(new Date(input.match(/[0-9.-]/g).join(''))).diff(moment(), 'days')
         if (diff === 0) {
           url = 'http://dites.bonjourmadame.fr/'
         } else if (diff < 0) {
@@ -39,8 +41,9 @@ export function bonjourmadame(user, channel, input) {
 
     let client = new MetaInspector(url, { timeout: 5000 })
 
-    client.on('fetch', () => (client.images && !client.images[3].match(/logo|avatar/i)) ?
-      resolve({ type: 'channel', message: client.images[3] }) : reject('No picture found'))
+    client.on('fetch', () => (client.images && !client.images[3].match(/logo|avatar/i))
+      ? resolve({ type: 'channel', message: client.images[3] })
+      : reject('No picture found'))
 
     client.on('error', () => {
       if (attempts < 3) {
@@ -64,7 +67,7 @@ export function bonjourmonsieur(user, channel, input) {
         return resolve({ type: 'channel', message: client.images[1] })
       }
 
-      return reject('No picture found')      
+      return reject('No picture found')
     })
 
     client.on('error', () => reject('Error loading page'))
@@ -73,21 +76,32 @@ export function bonjourmonsieur(user, channel, input) {
   })
 }
 
-export function f00px(user, channel, input = 'popular') {
-  return new Promise((resolve, reject) => {
-    let inpt = input.split(' ')
-    let validFeatures = ['popular', 'highest_rated', 'upcoming', 'editors', 'fresh_today', 'fresh_yesterday', 'fresh_week']
-    let feature = includes(validFeatures, inpt[0]) ? inpt[0] : undefined
-    if (!feature && isNaN(parseInt(inpt[0]))) return reject(`Invalid feature, valid features are: \n \`${validFeatures.join(', ')}\``)
+const validFeatures = ['popular', 'highest_rated', 'upcoming', 'editors', 'fresh_today', 'fresh_yesterday', 'fresh_week']
+const baseUrl = `https://api.500px.com/v1/photos?rpp=60&only=nude&image_size=2048&consumer_key=${config.f00pxAPIKey}`
 
-    let url = `https://api.500px.com/v1/photos?rpp=60&only=nude&image_size=2048&consumer_key=${config.f00pxAPIKey}&feature=${feature}`
+export async function f00px(user, channel, input = 'popular') {
+  let [ indexOrFeature, index ] = input.split(' ')
+  let feature = validFeatures.includes(indexOrFeature) ? indexOrFeature : undefined
+  index = parseInt(index)
 
-    needle.get(url, (err, resp, body) => {
-      if (!err && body && body.photos) {
-        let index = !feature ? parseInt(inpt[0]) : (!isNaN(parseInt(inpt[1])) ? parseInt(inpt[1]) : Math.floor(Math.random() * body.photos.length))
-        index = index > body.photos.length - 1 ? Math.floor(Math.random() * body.photos.length) : index
-        return resolve({ type: 'channel', message: body.photos[index].image_url })
-      } else return reject(err || 'An unknown error occured')
-    })
-  })
+  if (!feature) {
+    if (_.isNaN(+indexOrFeature)) throw `Invalid feature, valid features are:\n\`${validFeatures.join(', ')}\``
+    index = +indexOrFeature
+    feature = 'popular'
+  }
+
+  const data = await needle('get', `${baseUrl}&feature=${feature}`)
+  if (data.statusCode !== 200 || !data.body || !data.body.photos || !_.isArray(data.body.photos)) {
+    throw 'Error fetching data'
+  }
+
+  const photos = data.body.photos
+  index = (_.isNaN(index) || (index > photos.length - 1)) ? Math.floor(Math.random() * photos.length) : index
+  const image = _.isArray(photos[index].image_url) ? photos[index].image_url[0] : photos[index].image_url
+
+  if (!image || !_.isString(image)) {
+    throw 'Error finding image!'
+  }
+
+  return { type: 'channel', message: `${image}#${Math.floor(Math.random() * 1000)}` }
 }
