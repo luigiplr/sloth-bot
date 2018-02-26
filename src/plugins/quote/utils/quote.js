@@ -13,7 +13,7 @@ export async function getQuote(user, quotenum = 0) {
 
   let data
   try {
-    data = await CRUD.executeQuery(`SELECT * FROM Quotes WHERE user = '${u.name}' ORDER BY DATETIME(grabbed_at) DESC`)
+    data = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${u.name}' ORDER BY DATETIME(grabbed_at) DESC`)
   } catch (e) {
     return `Error fetching quote. ${e.message}`
   }
