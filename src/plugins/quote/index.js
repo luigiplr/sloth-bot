@@ -40,13 +40,13 @@ export function grab(user, channel, input) {
   })
 }
 
-export function quote(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: quote <username> [index] - Retrives and displays a users most recent or specified quote' })
-    let grabee = input.split(' ')[0].toLowerCase()
-    let index = input.split(' ')[1] ? input.split(' ')[1] : undefined
-    getQuote(grabee, index).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
-  })
+export async function quote(user, channel, input) {
+  if (!input) return { type: 'dm', message: 'Usage: quote <username> [index] - Retrives and displays a users most recent or specified quote' }
+
+  const grabee = input.split(' ')[0].toLowerCase()
+  const index = input.split(' ')[1] ? input.split(' ')[1] : undefined
+
+  return { type: 'channel', message: await getQuote(grabee, index) }
 }
 
 export function quotes(user, channel, input) {

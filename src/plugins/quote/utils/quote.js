@@ -5,23 +5,29 @@ import CRUD, { Quotes } from '../../../database'
 import { getHistory, findUser } from '../../../slack.js'
 import config from '../../../../config.json'
 
-export function getQuote(user, quotenum = 0) {
-  return new Promise((resolve, reject) => {
-    user = findUser(user)
-    if (!user) {
-      return reject("Couldn't find a user by that name")
-    }
+export async function getQuote(user, quotenum = 0) {
+  const u = findUser(user)
+  if (!u) {
+    throw "Couldn't find a user by that name"
+  }
 
-    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATETIME(grabbed_at) DESC`).then(rows => {
-      const quotes = _.get(rows, ['rs', 'rows', '_array'], [])
-      const quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
-      if (quotes[quoteindex]) return resolve(urlify(`<${user.name}> ${quotes[quoteindex].message}`))
-      else {
-        if (quotes.length > 0) return reject("I don't have quotes that far back for " + user.name)
-        else return reject(`No quotes found for ${user.name}, grab a quote via \`${config.prefix}grab <username>\``)
-      }
-    }).catch(reject)
-  })
+  let data
+  try {
+    data = await CRUD.executeQuery(`SELECT * FROM Quotes WHERE user = '${u.name}' ORDER BY DATETIME(grabbed_at) DESC`)
+  } catch (e) {
+    return `Error fetching quote. ${e.message}`
+  }
+
+  const quotes = _.get(data, ['rs', 'rows', '_array'], [])
+  const quoteindex = quotenum < 0 ? quotes.length + parseInt(quotenum) : parseInt(quotenum)
+
+  if (quotes[quoteindex]) {
+    return urlify(`<${u.name}> ${quotes[quoteindex].message}`)
+  } else {
+    throw quotes.length > 0
+      ? `I don't have quotes that far back for ${u.name}`
+      : `No quotes found for ${u.name}, grab a quote via \`${config.prefix}grab <username>\``
+  }
 }
 
 export function getQuotes(user, page = 1) {
