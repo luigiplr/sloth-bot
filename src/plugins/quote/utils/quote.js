@@ -156,8 +156,9 @@ SELECT count(*) AS total_quotes,
   (SELECT count(*) FROM Quote GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most_count,
   (SELECT user FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed,
   (SELECT count(*) FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed_count,
-  (SELECT user FROM Quote ORDER BY grabbed_at DESC) AS recently_grabbed,
-  (SELECT grabbed_at FROM Quote ORDER BY DATETIME(grabbed_at) DESC) AS recently_grabbed_at
+  (SELECT user FROM Quote ORDER BY datetime(grabbed_at) DESC) AS recently_grabbed,
+  (SELECT grabbed_at FROM Quote ORDER BY datetime(grabbed_at) DESC) AS recently_grabbed_at,
+  (SELECT count(*) * 1.0 / count(distinct(date(grabbed_at))) FROM Quote) as average_grabs
 FROM Quote
 `
 
@@ -185,7 +186,8 @@ export async function getQuoteStats(input) {
       { 'Overall': qs.total_quotes ? `${qs.total_quotes} quotes in total` : 'Unknown' },
       { 'Most Quoted': qs.most_grabbed ? `${qs.most_grabbed} with ${qs.most_grabbed_count} quotes` : 'Unknown' },
       { 'Grabs Most': qs.grabbed_most ? `${qs.grabbed_most} with ${qs.grabbed_most_count} grabs` : 'Unknown' },
-      { 'Latest Quote': qs.recently_grabbed ? `${qs.recently_grabbed} ${moment(new Date(qs.recently_grabbed_at)).from(Date.now())}` : 'Unknown' }
+      { 'Latest Quote': qs.recently_grabbed ? `${qs.recently_grabbed} ${moment(new Date(qs.recently_grabbed_at)).from(Date.now())}` : 'Unknown' },
+      { 'Avg Grabs / Day': qs.average_grabs ? `${qs.average_grabs.toFixed(2)} grabs per day ` : 'Unknown' }
     )
 
     return [
