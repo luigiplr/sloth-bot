@@ -56,24 +56,44 @@ export function bonjourmadame(user, channel, input) {
   })
 }
 
-export function bonjourmonsieur(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    const url = 'https://sexymenonline.tumblr.com/random'
+const blog = 'shirtlesssexyguys.tumblr.com'
+var totalImages = null
+var lastUpdated = null
 
-    let client = new MetaInspector(url, { timeout: 5000 })
+export async function bonjourmonsieur(user, channel, input) {
+  if (!totalImages || +moment(lastUpdated).add(1, 'day') < Date.now()) {
+    console.log('Updating total')
+    const data = await needle('get', `https://api.tumblr.com/v2/blog/${blog}/info?api_key=${config.tumblrAPIKey}`)
 
-    client.on('fetch', () => {
-      if (client.images && client.images.length > 1) {
-        return resolve({ type: 'channel', message: client.images[1] })
-      }
+    const total = _.get(data, 'body.response.blog.total_posts')
+    if (!data || _.get(data, 'body.meta.status') !== 200 || !total || !_.isNumber(total)) {
+      throw 'Error fetching sexy guys info'
+    }
 
-      return reject('No picture found')
-    })
+    totalImages = total
+    lastUpdated = Date.now()
+  }
 
-    client.on('error', () => reject('Error loading page'))
+  const offset = Math.floor(Math.random() * totalImages)
+  const data = await needle('get', `https://api.tumblr.com/v2/blog/${blog}/posts?api_key=${config.tumblrAPIKey}&limit=1&offset=${offset}`)
+  if (!data || _.get(data, 'body.meta.status') !== 200) {
+    throw 'Error fetching sexy guys info'
+  }
 
-    client.fetch()
-  })
+  totalImages = _.get(data, 'body.response.total_posts')
+  lastUpdated = Date.now()
+
+  const photos = _.get(data, 'body.response.posts[0].photos', [])
+  if (photos.length === 0) {
+    throw "Couldn't find any photos :("
+  }
+
+  const img = _.get(photos, [ Math.floor(Math.random() * photos.length), 'original_size', 'url' ])
+  if (!img) {
+    throw 'Error finding image'
+  }
+
+  return { type: 'channel', message: img }
 }
 
 const validFeatures = ['popular', 'highest_rated', 'upcoming', 'editors', 'fresh_today', 'fresh_yesterday', 'fresh_week']
