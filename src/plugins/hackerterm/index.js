@@ -65,7 +65,7 @@ export async function hackerterm(user, channel, input) {
           short: true
         }, {
           title: 'Related',
-          value: _.isArray(def.related) ? def.related.join(', ') : 'Unknown',
+          value: _.isArray(def.related) && def.related.length > 0 ? def.related.join(', ') : 'Unknown',
           short: true
         }, {
           title: 'Definition',
