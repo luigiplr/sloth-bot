@@ -1,7 +1,6 @@
-import { capitalize, get } from 'lodash'
+import _ from 'lodash'
 import needle from 'needle'
 import SteamID from 'steamid'
-import cheerio from 'cheerio'
 
 const filters = ['basic', 'price_overview', 'release_date', 'metacritic', 'developers', 'genres', 'demos'].join(',')
 const token = require('./../../../../config.json').steamAPIKey
@@ -20,7 +19,7 @@ const endpoints = {
   appList: `http://api.steampowered.com/ISteamApps/GetAppList/v0002/`, // Unused
   userLevel: `https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${token}&steamid=%q%`,
   resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`,
-  userWishList: `https://steamcommunity.com/profiles/%q%/wishlist/`
+  userWishList: `https://store.steampowered.com/wishlist/profiles/%q%`
 }
 
 const getUrl = (type, param, cc) => {
@@ -30,10 +29,11 @@ const getUrl = (type, param, cc) => {
 
 const getIDFromProfile = id => {
   return new Promise((resolve, reject) => needle.get(getUrl('resolveVanity', id), (err, resp, body) => {
-    if (!err && body && body.response)
-      if (body.response.success == 1) return resolve(body.response.steamid)
-      else return reject("Invalid Vanity ID")
-    else return reject('Error retrieving profile ID')
+    if (!err && body && body.response) {
+      return body.response.success === 1 ? resolve(body.response.steamid) : reject("Invalid Vanity ID")
+    }
+
+    return reject('Error retrieving profile ID')
   }))
 }
 
@@ -77,10 +77,12 @@ const getUserRecentlyPlayedGames = id => {
 
 const getAppDetails = (appid, cc, basic) => {
   return new Promise((resolve, reject) => needle.get(getUrl(basic ? 'appDetailsBasic' : 'appDetails', appid, cc), (err, resp, body) => {
-    if (!err && body)
-      if (get(body, `[${appid}].success`)) return resolve(body[appid].data)
+    if (!err && body) {
+      if (_.get(body, `[${appid}].success`)) return resolve(body[appid].data)
       else return reject(`Couldn't fetch app details for that AppID, invalid? ${appid}`)
-    else return reject('Error retrieving game details')
+    }
+
+    return reject('Error retrieving game details')
   }))
 }
 
@@ -96,10 +98,12 @@ const searchForApp = (query, isAppID) => {
 
 const getPlayersForApp = appid => {
   return new Promise((resolve, reject) => needle.get(getUrl('numPlayers', appid), (err, resp, body) => {
-    if (!err && body && body.response)
-      if (typeof body.response.player_count != 'undefined') return resolve(body.response)
+    if (!err && body && body.response) {
+      if (typeof body.response.player_count !== 'undefined') return resolve(body.response)
       else return reject('Unable to view player counts for this app')
-    else return reject('Error retrieving player counts')
+    }
+
+    return reject('Error retrieving player counts')
   }))
 }
 
@@ -108,15 +112,9 @@ export function getUserWishlist(id) {
     needle.get(getUrl('userWishList', newID), { follow_max: 3 }, (err, resp, body) => {
       if (!err && body) {
         try {
-          const $ = cheerio.load(body)
-          const data = $('#wishlist_items .wishlistRow').map((i, elm) => {
-            const $elm = $(elm)
-            const name = ($elm.find('h4').text() || '').trim()
-            const id = ($elm.attr('id') || '').split('_')[1]
-            return { name, id, index: i + 1 }
-          }).get()
+          const wishlistData = JSON.parse(body.match(/var g_rgAppInfo ? = ?({.+});/)[1])
 
-          return resolve(data)
+          return resolve(_.sortBy(_.map(wishlistData, (data, appid) => ({ appid, ...data })), 'priority'))
         } catch (e) {
           return reject('Error parsing users wishlist')
         }
@@ -128,8 +126,8 @@ export function getUserWishlist(id) {
 export function getProfileInfo(id) {
   return new Promise((resolve, reject) => formatProfileID(id).then(newID => needle.get(getUrl('profileSummary', newID), (err, resp, body) => {
     if (!err && body) {
-      let profile = body.response.players[0];
-      Promise.all([getUserLevel(newID), getUserBans(newID), getUserGames(newID), getUserRecentlyPlayedGames(newID)]).then(([level, bans, games, recentlyPlayed]) => {
+      let profile = body.response.players[0]
+      Promise.all([ getUserLevel(newID), getUserBans(newID), getUserGames(newID), getUserRecentlyPlayedGames(newID) ]).then(([ level, bans, games, recentlyPlayed ]) => {
         profile.user_level = level
         profile.bans = bans
         profile.totalgames = games.game_count || undefined
@@ -142,7 +140,7 @@ export function getProfileInfo(id) {
         profile.mostplayed = sortedGames[0]
         getAppDetails(sortedGames[0].appid, false, true).then(game => {
           if (game) {
-            profile.mostplayed.name = game.name;
+            profile.mostplayed.name = game.name
             return resolve(profile)
           }
         }).catch(reject)
@@ -181,26 +179,27 @@ export function getAppInfo(appid, cc = 'US', playersOnly) {
 export function getSteamIDInfo(id) {
   return new Promise((resolve, reject) => formatProfileID(id).then(newID => {
     let sid = new SteamID(newID)
-    let i, details = []
+    let i
+    let details = []
     for (i in SteamID.Universe) {
-      if (sid.universe == SteamID.Universe[i]) {
-        details.push(`*Universe:* ${capitalize(i.toLowerCase())} (${sid.universe})`)
+      if (sid.universe === SteamID.Universe[i]) {
+        details.push(`*Universe:* ${_.capitalize(i.toLowerCase())} (${sid.universe})`)
         break
       }
     }
     for (i in SteamID.Type) {
-      if (sid.type == SteamID.Type[i]) {
-        details.push(`*Type:* ${i.split('_').map(j => capitalize(j.toLowerCase())).join(' ')} (${sid.type})`)
+      if (sid.type === SteamID.Type[i]) {
+        details.push(`*Type:* ${i.split('_').map(j => _.capitalize(j.toLowerCase())).join(' ')} (${sid.type})`)
         break
       }
     }
     for (i in SteamID.Instance) {
-      if (sid.instance == SteamID.Instance[i]) {
-        details.push(`*Instance:* ${capitalize(i.toLowerCase())} (${sid.instance})`)
+      if (sid.instance === SteamID.Instance[i]) {
+        details.push(`*Instance:* ${_.capitalize(i.toLowerCase())} (${sid.instance})`)
         break
       }
     }
-    let msg = `${sid.getSteam3RenderedID()} ${sid.type == SteamID.Type.INDIVIDUAL ? '/ ' + sid.getSteam2RenderedID() : ''} / ${sid.getSteamID64()} \n *Valid:* ${sid.isValid() ? 'True' : 'False'}, ${details.join(', ')}, *AccountID:* ${sid.accountid}`;
+    let msg = `${sid.getSteam3RenderedID()} ${sid.type === SteamID.Type.INDIVIDUAL ? '/ ' + sid.getSteam2RenderedID() : ''} / ${sid.getSteamID64()} \n *Valid:* ${sid.isValid() ? 'True' : 'False'}, ${details.join(', ')}, *AccountID:* ${sid.accountid}`
     return resolve(msg)
   }).catch(reject))
 }

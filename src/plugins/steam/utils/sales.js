@@ -22,21 +22,6 @@ function getSaleData() {
   })
 }
 
-function formatDate(date) {
-  let hasTime = date.split(' ')[1]
-  let [day, month, year] = date.split('-')
-  let newDate = hasTime ? new Date(`${month}-${day}-${year}`) : new Date(`${month}-${day}-${year} 17:00:00`) // fuck ISO 8601
-  let UTCDate = new Date(Date.UTC(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), newDate.getHours()))
-  return UTCDate
-}
-
-function formatData({ date, enddate, confirmed, name }) {
-  date = formatDate(date)
-  enddate = formatDate(enddate)
-  confirmed = (confirmed === 'true' ? true : false)
-  return { name, enddate, date, confirmed }
-}
-
 export function getSaleTime(time) {
   const duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
   const getTime = (firstHalf, seconds) => firstHalf.replace(/, /, '').length !== 0 ? `${firstHalf} and ${seconds || '0 seconds'}` : seconds
