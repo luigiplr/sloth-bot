@@ -116,6 +116,10 @@ export function getUserWishlist(id) {
 
           return resolve(_.sortBy(_.map(wishlistData, (data, appid) => ({ appid, ...data })), 'priority'))
         } catch (e) {
+          if (body.match(/var g_rgWishlistData = \[\];/)) {
+            return resolve({ empty: true })
+          }
+
           return reject('Error parsing users wishlist')
         }
       } else return reject('Error retrieving users wishlist')

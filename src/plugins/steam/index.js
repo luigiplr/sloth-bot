@@ -91,10 +91,14 @@ export async function wishlist(user, channel, input) {
   const userAlias = await tryGetUserAlias(input, 'steam')
 
   const wishlist = await getUserWishlist(userAlias || input)
-  const games = wishlist.slice(0, 10)
 
+  if (wishlist.empty) {
+    return { type: 'channel', message: `${input} has nothing on their wishlist` }
+  }
+
+  const games = wishlist.slice(0, 10)
   if (games.length === 0) {
-    throw 'User has nothing on their wishlist'
+    throw 'Wishlist is empty??'
   }
 
   const msg = [
