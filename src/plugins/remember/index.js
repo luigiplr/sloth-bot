@@ -113,7 +113,9 @@ export function remember(user, channel, input) {
 
     Remembers.findOneByWord(word).then(existing => {
       if (existing && existing.protected) {
-        return reject('Error: Remember is protected from editing or deletion')
+        if (existing.user !== user.name) {
+          return reject('Error: Remember is protected from editing or deletion')
+        }
       }
 
       const newRemember = new Remembers()
