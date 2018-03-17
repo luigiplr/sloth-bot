@@ -101,10 +101,18 @@ export function Remembers() {
 CRUD.define(Remembers, {
   table: 'Remembers',
   primary: 'id',
-  fields: ['id', 'user', 'text', 'date', 'word'],
+  fields: ['id', 'user', 'text', 'date', 'word', 'protected'],
   orderProperty: 'date',
   orderDirection: 'DESC',
-  createStatement: 'CREATE TABLE Remembers (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) DEFAULT (NULL), text VARCHAR(4000) DEFAULT (NULL), date DATETIME DEFAULT CURRENT_TIMESTAMP, word VARCHAR(128) DEFAULT (NULL))'
+  createStatement: 'CREATE TABLE Remembers (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) DEFAULT (NULL), text VARCHAR(4000) DEFAULT (NULL), date DATETIME DEFAULT CURRENT_TIMESTAMP, word VARCHAR(128) DEFAULT (NULL), protected INTEGER DEFAULT 0)',
+  migrations: {
+    2: [
+      'ALTER TABLE Remembers RENAME TO Remembers_bak',
+      'CREATE TABLE Remembers (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) DEFAULT (NULL), text VARCHAR(4000) DEFAULT (NULL), date DATETIME DEFAULT CURRENT_TIMESTAMP, word VARCHAR(128) DEFAULT (NULL), protected INTEGER DEFAULT 0)',
+      'INSERT OR IGNORE INTO Remembers (id, user, text, date, word) SELECT id, user, text, date, word FROM Remembers_bak',
+      'DROP TABLE Remembers_bak'
+    ]
+  }
 })
 
 CRUD.setAdapter(new CRUD.SQLiteAdapter(dbFile, {

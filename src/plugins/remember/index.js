@@ -17,6 +17,10 @@ export const plugin_info = [{
   command: 'removeRemember',
   usage: 'removeRemember <word> - removes a remembered word',
   userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['protectremember'],
+  userLevel: ['superadmin'],
+  command: 'protectRemember'
 }]
 
 export function rememberList(user, channel, input) {
@@ -24,10 +28,11 @@ export function rememberList(user, channel, input) {
     if (!input) {
       CRUD.executeQuery(`SELECT DISTINCT word from Remembers`).then(res => {
         const words = _.sortBy(_.get(res, ['rs', 'rows', '_array'], []).map((w = {}) => w.word), a => a.toLowerCase())
+        console.log(words)
         if (words.length) {
           const data = table(_.chunk(words, 7).map(a => {
             if (a.length < 7) {
-              return [...a, ..._.times(7 - a.length, _.constant(''))]
+              return [ ...a, ..._.times(7 - a.length, _.constant(' ')) ]
             }
             return a
           }), {
@@ -79,6 +84,10 @@ export function removeRemember(user, channel, input) {
         return reject('Word does not exist')
       }
 
+      if (word.protected) {
+        return reject('Error: This remember is protected from editing or deletion')
+      }
+
       word.Delete().then(() => {
         resolve({ type: 'channel', message: 'Successfully deleted' })
       }, err => {
@@ -103,6 +112,10 @@ export function remember(user, channel, input) {
     }
 
     Remembers.findOneByWord(word).then(existing => {
+      if (existing && existing.protected) {
+        return reject('Error: Remember is protected from editing or deletion')
+      }
+
       const newRemember = new Remembers()
       newRemember.user = user.name
       newRemember.word = word
@@ -118,4 +131,17 @@ export function remember(user, channel, input) {
       })
     })
   })
+}
+
+export async function protectRemember(user, channel, input) {
+  if (!input) throw 'Usage: protectremember <word> - protects a remember from being edited or deleted'
+
+  const word = await Remembers.findOneByWord(input)
+
+  if (!word) throw 'Word does not exist'
+
+  word.protected = 1
+  await word.Persist()
+
+  return { type: 'channel', message: 'Protected!' }
 }
