@@ -1,13 +1,14 @@
 import moment from 'moment'
 import needle from 'needle'
 import { filter, capitalize, truncate } from 'lodash'
-var AUDRate;
+import striptags from 'striptags'
+var AUDRate
 
 const formatTimeCreated = time => {
   if (!time) return null
   const timeCreated = moment(time * 1000)
   const diff = moment().diff(timeCreated, 'years')
-  return `${timeCreated.format("dddd, Do MMMM YYYY")} _(${diff == 0 ? 'Less than a year' : (diff + ' year' + (diff == 1 ? '' : 's'))})_`
+  return `${timeCreated.format("dddd, Do MMMM YYYY")} _(${diff === 0 ? 'Less than a year' : (diff + ' year' + (diff === 1 ? '' : 's'))})_`
 }
 
 const formatLastOnline = time => {
@@ -21,9 +22,9 @@ const getGameTime = game => {
   const duration = moment.duration(game.playtime_2weeks, 'm')
   const hours = Math.round(duration.asHours())
   if (hours) {
-    return `${hours} hour` + (hours == 1 ? '' : 's')
+    return `${hours} hour` + (hours === 1 ? '' : 's')
   } else {
-    return `${game.playtime_2weeks} minute` + (game.playtime_2weeks == 1 ? '' : 's')
+    return `${game.playtime_2weeks} minute` + (game.playtime_2weeks === 1 ? '' : 's')
   }
 }
 
@@ -35,11 +36,11 @@ export function generateProfileResponse(profile) {
   const msg = [
     `*Profile Name:* ${profile.personaname} ${realname}`,
     `*Level:* ${profile.user_level} | *Status:* ${status}`,
-    status == 'Offline' ? `*Last Online:* ${formatLastOnline(profile.lastlogoff)}` : null,
+    status === 'Offline' ? `*Last Online:* ${formatLastOnline(profile.lastlogoff)}` : null,
     joined ? `*Joined Steam:* ${joined}` : null,
     profile.totalgames ? `*Total Games:* ${profile.totalgames || "Unknown"} | *Most Played:* ${profile.mostplayed.name || "Unknown"} w/ ${formatPlaytime(profile.mostplayed.playtime_forever)}` : null,
     profile.bans ? profile.bans.VACBanned ? `*This user has ${profile.bans.NumberOfVACBans} VAC ban/s on record!*` : null : null,
-    profile.communityvisibilitystate == 1 ? '*This is a private profile*' : null
+    +profile.communityvisibilitystate === 1 ? '*This is a private profile*' : null
   ]
 
   const out = {
@@ -49,8 +50,8 @@ export function generateProfileResponse(profile) {
       "author_icon": profile.avatar,
       "author_link": profile.profileurl,
       "color": "#14578b",
-      //"text": msg.filter(Boolean).join('\n'),
-      "fallback": msg.filter(Boolean).join(' | ').replace(/[\*\_]/g, '')
+      // "text": msg.filter(Boolean).join('\n'),
+      "fallback": msg.filter(Boolean).join(' | ').replace(/[*_]/g, '')
     }]
   }
 
@@ -69,6 +70,8 @@ export function generateAppDetailsResponse(app, cc = 'US') {
   let price = getPriceForApp(app)
   let date = getDateForApp(app)
 
+  console.log(app)
+
   let out = {
     attachments: [{
       "fallback": `${app.name} (${app.steam_appid}) | Cost: ${price} | Current Players: ${app.player_count ? formatNumber(app.player_count) : null}`,
@@ -85,7 +88,7 @@ export function generateAppDetailsResponse(app, cc = 'US') {
     "short": true
   }, {
     "title": "Real Cost",
-    "value": (AUDRate && cc.toUpperCase() == 'AU') ? '~$' + formatCurrency((app.price_overview.final / 100) * AUDRate, 'AUD') : null,
+    "value": (AUDRate && cc.toUpperCase() === 'AU') ? '~$' + formatCurrency((app.price_overview.final / 100) * AUDRate, 'AUD') : null,
     "short": true
   }, {
     "title": app.release_date ? (app.release_date.coming_soon ? "Release Date" : "Released") : null,
@@ -115,11 +118,14 @@ export function generateAppDetailsResponse(app, cc = 'US') {
     "title": "Demo",
     "value": app.demos ? 'Demos available' : null,
     "short": true
+  }, {
+    "title": "Overview",
+    "value": striptags(app.short_description)
   }], 'value')
   return out
 }
 
-export function generatePlayersResponse(app)  {
+export function generatePlayersResponse(app) {
   return `There are currently *${formatNumber(app.player_count)}* people playing _${app.name}_ right now`
 }
 
@@ -131,9 +137,9 @@ const getPriceForApp = app => {
   if (app.is_free)
     return 'This game is Free 2 Play, yay :)'
   else if (app.price_overview && app.price_overview.discount_percent > 0)
-    return (`~$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final/100, app.price_overview.currency)}* \n ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`)
+    return (`~$${formatCurrency(app.price_overview.initial / 100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final / 100, app.price_overview.currency)}* \n ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`)
   else if (app.price_overview)
-    return (`$${formatCurrency(app.price_overview.initial/100, app.price_overview.currency)}`)
+    return (`$${formatCurrency(app.price_overview.initial / 100, app.price_overview.currency)}`)
   else
     return '_Unknown_'
 }
@@ -144,19 +150,19 @@ const getDateForApp = app => {
   else return app.release_date.date
 }
 
-const getPersonaState = (state => {
+const getPersonaState = state => {
   switch (state) {
-    case 1: //Online
-    case 2: //Busy
-    case 3: //Away
-    case 4: //Snooze
-    case 5: //Looking to trade
-    case 6: //Looking to play
+    case 1: // Online
+    case 2: // Busy
+    case 3: // Away
+    case 4: // Snooze
+    case 5: // Looking to trade
+    case 6: // Looking to play
       return 'Online'
     default: // 0
       return 'Offline'
   }
-})
+}
 
 const getAUDRate = () => needle.get('http://api.fixer.io/latest?base=USD', (err, resp, body) => {
   if (!err && body && body.rates) AUDRate = body.rates.AUD

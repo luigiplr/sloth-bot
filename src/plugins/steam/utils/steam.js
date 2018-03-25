@@ -96,11 +96,17 @@ const searchForApp = (query, isAppID) => {
   })
 }
 
-const getPlayersForApp = appid => {
+const getPlayersForApp = (appid, allowUnknown) => {
   return new Promise((resolve, reject) => needle.get(getUrl('numPlayers', appid), (err, resp, body) => {
     if (!err && body && body.response) {
       if (typeof body.response.player_count !== 'undefined') return resolve(body.response)
-      else return reject('Unable to view player counts for this app')
+      else {
+        if (allowUnknown) {
+          return resolve({})
+        }
+
+        return reject('Unable to view player counts for this app')
+      }
     }
 
     return reject('Error retrieving player counts')
@@ -166,7 +172,7 @@ export function getAppInfo(appid, cc = 'US', playersOnly) {
   return new Promise((resolve, reject) => {
     const isAppID = appid.match(/^\d+$/)
     searchForApp(appid, isAppID).then(id => {
-      Promise.all([getAppDetails(id, cc), getPlayersForApp(id)]).then(([app, players]) => {
+      Promise.all([getAppDetails(id, cc), getPlayersForApp(id, !playersOnly)]).then(([app, players]) => {
         if (playersOnly) {
           players.name = app.name
           return resolve(players)
