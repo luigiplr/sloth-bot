@@ -24,6 +24,10 @@ export function parse(user, channel, text, ts) {
 
     // Sedbot
     if (!config.sed.disabled && text.startsWith('s/')) {
+      if (((permissions.allIgnored.indexOf(username) > -1) && userLevel !== 'superadmin')) {
+        return resolve(false)
+      }
+
       var split = text.split('/')
       if (split.length >= 3) {
         var [, word, replacement, who] = split
