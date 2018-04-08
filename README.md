@@ -35,6 +35,7 @@ config.json should resemble:
 
   "cookies": [ ],
 
+  "owner": "",
   "noDisable": [ ],
   "viewConfigs": [ ],
   "logMessages": false,
@@ -63,6 +64,8 @@ config.json should resemble:
 * Steam API Key: You'll need a SteamAPI key to make use of most of the Steam functions, you can generate one here; https://steamcommunity.com/dev
 * Wolfram API Key: WolframAlpha API key to make use of their engine
 * Trakt.tv API Key: API Key for using the movie/show details plugin. In order to get a key you need to create a new app here; https://trakt.tv/oauth/applications . Once you have made an app, the API key is the client_id for the app.
+* TMDB API Key: API Key the trakt funcationality, currently only used to get poster images.
+* 500px API Key: API Key for the 500px API
 
 
 ## License
