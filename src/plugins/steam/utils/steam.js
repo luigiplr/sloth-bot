@@ -5,18 +5,18 @@ import SteamID from 'steamid'
 const filters = ['basic', 'price_overview', 'release_date', 'metacritic', 'developers', 'genres', 'demos'].join(',')
 const token = require('./../../../../config.json').steamAPIKey
 const endpoints = {
-  profile: `http://steamcommunity.com/id/%q%/?xml=1`, // Unused
-  profileSummary: `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${token}&steamids=%q%`,
-  miniProfile: `http://steamcommunity.com/miniprofile/%q%`, // Unused
-  gameSummary: `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${token}&steamid=%q%&include_played_free_games=1`,
-  gameRecent: `http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${token}&steamid=%q%`,
-  appDetailsBasic: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=basic`,
-  appDetails: `http://store.steampowered.com/api/appdetails?appids=%q%&filters=${filters}&cc=%cc%`,
-  packageDetails: `http://store.steampowered.com/api/packagedetails/?packageids=%q%&cc=us`, // Unused
-  searchApps: `http://steamcommunity.com/actions/SearchApps/%q%`,
-  numPlayers: `http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%q%`,
-  userBans: `http://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=${token}&steamids=%q%`,
-  appList: `http://api.steampowered.com/ISteamApps/GetAppList/v0002/`, // Unused
+  profile: `https://steamcommunity.com/id/%q%/?xml=1`, // Unused
+  profileSummary: `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${token}&steamids=%q%`,
+  miniProfile: `https://steamcommunity.com/miniprofile/%q%`, // Unused
+  gameSummary: `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${token}&steamid=%q%&include_played_free_games=1`,
+  gameRecent: `https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${token}&steamid=%q%`,
+  appDetailsBasic: `https://store.steampowered.com/api/appdetails?appids=%q%&filters=basic`,
+  appDetails: `https://store.steampowered.com/api/appdetails?appids=%q%&filters=${filters}&cc=%cc%`,
+  packageDetails: `https://store.steampowered.com/api/packagedetails/?packageids=%q%&cc=us`, // Unused
+  searchApps: `https://steamcommunity.com/actions/SearchApps/%q%`,
+  numPlayers: `https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%q%`,
+  userBans: `https://api.steampowered.com/ISteamUser/GetPlayerBans/v0001/?key=${token}&steamids=%q%`,
+  appList: `https://api.steampowered.com/ISteamApps/GetAppList/v0002/`, // Unused
   userLevel: `https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${token}&steamid=%q%`,
   resolveVanity: `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${token}&vanityurl=%q%`,
   userWishList: `https://store.steampowered.com/wishlist/profiles/%q%`
