@@ -15,20 +15,21 @@ export function lodash(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!input) return resolve({ type: 'dm', message: 'Usage: lodash <command> | Searches for lodash function' })
 
-    let method = input == '_' ? input : input.replace('_.', '').replace('_', '')
+    let method = input === '_' ? input : input.replace('_.', '').replace('_', '')
     if (lodashFunctions[method.toLowerCase()]) {
-      let cmd = lodashFunctions[method.toLowerCase()];
+      let cmd = lodashFunctions[method.toLowerCase()]
       let msg = cmd.dontShow ? [`<https://lodash.com/docs#${cmd.name}|lodash.com/docs#${cmd.name}>`] : [
         `*Method:* _.${cmd.name}`,
         `*Command:* \`${cmd.command}\``,
         `*Since:* ${cmd.since}`,
         `*Description:* ${cmd.description}`,
         `https://lodash.com/docs#${cmd.name}`
-      ];
-      return resolve({ type: 'channel', messages: msg, options: { unfurl_links: false }})
+      ]
+
+      return resolve({ type: 'channel', messages: msg, options: { unfurl_links: false } })
     } else {
       var match = matcher.get(method)
-      if (match) return resolve({ type: 'message', message: `No function by that name, did you mean \`${match}\`?`})
+      if (match) return resolve({ type: 'message', message: `No function by that name, did you mean \`${match}\`?` })
       else return reject('No function by that name')
     }
   })
