@@ -7,9 +7,9 @@ Slack bot full of fun commands
 
 ## Usage
 ##### Dev Mode
-```gulp start-dev```
+```npm run dev```
 ##### Build and run
-```gulp build``` and ```node index.js```
+```npm run build``` and ```npm run start```
 ##### Running forever
 You can use the `forever` npm module to run this bot  
 in the background forever using the command:  
