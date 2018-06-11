@@ -119,8 +119,9 @@ export function getUserWishlist(id) {
       if (!err && body) {
         try {
           const wishlistData = JSON.parse(body.match(/var g_rgAppInfo ? = ?({.+});/)[1])
+          const sortedData = _.sortBy(_.map(wishlistData, (data, appid) => ({ appid, ...data, priority: data.priorty === 0 ? null : data.priority })), 'priority')
 
-          return resolve(_.sortBy(_.map(wishlistData, (data, appid) => ({ appid, ...data })), 'priority'))
+          return resolve(sortedData)
         } catch (e) {
           if (body.match(/var g_rgWishlistData = \[\];/)) {
             return resolve({ empty: true })

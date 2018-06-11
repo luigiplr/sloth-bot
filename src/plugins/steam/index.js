@@ -96,7 +96,7 @@ export async function wishlist(user, channel, input) {
     return { type: 'channel', message: `${input} has nothing on their wishlist` }
   }
 
-  const games = wishlist.slice(0, 10)
+  const games = wishlist.slice(0, 12)
   if (games.length === 0) {
     throw 'Wishlist is empty??'
   }
@@ -106,7 +106,7 @@ export async function wishlist(user, channel, input) {
     '```',
     ...games.map(({ name, appid, priority }) => ` ${priority < 10 ? ' ' : ''}${priority}. ${pad('[' + appid + ']', 8, ' ')} ${name}`),
     '```',
-    wishlist.length > 10 ? `_Plus ${wishlist.length - 10} more games not shown_` : void 0
+    wishlist.length > 12 ? `_Plus ${wishlist.length - 12} more games not shown_` : void 0
   ].filter(Boolean).join('\n')
 
   return { type: 'channel', message: msg }
