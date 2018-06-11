@@ -2,6 +2,7 @@ import moment from 'moment'
 import needle from 'needle'
 import { filter, capitalize, truncate } from 'lodash'
 import striptags from 'striptags'
+import config from '../../../../config.json'
 var AUDRate
 
 const formatTimeCreated = time => {
@@ -135,7 +136,7 @@ const formatPlaytime = time => !time ? "Unknown" : time < 120 ? `${time} minutes
 
 const getPriceForApp = app => {
   if (app.is_free)
-    return 'This game is Free 2 Play, yay :)'
+    return 'FREE'
   else if (app.price_overview && app.price_overview.discount_percent > 0)
     return (`~$${formatCurrency(app.price_overview.initial / 100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final / 100, app.price_overview.currency)}* \n ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`)
   else if (app.price_overview)
@@ -164,17 +165,22 @@ const getPersonaState = state => {
   }
 }
 
-const getAUDRate = () => needle.get('http://api.fixer.io/latest?base=USD', (err, resp, body) => {
-  if (!err && body && body.rates) AUDRate = body.rates.AUD
-  else console.error("Error fetching AUD Rate")
+const currencyAPI = `http://www.apilayer.net/api/live?access_key=${config.currencyLayerAPIKey}&currencies=AUD&source=USD`
+const getAUDRate = () => needle.get(currencyAPI, (err, resp, body) => {
+  if (!err && body && body.quotes) {
+    AUDRate = body.quotes.USDAUD
+    return
+  }
+
+  console.error("Error fetching AUD Rate")
 })
 
-// Fetch AUD rate on startup and update every 24 hours
+// Fetch AUD rate on startup and update every 12 hours
 setTimeout(() => {
   console.log("Fetching AUD Rate")
   setInterval(() => {
     console.log("Updating AUD Rate")
     getAUDRate()
-  }, 86403600)
+  }, 4.32e+7)
   getAUDRate()
 }, 2000)
