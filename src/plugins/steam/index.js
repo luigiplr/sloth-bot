@@ -94,9 +94,9 @@ export async function wishlist(user, channel, input) {
 
   const userAlias = await tryGetUserAlias(input, 'steam')
 
-  const wishlist = await getUserWishlist(userAlias || input)
+  const { empty, data: wishlist, id } = await getUserWishlist(userAlias || input)
 
-  if (wishlist.empty) {
+  if (empty) {
     return { type: 'channel', message: `${input} has nothing on their wishlist` }
   }
 
@@ -110,7 +110,8 @@ export async function wishlist(user, channel, input) {
     '```',
     ...games.map(({ name, appid, priority }, i) => ` ${i + 1 < 10 ? ' ' : ''}${i + 1}. ${pad('[' + appid + ']', 8, ' ')} ${name}`),
     '```',
-    wishlist.length > 12 ? `_Plus ${wishlist.length - 12} more games not shown_` : void 0
+    wishlist.length > 12 ? `_Plus ${wishlist.length - 12} more games not shown_` : void 0,
+    `_ Wishlist Link: store.steampowered.com/wishlist/profiles/${id} _`
   ].filter(Boolean).join('\n')
 
   return { type: 'channel', message: msg }

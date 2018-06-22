@@ -121,7 +121,7 @@ export function getUserWishlist(id) {
           const wishlistData = JSON.parse(body.match(/var g_rgAppInfo ? = ?({.+});/)[1])
           const sortedData = _.sortBy(_.map(wishlistData, (data, appid) => ({ appid, ...data, priority: data.priority === 0 ? null : data.priority })), 'priority')
 
-          return resolve(sortedData)
+          return resolve({ data: sortedData, id: newID })
         } catch (e) {
           if (body.match(/var g_rgWishlistData = \[\];/)) {
             return resolve({ empty: true })
