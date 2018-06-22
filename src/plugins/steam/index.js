@@ -151,10 +151,10 @@ export async function doIOwn(user, channel, input) {
   }
 }
 
-export function gamelink(user, channel, input) {
+export async function gamelink(user, channel, input) {
   if (!input) return 'Specify an AppID please.'
 
   if (!input.match(/^\d+$/)) return 'AppID must be a number!'
 
-  return `store.steampowered.com/app/${input}`
+  return { type: 'channel', message: `store.steampowered.com/app/${input}` }
 }
