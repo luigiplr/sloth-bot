@@ -104,7 +104,7 @@ export async function wishlist(user, channel, input) {
   const msg = [
     `*Top ${games.length} games in wishlist for ${input}*`,
     '```',
-    ...games.map(({ name, appid, priority }, i) => ` ${i < 10 ? ' ' : ''}${i}. ${pad('[' + appid + ']', 8, ' ')} ${name}`),
+    ...games.map(({ name, appid, priority }, i) => ` ${i + 1 < 10 ? ' ' : ''}${i + 1}. ${pad('[' + appid + ']', 8, ' ')} ${name}`),
     '```',
     wishlist.length > 12 ? `_Plus ${wishlist.length - 12} more games not shown_` : void 0
   ].filter(Boolean).join('\n')
