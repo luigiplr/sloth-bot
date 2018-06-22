@@ -34,6 +34,10 @@ export const plugin_info = [{
   alias: ['doiown', 'dio'],
   command: 'doIOwn',
   usage: 'doiown <game|appid> - checks if you own a steam game'
+}, {
+  alias: ['applink', 'gamelink'],
+  command: 'gamelink',
+  usage: 'gamelink <appid> - returns steam link for an appid'
 }]
 
 export async function steamProfile(user, channel, input) {
@@ -145,4 +149,12 @@ export async function doIOwn(user, channel, input) {
     console.error(e)
     return { type: 'channel', message: typeof e === 'string' ? e : 'Something went wrong' }
   }
+}
+
+export function gamelink(user, channel, input) {
+  if (!input) return 'Specify an AppID please.'
+
+  if (!input.match(/^\d+$/)) return 'AppID must be a number!'
+
+  return `store.steampowered.com/app/${input}`
 }
