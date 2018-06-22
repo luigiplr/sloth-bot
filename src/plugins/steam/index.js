@@ -97,7 +97,7 @@ export async function wishlist(user, channel, input) {
   const { empty, data: wishlist, id } = await getUserWishlist(userAlias || input)
 
   if (empty) {
-    return { type: 'channel', message: `${input} has nothing on their wishlist` }
+    return { type: 'channel', message: `${input} has nothing on their wishlist or their profile is private.` }
   }
 
   const games = wishlist.slice(0, 12)
