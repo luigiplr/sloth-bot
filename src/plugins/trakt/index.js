@@ -2,6 +2,7 @@ import { filter, truncate, capitalize, floor } from 'lodash'
 import moment from 'moment'
 import config from '../../../config.json'
 import { getSerieDetails, getMovieDetails } from './utils/trakt'
+import youtubeUrl from 'youtube-url'
 
 if (!config.traktAPIKey) console.error("Error: Trakt Plugin requires traktAPIKey")
 
@@ -46,11 +47,16 @@ export function redirect() {
 
 const generateMovieResponse = movie => {
   if (!movie) return 'Error: Missing movie data while generating response'
+
   if (movie.runtime) {
     var time = moment.duration(movie.runtime, 'minutes')
-    var duration = type => time[type]() !== 0 ? `${time[type]()} ${type.slice(0, -1)}${(time[type]() > 1 ? 's' : '')}` : false
-    var runtime = ['hours', 'minutes'].map(duration).filter(Boolean).join(' and ')
+    var duration = type => time[type]() !== 0 ? `${time[type]()}${type.slice(0, 1)}` : false
+    var runtime = ['hours', 'minutes'].map(duration).filter(Boolean).join(' ')
   }
+
+  const trailer = youtubeUrl.valid(movie.trailer)
+    ? `http://youtu.be/${youtubeUrl.extractId(movie.trailer)}`
+    : movie.trailer
 
   let out = {
     attachments: [{
@@ -70,7 +76,7 @@ const generateMovieResponse = movie => {
     "short": false
   }, {
     "title": "Released",
-    "value": movie.released ? moment(movie.released).format('MMMM Do YYYY') : null,
+    "value": movie.released ? moment(movie.released).format('MMM Do YYYY') : null,
     "short": true
   }, {
     "title": "Runtime",
@@ -90,7 +96,7 @@ const generateMovieResponse = movie => {
     "short": true
   }, {
     "title": "Trailer",
-    "value": movie.trailer && movie.trailer.includes('youtube') ? movie.trailer.replace(/^(https?):\/\//, '') : null,
+    "value": trailer || null,
     "short": true
   }, {
     "title": "Homepage",
@@ -104,6 +110,11 @@ const generateShowResponse = serie => {
   if (!serie) return 'Error: Missing serie data while generating response'
   if (serie.seasons[0].number === 0) serie.seasons.shift() // Don't count specials season
   if (serie.seasons[serie.seasons.length - 1].aired_episodes === 0) serie.seasons.pop() // Ignore last season if no aired episodes
+
+  const trailer = youtubeUrl.valid(serie.trailer)
+    ? `http://youtu.be/${youtubeUrl.extractId(serie.trailer)}`
+    : serie.trailer
+
   let out = {
     attachments: [{
       "title": `${serie.title} (${serie.year || 'Unknown'})`,
@@ -121,7 +132,7 @@ const generateShowResponse = serie => {
     "short": false
   }, {
     "title": "First Aired",
-    "value": serie.first_aired ? moment(serie.first_aired).format('MMMM Do YYYY') : null,
+    "value": serie.first_aired ? moment(serie.first_aired).format('MMM Do YYYY') : null,
     "short": true
   }, {
     "title": "Status",
@@ -145,7 +156,7 @@ const generateShowResponse = serie => {
     "short": true
   }, {
     "title": "Trailer",
-    "value": serie.trailer && serie.trailer.includes('youtube') ? serie.trailer.replace(/^(https?):\/\//, '') : null,
+    "value": trailer || null,
     "short": true
   }, {
     "title": "Homepage",
