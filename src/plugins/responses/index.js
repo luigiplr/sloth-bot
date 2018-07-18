@@ -87,6 +87,10 @@ export const plugin_info = [{
   alias: ['showerthought'],
   command: 'showerthought',
   usage: 'showerthought - returns a shower thought'
+}, {
+  alias: ['hellosnake', 'snek'],
+  command: 'snek',
+  usage: 'hellosnake - returns a snake'
 }]
 
 const _cleanInput = input => {
@@ -308,6 +312,19 @@ export async function advice() {
   try {
     const { slip: { advice } } = JSON.parse(data.body)
     return { type: 'channel', message: advice }
+  } catch (e) {
+    throw 'Error parsing data'
+  }
+}
+
+export async function snek() {
+  const data = await needle('get', 'http://fur.im/snek/')
+
+  if (data.statusCode !== 200) throw 'Error fetching advice'
+
+  try {
+    const { file } = JSON.parse(data.body)
+    return { type: 'channel', message: file }
   } catch (e) {
     throw 'Error parsing data'
   }
