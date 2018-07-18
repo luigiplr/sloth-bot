@@ -320,7 +320,7 @@ export async function advice() {
 export async function snek() {
   const data = await needle('get', 'http://fur.im/snek/')
 
-  if (data.statusCode !== 200) throw 'Error fetching advice'
+  if (data.statusCode !== 200) throw 'Error fetching snek'
 
   try {
     const { file } = JSON.parse(data.body)
