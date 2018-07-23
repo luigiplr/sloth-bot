@@ -19,7 +19,7 @@ export async function stackoverflow(user, channel, input) {
     throw 'Error getting data from Stack Overflow'
   }
 
-  if (!data.body || !data.body.items || data.body.items.length === 0) {
+  if (_.get(data, ['body', 'items'], []).length === 0) {
     throw 'Got no results'
   }
 
