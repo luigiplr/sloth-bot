@@ -25,8 +25,6 @@ export function wolfram(user, channel, input) {
         return reject('Error returned from Wolfram')
       }
 
-      // require('fs').writeFileSync('./shit.json', JSON.stringify(body, null, 2))
-
       const interpretationTitle = _.get(body, ['children', 0, 'attributes', 'title'])
       const interpretation = _.find(_.get(body, ['children', 0, 'children', 0, 'children'], []), { name: 'plaintext' })
 
