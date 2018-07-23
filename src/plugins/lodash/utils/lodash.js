@@ -1,4 +1,4 @@
-// Last Updated 25/04/2017 v4.17.4
+// Last Updated 23/07/2018 v4.17.10
 module.exports = {
   "chunk": {
     "name": "chunk",
@@ -543,7 +543,7 @@ module.exports = {
   "now": {
     "name": "now",
     "command": "_.now()",
-    "description": "Gets the timestamp of the number of milliseconds that have elapsed since the Unix epoch (1 January 1970 00:00:00 UTC).",
+    "description": "Gets the timestamp of the number of milliseconds that have elapsed since the Unix epoch (1 January `1970 00`:00:00 UTC).",
     "since": "2.4.0"
   },
   "after": {
@@ -1489,7 +1489,7 @@ module.exports = {
   "escaperegexp": {
     "name": "escapeRegExp",
     "command": "_.escapeRegExp([string=''])",
-    "description": "Escapes the `RegExp` special characters \"^\", \"$\", \"\\\", \".\", \"*\", \"+\", \"?\", \"(\", \")\", \"[\", \"]\", \"{\", \"}\", and \"|\" in `string`.",
+    "description": "Escapes the `RegExp` special characters \"^\", \"$\", \"\", \".\", \"*\", \"+\", \"?\", \"(\", \")\", \"[\", \"]\", \"{\", \"}\", and \"|\" in `string`.",
     "since": "3.0.0"
   },
   "kebabcase": {
@@ -1572,7 +1572,9 @@ module.exports = {
   },
   "template": {
     "name": "template",
-    "dontShow": true
+    "command": "_.template([string=''], [options={}])",
+    "description": "Creates a compiled template function that can interpolate data properties in \"interpolate\" delimiters, HTML-escape interpolated data properties in \"escape\" delimiters, and execute JavaScript in \"evaluate\" delimiters. Data properties may be accessed as free variables in the template. If a setting object is given, it takes precedence over `_.templateSettings` values. Note: In the development build `_.template` utilizes sourceURLs for easier debugging. For more information on precompiling templates see lodash's custom builds documentation. For more information on Chrome extension sandboxes see Chrome's extensions documentation.",
+    "since": "0.1.0"
   },
   "tolower": {
     "name": "toLower",

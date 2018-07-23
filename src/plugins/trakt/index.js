@@ -140,7 +140,7 @@ const generateShowResponse = serie => {
     "short": true
   }, {
     "title": "Aired Episodes",
-    "value": `${serie.aired_episodes} Episode${serie.aired_episodes == 1 ? '' : 's'} | ${serie.seasons.length} Season${serie.seasons.length === 1 ? '' : 's'}`,
+    "value": `${serie.aired_episodes} Episode${serie.aired_episodes === 1 ? '' : 's'} | ${serie.seasons.length} Season${serie.seasons.length === 1 ? '' : 's'}`,
     "short": true
   }, {
     "title": "Genres",
