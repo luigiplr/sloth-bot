@@ -33,6 +33,7 @@
     "cheerio": "^0.22.0",
     "cli-table2": "^0.2.0",
     "codepad": "^0.1.1",
+    "color": "^3.0.0",
     "createreadupdatedelete.js": "^0.8.0",
     "did-you-mean": "0.0.1",
     "eightball": "^1.0.1",
