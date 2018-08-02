@@ -55,11 +55,12 @@ export async function getQuotes(user, page = 1) {
 
   const totalQuotes = _.get(quoteCount, ['rs', 'rows', '_array', 0, 'count'])
   const totalPages = Math.ceil(+totalQuotes / QUOTES_PER_PAGE)
-  const quotes = [`*${user.name} Quotes* _(Page ${page}/${totalPages})_:`]
-
-  rows.forEach((quote, i) => {
-    quotes.push(`[${(i + offset) - +totalQuotes}] (${moment(quote.grabbed_at).format('DD-MM-YYYY')}) ${quote.message}`)
-  })
+  const quotes = [
+    `Quotes for *${user.name}* _(Page ${page}/${totalPages})_:`,
+    '```',
+    ...rows.map((quote, i) => `[${(i + offset) - +totalQuotes}] (${moment(quote.grabbed_at).format('DD-MM-YYYY')}) ${quote.message}`),
+    '```'
+  ]
 
   return quotes
 }
