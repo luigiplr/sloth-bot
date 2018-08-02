@@ -3,6 +3,7 @@ import moment from 'moment'
 import CliTable from 'cli-table2'
 import CRUD, { Quotes } from '../../../database'
 import { getHistory, findUser } from '../../../slack.js'
+import sqlify from 'sqlstring'
 import config from '../../../../config.json'
 
 export async function getQuote(user, index = 0) {
@@ -13,7 +14,8 @@ export async function getQuote(user, index = 0) {
 
   let data
   try {
-    data = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = '${u.name}' ORDER BY DATETIME(grabbed_at) DESC`)
+    const username = sqlify.escape(u.name)
+    data = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC`)
   } catch (e) {
     return `Error fetching quote. ${e.message}`
   }
@@ -30,32 +32,36 @@ export async function getQuote(user, index = 0) {
   }
 }
 
-export function getQuotes(user, page = 1) {
-  return new Promise((resolve, reject) => {
-    user = findUser(user)
-    if (!user) {
-      return reject("Couldn't find a user by that name")
-    }
+const QUOTES_PER_PAGE = 10
 
-    page = _.isNumber(+page) && !_.isNaN(+page) ? page <= 0 ? 1 : +page : 1
-    const offset = 15 * page - 15
+export async function getQuotes(user, page = 1) {
+  user = findUser(user)
+  if (!user) throw "Couldn't find a user by that name"
 
-    const query = `SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATETIME(grabbed_at) DESC LIMIT 15 OFFSET ${offset}`
-    CRUD.executeQuery(query).then(results => {
-      const rows = _.get(results, ['rs', 'rows', '_array'], [])
-      if (rows.length > 0) {
-        const quotes = [`<${user.name}> Quotes (Page ${page}):`]
+  page = _.isNumber(+page) && !_.isNaN(+page) ? page <= 0 ? 1 : +page : 1
+  const offset = QUOTES_PER_PAGE * page - QUOTES_PER_PAGE
 
-        rows.forEach((quote, i) => {
-          quotes.push(urlify(`[${i + offset}] (${moment(quote.grabbed_at).format('DD-MM-YYYY')}) ${quote.message}`))
-        })
+  const username = sqlify.escape(user.name)
+  const [ quotesData, quoteCount ] = await Promise.all([
+    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 10 OFFSET ${offset}`),
+    CRUD.executeQuery(`SELECT count(*) AS count FROM Quote WHERE user = ${username}`)
+  ])
 
-        return resolve(quotes)
-      } else {
-        return reject(page === 1 ? 'User has no quotes' : 'User has no more quotes')
-      }
-    })
+  const rows = _.get(quotesData, ['rs', 'rows', '_array'], [])
+
+  if (rows.length === 0) {
+    throw page === 1 ? 'User has no quotes' : 'User has no more quotes'
+  }
+
+  const totalQuotes = _.get(quoteCount, ['rs', 'rows', '_array', 0, 'count'])
+  const totalPages = Math.ceil(+totalQuotes / QUOTES_PER_PAGE)
+  const quotes = [`*${user.name} Quotes* _(Page ${page}/${totalPages})_:`]
+
+  rows.forEach((quote, i) => {
+    quotes.push(`[${(i + offset) - +totalQuotes}] (${moment(quote.grabbed_at).format('DD-MM-YYYY')}) ${quote.message}`)
   })
+
+  return quotes
 }
 
 export function getRandomQuote(user) {
@@ -65,7 +71,8 @@ export function getRandomQuote(user) {
       if (!user) return reject("Couldn't find a user by that name")
     }
 
-    const query = 'SELECT * FROM Quote WHERE id IN (SELECT id FROM Quote' + (user ? ` WHERE user = '${user.name}'` : '') + ' ORDER BY RANDOM() LIMIT 1)'
+    const username = user && sqlify.escape(user.name)
+    const query = 'SELECT * FROM Quote WHERE id IN (SELECT id FROM Quote' + (user ? ` WHERE user = ${username}` : '') + ' ORDER BY RANDOM() LIMIT 1)'
     CRUD.executeQuery(query).then(result => {
       const rows = _.get(result, ['rs', 'rows', '_array'], [])
       if (rows.length > 0) {
@@ -84,7 +91,10 @@ export async function getQuoteInfo(user, index) {
 
   index = _.isNumber(+index) && !_.isNaN(+index) ? +index : 0
   let offset = index
-  const total = _.get(await CRUD.executeQuery(`SELECT count(*) as c FROM Quote WHERE user = '${user.name}'`), ['rs', 'rows', '_array', 0, 'c'])
+
+  const username = sqlify.escape(user.name)
+  const totalQuotesData = await CRUD.executeQuery(`SELECT count(*) as c FROM Quote WHERE user = ${username}`)
+  const total = _.get(totalQuotesData, ['rs', 'rows', '_array', 0, 'c'])
   if (!total) throw 'Error getting total quotes'
 
   if (index < 0) {
@@ -94,9 +104,8 @@ export async function getQuoteInfo(user, index) {
     }
   }
 
-  const query = `SELECT * FROM Quote WHERE user = '${user.name}' ORDER BY DATETIME(grabbed_at) DESC LIMIT 1 OFFSET ${offset}`
-  const data = await CRUD.executeQuery(query)
-  const quote = _.get(data, ['rs', 'rows', '_array', 0])
+  const quoteData = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 1 OFFSET ${offset}`)
+  const quote = _.get(quoteData, ['rs', 'rows', '_array', 0])
 
   if (!quote) {
     throw 'Offset is greater than total quotes'
