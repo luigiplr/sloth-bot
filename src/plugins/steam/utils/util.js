@@ -135,14 +135,12 @@ const formatCurrency = (n, currency) => n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)
 const formatPlaytime = time => !time ? "Unknown" : time < 120 ? `${time} minutes` : `${Math.floor(time / 60)} hours`
 
 const getPriceForApp = app => {
-  if (app.is_free)
-    return 'FREE'
-  else if (app.price_overview && app.price_overview.discount_percent > 0)
-    return (`~$${formatCurrency(app.price_overview.initial / 100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final / 100, app.price_overview.currency)}* \n ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`)
-  else if (app.price_overview)
-    return (`$${formatCurrency(app.price_overview.initial / 100, app.price_overview.currency)}`)
-  else
-    return '_Unknown_'
+  if (app.is_free) return 'FREE'
+  else if (app.price_overview && app.price_overview.discount_percent > 0) {
+    return `~$${formatCurrency(app.price_overview.initial / 100, app.price_overview.currency)}~ - *$${formatCurrency(app.price_overview.final / 100, app.price_overview.currency)}* \n ${app.price_overview.discount_percent}% OFF!!! :eyes::scream:`
+  } else if (app.price_overview) {
+    return `$${formatCurrency(app.price_overview.initial / 100, app.price_overview.currency)}`
+  } else return '_Unknown_'
 }
 
 const getDateForApp = app => {

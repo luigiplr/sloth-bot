@@ -33,7 +33,7 @@ export function googleSearch(user, channel, input) {
     if (!config.googleAPIKey || !config.cseSearchID) return reject("Error: Google API Key and CSE Key are required to use this function")
 
     const lastWord = last(input.split(' '))
-    const index = lastWord.startsWith('-') ? parseInt(lastWord.slice(1)) || 0  : 0
+    const index = lastWord.startsWith('-') ? parseInt(lastWord.slice(1)) || 0 : 0
 
     const url = `${baseURL}&q=${input}&cx=${config.cseSearchID}`
 
@@ -74,9 +74,9 @@ export function googleImage(user, channel, input) {
 
 export function youtubeSearch(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: youtube <query> | Returns the Youtube result for query' });
+    if (!input) return resolve({ type: 'dm', message: 'Usage: youtube <query> | Returns the Youtube result for query' })
 
-    if (!config.googleAPIKey) return reject("Error: Google APIKey required to use this function");
+    if (!config.googleAPIKey) return reject("Error: Google APIKey required to use this function")
 
     ytSearch(input, ytOpts, (err, resp) => {
       if (err) return reject(`ytSearchErr: ${err}`)

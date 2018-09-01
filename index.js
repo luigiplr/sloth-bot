@@ -7,15 +7,14 @@
  * ----------------------------------------------------------------------------
  */
 
-var cluster = require('cluster');
-var moment = require('moment');
+var cluster = require('cluster')
+var moment = require('moment')
 
 global.__DEVELOPMENT__ = process.env.NODE_ENV !== 'production'
 
 if (__DEVELOPMENT__) {
   require('piping')()
 }
-
 
 var errors = 0;
 
@@ -27,15 +26,17 @@ var errors = 0;
 
 // Reboot the bot on crashes
 if (cluster.isMaster) {
-  cluster.fork();
+  cluster.fork()
 
   cluster.on("exit", function(worker, code) {
-    if (code != 0) {
-      console.error("Worker crashed or was rebooted! Spawning a replacement.", errors);
+    if (code !== 0) {
+      console.error("Worker crashed or was rebooted! Spawning a replacement.", errors)
       if (errors < 3) {
         errors++
         setTimeout(() => {
-          if (errors > 0) errors--;
+          if (errors > 0) {
+            errors--
+          }
         }, 20000)
       } else {
         console.error("Warning! Repeated crashing, stopping bot")
@@ -43,9 +44,9 @@ if (cluster.isMaster) {
         return
       }
 
-      cluster.fork();
+      cluster.fork()
     }
-  });
+  })
 } else {
-  module.exports = require(__DEVELOPMENT__ ? './src/sloth.js' : './build/sloth.js');
+  module.exports = require(__DEVELOPMENT__ ? './src/sloth.js' : './build/sloth.js')
 }

@@ -257,8 +257,9 @@ export function addLoadMessage(user, channel, input) {
 export function delLoadMessage(user, channel, input) {
   return new Promise((resolve, reject) => {
     if (!canPerformAdminCommands) return reject(adminErr)
-    if (!input)
+    if (!input) {
       return resolve({ type: 'dm', message: 'Usage: removeloadingmessage <id> - Remove a loading message from the team - ID is required and can only be viewed within the Slack Admin Page' })
+    }
 
     deleteLoadingMsg(input).then(() => resolve({ type: 'channel', message: `Successfully removed message with id ${input}` })).catch(reject)
   })

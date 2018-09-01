@@ -27,7 +27,7 @@ const browserIDs = {
 export function css(user, channel, input) {
   return new Promise(resolve => {
     var matches = canIUse.find(input)
-    return resolve({ type: 'channel', message: matches.length ? `*Found ${matches.length} matches:* \n ${matches.map(a => `\`${a}\``).join(' ')}` : 'Found no matches'})
+    return resolve({ type: 'channel', message: matches.length ? `*Found ${matches.length} matches:* \n ${matches.map(a => `\`${a}\``).join(' ')}` : 'Found no matches' })
   })
 }
 

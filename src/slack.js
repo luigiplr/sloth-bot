@@ -114,7 +114,6 @@ export function inviteUser(channel, user) {
   }))
 }
 
-
 /**
  * Returns a user object for user name or slack id
  * @param user name or slack id

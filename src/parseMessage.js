@@ -17,7 +17,7 @@ export function parse(user, channel, text, ts) {
     let userLevel = getUserlevel(username)
 
     // If user is muted and is not an admin
-    if (permissions.muted.indexOf(username) > -1 && userLevel != 'superadmin') {
+    if (permissions.muted.indexOf(username) > -1 && userLevel !== 'superadmin') {
       deleteMessage(channel.id, ts)
       return resolve(false)
     }
@@ -35,25 +35,33 @@ export function parse(user, channel, text, ts) {
         getHistory(channel.id, 35).then(messages => {
           // Finds latest message that isn't the current message, isn't a bot message and includes the text
           // also if a user is specified, make sure the message is from said user
-          var matchedMessage = find(messages, m => (
-            (!who || (who && who.id == m.user)) &&
-            !m.bot_id && m.user !== config.botid && m.ts != ts && m.text && m.text.includes(word)
+          const matchedMessage = find(messages, m => (
+            (!who || (who && who.id === m.user)) &&
+            !m.bot_id && m.user !== config.botid && m.ts !== ts && m.text && m.text.includes(word)
           ))
-          if (!matchedMessage) return reject("Found no matching word in recent messages")
+
+          if (!matchedMessage) return reject('Found no matching word in recent messages')
+
           let rx
           try {
             rx = new RegExp(word, 'g')
           } catch (e) {
             return reject("Invalid regular expression")
           }
-          var whoSaid = findUser(matchedMessage.user)
-          var newMessage = matchedMessage.text.replace(rx, replacement)
+
+          const whoSaid = findUser(matchedMessage.user)
+          const newMessage = matchedMessage.text.replace(rx, replacement)
+
           if (whoSaid && (whoSaid.real_name || whoSaid.name)) {
-            return resolve({ type: 'channel', message: newMessage, options: {
-              as_user: false,
-              username: config.sed.realnames ? whoSaid.real_name || whoSaid.name : whoSaid.name,
-              icon_url: get(whoSaid, 'profile.image_72', '')
-            }})
+            return resolve({
+              type: 'channel',
+              message: newMessage,
+              options: {
+                as_user: false,
+                username: config.sed.realnames ? whoSaid.real_name || whoSaid.name : whoSaid.name,
+                icon_url: get(whoSaid, 'profile.image_72', '')
+              }
+            })
           } else return resolve({ type: 'channel', message: newMessage })
         })
       }
@@ -64,22 +72,27 @@ export function parse(user, channel, text, ts) {
       const word = text.slice(1).trim()
       Remembers.findOneByWord(word).then(resp => {
         if (resp) {
-          resolve({ type: 'channel', message: resp.text, options: {
-            unfurl_links: true,
-            unfurl_media: true
-          } })
+          resolve({
+            type: 'channel',
+            message: resp.text,
+            options: {
+              unfurl_links: true,
+              unfurl_media: true
+            }
+          })
         }
       })
-      
+
       return
     }
 
-    if (text.charAt(0) !== config.prefix) return resolve(false);
+    if (text.charAt(0) !== config.prefix) return resolve(false)
 
     console.log("IN", user.name + ':', text)
     // If user is ignored and is not an admin (or if the user is the bot itself)
-    if (((permissions.allIgnored.indexOf(username) > -1) && userLevel != 'superadmin') || user.name.toString().toLowerCase() === config.botname)
+    if (((permissions.allIgnored.indexOf(username) > -1) && userLevel !== 'superadmin') || user.name.toString().toLowerCase() === config.botname) {
       return resolve(false)
+    }
 
     let command = text.split(' ')[0].substr(1).toLowerCase()
     let context = text.split(' ').slice(1).join(' ').trim()
@@ -100,8 +113,9 @@ export function parse(user, channel, text, ts) {
     if ((plugin && call.disabled) || !plugin) return reject()
 
     // If userLevel required and you don't match the required level or if you're an admin trying to pull shit on a superadmin
-    if (cmdLevel && (cmdLevel.indexOf(userLevel) === -1 || (userLevel === 'admin' && (context && getUserlevel(context.split(' ')[0]) === 'superadmin'))))
-      return resolve({ type: 'channel', message: 'Insufficient Permissions' });
+    if (cmdLevel && (cmdLevel.indexOf(userLevel) === -1 || (userLevel === 'admin' && (context && getUserlevel(context.split(' ')[0]) === 'superadmin')))) {
+      return resolve({ type: 'channel', message: 'Insufficient Permissions' })
+    }
 
     plugin[call.command](user, channel, context, ts, plugins, userLevel)
       .then(resolve)

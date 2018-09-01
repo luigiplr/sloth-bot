@@ -105,21 +105,21 @@ export function permaIgnore(user, channel, input, ts, plugin, adminLevel) {
 
 export function set(admin, channel, input, ts, plugin, adminLevel) {
   return new Promise((resolve, reject) => {
-    if (!input) return reject("Please specify a user");
+    if (!input) return reject("Please specify a user")
 
     let user = input.split(' ')[0].toLowerCase()
     let userLevel = getUserLevel(user)
     let level = input.split(' ')[1] ? input.split(' ')[1].toLowerCase().replace(/[s]$/, '') : 'user'
-    let levels = ((adminLevel === 'superadmin' && userLevel === 'superadmin')) ? -1 :
-      (adminLevel === 'admin' && userLevel === 'admin') ? -1 :
-      (adminLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin']
+    let levels = ((adminLevel === 'superadmin' && userLevel === 'superadmin')) ? -1
+      : (adminLevel === 'admin' && userLevel === 'admin') ? -1
+        : (adminLevel === 'admin') ? ['user', 'admin'] : ['user', 'admin', 'superadmin']
 
     if (user) {
-      if (levels == -1) return reject("You cannot change the level of yourself or other admins")
+      if (levels === -1) return reject("You cannot change the level of yourself or other admins")
       else if (levels.indexOf(level) > -1) {
         permissions.add(user, level)
         return resolve({ type: 'channel', message: `Set ${user} to ${level}` })
-      } else return reject("Invalid User Level");
+      } else return reject("Invalid User Level")
     }
   })
 }

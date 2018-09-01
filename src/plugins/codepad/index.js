@@ -12,18 +12,22 @@ export const plugin_info = [{
 
 export function codep(user, channel, input) {
   return new Promise((resolve, reject) => {
-    if (!input || !input.split('```')[1])
+    if (!input || !input.split('```')[1]) {
       return resolve({
         type: 'dm',
         message: 'Usage: eval <langage> <code> | Evals the code in the specified language, valid languages are: ' + langs.join(' ')
       })
+    }
+
     let type = input.split(' ')[0].split('\n')[0]
     let code = unescape(input.split('```')[1])
     let rejected = false
+
     let timeout = setTimeout(function() {
       rejected = true
       return reject("Error: Request took too long")
     }, 11000)
+
     codepad.eval(type, code, (err, out) => {
       if (!rejected) {
         clearTimeout(timeout)

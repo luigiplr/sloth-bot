@@ -3,7 +3,7 @@ import path from 'path'
 import config from '../config'
 
 const dirName = config.saveName || '.Sloth-Bot'
-const dbDir = path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], dirName)
+const dbDir = path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], dirName)
 const permsFile = path.join(dbDir, 'permissions.json')
 
 const fileExists = filePath => {

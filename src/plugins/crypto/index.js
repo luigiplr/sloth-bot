@@ -30,14 +30,14 @@ export function encrypt(user, channel, input) {
       case 'sha1':
       case 'sha256':
         try {
-          hash = ((crypto.createHash(type)).update(toHash)).digest('hex');
+          hash = ((crypto.createHash(type)).update(toHash)).digest('hex')
         } catch (err) {
-          return reject(err);
+          return reject(err)
         }
-        break;
+        break
       case 'base64':
-        hash = (new Buffer(toHash)).toString('base64');
-        break;
+        hash = (new Buffer(toHash)).toString('base64')
+        break
     }
     return resolve({ type: 'channel', message: hash })
   })
@@ -50,7 +50,7 @@ export function randomData(user, channel, input) {
     if (!count || count > 90) return reject(count ? 'Count must be less <= 90' : 'Invalid number')
 
     crypto.randomBytes(count, (err, buf) => {
-      if (err) return reject(err);
+      if (err) return reject(err)
       return resolve({ type: 'channel', message: buf.toString('hex') })
     })
   })

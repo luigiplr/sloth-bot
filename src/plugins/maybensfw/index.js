@@ -19,6 +19,6 @@ export function maybensfw() {
     })
 
     client.on('error', () => reject('Error loading page'))
-    client.fetch();
+    client.fetch()
   })
 }

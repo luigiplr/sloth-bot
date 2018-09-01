@@ -1,4 +1,4 @@
-const mcping = require('mc-ping-updated');
+const mcping = require('mc-ping-updated')
 
 export const plugin_info = [{
   alias: ['mc', 'minecraft'],
@@ -14,12 +14,14 @@ export function mc(user, channel, input) {
     mcping(split[0], parseInt(split[1]) || 25565, (err, resp) => {
       if (err || !resp) return reject("Error fetching server info")
       if (!resp.players || !resp.players.online) return resolve({ type: 'channel', message: 'No players are currently on the server' })
-      var players = (resp.players || { sample: []}).sample.map(player => player.name.length ? player.name : undefined).filter(a => a ? true : false)
-      return resolve({ type: 'channel', messages: [
-        `*Current players on the server (${resp.players.online}/${resp.players.max}):*`,
-        players.length ? ` - ${players.join("\n - ")}` : "Unable to view players"
-      ]})
-      
+      var players = (resp.players || { sample: [] }).sample.map(player => player.name.length ? player.name : undefined).filter(a => a)
+      return resolve({
+        type: 'channel',
+        messages: [
+          `*Current players on the server (${resp.players.online}/${resp.players.max}):*`,
+          players.length ? ` - ${players.join("\n - ")}` : "Unable to view players"
+        ]
+      })
     })
   })
 }

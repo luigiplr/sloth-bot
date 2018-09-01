@@ -5,10 +5,10 @@ import config from '../config.json'
 import { parse as parseMsg } from './parseMessage'
 
 var errors = 0
-var firstStart = true;
+var firstStart = true
 var sentErrorSpamAlert = false
 
-const DEVMODE = process.env.NODE_ENV == 'development'
+const DEVMODE = process.env.NODE_ENV === 'development'
 
 if (!config.prefix || !config.slackBotToken) {
   console.error("Invalid config, please fill in the first 2 required config fields")
@@ -41,9 +41,10 @@ class Slack extends RtmClient {
 
     this.on(CLIENT_EVENTS.RTM.AUTHENTICATED, () => {
       if (firstStart) {
-        firstStart = false;
-        return;
+        firstStart = false
+        return
       }
+
       this._sendErrorToDebugChannel(null, 'Successfully reconnected to Slack', true)
     })
 
@@ -102,10 +103,12 @@ class Slack extends RtmClient {
       return
     }
     needle.post("https://slack.com/api/chat.postMessage", Object.assign({}, {
-      channel, thread_ts, text,
+      channel,
+      thread_ts,
+      text,
       token: config.slackBotToken,
       as_user: true,
-      attachments: typeof attachments == 'string' ? attachments : JSON.stringify(attachments)
+      attachments: typeof attachments === 'string' ? attachments : JSON.stringify(attachments)
     }, options), (err, resp, body) => {
       if (err || !body.ok) console.error("_sendMessageError", err, body)
     })
@@ -131,7 +134,9 @@ class Slack extends RtmClient {
     if (errors < 3) {
       errors++
       setTimeout(() => {
-        if (errors > 0) errors--;
+        if (errors > 0) {
+          errors--
+        }
       }, 20000)
     } else {
       if (!sentErrorSpamAlert) {
