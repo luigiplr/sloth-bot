@@ -24,6 +24,8 @@ export function parse(user, channel, text, ts) {
 
     // Sedbot
     if (!config.sed.disabled && text.startsWith('s/')) {
+      console.log("IN", user.name + ':', text)
+
       if (((permissions.allIgnored.indexOf(username) > -1) && userLevel !== 'superadmin')) {
         return resolve(false)
       }
