@@ -51,25 +51,43 @@ export function googleSearch(user, channel, input) {
   })
 }
 
-export function googleImage(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 5 images returned for query' })
-    if (!config.googleAPIKey || !config.cseImageID) return reject("Error: Google API Key and CSE Key are required to use this function")
+const imageCache = []
 
-    const url = `${baseURL}&q=${input}&cx=${config.cseImageID}&searchType=image`
+export async function googleImage(user, channel, input) {
+  if (!input) {
+    return { type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 5 images returned for query' }
+  }
 
-    needle.get(url, (err, resp, body) => {
-      if (!err && body && !body.error) {
-        if (body.items) {
-          const chosen = body.items[Math.floor(Math.random() * body.queries.request[0].count)].link + `#${Math.floor(Math.random() * 1000)}`
-          return resolve({ type: 'channel', message: chosen })
-        } else return reject("No results found")
-      } else {
-        console.error(`googleImgError: ${err || body.error.message}`)
-        reject(`googleImgError: ${err || body.error.message}`)
-      }
-    })
-  })
+  if (!config.googleAPIKey || !config.cseImageID) {
+    throw 'Error: Google API Key and CSE Key are required to use this function'
+  }
+
+  const data = await needle(`${baseURL}&q=${input}&cx=${config.cseImageID}&searchType=image`)
+
+  if (data.statusCode !== 200 || !data.body || data.body.error) {
+    throw `Error getting data from Google - [${data.statusCode}]: ${data.body ? data.body.error : 'Unknown error'}`
+  }
+
+  if (!data.body.items) {
+    return 'No results found'
+  }
+
+  console.log(imageCache)
+
+  if (imageCache.length > 3) {
+    imageCache.shift()
+  }
+
+  let validResults = data.body.items.filter(item => !imageCache.includes(item.link))
+
+  if (validResults.lengh === 0) {
+    validResults = data.body.items
+  }
+
+  const chosenImg = validResults[Math.floor(Math.random() * validResults.length)].link + `#${Math.floor(Math.random() * 1000)}`
+  imageCache.push(chosenImg)
+
+  return chosenImg + `#${Math.floor(Math.random() * 1000)}`
 }
 
 export function youtubeSearch(user, channel, input) {
