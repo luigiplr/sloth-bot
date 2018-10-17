@@ -72,19 +72,20 @@ export async function googleImage(user, channel, input) {
     return 'No results found'
   }
 
-  console.log(imageCache)
-
+  // Store a max of 3 images, remove the first image if we go over
   if (imageCache.length > 3) {
     imageCache.shift()
   }
 
   let validResults = data.body.items.filter(item => !imageCache.includes(item.link))
 
+
+  // If there is no valid de-duped results, just use the initial results
   if (validResults.lengh === 0) {
     validResults = data.body.items
   }
 
-  const chosenImg = validResults[Math.floor(Math.random() * validResults.length)].link + `#${Math.floor(Math.random() * 1000)}`
+  const chosenImg = validResults[Math.floor(Math.random() * validResults.length)].link
   imageCache.push(chosenImg)
 
   return chosenImg + `#${Math.floor(Math.random() * 1000)}`
