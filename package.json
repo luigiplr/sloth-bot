@@ -81,6 +81,9 @@
     "rimraf": "^2.6.2"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 8.0.0"
+  },
+  "resolutions": {
+    "sqlite3": "^4.0.2"
   }
 }
