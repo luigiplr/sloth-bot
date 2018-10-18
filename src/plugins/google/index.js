@@ -25,7 +25,7 @@ const ytOpts = {
   safeSearch: config.youtubeSafeSearch || 'none'
 }
 
-const baseURL = `https://www.googleapis.com/customsearch/v1?num=5&start=1&hl=en&safe=${config.googleSafeSearch || 'off'}&key=${config.googleAPIKey}`
+const baseURL = `https://www.googleapis.com/customsearch/v1?num=10&start=1&hl=en&safe=${config.googleSafeSearch || 'off'}&key=${config.googleAPIKey}`
 
 export function googleSearch(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -55,7 +55,7 @@ const imageCache = []
 
 export async function googleImage(user, channel, input) {
   if (!input) {
-    return { type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 5 images returned for query' }
+    return { type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 10 images returned for query' }
   }
 
   if (!config.googleAPIKey || !config.cseImageID) {
@@ -72,13 +72,12 @@ export async function googleImage(user, channel, input) {
     return 'No results found'
   }
 
-  // Store a max of 3 images, remove the first image if we go over
-  if (imageCache.length > 3) {
+  // Store a max of 5 images, remove the first image if we go over
+  if (imageCache.length > 5) {
     imageCache.shift()
   }
 
   let validResults = data.body.items.filter(item => !imageCache.includes(item.link))
-
 
   // If there is no valid de-duped results, just use the initial results
   if (validResults.lengh === 0) {
