@@ -25,7 +25,8 @@ const ytOpts = {
   safeSearch: config.youtubeSafeSearch || 'none'
 }
 
-const baseURL = `https://www.googleapis.com/customsearch/v1?num=10&start=1&hl=en&safe=${config.googleSafeSearch || 'off'}&key=${config.googleAPIKey}`
+const MAX_RESULTS = 8
+const baseURL = `https://www.googleapis.com/customsearch/v1?num=${MAX_RESULTS}&start=1&hl=en&safe=${config.googleSafeSearch || 'off'}&key=${config.googleAPIKey}`
 
 export function googleSearch(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -55,7 +56,7 @@ const imageCache = []
 
 export async function googleImage(user, channel, input) {
   if (!input) {
-    return { type: 'dm', message: 'Usage: googleimage <query> - Returns any of the first 10 images returned for query' }
+    return { type: 'dm', message: `Usage: googleimage <query> - Returns any of the first ${MAX_RESULTS} images returned for query` }
   }
 
   if (!config.googleAPIKey || !config.cseImageID) {
