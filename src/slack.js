@@ -266,7 +266,7 @@ const deleteQueue = queue((task, cb) => {
   const deleteMessageFn = callback => {
     needle.post('https://slack.com/api/chat.delete', {
       channel: task.channel,
-      token: (task.channel.slice(0, 1) !== 'G' && config.slackAPIToken) ? config.slackAPIToken : config.slackBotToken,
+      token: config.slackAPIToken || config.slackBotToken,
       ts: task.ts
     }, (err, resp, { error }) => {
       if (err || error) {
