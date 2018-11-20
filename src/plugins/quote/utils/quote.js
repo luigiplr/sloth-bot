@@ -24,7 +24,7 @@ export async function getQuote(user, index = 0) {
   const qIndex = index < 0 ? quotes.length + index : index
 
   if (quotes[qIndex]) {
-    return urlify(`<${u.name}> ${quotes[qIndex].message}`)
+    return urlify(`<${u.name}>\n${quotes[qIndex].message}`)
   } else {
     throw quotes.length > 0
       ? `I don't have quotes that far back for ${u.name}`
