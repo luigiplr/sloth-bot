@@ -101,8 +101,8 @@ export async function purge(user, channel, input) {
     return 'Invalid number'
   }
 
-  if (amount > 50) {
-    return 'Maximum purge amount is 50'
+  if (amount > 40) {
+    return 'Maximum purge amount is 40'
   }
 
   try {
