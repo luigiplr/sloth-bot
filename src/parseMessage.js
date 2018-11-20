@@ -1,4 +1,4 @@
-import { find, get } from 'lodash'
+import _ from 'lodash'
 import permissions from './permissions'
 import config from '../config.json'
 import { deleteMessage, getHistory, findUser } from './slack'
@@ -74,7 +74,7 @@ export function parse(user, channel, text, ts) {
               options: {
                 as_user: false,
                 username: config.sed.realnames ? whoSaid.real_name || whoSaid.name : whoSaid.name,
-                icon_url: get(whoSaid, 'profile.image_72', '')
+                icon_url: _.get(whoSaid, 'profile.image_72', '')
               }
             })
           } else return resolve({ type: 'channel', message: newMessage })
@@ -109,8 +109,8 @@ export function parse(user, channel, text, ts) {
 
     let cmdLevel = false
     let call = false
-    let plugin = find(plugins, plugin => {
-      return find(plugin.plugin_info, cmd => {
+    let plugin = _.find(plugins, plugin => {
+      return _.find(plugin.plugin_info, cmd => {
         if (cmd.alias.indexOf(command) > -1) {
           if (cmd.userLevel) cmdLevel = cmd.userLevel
           call = cmd
@@ -120,6 +120,10 @@ export function parse(user, channel, text, ts) {
     })
 
     if ((plugin && call.disabled) || !plugin) return reject()
+
+    if (_.get(config, ['disabledCommandsPerChannel', channel.id], []).includes(call.command)) {
+      return resolve({ type: 'channel', message: 'This command cannot be used in this channel.' })
+    }
 
     // If userLevel required and you don't match the required level or if you're an admin trying to pull shit on a superadmin
     if (cmdLevel && (cmdLevel.indexOf(userLevel) === -1 || (userLevel === 'admin' && (context && getUserlevel(context.split(' ')[0]) === 'superadmin')))) {
