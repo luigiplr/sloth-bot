@@ -15,6 +15,8 @@ export function parse(user, channel, text, ts) {
   return new Promise((resolve, reject) => {
     let username = user.name.toString().toLowerCase()
     let userLevel = getUserlevel(username)
+    const isCommand = text.charAt(0) === config.prefix
+    const isSedCommand = !config.sed.disabled && text.startsWith('s/')
 
     // If user is muted and is not an admin
     if (permissions.muted.indexOf(username) > -1 && userLevel !== 'superadmin') {
@@ -22,18 +24,21 @@ export function parse(user, channel, text, ts) {
       return resolve(false)
     }
 
-    if (!config.allowGuests && (user.is_restricted || user.is_ultra_restricted)) {
+    // If user is ignored and is not an admin (or if the user is the bot itself)
+    if (((permissions.allIgnored.indexOf(username) > -1) && userLevel !== 'superadmin') || user.name.toString().toLowerCase() === config.botname) {
+      return resolve(false)
+    }
+
+    if (!config.allowGuests && (user.is_restricted || user.is_ultra_restricted) && (isCommand || isSedCommand)) {
       return resolve({ type: 'channel', message: 'Sorry, guests cannot use this bot.' })
     }
 
-    // Sedbot
-    if (!config.sed.disabled && text.startsWith('s/')) {
+    if (isCommand || isSedCommand) {
       console.log("IN", user.name + ':', text)
+    }
 
-      if (((permissions.allIgnored.indexOf(username) > -1) && userLevel !== 'superadmin')) {
-        return resolve(false)
-      }
-
+    // Sedbot
+    if (isSedCommand) {
       var split = text.split('/')
       if (split.length >= 3) {
         var [, word, replacement, who] = split
@@ -92,13 +97,7 @@ export function parse(user, channel, text, ts) {
       return
     }
 
-    if (text.charAt(0) !== config.prefix) return resolve(false)
-
-    console.log("IN", user.name + ':', text)
-    // If user is ignored and is not an admin (or if the user is the bot itself)
-    if (((permissions.allIgnored.indexOf(username) > -1) && userLevel !== 'superadmin') || user.name.toString().toLowerCase() === config.botname) {
-      return resolve(false)
-    }
+    if (!isCommand) return resolve(false)
 
     let command = text.split(' ')[0].substr(1).toLowerCase()
     let context = text.split(' ').slice(1).join(' ').trim()
