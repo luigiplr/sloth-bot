@@ -1,7 +1,7 @@
 import { kick, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
-import { invite, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw, inviteUser as inviteUserRAW } from '../../slack.js'
+import { invite, getHistory, deleteMessage, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw, inviteUser as inviteUserRAW } from '../../slack.js'
 import moment from 'moment'
-import { filter } from 'lodash'
+import _ from 'lodash'
 import perms from '../../permissions'
 import config from '../../../config.json'
 import { InviteUsers } from '../../database'
@@ -81,11 +81,38 @@ export const plugin_info = [{
   command: 'reconnect',
   usage: 'reconnect <user> - disables and enables the users account causing them to reconnect',
   userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['purge'],
+  command: 'purge',
+  usage: 'purge  <count>- purges messages',
+  userLevel: ['superadmin']
 }]
 
 const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.length > 0
 const adminErr = '`missing admin api key, cannot perform admin commands`'
 const cantDisable = u => u.id === config.botid || perms.superadmins.includes(u.name) || (config.noDisable && config.noDisable.includes(u.id))
+
+export async function purge(user, channel, input) {
+  if (!input) return 'Usage: purge <count> - purges the amount of messages'
+
+  const amount = +input
+
+  if (_.isNaN(amount)) {
+    return 'Invalid number'
+  }
+
+  if (amount > 50) {
+    return 'Maximum purge amount is 50'
+  }
+
+  try {
+    const messages = await getHistory(channel.id, amount)
+
+    messages.forEach(msg => deleteMessage(channel.id, msg.ts))
+  } catch (e) {
+    return 'Error fetching message history'
+  }
+}
 
 export function kickAllUser(user, channel, input) {
   return new Promise((resolve, reject) => {
@@ -293,7 +320,7 @@ export function whois(user, channel, input) {
       let ignored = p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null
       let botAdmin = p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
 
-      return resolve({ type: 'channel', message: filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n') })
+      return resolve({ type: 'channel', message: _.filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n') })
     })
   })
 }

@@ -1,7 +1,7 @@
 import { forEach, delay, find, get } from 'lodash'
 import needle from 'needle'
 import config from '../config.json'
-import { queue } from 'async'
+import { queue, retry } from 'async'
 
 let userNamesCache = {}
 export var usersCache = {}
@@ -263,13 +263,32 @@ export function deleteMessage(channel, ts) {
 }
 
 const deleteQueue = queue((task, cb) => {
-  needle.post('https://slack.com/api/chat.delete', {
-    channel: task.channel,
-    token: (task.channel.slice(0, 1) !== 'G' && config.slackAPIToken) ? config.slackAPIToken : config.slackBotToken,
-    ts: task.ts
-  }, (err, resp, { error }) => {
-    if (err || error) console.error(`Error deleting message ${err || error}`)
-    delay(() => { cb() }, 900)
+  const deleteMessageFn = callback => {
+    needle.post('https://slack.com/api/chat.delete', {
+      channel: task.channel,
+      token: (task.channel.slice(0, 1) !== 'G' && config.slackAPIToken) ? config.slackAPIToken : config.slackBotToken,
+      ts: task.ts
+    }, (err, resp, { error }) => {
+      if (err || error) {
+        console.error(`Error deleting message ${err || error}`)
+        return callback(err || error)
+      }
+
+      delay(() => { callback() }, 500)
+    })
+  }
+
+  retry({
+    times: 4,
+    interval: retryCount => {
+      return 50 * Math.pow(2, retryCount)
+    }
+  }, deleteMessageFn, (err, res) => {
+    if (err) {
+      console.error('Error deleteing message??', err)
+    }
+
+    cb()
   })
 }, 4)
 
