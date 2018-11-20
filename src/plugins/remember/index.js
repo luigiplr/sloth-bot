@@ -1,6 +1,5 @@
 import CRUD, { Remembers } from '../../database'
 import { sendMessage } from '../../slack'
-import { table, getBorderCharacters } from 'table'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -28,18 +27,8 @@ export function rememberList(user, channel, input) {
     if (!input) {
       CRUD.executeQuery(`SELECT DISTINCT word from Remembers`).then(res => {
         const words = _.sortBy(_.get(res, ['rs', 'rows', '_array'], []).map((w = {}) => w.word), a => a.toLowerCase())
-        console.log(words)
-        if (words.length) {
-          const data = table(_.chunk(words, 7).map(a => {
-            if (a.length < 7) {
-              return [ ...a, ..._.times(7 - a.length, _.constant(' ')) ]
-            }
-            return a
-          }), {
-            border: getBorderCharacters('norc')
-          })
-
-          return resolve({ type: 'channel', message: `Remembered words: \`\`\`${data}\`\`\`` })
+        if (words.length > 0) {
+          return resolve({ type: 'channel', message: `Remembered words: \`\`\`${words.join(' | ')}\`\`\`` })
         } else {
           return reject('No words have been saved')
         }
@@ -58,6 +47,10 @@ export function rememberList(user, channel, input) {
 
       return resolve({
         type: 'channel',
+        options: {
+          unfurl_links: false,
+          unfurl_media: false
+        },
         messages: [
           `Rememebers saved for \`${input}\`:`,
           '```',
