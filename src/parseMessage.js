@@ -17,6 +17,8 @@ export function parse(user, channel, text, ts) {
     let userLevel = getUserlevel(username)
     const isCommand = text.charAt(0) === config.prefix
     const isSedCommand = !config.sed.disabled && text.startsWith('s/')
+    const isRememberCommand = !config.disableRemember && text.startsWith('?')
+    const isABotCommand = isCommand || isRememberCommand || isSedCommand
 
     // If user is muted and is not an admin
     if (permissions.muted.indexOf(username) > -1 && userLevel !== 'superadmin') {
@@ -29,12 +31,14 @@ export function parse(user, channel, text, ts) {
       return resolve(false)
     }
 
-    if (!config.allowGuests && (user.is_restricted || user.is_ultra_restricted) && (isCommand || isSedCommand)) {
+    if (!config.allowGuests && (user.is_restricted || user.is_ultra_restricted) && isABotCommand) {
       return resolve({ type: 'channel', message: 'Sorry, guests cannot use this bot.' })
     }
 
-    if (isCommand || isSedCommand) {
+    if (isABotCommand) {
       console.log("IN", user.name + ':', text)
+    } else {
+      return resolve(false)
     }
 
     // Sedbot
@@ -79,7 +83,7 @@ export function parse(user, channel, text, ts) {
       return
     }
 
-    if (!config.disableRemember && text.startsWith('?')) {
+    if (isRememberCommand) {
       const word = text.slice(1).trim()
       Remembers.findOneByWord(word).then(resp => {
         if (resp) {
