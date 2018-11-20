@@ -22,6 +22,10 @@ export function parse(user, channel, text, ts) {
       return resolve(false)
     }
 
+    if (!config.allowGuests && user.is_restricted) {
+      return resolve({ type: 'channel', message: 'Sorry, guests cannot use this bot.' })
+    }
+
     // Sedbot
     if (!config.sed.disabled && text.startsWith('s/')) {
       console.log("IN", user.name + ':', text)
