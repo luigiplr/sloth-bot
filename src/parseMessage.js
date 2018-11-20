@@ -22,7 +22,7 @@ export function parse(user, channel, text, ts) {
       return resolve(false)
     }
 
-    if (!config.allowGuests && user.is_restricted) {
+    if (!config.allowGuests && (user.is_restricted || user.is_ultra_restricted)) {
       return resolve({ type: 'channel', message: 'Sorry, guests cannot use this bot.' })
     }
 
