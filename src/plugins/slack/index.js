@@ -92,18 +92,31 @@ const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.len
 const adminErr = '`missing admin api key, cannot perform admin commands`'
 const cantDisable = u => u.id === config.botid || perms.superadmins.includes(u.name) || (config.noDisable && config.noDisable.includes(u.id))
 
+const awaitingPurgeConfirmation = {}
+
 export async function purge(user, channel, input) {
   if (!input) return 'Usage: purge <count> - purges the amount of messages'
 
   const amount = +input
 
-  if (_.isNaN(amount)) {
+  if (_.isNaN(amount) || amount <= 0) {
     return 'Invalid number'
   }
 
-  if (amount > 40) {
-    return 'Maximum purge amount is 40'
+  if (amount > 35) {
+    return 'Maximum purge amount is 35'
   }
+
+  const uniqueId = `${user.id}@${channel.id}`
+  const timeOfCommand = awaitingPurgeConfirmation[uniqueId]
+
+
+  if (!(uniqueId in awaitingPurgeConfirmation) || timeOfCommand + 20000 < Date.now()) {
+    awaitingPurgeConfirmation[uniqueId] = Date.now()
+    return `Are you sure you want to purge ${amount} messages from the chat? Re-enter the command to continue, you have 20 seconds.`
+  }
+
+  delete awaitingPurgeConfirmation[uniqueId]
 
   try {
     const messages = await getHistory(channel.id, amount)
