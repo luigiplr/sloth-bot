@@ -339,10 +339,10 @@ export async function whois(user, channel, input) {
   const messages = [
     `*${u.name}* ${u.real_name ? 'or otherwise known as ' + u.real_name : ''}`,
     u.deleted ? '- This users account has been deactivated' : null,
-    u.is_bot ? `- This user is a bot` : null,
+    u.is_bot ? `- This user is a bot` : u.is_app_user ? '- This user is an app user' : null,
     isAdminOrOwner ? `- They are an Admin${u.is_owner ? (' and ' + (u.is_primary_owner ? 'Primary Owner' : 'Owner')) : ''} of this team` : null,
     (!isAdminOrOwner && !isRestricted) ? '- They are a regular user of this team' : null,
-    isRestricted ? `- They are a ${u.is_ultra_restricted ? 'single' : 'multi- '}channel guest` : null,
+    isRestricted ? `- They are a ${u.is_ultra_restricted ? 'single ' : 'multi-'}channel guest` : null,
     inviteData ? `- They were invited by ${inviteData.inviter} ${moment(inviteData.date).isValid() ? 'on ' + moment(inviteData.date).format("dddd, Do MMM YYYY") : ''}` : null,
     (u.tz && u.tz.split('/')[1]) ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null,
     p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null,
