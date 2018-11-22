@@ -308,33 +308,48 @@ export function updateUserCache() {
   return new Promise((resolve, reject) => updateUsersCache().then(resp => resolve({ type: 'channel', message: resp })).catch(reject))
 }
 
-export function whois(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return reject("Who am I looking for??")
-    let type = 'name'
-    let query = input
-    if (input.includes('<mailto:')) {
-      type = ['profile', 'email']
-      query = input.substr(8).split('|')[0]
-    }
-    let u = findUserByParam(type, query) || findUserByParam('id', query)
-    if (!u) return reject("Couldn't find a user matching input")
+export async function whois(user, channel, input) {
+  if (!input) {
+    throw 'Who am I looking for??'
+  }
 
-    let p = perms.getAll
-    getInviteForUser(u).then(resp => {
-      let invited = resp ? `- They were invited by ${resp.inviter} ${moment(resp.date).isValid() ? 'on ' + moment(resp.date).format("dddd, Do MMM YYYY") : ''}` : "- I don't know when they were invited to the team"
+  let type = 'name'
+  let query = input
+  if (input.includes('<mailto:')) {
+    type = ['profile', 'email']
+    query = input.substr(8).split('|')[0]
+  }
 
-      let name = `*${u.name}* ${u.real_name ? 'or otherwise known as ' + u.real_name : ''}`
-      let deleted = u.deleted ? '- This users account has been deactivated' : null
-      let bot = u.is_bot ? `- This user is a bot` : null
-      let admin = (u.is_admin || u.is_owner) ? `- They are an Admin${u.is_owner ? (' and ' + (u.is_primary_owner ? 'Primary Owner' : 'Owner')) : ''} of this team` : bot || deleted ? null : '- They are a regular user of this team'
-      let region = (u.tz && u.tz.split('/')[1]) ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null
-      let ignored = p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null
-      let botAdmin = p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
+  let p = perms.getAll
+  let u = findUserByParam(type, query) || findUserByParam('id', query)
+  if (!u) {
+    throw 'Couldn\'t find a user matching input'
+  }
 
-      return resolve({ type: 'channel', message: _.filter([name, bot, deleted, admin, invited, region, ignored, botAdmin], null).join('\n') })
-    })
-  })
+  let inviteData
+  try {
+    inviteData = await getInviteForUser(u)
+  } catch (e) {
+    // ignored
+  }
+
+  const isAdminOrOwner = u.is_admin || u.is_owner
+  const isRestricted = u.is_restricted || u.is_ultra_restricted
+
+  const messages = [
+    `*${u.name}* ${u.real_name ? 'or otherwise known as ' + u.real_name : ''}`,
+    u.deleted ? '- This users account has been deactivated' : null,
+    u.is_bot ? `- This user is a bot` : null,
+    isAdminOrOwner ? `- They are an Admin${u.is_owner ? (' and ' + (u.is_primary_owner ? 'Primary Owner' : 'Owner')) : ''} of this team` : null,
+    (!isAdminOrOwner && !isRestricted) ? '- They are a regular user of this team' : null,
+    isRestricted ? `- They are a ${u.is_ultra_restricted ? 'single' : 'multi- '}channel guest` : null,
+    inviteData ? `- They were invited by ${inviteData.inviter} ${moment(inviteData.date).isValid() ? 'on ' + moment(inviteData.date).format("dddd, Do MMM YYYY") : ''}` : null,
+    (u.tz && u.tz.split('/')[1]) ? `- I think they are located in ${u.tz.split('/')[0]} near ${u.tz.split('/')[1].replace('_', ' ')} based on their timezone` : null,
+    p.allIgnored.includes(u.name) ? `- They are also currently ${p.permaIgnored.includes(u.name) ? 'perma-' : ''}ignored by the bot` : null,
+    p.owners.includes(u.name) ? '- They are also an Owner of this bot' : p.admins.includes(u.name) ? '- They are also an Admin of this bot' : null
+  ].filter(Boolean)
+
+  return { type: 'channel', messages }
 }
 
 export function enableUser(user, channel, input) {
