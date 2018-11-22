@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, setInactive, setRegular, updateUsersCache, usersCache } from '../../../slack.js';
+import { findUser, sendPMThroughSlackbot, getHistory, deleteMessage, kickUser, setInactive, setRegular, updateUsersCache, usersCache } from '../../../slack.js'
 import config from '../../../../config.json'
 import request from 'request'
 import moment from 'moment'
@@ -42,11 +42,11 @@ export function deleteLastMessage(channel, messagets) {
       let ts = messages.filter(message => message.user === config.botid)
         .map(a => a.ts)[0]
 
-      if (!ts) return resolve(false);
+      if (!ts) return resolve(false)
 
       deleteMessage(channel, ts)
       return resolve()
-    }).catch(reject);
+    }).catch(reject)
   })
 }
 
@@ -58,7 +58,7 @@ const _getSpecialToken = () => {
   return new Promise((resolve, reject) => {
     if (specialToken && nextUpdate && moment().isBefore(nextUpdate)) return resolve(specialToken)
     let url = `https://${config.teamName}.slack.com`
-    let cookieJar = request.jar();
+    let cookieJar = request.jar()
     let cookie1 = request.cookie(config.cookies[0])
     let cookie2 = request.cookie(config.cookies[1])
     let cookie3 = request.cookie(config.cookies[2])
@@ -82,15 +82,18 @@ export function enableOrDisableUser(enable, user) {
   return new Promise((resolve, reject) => {
     if (config.cookies && config.teamName && config.cookies.length == 3) {
       _getSpecialToken().then(token => {
-        if (enable) setRegular(user, token).then(resp => {
-          if (typeof user.real_name == 'undefined') updateUsersCache().then(console.log, console.error)
-          else usersCache[user.id].deleted = false
-          return resolve(resp)
-        }, reject)
-        else setInactive(user, token).then(resp => {
-          usersCache[user.id].deleted = true
-          return resolve(resp)
-        }, reject)
+        if (enable) {
+          setRegular(user, token).then(resp => {
+            if (typeof user.real_name === 'undefined') updateUsersCache().then(console.log, console.error)
+            else usersCache[user.id].deleted = false
+            return resolve(resp)
+          }, reject)
+        } else {
+          setInactive(user, token).then(resp => {
+            usersCache[user.id].deleted = true
+            return resolve(resp)
+          }, reject)
+        }
       }).catch(reject)
     } else return reject("Where be da cookies")
   })

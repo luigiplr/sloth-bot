@@ -110,7 +110,6 @@ export async function purge(user, channel, input) {
   const uniqueId = `${user.id}@${channel.id}`
   const timeOfCommand = awaitingPurgeConfirmation[uniqueId]
 
-
   if (!(uniqueId in awaitingPurgeConfirmation) || timeOfCommand + 20000 < Date.now()) {
     awaitingPurgeConfirmation[uniqueId] = Date.now()
     return `Are you sure you want to purge ${amount} messages from the chat? Re-enter the command to continue, you have 20 seconds.`

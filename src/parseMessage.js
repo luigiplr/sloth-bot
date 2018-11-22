@@ -50,7 +50,7 @@ export function parse(user, channel, text, ts) {
         getHistory(channel.id, 35).then(messages => {
           // Finds latest message that isn't the current message, isn't a bot message and includes the text
           // also if a user is specified, make sure the message is from said user
-          const matchedMessage = find(messages, m => (
+          const matchedMessage = _.find(messages, m => (
             (!who || (who && who.id === m.user)) &&
             !m.bot_id && m.user !== config.botid && m.ts !== ts && m.text && m.text.includes(word)
           ))

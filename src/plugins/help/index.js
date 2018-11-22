@@ -29,7 +29,7 @@ export function help(user, channel, context = 0, ts, plugins, userLevel) {
         plugin.plugin_info.forEach(help => {
           if (!help.alias || !help.usage || (help.userLevel && help.userLevel.indexOf(userLevel) === -1) || (help.userLevel && noAdmin)) return
 
-          let cmdalias = '';
+          let cmdalias = ''
           help.alias.forEach(cmd => cmdalias += config.prefix + cmd + ' ')
           if (aliases[0].length < 45) {
             aliases[0].push(cmdalias)
@@ -38,9 +38,9 @@ export function help(user, channel, context = 0, ts, plugins, userLevel) {
             aliases[1].push(cmdalias)
             commands[1].push(`${cmdalias}%pad%| ${help.usage}`)
           }
-        });
+        })
       }
-    });
+    })
 
     commands.forEach((thing, i) => {
       let padding = aliases[i].sort((a, b) => {
