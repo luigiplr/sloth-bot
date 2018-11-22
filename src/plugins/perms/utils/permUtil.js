@@ -13,7 +13,7 @@ const getUserLevel = user => {
 }
 
 const canDoTheThing = (user, adminLevel) => {
-  let userLevel = getUserLevel(user);
+  let userLevel = getUserLevel(user)
   let iCan = ((adminLevel === 'superadmin' && userLevel === 'superadmin')) ? false :
     (adminLevel === 'admin' && userLevel === 'admin') ? false : true
   if (iCan) return true
@@ -36,24 +36,24 @@ module.exports = {
       if (!user) return reject("Couldn't find a user by that name")
 
       // If you're trying to pull shit on the bot
-      if (user.name == config.botname || user.id == config.botid)
+      if (user.name === config.botname || user.id === config.botid)
         return reject("Error: Bitch. No.")
 
       // If you're trying to pull shit on ur m8s
       if (!canDoTheThing(user.name, adminLevel)) return reject("Error: lolno")
 
-      if (type == 'ignore' && includes(permissions.allIgnored, user.name))
+      if (type === 'ignore' && includes(permissions.allIgnored, user.name))
         return reject("This user is already ignored")
-      if (type == 'mute' && includes(permissions.muted, user.name))
+      if (type === 'mute' && includes(permissions.muted, user.name))
         return reject("This user is already muted")
-      if (type == 'unignore' && !includes(permissions.allIgnored, user.name))
+      if (type === 'unignore' && !includes(permissions.allIgnored, user.name))
         return reject("This user is not ignored")
-      if (type == 'unmute' && !includes(permissions.muted, user.name))
+      if (type === 'unmute' && !includes(permissions.muted, user.name))
         return reject("This user is not muted")
-      if (type == 'permaignore' && includes(permissions.permaIgnored, user.name))
+      if (type === 'permaignore' && includes(permissions.permaIgnored, user.name))
         return reject("This user is already permanently ignored")
 
-      if (type == 'unignore' || type == 'unmute') {
+      if (type === 'unignore' || type === 'unmute') {
         permissions.add(user.name, type)
         return resolve(`${responses[type]} ${user.name}`)
       } else {

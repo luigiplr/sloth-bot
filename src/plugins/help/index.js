@@ -10,19 +10,10 @@ export const plugin_info = [{
 
 export function help(user, channel, context = 0, ts, plugins, userLevel) {
   return new Promise(resolve => {
-    let noAdmin = parseInt(context),
-      helpList = [
-        [],
-        []
-      ],
-      commands = [
-        [],
-        []
-      ],
-      aliases = [
-        [],
-        []
-      ] // stupid js beautify
+    let noAdmin = parseInt(context)
+    let helpList = [[], []]
+    let commands = [[], []]
+    let aliases = [[], []]
 
     plugins.forEach(plugin => {
       if (plugin.plugin_info && Array.isArray(plugin.plugin_info)) {
@@ -30,7 +21,7 @@ export function help(user, channel, context = 0, ts, plugins, userLevel) {
           if (!help.alias || !help.usage || (help.userLevel && help.userLevel.indexOf(userLevel) === -1) || (help.userLevel && noAdmin)) return
 
           let cmdalias = ''
-          help.alias.forEach(cmd => cmdalias += config.prefix + cmd + ' ')
+          help.alias.forEach(cmd => (cmdalias += config.prefix + cmd + ' '))
           if (aliases[0].length < 45) {
             aliases[0].push(cmdalias)
             commands[0].push(`${cmdalias}%pad%| ${help.usage}`)

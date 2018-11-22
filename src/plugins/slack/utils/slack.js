@@ -26,7 +26,7 @@ export function kick(user, channel, input) {
 
     if (!user) return reject("Found no user by that name")
 
-    if (user.name == config.botname || user.id === config.botid) return reject('Error: Bitch. No.')
+    if (user.name === config.botname || user.id === config.botid) return reject('Error: Bitch. No.')
 
     kickUser(channel.id, user.id).then(() => {
       sendPMThroughSlackbot(user.name, `You were kicked from #${channel.name} ${reason || 'for no reason'}`)
@@ -68,7 +68,7 @@ const _getSpecialToken = () => {
     request({ url: `${url}/admin`, jar: cookieJar }, (err, resp, body) => {
       if (!err && body) {
         let token = tokenRegex.exec(body)
-        if (token && token.length == 2) {
+        if (token && token.length === 2) {
           specialToken = token[1]
           nextUpdate = moment().add(1, 'd').format()
           return resolve(specialToken)
@@ -80,7 +80,7 @@ const _getSpecialToken = () => {
 
 export function enableOrDisableUser(enable, user) {
   return new Promise((resolve, reject) => {
-    if (config.cookies && config.teamName && config.cookies.length == 3) {
+    if (config.cookies && config.teamName && config.cookies.length === 3) {
       _getSpecialToken().then(token => {
         if (enable) {
           setRegular(user, token).then(resp => {
