@@ -126,7 +126,7 @@ export async function quoteById(user, channel, input) {
     return { type: 'dm', message: 'Usage: qid <id> - Returns a quote via it\'s unique id' }
   }
 
-  const quote = getQuoteById(input)
+  const quote = await getQuoteById(input)
 
   return { type: 'channel', message: quote }
 }
