@@ -174,7 +174,7 @@ export async function searchForQuoteByText(user, text) {
   let query = `SELECT * FROM Quote WHERE message LIKE ${sqlify.escape(textQuery)}`
 
   if (user) {
-    query += ` AND user = ${sqlify.excape(user)}`
+    query += ` AND user = ${sqlify.escape(user)}`
   }
 
   const res = await CRUD.executeQuery(query)
