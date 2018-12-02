@@ -108,7 +108,8 @@ export async function quoteSearch(user, channel, input) {
     return { type: 'dm', message: 'Usage: qsearch [@user] <text> - Searches for a quote by text, you can optionally supply a user to search. Must be an @user mention.' }
   }
 
-  const [ maybeUser, ...text ] = input.split(' ')
+  const inputSplit = input.split(' ')
+  const [ maybeUser, ...textWithoutUserSplit ] = inputSplit
   const hasUser = maybeUser.slice(0, 2) === "<@"
   const fromUser = hasUser && findUser(maybeUser)
 
@@ -116,9 +117,22 @@ export async function quoteSearch(user, channel, input) {
     throw 'Invalid user??'
   }
 
-  const query = fromUser ? text.join(' ') : input
+  let query = fromUser ? textWithoutUserSplit : inputSplit
+  let page = +_.last(query)
 
-  return searchForQuoteByText(fromUser.name, query)
+  if (_.isFinite(page)) {
+    query = query.slice(0, query.length - 1)
+  } else {
+    page = 0
+  }
+
+  query = query.join(' ')
+
+  if (!query || query === '') {
+    throw 'Invalid query'
+  }
+
+  return searchForQuoteByText(fromUser.name, query, page)
 }
 
 export async function quoteById(user, channel, input) {

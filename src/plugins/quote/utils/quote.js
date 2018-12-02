@@ -6,6 +6,8 @@ import { getHistory, findUser } from '../../../slack.js'
 import sqlify from 'sqlstring'
 import config from '../../../../config.json'
 
+const QUOTES_PER_PAGE = 12
+
 export async function getQuote(user, index = 0) {
   const u = findUser(user)
   if (!u) {
@@ -32,8 +34,6 @@ export async function getQuote(user, index = 0) {
   }
 }
 
-const QUOTES_PER_PAGE = 10
-
 export async function getQuotes(user, page = 1) {
   user = findUser(user)
   if (!user) throw "Couldn't find a user by that name"
@@ -43,7 +43,7 @@ export async function getQuotes(user, page = 1) {
 
   const username = sqlify.escape(user.name)
   const [ quotesData, quoteCount ] = await Promise.all([
-    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 10 OFFSET ${offset}`),
+    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT ${QUOTES_PER_PAGE} OFFSET ${offset}`),
     CRUD.executeQuery(`SELECT count(*) AS count FROM Quote WHERE user = ${username}`)
   ])
 
@@ -168,28 +168,37 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
   }).catch(reject))
 }
 
-export async function searchForQuoteByText(user, text) {
+export async function searchForQuoteByText(user, text, page) {
   const textQuery = text.match(/(^%|%$)/) ? text : `%${text}%`
-  console.log(text, textQuery, sqlify.escape(textQuery))
-  let query = `SELECT * FROM Quote WHERE message LIKE ${sqlify.escape(textQuery)}`
+  let query = `FROM Quote WHERE message LIKE ${sqlify.escape(textQuery)}`
+  let userQuery = ''
 
   if (user) {
-    query += ` AND user = ${sqlify.escape(user)}`
+    userQuery = `AND user = ${sqlify.escape(user)}`
   }
 
-  const res = await CRUD.executeQuery(query)
+  page = page <= 0 ? 1 : page
+  const offset = QUOTES_PER_PAGE * page - QUOTES_PER_PAGE
+
+  const [ res, totalCount ] = await Promise.all([
+    CRUD.executeQuery(`SELECT * ${query} ${userQuery} ORDER BY DATETIME(grabbed_at) DESC LIMIT ${QUOTES_PER_PAGE} OFFSET ${offset}`),
+    CRUD.executeQuery(`SELECT count(*) AS count ${query} ${userQuery}`)
+  ])
+
+  const totalQuotes = _.get(totalCount, ['rs', 'rows', '_array', 0, 'count'])
+  const totalPages = Math.ceil(+totalQuotes / QUOTES_PER_PAGE)
   const results = _.get(res, ['rs', 'rows', '_array'], [])
 
   if (results.length === 0) {
-    throw 'No results found'
+    throw page === 1 ? 'No results found' : 'No more results'
   }
 
   return {
     type: 'channel',
     messages: [
-      `*${results.length} Result${results.length > 1 ? 's' : ''} found for "${text}"*`,
+      `*${totalQuotes} Result${results.length > 1 ? 's' : ''} found for "${text}"${user ? ` from ${user}` : ''} | Page ${page}/${totalPages}*`,
       '```',
-      ...results.slice(0, 15).map(quote => `[${quote.id}]${user ? '' : ` [${quote.user}]`} ${quote.message}`),
+      ...results.map(quote => `[${quote.id}]${user ? '' : ` [${quote.user}]`} ${quote.message}`),
       '```'
     ]
   }
