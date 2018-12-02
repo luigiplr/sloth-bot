@@ -1,4 +1,5 @@
-import { getQuote, getQuotes, grabQuote, getRandomQuote, getQuoteInfo, getQuoteStats } from './utils/quote'
+import { getQuote, getQuotes, grabQuote, getRandomQuote, getQuoteInfo, getQuoteStats, searchForQuoteByText, getQuoteById } from './utils/quote'
+import { findUser } from '../../slack'
 import _ from 'lodash'
 
 export const plugin_info = [{
@@ -20,11 +21,19 @@ export const plugin_info = [{
 }, {
   alias: ['qinfo'],
   command: 'quoteInfo',
-  usage: 'qinfo <username> [index]'
+  usage: 'qinfo <username|id> [index] - returns quote info'
 }, {
   alias: ['qstats', 'quotestats'],
   command: 'quoteStats',
   usage: 'qstats [user] - returns overall or users quote stats'
+}, {
+  alias: ['qs', 'qsearch'],
+  command: 'quoteSearch',
+  usage: 'qsearch [@user] <text> - searches for a quote, optionally by user'
+}, {
+  alias: ['qid', 'quoteid'],
+  command: 'quoteById',
+  usage: 'qid <id> - gets quote by it\'s id'
 }]
 
 export function grab(user, channel, input) {
@@ -78,18 +87,46 @@ export function randomQuote(user, channel, input) {
 }
 
 export async function quoteInfo(user, channel, input) {
-  return new Promise((resolve, reject) => {
-    if (!input) return resolve({ type: 'dm', message: 'Usage: qinfo <username> [index] - Retrives and displays a users most recent or specified quote info' })
+  if (!input) {
+    return { type: 'dm', message: 'Usage: qinfo <username|info> [index] - Shows quote info for a quote by ID or a quote by user and it\'s index.' }
+  }
 
-    const [ user, index ] = input.split(' ')
-    getQuoteInfo(user, index).then(quote => {
-      return resolve({ type: 'channel', message: quote })
-    }).catch(reject)
-  })
+  const [ userOrId, index ] = input.split(' ')
+  const quote = await getQuoteInfo(userOrId, index)
+
+  return { type: 'channel', message: quote }
 }
 
 export function quoteStats(user, channel, input) {
   return new Promise((resolve, reject) => {
     getQuoteStats(input).then(resp => resolve({ type: 'channel', message: resp })).catch(reject)
   })
+}
+
+export async function quoteSearch(user, channel, input) {
+  if (!input) {
+    return { type: 'dm', message: 'Usage: qsearch [@user] <text> - Searches for a quote by text, you can optionally supply a user to search. Must be an @user mention.' }
+  }
+
+  const [ maybeUser, ...text ] = input.split(' ')
+  const hasUser = maybeUser.slice(0, 2) === "<@"
+  const fromUser = hasUser && findUser(maybeUser)
+
+  if (hasUser && !fromUser) {
+    throw 'Invalid user??'
+  }
+
+  const query = fromUser ? text : input
+
+  return searchForQuoteByText(fromUser.name, query)
+}
+
+export async function quoteById(user, channel, input) {
+  if (!input) {
+    return { type: 'dm', message: 'Usage: qid <id> - Returns a quote via it\'s unique id' }
+  }
+
+  const quote = getQuoteById(input)
+
+  return { type: 'channel', message: quote }
 }

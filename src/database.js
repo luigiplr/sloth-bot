@@ -28,7 +28,7 @@ CRUD.define(Quotes, {
     'grabbed_at',
     'message_id'
   ],
-  orderProperty: 'date',
+  orderProperty: 'grabbed_at',
   orderDirection: 'DESC',
   createStatement: 'CREATE TABLE Quote (id INTEGER PRIMARY KEY NOT NULL, user VARCHAR(128) NOT NULL, message VARCHAR(4000) NOT NULL, grabbed_by VARCHAR(128), grabbed_at DATETIME, message_id NUMERIC UNIQUE)',
   migrations: {

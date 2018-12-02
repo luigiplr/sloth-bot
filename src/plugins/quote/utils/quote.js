@@ -86,27 +86,35 @@ export function getRandomQuote(user) {
   })
 }
 
-export async function getQuoteInfo(user, index) {
-  user = findUser(user)
-  if (!user) throw "Couldn't find a user by that name"
+export async function getQuoteInfo(userOrId, index) {
+  let quote
+  let quoteOffset
 
-  index = _.isNumber(+index) && !_.isNaN(+index) ? +index : 0
-  let offset = index
+  if (_.isFinite(+userOrId)) {
+    quote = await Quotes.findOneById(+userOrId)
+  } else {
+    const user = findUser(userOrId)
+    if (!user) throw "Couldn't find a user by that name"
 
-  const username = sqlify.escape(user.name)
-  const totalQuotesData = await CRUD.executeQuery(`SELECT count(*) as c FROM Quote WHERE user = ${username}`)
-  const total = _.get(totalQuotesData, ['rs', 'rows', '_array', 0, 'c'])
-  if (!total) throw 'Error getting total quotes'
+    index = _.isNumber(+index) && !_.isNaN(+index) ? +index : 0
+    let offset = index
 
-  if (index < 0) {
-    offset = total + offset
-    if (offset < 0) {
-      throw 'Offset is greater than total quotes'
+    const username = sqlify.escape(user.name)
+    const totalQuotesData = await CRUD.executeQuery(`SELECT count(*) as c FROM Quote WHERE user = ${username}`)
+    const total = _.get(totalQuotesData, ['rs', 'rows', '_array', 0, 'c'])
+    if (!total) throw 'Error getting total quotes'
+
+    if (index < 0) {
+      offset = total + offset
+      if (offset < 0) {
+        throw 'Offset is greater than total quotes'
+      }
     }
-  }
 
-  const quoteData = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 1 OFFSET ${offset}`)
-  const quote = _.get(quoteData, ['rs', 'rows', '_array', 0])
+    const quoteData = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 1 OFFSET ${offset}`)
+    quote = _.get(quoteData, ['rs', 'rows', '_array', 0])
+    quoteOffset = offset - total
+  }
 
   if (!quote) {
     throw 'Offset is greater than total quotes'
@@ -114,14 +122,14 @@ export async function getQuoteInfo(user, index) {
 
   return [
     '```',
-    `    Offset: ${offset - total}`,
+    quoteOffset && `    Offset: ${quoteOffset}`,
     `  Quote ID: ${quote.id}`,
     `Grabbed By: ${quote.grabbed_by}`,
     `Grabbed At: ${quote.grabbed_at}`,
     `Quote User: ${quote.user}`,
     `     Quote: ${quote.message}`,
     '```'
-  ].join('\n')
+  ].filter(Boolean).join('\n')
 }
 
 export function grabQuote(grabee, channel, index = 0, grabber) {
@@ -158,6 +166,43 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
       resolve(`Successfully grabbed a quote for ${user.name}`)
     })
   }).catch(reject))
+}
+
+export async function searchForQuoteByText(user, text) {
+  const textQuery = text.match(/(^%|%$)/) ? text : `%${text}%`
+  console.log(text, textQuery, sqlify.escape(textQuery))
+  let query = `SELECT * FROM Quote WHERE message LIKE ${sqlify.escape(textQuery)}`
+
+  if (user) {
+    query += ` AND user = ${sqlify.excape(user)}`
+  }
+
+  const res = await CRUD.executeQuery(query)
+  const results = _.get(res, ['rs', 'rows', '_array'], [])
+
+  if (results.length === 0) {
+    throw 'No results found'
+  }
+
+  return {
+    type: 'channel',
+    messages: [
+      `*${results.length} Result${results.length > 1 ? 's' : ''} found for "${text}"*`,
+      '```',
+      ...results.slice(0, 15).map(quote => `[${quote.id}]${user ? '' : ` [${quote.user}]`} ${quote.message}`),
+      '```'
+    ]
+  }
+}
+
+export async function getQuoteById(id) {
+  if (!_.isFinite(+id)) {
+    throw 'Invalid number'
+  }
+
+  const quote = await Quotes.findOneById(+id)
+
+  return urlify(`<${quote.user}>\n${quote.message}`)
 }
 
 const selectOverallQuoteStats = `
