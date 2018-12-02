@@ -198,7 +198,7 @@ export async function searchForQuoteByText(user, text, page) {
     messages: [
       `*${totalQuotes} Result${results.length > 1 ? 's' : ''} found for "${text}"${user ? ` from ${user}` : ''} | Page ${page}/${totalPages}*`,
       '```',
-      ...results.map(quote => `[${quote.id}]${user ? '' : ` [${quote.user}]`} ${quote.message}`),
+      ...results.map(quote => `[${quote.id}]${user ? '' : ` [${quote.user}]`} ${quote.message.replace(/```/g, '``')}`),
       '```'
     ]
   }
