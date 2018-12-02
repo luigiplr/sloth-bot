@@ -116,7 +116,7 @@ export async function quoteSearch(user, channel, input) {
     throw 'Invalid user??'
   }
 
-  const query = fromUser ? text : input
+  const query = fromUser ? text.join(' ') : input
 
   return searchForQuoteByText(fromUser.name, query)
 }
