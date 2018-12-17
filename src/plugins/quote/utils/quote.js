@@ -6,6 +6,8 @@ import { getHistory, findUser } from '../../../slack.js'
 import sqlify from 'sqlstring'
 import config from '../../../../config.json'
 
+const QUOTES_PER_PAGE = 12
+
 export async function getQuote(user, index = 0) {
   const u = findUser(user)
   if (!u) {
@@ -32,8 +34,6 @@ export async function getQuote(user, index = 0) {
   }
 }
 
-const QUOTES_PER_PAGE = 10
-
 export async function getQuotes(user, page = 1) {
   user = findUser(user)
   if (!user) throw "Couldn't find a user by that name"
@@ -43,7 +43,7 @@ export async function getQuotes(user, page = 1) {
 
   const username = sqlify.escape(user.name)
   const [ quotesData, quoteCount ] = await Promise.all([
-    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 10 OFFSET ${offset}`),
+    CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT ${QUOTES_PER_PAGE} OFFSET ${offset}`),
     CRUD.executeQuery(`SELECT count(*) AS count FROM Quote WHERE user = ${username}`)
   ])
 
@@ -86,27 +86,35 @@ export function getRandomQuote(user) {
   })
 }
 
-export async function getQuoteInfo(user, index) {
-  user = findUser(user)
-  if (!user) throw "Couldn't find a user by that name"
+export async function getQuoteInfo(userOrId, index) {
+  let quote
+  let quoteOffset
 
-  index = _.isNumber(+index) && !_.isNaN(+index) ? +index : 0
-  let offset = index
+  if (_.isFinite(+userOrId)) {
+    quote = await Quotes.findOneById(+userOrId)
+  } else {
+    const user = findUser(userOrId)
+    if (!user) throw "Couldn't find a user by that name"
 
-  const username = sqlify.escape(user.name)
-  const totalQuotesData = await CRUD.executeQuery(`SELECT count(*) as c FROM Quote WHERE user = ${username}`)
-  const total = _.get(totalQuotesData, ['rs', 'rows', '_array', 0, 'c'])
-  if (!total) throw 'Error getting total quotes'
+    index = _.isNumber(+index) && !_.isNaN(+index) ? +index : 0
+    let offset = index
 
-  if (index < 0) {
-    offset = total + offset
-    if (offset < 0) {
-      throw 'Offset is greater than total quotes'
+    const username = sqlify.escape(user.name)
+    const totalQuotesData = await CRUD.executeQuery(`SELECT count(*) as c FROM Quote WHERE user = ${username}`)
+    const total = _.get(totalQuotesData, ['rs', 'rows', '_array', 0, 'c'])
+    if (!total) throw 'Error getting total quotes'
+
+    if (index < 0) {
+      offset = total + offset
+      if (offset < 0) {
+        throw 'Offset is greater than total quotes'
+      }
     }
-  }
 
-  const quoteData = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 1 OFFSET ${offset}`)
-  const quote = _.get(quoteData, ['rs', 'rows', '_array', 0])
+    const quoteData = await CRUD.executeQuery(`SELECT * FROM Quote WHERE user = ${username} ORDER BY DATETIME(grabbed_at) DESC LIMIT 1 OFFSET ${offset}`)
+    quote = _.get(quoteData, ['rs', 'rows', '_array', 0])
+    quoteOffset = offset - total
+  }
 
   if (!quote) {
     throw 'Offset is greater than total quotes'
@@ -114,14 +122,14 @@ export async function getQuoteInfo(user, index) {
 
   return [
     '```',
-    `    Offset: ${offset - total}`,
+    quoteOffset && `    Offset: ${quoteOffset}`,
     `  Quote ID: ${quote.id}`,
     `Grabbed By: ${quote.grabbed_by}`,
     `Grabbed At: ${quote.grabbed_at}`,
     `Quote User: ${quote.user}`,
     `     Quote: ${quote.message}`,
     '```'
-  ].join('\n')
+  ].filter(Boolean).join('\n')
 }
 
 export function grabQuote(grabee, channel, index = 0, grabber) {
@@ -160,8 +168,53 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
   }).catch(reject))
 }
 
-const withinTime = `WHERE grabbed_at >= date('now', '-1 months')`
+export async function searchForQuoteByText(user, text, page) {
+  const textQuery = text.match(/(^%|%$)/) ? text : `%${text}%`
+  let query = `FROM Quote WHERE message LIKE ${sqlify.escape(textQuery)}`
+  let userQuery = ''
 
+  if (user) {
+    userQuery = `AND user = ${sqlify.escape(user)}`
+  }
+
+  page = page <= 0 ? 1 : page
+  const offset = QUOTES_PER_PAGE * page - QUOTES_PER_PAGE
+
+  const [ res, totalCount ] = await Promise.all([
+    CRUD.executeQuery(`SELECT * ${query} ${userQuery} ORDER BY DATETIME(grabbed_at) DESC LIMIT ${QUOTES_PER_PAGE} OFFSET ${offset}`),
+    CRUD.executeQuery(`SELECT count(*) AS count ${query} ${userQuery}`)
+  ])
+
+  const totalQuotes = _.get(totalCount, ['rs', 'rows', '_array', 0, 'count'])
+  const totalPages = Math.ceil(+totalQuotes / QUOTES_PER_PAGE)
+  const results = _.get(res, ['rs', 'rows', '_array'], [])
+
+  if (results.length === 0) {
+    throw page === 1 ? 'No results found' : 'No more results'
+  }
+
+  return {
+    type: 'channel',
+    messages: [
+      `*${totalQuotes} Result${results.length > 1 ? 's' : ''} found for "${text}"${user ? ` from ${user}` : ''} | Page ${page}/${totalPages}*`,
+      '```',
+      ...results.map(quote => `[${quote.id}]${user ? '' : ` [${quote.user}]`} ${quote.message.replace(/```/g, '``')}`),
+      '```'
+    ]
+  }
+}
+
+export async function getQuoteById(id) {
+  if (!_.isFinite(+id)) {
+    throw 'Invalid number'
+  }
+
+  const quote = await Quotes.findOneById(+id)
+
+  return urlify(`<${quote.user}>\n${quote.message}`)
+}
+
+const withinTime = `WHERE grabbed_at >= date('now', '-1 months')`
 const selectOverallQuoteStats = `
 SELECT count(*) AS total_quotes_all,
   (SELECT count(*) FROM Quote ${withinTime}) AS total_quotes,
