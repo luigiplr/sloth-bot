@@ -160,15 +160,23 @@ export function grabQuote(grabee, channel, index = 0, grabber) {
   }).catch(reject))
 }
 
+const withinTime = `WHERE grabbed_at >= date('now', '-1 months')`
+
 const selectOverallQuoteStats = `
-SELECT count(*) AS total_quotes,
-  (SELECT grabbed_by FROM Quote GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most,
-  (SELECT count(*) FROM Quote GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most_count,
-  (SELECT user FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed,
-  (SELECT count(*) FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed_count,
+SELECT count(*) AS total_quotes_all,
+  (SELECT count(*) FROM Quote ${withinTime}) AS total_quotes,
+  (SELECT grabbed_by FROM Quote ${withinTime} GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most,
+  (SELECT count(*) FROM Quote ${withinTime} GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most_count,
+  (SELECT user FROM Quote ${withinTime} GROUP BY user ORDER BY count(*) DESC) AS most_grabbed,
+  (SELECT count(*) FROM Quote ${withinTime} GROUP BY user ORDER BY count(*) DESC) AS most_grabbed_count,
+  (SELECT count(*) * 1.0 / count(distinct(date(grabbed_at))) FROM Quote ${withinTime}) as average_grabs,
+  (SELECT grabbed_by FROM Quote GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most_all,
+  (SELECT count(*) FROM Quote GROUP BY grabbed_by ORDER BY count(*) DESC) AS grabbed_most_count_all,
+  (SELECT user FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed_all,
+  (SELECT count(*) FROM Quote GROUP BY user ORDER BY count(*) DESC) AS most_grabbed_count_all,
   (SELECT user FROM Quote ORDER BY datetime(grabbed_at) DESC) AS recently_grabbed,
   (SELECT grabbed_at FROM Quote ORDER BY datetime(grabbed_at) DESC) AS recently_grabbed_at,
-  (SELECT count(*) * 1.0 / count(distinct(date(grabbed_at))) FROM Quote) as average_grabs
+  (SELECT count(*) * 1.0 / count(distinct(date(grabbed_at))) FROM Quote) as average_grabs_all
 FROM Quote
 `
 
@@ -191,14 +199,37 @@ export async function getQuoteStats(input) {
   if (user) {
     return 'NOT IMPLEMENTED'
   } else {
-    const table = new CliTable({ head: [], style: { head: [], border: [] } })
-    table.push(
-      { 'Overall': qs.total_quotes ? `${qs.total_quotes} quotes in total` : 'Unknown' },
-      { 'Most Quoted': qs.most_grabbed ? `${qs.most_grabbed} with ${qs.most_grabbed_count} quotes` : 'Unknown' },
-      { 'Grabs Most': qs.grabbed_most ? `${qs.grabbed_most} with ${qs.grabbed_most_count} grabs` : 'Unknown' },
-      { 'Latest Quote': qs.recently_grabbed ? `${qs.recently_grabbed} ${moment(new Date(qs.recently_grabbed_at)).from(Date.now())}` : 'Unknown' },
-      { 'Avg Grabs / Day': qs.average_grabs ? `${qs.average_grabs.toFixed(2)} grabs per day ` : 'Unknown' }
-    )
+    const table = new CliTable({
+      head: [ '', 'Past Month', 'All Time' ],
+      style: { head: [], border: [] }
+    })
+
+    table.push({
+      'Most Quoted': [
+        qs.most_grabbed ? `${qs.most_grabbed} with ${qs.most_grabbed_count} quotes` : 'Unknown',
+        qs.most_grabbed_all ? `${qs.most_grabbed_all} with ${qs.most_grabbed_count_all} quotes` : 'Unknown'
+      ]
+    }, {
+      'Grabs Most': [
+        qs.grabbed_most ? `${qs.grabbed_most} with ${qs.grabbed_most_count} grabs` : 'Unknown',
+        qs.grabbed_most_all ? `${qs.grabbed_most_all} with ${qs.grabbed_most_count_all} grabs` : 'Unknown'
+      ]
+    }, {
+      'Avg Grabs / Day': [
+        qs.average_grabs ? `${qs.average_grabs.toFixed(2)} grabs per day ` : 'Unknown',
+        qs.average_grabs_all ? `${qs.average_grabs_all.toFixed(2)} grabs per day ` : 'Unknown'
+      ]
+    }, {
+      'Overall': [
+        qs.total_quotes ? `${qs.total_quotes} quotes` : 'Unknown',
+        qs.total_quotes_all ? `${qs.total_quotes_all} quotes` : 'Unknown'
+      ]
+    }, {
+      'Latest Quote': [
+        qs.recently_grabbed ? `${qs.recently_grabbed} ${moment(new Date(qs.recently_grabbed_at)).from(Date.now())}` : 'Unknown',
+        'N/A'
+      ]
+    })
 
     return [
       '*Quote Statistics:*',
