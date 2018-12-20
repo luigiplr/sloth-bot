@@ -64,6 +64,22 @@ export function sendPMThroughSlackbot(channel, input) {
 }
 
 /**
+ * Renames a channel
+ * @param {string} channel - id of the channel to rename
+ * @param {string} newName - new name of the channel
+ */
+export function renameChannel(channel, newName) {
+  return new Promise((resolve, reject) => needle.post('https://slack.com/api/channels.rename', {
+    name: newName,
+    channel: channel,
+    token: config.slackAPIToken
+  }, (err, resp, { error }) => {
+    if (err || error) return reject(_logErr('renameChannelErr', err || error))
+    resolve()
+  }))
+}
+
+/**
  * Returns message history for a channel
  * @param id of the channel
  * @param optional limit - default 100

@@ -1,5 +1,5 @@
 import { kick, deleteLastMessage, enableOrDisableUser, getInviteForUser } from './utils/slack'
-import { invite, getHistory, deleteMessage, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw, inviteUser as inviteUserRAW } from '../../slack.js'
+import { renameChannel, invite, getHistory, deleteMessage, findUser, findUserByParam, addLoadingMsg, deleteLoadingMsg, updateUsersCache, getChannelsList, kickUser as kickUserRaw, inviteUser as inviteUserRAW } from '../../slack.js'
 import moment from 'moment'
 import _ from 'lodash'
 import perms from '../../permissions'
@@ -84,8 +84,13 @@ export const plugin_info = [{
 }, {
   alias: ['purge'],
   command: 'purge',
-  usage: 'purge  <count>- purges messages',
+  usage: 'purge <count> - purges messages',
   userLevel: ['superadmin']
+}, {
+  alias: ['renamechannel'],
+  command: 'renamechannel',
+  usage: 'renamechannel <name> - renames a channel',
+  userLevel: ['admin', 'superadmin']
 }]
 
 const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.length > 0
@@ -407,4 +412,21 @@ export async function avatar(user, channel, input) {
   if (!u.profile.image_original) throw `${u.name} has no avatar`
 
   return { type: 'channel', message: `${u.name}'s avatar is: ${u.profile.image_original}` }
+}
+
+const channelNameRx = /^[a-z0-9-_]+$/
+export async function renamechannel(user, channel, input) {
+  if (!input) {
+    return { type: 'dm', message: 'Usage: renamechannel <name> - renames a channel' }
+  }
+
+  if (input.length <= 1 || input.length > 21) {
+    throw 'Channel name is too long, must be 21 characters or less'
+  }
+
+  if (!channelNameRx.test(input)) {
+    throw 'Channel names can only contain lowercase letters, numbers, hyphens, and underscores'
+  }
+
+  return await renameChannel(channel.id, input)
 }
