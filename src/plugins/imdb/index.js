@@ -39,8 +39,12 @@ export async function imdb(user, channel, input) {
       const isEpisode = data['@type'] === 'TVEpisode'
       const description = $('.plot_summary .summary_text').text().trim()
 
+      // Episode specific variables
       let seasonNum
       let episodeNum
+      let parentShowTitle
+      let parentShowUrl
+
       if (isEpisode) {
         const seasonAndEpisodeText = $('#title-overview-widget div.bp_item:not(.np_next):not(.np_prev) .bp_heading').text().trim()
         const seMatch = seasonAndEpisodeText.match(/^Season (\d+) \| Episode (\d+)$/i)
@@ -50,6 +54,10 @@ export async function imdb(user, channel, input) {
           seasonNum = +seMatch[1]
           episodeNum = +seMatch[2]
         }
+
+        const parentShow = $('.titleParent a')
+        parentShowTitle = parentShow.text().trim()
+        parentShowUrl = (parentShow.attr('href') || '').split('?')[0]
       }
 
       const date = new Date(data.datePublished)
@@ -76,6 +84,14 @@ export async function imdb(user, channel, input) {
               value: !_.isNaN(date) && data.datePublished,
               short: true
             }, {
+              title: 'Parent Show',
+              value: (isEpisode && parentShowTitle && parentShowUrl) && `<https://www.imdb.com${parentShowUrl}|${parentShowTitle}>`,
+              short: true
+            }, {
+              title: 'Season/Episode',
+              value: (_.isFinite(seasonNum) && _.isFinite(episodeNum)) && `S${seasonNum < 10 ? '0' : ''}${seasonNum}E${episodeNum < 10 ? '0' : ''}${episodeNum}`,
+              short: true
+            }, {
               title: 'Rating',
               value: data.aggregateRating && data.aggregateRating.ratingValue,
               short: true
@@ -84,20 +100,16 @@ export async function imdb(user, channel, input) {
               value: data.aggregateRating && numberWithCommas(data.aggregateRating.ratingCount),
               short: true
             }, {
-              title: 'Season/Episode',
-              value: (_.isFinite(seasonNum) && _.isFinite(episodeNum)) && `S${seasonNum < 10 ? '0' : ''}${seasonNum}E${episodeNum < 10 ? '0' : ''}${episodeNum}`,
-              short: true
-            }, {
               title: 'Director',
               value: data.director && `<https://www.imdb.com${data.director.url}|${data.director.name}>`,
               short: true
             }, {
-              title: 'Genres',
-              value: data.genre && data.genre.join(', '),
-              short: true
-            }, {
               title: 'Classification',
               value: data.contentRating && data.contentRating,
+              short: true
+            }, {
+              title: 'Genres',
+              value: data.genre && data.genre.join(', '),
               short: true
             }, {
               title: 'Type',
