@@ -36,9 +36,25 @@ export async function imdb(user, channel, input) {
       const schemaData = $('script[type="application/ld+json"]').text().trim()
       const data = JSON.parse(schemaData)
 
+      const isEpisode = data['@type'] === 'TVEpisode'
+      const description = $('.plot_summary .summary_text').text().trim()
+
+      let seasonNum
+      let episodeNum
+      if (isEpisode) {
+        const seasonAndEpisodeText = $('#title-overview-widget div.bp_item:not(.np_next):not(.np_prev) .bp_heading').text().trim()
+        const seMatch = seasonAndEpisodeText.match(/^Season (\d+) \| Episode (\d+)$/i)
+        console.log(seasonAndEpisodeText, seMatch)
+
+        if (seMatch) {
+          seasonNum = +seMatch[1]
+          episodeNum = +seMatch[2]
+        }
+      }
+
       const date = new Date(data.datePublished)
       const year = date.getFullYear()
-      const title = `${data.name}${!_.isNaN(year) ? ` (${year})` : ''}`
+      const title = `${data.name}${!_.isNaN(year) && !isEpisode ? ` (${year})` : ''}`
 
       return {
         type: 'channel',
@@ -47,8 +63,8 @@ export async function imdb(user, channel, input) {
             color: '#f5c518',
             title: title,
             title_link: `https://www.imdb.com/title/${input}/`,
-            text: data.description,
-            image_url: data.image && data.image.replace('_V1_', '_V1_SX142'),
+            text: description && description.length > 0 ? description : null,
+            image_url: data.image && data.image.replace('_V1_', '_V1_SX132'),
             footer: 'IMDb',
             footer_icon: 'https://m.media-amazon.com/images/G/01/IMDb/BG_rectangle._CB1509060989_SY230_SX307_AL_.png',
             fields: [{
@@ -68,6 +84,10 @@ export async function imdb(user, channel, input) {
               value: data.aggregateRating && numberWithCommas(data.aggregateRating.ratingCount),
               short: true
             }, {
+              title: 'Season/Episode',
+              value: (_.isFinite(seasonNum) && _.isFinite(episodeNum)) && `S${seasonNum < 10 ? '0' : ''}${seasonNum}E${episodeNum < 10 ? '0' : ''}${episodeNum}`,
+              short: true
+            }, {
               title: 'Director',
               value: data.director && `<https://www.imdb.com${data.director.url}|${data.director.name}>`,
               short: true
@@ -78,6 +98,10 @@ export async function imdb(user, channel, input) {
             }, {
               title: 'Classification',
               value: data.contentRating && data.contentRating,
+              short: true
+            }, {
+              title: 'Type',
+              value: data['@type'] && data['@type'],
               short: true
             }].filter(field => field.value)
           }]
