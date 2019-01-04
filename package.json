@@ -41,7 +41,7 @@
     "giphy": "0.0.4",
     "lodash": "^4.17.10",
     "mc-ping-updated": "^0.1.0",
-    "moment": "^2.22.2",
+    "moment": "2.23.0",
     "morse-node": "^0.1.1",
     "needle": "^2.2.1",
     "node-metainspector": "https://github.com/jaruba/node-metainspector/tarball/master",
@@ -55,7 +55,7 @@
     "steamid": "^1.1.0",
     "striptags": "^3.1.1",
     "xml2js": "^0.4.17",
-    "youtube-search": "^1.1.1",
+    "youtube-search": "1.1.4",
     "youtube-url": "^0.5.0"
   },
   "devDependencies": {
@@ -71,12 +71,12 @@
     "babel-register": "^6.26.0",
     "cpy-cli": "2.0.0",
     "cross-env": "^5.2.0",
-    "eslint": "5.9.0",
+    "eslint": "5.11.1",
     "eslint-formatter-pretty": "2.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "4.0.0",
     "piping": "^1.0.0-rc.4",
-    "rimraf": "^2.6.2"
+    "rimraf": "2.6.3"
   },
   "engines": {
     "node": ">= 8.0.0"
