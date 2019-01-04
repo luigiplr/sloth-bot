@@ -46,23 +46,23 @@ export async function imdb(user, channel, input) {
       let parentShowUrl
 
       if (isEpisode) {
+        const parentShow = $('.titleParent a')
+        parentShowTitle = parentShow.text().trim()
+        parentShowUrl = (parentShow.attr('href') || '').split('?')[0]
+
         const seasonAndEpisodeText = $('#title-overview-widget div.bp_item:not(.np_next):not(.np_prev) .bp_heading').text().trim()
         const seMatch = seasonAndEpisodeText.match(/^Season (\d+) \| Episode (\d+)$/i)
-        console.log(seasonAndEpisodeText, seMatch)
 
         if (seMatch) {
           seasonNum = +seMatch[1]
           episodeNum = +seMatch[2]
         }
-
-        const parentShow = $('.titleParent a')
-        parentShowTitle = parentShow.text().trim()
-        parentShowUrl = (parentShow.attr('href') || '').split('?')[0]
       }
 
+      const seasonAndEpisode = (_.isFinite(seasonNum) && _.isFinite(episodeNum)) && `S${getEpisodeNumber(seasonNum)}E${getEpisodeNumber(episodeNum)}`
       const date = new Date(data.datePublished)
       const year = date.getFullYear()
-      const title = `${data.name}${!_.isNaN(year) && !isEpisode ? ` (${year})` : ''}`
+      const title = `${seasonAndEpisode ? `${seasonAndEpisode} - ` : ''}${data.name}${!_.isNaN(year) && !isEpisode ? ` (${year})` : ''}`
 
       return {
         type: 'channel',
@@ -89,7 +89,7 @@ export async function imdb(user, channel, input) {
               short: true
             }, {
               title: 'Season/Episode',
-              value: (_.isFinite(seasonNum) && _.isFinite(episodeNum)) && `S${seasonNum < 10 ? '0' : ''}${seasonNum}E${episodeNum < 10 ? '0' : ''}${episodeNum}`,
+              value: seasonAndEpisode,
               short: true
             }, {
               title: 'Rating',
@@ -127,6 +127,10 @@ export async function imdb(user, channel, input) {
     console.error('Error fetching data from IMDB')
     throw 'Error fetching data from IMDB'
   }
+}
+
+function getEpisodeNumber(x) {
+  return x <= 9 ? `0${x}` : x
 }
 
 // https://stackoverflow.com/a/2901298
