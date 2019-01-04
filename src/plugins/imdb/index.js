@@ -48,7 +48,7 @@ export async function imdb(user, channel, input) {
             title: title,
             title_link: `https://www.imdb.com/title/${input}/`,
             text: data.description,
-            image_url: data.image && data.image.replace('_V1_', '_V1_SX162'),
+            image_url: data.image && data.image.replace('_V1_', '_V1_SX142'),
             footer: 'IMDb',
             footer_icon: 'https://m.media-amazon.com/images/G/01/IMDb/BG_rectangle._CB1509060989_SY230_SX307_AL_.png',
             fields: [{
