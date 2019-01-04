@@ -11,8 +11,8 @@ Slack bot full of fun commands
 ##### Build and run
 ```npm run build``` and ```npm run start```
 ##### Running forever
-You can use the `forever` npm module to run this bot  
-in the background forever using the command:  
+You can use the `forever` npm module to run this bot
+in the background forever using the command:
 `npm run forever`
 
 ## Config File
@@ -26,7 +26,6 @@ config.json should resemble:
   "steamAPIKey": "",
   "wolframAPIKey": "",
   "traktAPIKey": "",
-  "f00pxAPIKey": "",
   "tmdbAPIKey": "",
 
   "googleAPIKey": "",
@@ -65,7 +64,6 @@ config.json should resemble:
 * Wolfram API Key: WolframAlpha API key to make use of their engine
 * Trakt.tv API Key: API Key for using the movie/show details plugin. In order to get a key you need to create a new app here; https://trakt.tv/oauth/applications . Once you have made an app, the API key is the client_id for the app.
 * TMDB API Key: API Key the trakt funcationality, currently only used to get poster images.
-* 500px API Key: API Key for the 500px API
 
 
 ## License
