@@ -1,4 +1,4 @@
-// Last Updated Febuary 25th 2018 v0.25.0
+// Last Updated January 4th, 2019 v0.26.1
 module.exports = {
   "__": {
     "name": "__",
@@ -7,7 +7,7 @@ module.exports = {
     "since": "v0.6.0",
     "description": "A special placeholder value used to specify \"gaps\" within curried functions, allowing partial application of any combination of arguments, regardless of their positions. If `g` is a curried ternary function and `_` is `R.__`, the following are equivalent: `g(1, 2, 3)` `g(_, 2, 3)(1)` `g(_, _, 3)(1)(2)` `g(_, _, 3)(1, 2)` `g(_, 2, _)(1, 3)` `g(_, 2)(1)(3)` `g(_, 2)(1, 3)` `g(_, 2)(_, 3)(1)`",
     "see": [],
-    "example": "var greet = R.replace('{name}', R.__, 'Hello, {name}!');\ngreet('Alice'); //=> 'Hello, Alice!'"
+    "example": "const greet = R.replace('{name}', R.__, 'Hello, {name}!');\ngreet('Alice'); //=> 'Hello, Alice!'"
   },
   "add": {
     "name": "add",
@@ -22,23 +22,23 @@ module.exports = {
   },
   "addindex": {
     "name": "addIndex",
-    "command": "((a … → b) … → [a] → *) → (a …, Int, [a] → b) … → [a] → *)",
+    "command": "((a … → b) … → [a] → *) → ((a …, Int, [a] → b) … → [a] → *)",
     "category": "Function",
     "since": "v0.15.0",
     "description": "Creates a new list iteration function from an existing one by adding two new parameters to its callback function: the current index, and the entire list. This would turn, for instance, `R.map` function into one that more closely resembles `Array.prototype.map`. Note that this will only work for functions in which the iteration callback function is the first parameter, and where the list is the last parameter. (This latter might be unimportant if the list parameter is not used.)",
     "see": [],
-    "example": "var mapIndexed = R.addIndex(R.map);\nmapIndexed((val, idx) => idx + '-' + val, ['f', 'o', 'o', 'b', 'a', 'r']);\n//=> ['0-f', '1-o', '2-o', '3-b', '4-a', '5-r']"
+    "example": "const mapIndexed = R.addIndex(R.map);\nmapIndexed((val, idx) => idx + '-' + val, ['f', 'o', 'o', 'b', 'a', 'r']);\n//=> ['0-f', '1-o', '2-o', '3-b', '4-a', '5-r']"
   },
   "adjust": {
     "name": "adjust",
-    "command": "(a → a) → Number → [a] → [a]",
+    "command": "Number → (a → a) → [a] → [a]",
     "category": "List",
     "since": "v0.14.0",
     "description": "Applies a function to the value at the given index of an array, returning a new copy of the array with the element at the given index replaced with the result of the function application.",
     "see": [
       "update"
     ],
-    "example": "R.adjust(R.add(10), 1, [1, 2, 3]);     //=> [1, 12, 3]\nR.adjust(R.add(10))(1)([1, 2, 3]);     //=> [1, 12, 3]"
+    "example": "R.adjust(1, R.toUpper, ['a', 'b', 'c', 'd']);      //=> ['a', 'B', 'c', 'd']\nR.adjust(-1, R.toUpper, ['a', 'b', 'c', 'd']);     //=> ['a', 'b', 'c', 'D']"
   },
   "all": {
     "name": "all",
@@ -51,7 +51,7 @@ module.exports = {
       "none",
       "transduce"
     ],
-    "example": "var equals3 = R.equals(3);\nR.all(equals3)([3, 3, 3, 3]); //=> true\nR.all(equals3)([3, 3, 1, 3]); //=> false"
+    "example": "const equals3 = R.equals(3);\nR.all(equals3)([3, 3, 3, 3]); //=> true\nR.all(equals3)([3, 3, 1, 3]); //=> false"
   },
   "allpass": {
     "name": "allPass",
@@ -62,7 +62,7 @@ module.exports = {
     "see": [
       "anyPass"
     ],
-    "example": "var isQueen = R.propEq('rank', 'Q');\nvar isSpade = R.propEq('suit', '♠︎');\nvar isQueenOfSpades = R.allPass([isQueen, isSpade]);\n\nisQueenOfSpades({rank: 'Q', suit: '♣︎'}); //=> false\nisQueenOfSpades({rank: 'Q', suit: '♠︎'}); //=> true"
+    "example": "const isQueen = R.propEq('rank', 'Q');\nconst isSpade = R.propEq('suit', '♠︎');\nconst isQueenOfSpades = R.allPass([isQueen, isSpade]);\n\nisQueenOfSpades({rank: 'Q', suit: '♣︎'}); //=> false\nisQueenOfSpades({rank: 'Q', suit: '♠︎'}); //=> true"
   },
   "always": {
     "name": "always",
@@ -71,7 +71,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Returns a function that always returns the given value. Note that for non-primitives the value returned is a reference to the original value. This function is known as `const`, `constant`, or `K` (for K combinator) in other languages and libraries.",
     "see": [],
-    "example": "var t = R.always('Tee');\nt(); //=> 'Tee'"
+    "example": "const t = R.always('Tee');\nt(); //=> 'Tee'"
   },
   "and": {
     "name": "and",
@@ -89,13 +89,13 @@ module.exports = {
     "command": "(a → Boolean) → [a] → Boolean",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns `true` if at least one of elements of the list match the predicate, `false` otherwise. Dispatches to the `any` method of the second argument, if present. Acts as a transducer if a transformer is given in list position.",
+    "description": "Returns `true` if at least one of the elements of the list match the predicate, `false` otherwise. Dispatches to the `any` method of the second argument, if present. Acts as a transducer if a transformer is given in list position.",
     "see": [
       "all",
       "none",
       "transduce"
     ],
-    "example": "var lessThan0 = R.flip(R.lt)(0);\nvar lessThan2 = R.flip(R.lt)(2);\nR.any(lessThan0)([1, 2]); //=> false\nR.any(lessThan2)([1, 2]); //=> true"
+    "example": "const lessThan0 = R.flip(R.lt)(0);\nconst lessThan2 = R.flip(R.lt)(2);\nR.any(lessThan0)([1, 2]); //=> false\nR.any(lessThan2)([1, 2]); //=> true"
   },
   "anypass": {
     "name": "anyPass",
@@ -106,7 +106,7 @@ module.exports = {
     "see": [
       "allPass"
     ],
-    "example": "var isClub = R.propEq('suit', '♣');\nvar isSpade = R.propEq('suit', '♠');\nvar isBlackCard = R.anyPass([isClub, isSpade]);\n\nisBlackCard({rank: '10', suit: '♣'}); //=> true\nisBlackCard({rank: 'Q', suit: '♠'}); //=> true\nisBlackCard({rank: 'Q', suit: '♦'}); //=> false"
+    "example": "const isClub = R.propEq('suit', '♣');\nconst isSpade = R.propEq('suit', '♠');\nconst isBlackCard = R.anyPass([isClub, isSpade]);\n\nisBlackCard({rank: '10', suit: '♣'}); //=> true\nisBlackCard({rank: 'Q', suit: '♠'}); //=> true\nisBlackCard({rank: 'Q', suit: '♦'}); //=> false"
   },
   "ap": {
     "name": "ap",
@@ -149,7 +149,7 @@ module.exports = {
       "call",
       "unapply"
     ],
-    "example": "var nums = [1, 2, 3, -99, 42, 6, 7];\nR.apply(Math.max, nums); //=> 42"
+    "example": "const nums = [1, 2, 3, -99, 42, 6, 7];\nR.apply(Math.max, nums); //=> 42"
   },
   "applyspec": {
     "name": "applySpec",
@@ -161,7 +161,7 @@ module.exports = {
       "converge",
       "juxt"
     ],
-    "example": "var getMetrics = R.applySpec({\n  sum: R.add,\n  nested: { mul: R.multiply }\n});\ngetMetrics(2, 4); // => { sum: 6, nested: { mul: 8 } }"
+    "example": "const getMetrics = R.applySpec({\n  sum: R.add,\n  nested: { mul: R.multiply }\n});\ngetMetrics(2, 4); // => { sum: 6, nested: { mul: 8 } }"
   },
   "applyto": {
     "name": "applyTo",
@@ -170,7 +170,7 @@ module.exports = {
     "since": "v0.25.0",
     "description": "Takes a value and applies a function to it. This function is also known as the `thrush` combinator.",
     "see": [],
-    "example": "var t42 = R.applyTo(42);\nt42(R.identity); //=> 42\nt42(R.add(1)); //=> 43"
+    "example": "const t42 = R.applyTo(42);\nt42(R.identity); //=> 42\nt42(R.add(1)); //=> 43"
   },
   "ascend": {
     "name": "ascend",
@@ -181,7 +181,7 @@ module.exports = {
     "see": [
       "descend"
     ],
-    "example": "var byAge = R.ascend(R.prop('age'));\nvar people = [\n  // ...\n];\nvar peopleByYoungestFirst = R.sort(byAge, people);"
+    "example": "const byAge = R.ascend(R.prop('age'));\nconst people = [\n  { name: 'Emma', age: 70 },\n  { name: 'Peter', age: 78 },\n  { name: 'Mikhail', age: 62 },\n];\nconst peopleByYoungestFirst = R.sort(byAge, people);\n  //=> [{ name: 'Mikhail', age: 62 },{ name: 'Emma', age: 70 }, { name: 'Peter', age: 78 }]"
   },
   "assoc": {
     "name": "assoc",
@@ -190,7 +190,8 @@ module.exports = {
     "since": "v0.8.0",
     "description": "Makes a shallow clone of an object, setting or overriding the specified property with the given value. Note that this copies and flattens prototype properties onto the new object as well. All non-primitive properties are copied by reference.",
     "see": [
-      "dissoc"
+      "dissoc",
+      "pick"
     ],
     "example": "R.assoc('c', 3, {a: 1, b: 2}); //=> {a: 1, b: 2, c: 3}"
   },
@@ -215,7 +216,7 @@ module.exports = {
       "nAry",
       "unary"
     ],
-    "example": "var takesThreeArgs = function(a, b, c) {\n  return [a, b, c];\n};\ntakesThreeArgs.length; //=> 3\ntakesThreeArgs(1, 2, 3); //=> [1, 2, 3]\n\nvar takesTwoArgs = R.binary(takesThreeArgs);\ntakesTwoArgs.length; //=> 2\n// Only 2 arguments are passed to the wrapped function\ntakesTwoArgs(1, 2, 3); //=> [1, 2, undefined]"
+    "example": "const takesThreeArgs = function(a, b, c) {\n  return [a, b, c];\n};\ntakesThreeArgs.length; //=> 3\ntakesThreeArgs(1, 2, 3); //=> [1, 2, 3]\n\nconst takesTwoArgs = R.binary(takesThreeArgs);\ntakesTwoArgs.length; //=> 2\n// Only 2 arguments are passed to the wrapped function\ntakesTwoArgs(1, 2, 3); //=> [1, 2, undefined]"
   },
   "bind": {
     "name": "bind",
@@ -226,7 +227,7 @@ module.exports = {
     "see": [
       "partial"
     ],
-    "example": "var log = R.bind(console.log, console);\nR.pipe(R.assoc('a', 2), R.tap(log), R.assoc('a', 3))({a: 1}); //=> {a: 3}\n// logs {a: 2}"
+    "example": "const log = R.bind(console.log, console);\nR.pipe(R.assoc('a', 2), R.tap(log), R.assoc('a', 3))({a: 1}); //=> {a: 3}\n// logs {a: 2}"
   },
   "both": {
     "name": "both",
@@ -237,7 +238,7 @@ module.exports = {
     "see": [
       "and"
     ],
-    "example": "var gt10 = R.gt(R.__, 10)\nvar lt20 = R.lt(R.__, 20)\nvar f = R.both(gt10, lt20);\nf(15); //=> true\nf(30); //=> false"
+    "example": "const gt10 = R.gt(R.__, 10)\nconst lt20 = R.lt(R.__, 20)\nconst f = R.both(gt10, lt20);\nf(15); //=> true\nf(30); //=> false\n\nR.both(Maybe.Just(false), Maybe.Just(55)); // => Maybe.Just(false)\nR.both([false, false, 'a'], [11]); //=> [false, false, 11]"
   },
   "call": {
     "name": "call",
@@ -248,16 +249,16 @@ module.exports = {
     "see": [
       "apply"
     ],
-    "example": "R.call(R.add, 1, 2); //=> 3\n\nvar indentN = R.pipe(R.repeat(' '),\n                     R.join(''),\n                     R.replace(/^(?!$)/gm));\n\nvar format = R.converge(R.call, [\n                            R.pipe(R.prop('indent'), indentN),\n                            R.prop('value')\n                        ]);\n\nformat({indent: 2, value: 'foo\\nbar\\nbaz\\n'}); //=> '  foo\\n  bar\\n  baz\\n'"
+    "example": "R.call(R.add, 1, 2); //=> 3\n\nconst indentN = R.pipe(R.repeat(' '),\n                     R.join(''),\n                     R.replace(/^(?!$)/gm));\n\nconst format = R.converge(R.call, [\n                            R.pipe(R.prop('indent'), indentN),\n                            R.prop('value')\n                        ]);\n\nformat({indent: 2, value: 'foo\\nbar\\nbaz\\n'}); //=> '  foo\\n  bar\\n  baz\\n'"
   },
   "chain": {
     "name": "chain",
     "command": "Chain m => (a → m b) → m a → m b",
     "category": "List",
     "since": "v0.3.0",
-    "description": "`chain` maps a function over a list and concatenates the results. `chain` is also known as `flatMap` in some libraries Dispatches to the `chain` method of the second argument, if present, according to the FantasyLand Chain spec.",
+    "description": "`chain` maps a function over a list and concatenates the results. `chain` is also known as `flatMap` in some libraries. Dispatches to the `chain` method of the second argument, if present, according to the FantasyLand Chain spec. If second argument is a function, `chain(f, g)(x)` is equivalent to `f(g(x), x)`. Acts as a transducer if a transformer is given in list position.",
     "see": [],
-    "example": "var duplicate = n => [n, n];\nR.chain(duplicate, [1, 2, 3]); //=> [1, 1, 2, 2, 3, 3]\n\nR.chain(R.append, R.head)([1, 2, 3]); //=> [1, 2, 3, 1]"
+    "example": "const duplicate = n => [n, n];\nR.chain(duplicate, [1, 2, 3]); //=> [1, 1, 2, 2, 3, 3]\n\nR.chain(R.append, R.head)([1, 2, 3]); //=> [1, 2, 3, 1]"
   },
   "clamp": {
     "name": "clamp",
@@ -275,7 +276,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Creates a deep copy of the value which may contain (nested) `Array`s and `Object`s, `Number`s, `String`s, `Boolean`s and `Date`s. `Function`s are assigned by reference rather than copied Dispatches to a `clone` method if present.",
     "see": [],
-    "example": "var objects = [{}, {}, {}];\nvar objectsClone = R.clone(objects);\nobjects === objectsClone; //=> false\nobjects[0] === objectsClone[0]; //=> false"
+    "example": "const objects = [{}, {}, {}];\nconst objectsClone = R.clone(objects);\nobjects === objectsClone; //=> false\nobjects[0] === objectsClone[0]; //=> false"
   },
   "comparator": {
     "name": "comparator",
@@ -284,7 +285,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Makes a comparator function out of a function that reports whether the first element is less than the second.",
     "see": [],
-    "example": "var byAge = R.comparator((a, b) => a.age < b.age);\nvar people = [\n  // ...\n];\nvar peopleByIncreasingAge = R.sort(byAge, people);"
+    "example": "const byAge = R.comparator((a, b) => a.age < b.age);\nconst people = [\n  { name: 'Emma', age: 70 },\n  { name: 'Peter', age: 78 },\n  { name: 'Mikhail', age: 62 },\n];\nconst peopleByIncreasingAge = R.sort(byAge, people);\n  //=> [{ name: 'Mikhail', age: 62 },{ name: 'Emma', age: 70 }, { name: 'Peter', age: 78 }]"
   },
   "complement": {
     "name": "complement",
@@ -295,7 +296,7 @@ module.exports = {
     "see": [
       "not"
     ],
-    "example": "var isNotNil = R.complement(R.isNil);\nisNil(null); //=> true\nisNotNil(null); //=> false\nisNil(7); //=> false\nisNotNil(7); //=> true"
+    "example": "const isNotNil = R.complement(R.isNil);\nisNil(null); //=> true\nisNotNil(null); //=> false\nisNil(7); //=> false\nisNotNil(7); //=> true"
   },
   "compose": {
     "name": "compose",
@@ -306,29 +307,41 @@ module.exports = {
     "see": [
       "pipe"
     ],
-    "example": "var classyGreeting = (firstName, lastName) => \"The name's \" + lastName + \", \" + firstName + \" \" + lastName\nvar yellGreeting = R.compose(R.toUpper, classyGreeting);\nyellGreeting('James', 'Bond'); //=> \"THE NAME'S BOND, JAMES BOND\"\n\nR.compose(Math.abs, R.add(1), R.multiply(2))(-4) //=> 7"
+    "example": "const classyGreeting = (firstName, lastName) => \"The name's \" + lastName + \", \" + firstName + \" \" + lastName\nconst yellGreeting = R.compose(R.toUpper, classyGreeting);\nyellGreeting('James', 'Bond'); //=> \"THE NAME'S BOND, JAMES BOND\"\n\nR.compose(Math.abs, R.add(1), R.multiply(2))(-4) //=> 7"
   },
   "composek": {
     "name": "composeK",
-    "command": "Chain m => ((y → m z), (x → m y), …, (a → m b)) → (a → m z)",
+    "command": "composeK",
     "category": "Function",
     "since": "v0.16.0",
     "description": "Returns the right-to-left Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.composeK(h, g, f)` is equivalent to `R.compose(R.chain(h), R.chain(g), f)`.",
     "see": [
       "pipeK"
     ],
-    "example": "//  get :: String -> Object -> Maybe *\n var get = R.curry((propName, obj) => Maybe(obj[propName]))\n\n //  getStateCode :: Maybe String -> Maybe String\n var getStateCode = R.composeK(\n   R.compose(Maybe.of, R.toUpper),\n   get('state'),\n   get('address'),\n   get('user'),\n );\n getStateCode({\"user\":{\"address\":{\"state\":\"ny\"}}}); //=> Maybe.Just(\"NY\")\n getStateCode({}); //=> Maybe.Nothing()"
+    "example": "//  get :: String -> Object -> Maybe *\n const get = R.curry((propName, obj) => Maybe(obj[propName]))\n\n //  getStateCode :: Maybe String -> Maybe String\n const getStateCode = R.composeK(\n   R.compose(Maybe.of, R.toUpper),\n   get('state'),\n   get('address'),\n   get('user'),\n );\n getStateCode({\"user\":{\"address\":{\"state\":\"ny\"}}}); //=> Maybe.Just(\"NY\")\n getStateCode({}); //=> Maybe.Nothing()"
   },
   "composep": {
     "name": "composeP",
-    "command": "((y → Promise z), (x → Promise y), …, (a → Promise b)) → (a → Promise z)",
+    "command": "composeP",
     "category": "Function",
     "since": "v0.10.0",
     "description": "Performs right-to-left composition of one or more Promise-returning functions. The rightmost function may have any arity; the remaining functions must be unary.",
     "see": [
       "pipeP"
     ],
-    "example": "var db = {\n  users: {\n    JOE: {\n      name: 'Joe',\n      followers: ['STEVE', 'SUZY']\n    }\n  }\n}\n\n// We'll pretend to do a db lookup which returns a promise\nvar lookupUser = (userId) => Promise.resolve(db.users[userId])\nvar lookupFollowers = (user) => Promise.resolve(user.followers)\nlookupUser('JOE').then(lookupFollowers)\n\n//  followersForUser :: String -> Promise [UserId]\nvar followersForUser = R.composeP(lookupFollowers, lookupUser);\nfollowersForUser('JOE').then(followers => console.log('Followers:', followers))\n// Followers: [\"STEVE\",\"SUZY\"]"
+    "example": "const db = {\n  users: {\n    JOE: {\n      name: 'Joe',\n      followers: ['STEVE', 'SUZY']\n    }\n  }\n}\n\n// We'll pretend to do a db lookup which returns a promise\nconst lookupUser = (userId) => Promise.resolve(db.users[userId])\nconst lookupFollowers = (user) => Promise.resolve(user.followers)\nlookupUser('JOE').then(lookupFollowers)\n\n//  followersForUser :: String -> Promise [UserId]\nconst followersForUser = R.composeP(lookupFollowers, lookupUser);\nfollowersForUser('JOE').then(followers => console.log('Followers:', followers))\n// Followers: [\"STEVE\",\"SUZY\"]"
+  },
+  "composewith": {
+    "name": "composeWith",
+    "command": "((* → *), [(y → z), (x → y), …, (o → p), ((a, b, …, n) → o)]) → ((a, b, …, n) → z)",
+    "category": "Function",
+    "since": "Unknown",
+    "description": "Performs right-to-left function composition using transforming function. The rightmost function may have any arity; the remaining functions must be unary. Note: The result of compose is not automatically curried.",
+    "see": [
+      "compose",
+      "pipeWith"
+    ],
+    "example": "const composeWhileNotNil = R.composeWith((f, res) => R.isNil(res) ? res : f(res));\n\ncomposeWhileNotNil([R.inc, R.prop('age')])({age: 1}) //=> 2\ncomposeWhileNotNil([R.inc, R.prop('age')])({}) //=> undefined"
   },
   "concat": {
     "name": "concat",
@@ -345,8 +358,12 @@ module.exports = {
     "category": "Logic",
     "since": "v0.6.0",
     "description": "Returns a function, `fn`, which encapsulates `if/else, if/else, ...` logic. `R.cond` takes a list of [predicate, transformer] pairs. All of the arguments to `fn` are applied to each of the predicates in turn until one returns a \"truthy\" value, at which point `fn` returns the result of applying its arguments to the corresponding transformer. If none of the predicates matches, `fn` returns undefined.",
-    "see": [],
-    "example": "var fn = R.cond([\n  [R.equals(0),   R.always('water freezes at 0°C')],\n  [R.equals(100), R.always('water boils at 100°C')],\n  [R.T,           temp => 'nothing special happens at ' + temp + '°C']\n]);\nfn(0); //=> 'water freezes at 0°C'\nfn(50); //=> 'nothing special happens at 50°C'\nfn(100); //=> 'water boils at 100°C'"
+    "see": [
+      "ifElse",
+      "unless",
+      "when"
+    ],
+    "example": "const fn = R.cond([\n  [R.equals(0),   R.always('water freezes at 0°C')],\n  [R.equals(100), R.always('water boils at 100°C')],\n  [R.T,           temp => 'nothing special happens at ' + temp + '°C']\n]);\nfn(0); //=> 'water freezes at 0°C'\nfn(50); //=> 'nothing special happens at 50°C'\nfn(100); //=> 'water boils at 100°C'"
   },
   "construct": {
     "name": "construct",
@@ -357,7 +374,7 @@ module.exports = {
     "see": [
       "invoker"
     ],
-    "example": "// Constructor function\nfunction Animal(kind) {\n  this.kind = kind;\n};\nAnimal.prototype.sighting = function() {\n  return \"It's a \" + this.kind + \"!\";\n}\n\nvar AnimalConstructor = R.construct(Animal)\n\n// Notice we no longer need the 'new' keyword:\nAnimalConstructor('Pig'); //=> {\"kind\": \"Pig\", \"sighting\": function (){...}};\n\nvar animalTypes = [\"Lion\", \"Tiger\", \"Bear\"];\nvar animalSighting = R.invoker(0, 'sighting');\nvar sightNewAnimal = R.compose(animalSighting, AnimalConstructor);\nR.map(sightNewAnimal, animalTypes); //=> [\"It's a Lion!\", \"It's a Tiger!\", \"It's a Bear!\"]"
+    "example": "// Constructor function\nfunction Animal(kind) {\n  this.kind = kind;\n};\nAnimal.prototype.sighting = function() {\n  return \"It's a \" + this.kind + \"!\";\n}\n\nconst AnimalConstructor = R.construct(Animal)\n\n// Notice we no longer need the 'new' keyword:\nAnimalConstructor('Pig'); //=> {\"kind\": \"Pig\", \"sighting\": function (){...}};\n\nconst animalTypes = [\"Lion\", \"Tiger\", \"Bear\"];\nconst animalSighting = R.invoker(0, 'sighting');\nconst sightNewAnimal = R.compose(animalSighting, AnimalConstructor);\nR.map(sightNewAnimal, animalTypes); //=> [\"It's a Lion!\", \"It's a Tiger!\", \"It's a Bear!\"]"
   },
   "constructn": {
     "name": "constructN",
@@ -366,29 +383,29 @@ module.exports = {
     "since": "v0.4.0",
     "description": "Wraps a constructor function inside a curried function that can be called with the same arguments and returns the same type. The arity of the function returned is specified to allow using variadic constructor functions.",
     "see": [],
-    "example": "// Variadic Constructor function\nfunction Salad() {\n  this.ingredients = arguments;\n}\n\nSalad.prototype.recipe = function() {\n  var instructions = R.map(ingredient => 'Add a dollop of ' + ingredient, this.ingredients);\n  return R.join('\\n', instructions);\n};\n\nvar ThreeLayerSalad = R.constructN(3, Salad);\n\n// Notice we no longer need the 'new' keyword, and the constructor is curried for 3 arguments.\nvar salad = ThreeLayerSalad('Mayonnaise')('Potato Chips')('Ketchup');\n\nconsole.log(salad.recipe());\n// Add a dollop of Mayonnaise\n// Add a dollop of Potato Chips\n// Add a dollop of Ketchup"
+    "example": "// Variadic Constructor function\nfunction Salad() {\n  this.ingredients = arguments;\n}\n\nSalad.prototype.recipe = function() {\n  const instructions = R.map(ingredient => 'Add a dollop of ' + ingredient, this.ingredients);\n  return R.join('\\n', instructions);\n};\n\nconst ThreeLayerSalad = R.constructN(3, Salad);\n\n// Notice we no longer need the 'new' keyword, and the constructor is curried for 3 arguments.\nconst salad = ThreeLayerSalad('Mayonnaise')('Potato Chips')('Ketchup');\n\nconsole.log(salad.recipe());\n// Add a dollop of Mayonnaise\n// Add a dollop of Potato Chips\n// Add a dollop of Ketchup"
   },
   "contains": {
     "name": "contains",
-    "command": "a → [a] → Boolean",
+    "command": "contains",
     "category": "List",
     "since": "v0.1.0",
-    "description": "Returns `true` if the specified value is equal, in `R.equals` terms, to at least one element of the given list; `false` otherwise.",
+    "description": "Returns `true` if the specified value is equal, in `R.equals` terms, to at least one element of the given list; `false` otherwise. Works also with strings.",
     "see": [
-      "any"
+      "includes"
     ],
-    "example": "R.contains(3, [1, 2, 3]); //=> true\nR.contains(4, [1, 2, 3]); //=> false\nR.contains({ name: 'Fred' }, [{ name: 'Fred' }]); //=> true\nR.contains([42], [[42]]); //=> true"
+    "example": "R.contains(3, [1, 2, 3]); //=> true\nR.contains(4, [1, 2, 3]); //=> false\nR.contains({ name: 'Fred' }, [{ name: 'Fred' }]); //=> true\nR.contains([42], [[42]]); //=> true\nR.contains('ba', 'banana'); //=>true"
   },
   "converge": {
     "name": "converge",
     "command": "((x1, x2, …) → z) → [((a, b, …) → x1), ((a, b, …) → x2), …] → (a → b → … → z)",
     "category": "Function",
     "since": "v0.4.2",
-    "description": "Accepts a converging function and a list of branching functions and returns a new function. When invoked, this new function is applied to some arguments, each branching function is applied to those same arguments. The results of each branching function are passed as arguments to the converging function to produce the return value.",
+    "description": "Accepts a converging function and a list of branching functions and returns a new function. The arity of the new function is the same as the arity of the longest branching function. When invoked, this new function is applied to some arguments, and each branching function is applied to those same arguments. The results of each branching function are passed as arguments to the converging function to produce the return value.",
     "see": [
       "useWith"
     ],
-    "example": "var average = R.converge(R.divide, [R.sum, R.length])\naverage([1, 2, 3, 4, 5, 6, 7]) //=> 4\n\nvar strangeConcat = R.converge(R.concat, [R.toUpper, R.toLower])\nstrangeConcat(\"Yodel\") //=> \"YODELyodel\""
+    "example": "const average = R.converge(R.divide, [R.sum, R.length])\naverage([1, 2, 3, 4, 5, 6, 7]) //=> 4\n\nconst strangeConcat = R.converge(R.concat, [R.toUpper, R.toLower])\nstrangeConcat(\"Yodel\") //=> \"YODELyodel\""
   },
   "countby": {
     "name": "countBy",
@@ -397,7 +414,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Counts the elements of a list according to how many match each value of a key generated by the supplied function. Returns an object mapping the keys produced by `fn` to the number of occurrences in the list. Note that all keys are coerced to strings because of how JavaScript objects work. Acts as a transducer if a transformer is given in list position.",
     "see": [],
-    "example": "var numbers = [1.0, 1.1, 1.2, 2.0, 3.0, 2.2];\nR.countBy(Math.floor)(numbers);    //=> {'1': 3, '2': 2, '3': 1}\n\nvar letters = ['a', 'b', 'A', 'a', 'B', 'c'];\nR.countBy(R.toLower)(letters);   //=> {'a': 3, 'b': 2, 'c': 1}"
+    "example": "const numbers = [1.0, 1.1, 1.2, 2.0, 3.0, 2.2];\nR.countBy(Math.floor)(numbers);    //=> {'1': 3, '2': 2, '3': 1}\n\nconst letters = ['a', 'b', 'A', 'a', 'B', 'c'];\nR.countBy(R.toLower)(letters);   //=> {'a': 3, 'b': 2, 'c': 1}"
   },
   "curry": {
     "name": "curry",
@@ -406,9 +423,10 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Returns a curried equivalent of the provided function. The curried function has two unusual capabilities. First, its arguments needn't be provided one at a time. If `f` is a ternary function and `g` is `R.curry(f)`, the following are equivalent: `g(1)(2)(3)` `g(1)(2, 3)` `g(1, 2)(3)` `g(1, 2, 3)` Secondly, the special placeholder value `R.__` may be used to specify \"gaps\", allowing partial application of any combination of arguments, regardless of their positions. If `g` is as above and `_` is `R.__`, the following are equivalent: `g(1, 2, 3)` `g(_, 2, 3)(1)` `g(_, _, 3)(1)(2)` `g(_, _, 3)(1, 2)` `g(_, 2)(1)(3)` `g(_, 2)(1, 3)` `g(_, 2)(_, 3)(1)`",
     "see": [
-      "curryN"
+      "curryN",
+      "partial"
     ],
-    "example": "var addFourNumbers = (a, b, c, d) => a + b + c + d;\n\nvar curriedAddFourNumbers = R.curry(addFourNumbers);\nvar f = curriedAddFourNumbers(1, 2);\nvar g = f(3);\ng(4); //=> 10"
+    "example": "const addFourNumbers = (a, b, c, d) => a + b + c + d;\n\nconst curriedAddFourNumbers = R.curry(addFourNumbers);\nconst f = curriedAddFourNumbers(1, 2);\nconst g = f(3);\ng(4); //=> 10"
   },
   "curryn": {
     "name": "curryN",
@@ -419,7 +437,7 @@ module.exports = {
     "see": [
       "curry"
     ],
-    "example": "var sumArgs = (...args) => R.sum(args);\n\nvar curriedAddFourNumbers = R.curryN(4, sumArgs);\nvar f = curriedAddFourNumbers(1, 2);\nvar g = f(3);\ng(4); //=> 10"
+    "example": "const sumArgs = (...args) => R.sum(args);\n\nconst curriedAddFourNumbers = R.curryN(4, sumArgs);\nconst f = curriedAddFourNumbers(1, 2);\nconst g = f(3);\ng(4); //=> 10"
   },
   "dec": {
     "name": "dec",
@@ -439,7 +457,7 @@ module.exports = {
     "since": "v0.10.0",
     "description": "Returns the second argument if it is not `null`, `undefined` or `NaN`; otherwise the first argument is returned.",
     "see": [],
-    "example": "var defaultTo42 = R.defaultTo(42);\n\ndefaultTo42(null);  //=> 42\ndefaultTo42(undefined);  //=> 42\ndefaultTo42('Ramda');  //=> 'Ramda'\n// parseInt('string') results in NaN\ndefaultTo42(parseInt('string')); //=> 42"
+    "example": "const defaultTo42 = R.defaultTo(42);\n\ndefaultTo42(null);  //=> 42\ndefaultTo42(undefined);  //=> 42\ndefaultTo42(false);  //=> false\ndefaultTo42('Ramda');  //=> 'Ramda'\n// parseInt('string') results in NaN\ndefaultTo42(parseInt('string')); //=> 42"
   },
   "descend": {
     "name": "descend",
@@ -450,7 +468,7 @@ module.exports = {
     "see": [
       "ascend"
     ],
-    "example": "var byAge = R.descend(R.prop('age'));\nvar people = [\n  // ...\n];\nvar peopleByOldestFirst = R.sort(byAge, people);"
+    "example": "const byAge = R.descend(R.prop('age'));\nconst people = [\n  { name: 'Emma', age: 70 },\n  { name: 'Peter', age: 78 },\n  { name: 'Mikhail', age: 62 },\n];\nconst peopleByOldestFirst = R.sort(byAge, people);\n  //=> [{ name: 'Peter', age: 78 }, { name: 'Emma', age: 70 }, { name: 'Mikhail', age: 62 }]"
   },
   "difference": {
     "name": "difference",
@@ -477,7 +495,7 @@ module.exports = {
       "symmetricDifference",
       "symmetricDifferenceWith"
     ],
-    "example": "var cmp = (x, y) => x.a === y.a;\nvar l1 = [{a: 1}, {a: 2}, {a: 3}];\nvar l2 = [{a: 3}, {a: 4}];\nR.differenceWith(cmp, l1, l2); //=> [{a: 1}, {a: 2}]"
+    "example": "const cmp = (x, y) => x.a === y.a;\nconst l1 = [{a: 1}, {a: 2}, {a: 3}];\nconst l2 = [{a: 3}, {a: 4}];\nR.differenceWith(cmp, l1, l2); //=> [{a: 1}, {a: 2}]"
   },
   "dissoc": {
     "name": "dissoc",
@@ -486,7 +504,8 @@ module.exports = {
     "since": "v0.10.0",
     "description": "Returns a new object that does not contain a `prop` property.",
     "see": [
-      "assoc"
+      "assoc",
+      "omit"
     ],
     "example": "R.dissoc('b', {a: 1, b: 2, c: 3}); //=> {a: 1, c: 3}"
   },
@@ -510,7 +529,7 @@ module.exports = {
     "see": [
       "multiply"
     ],
-    "example": "R.divide(71, 100); //=> 0.71\n\nvar half = R.divide(R.__, 2);\nhalf(42); //=> 21\n\nvar reciprocal = R.divide(1);\nreciprocal(4);   //=> 0.25"
+    "example": "R.divide(71, 100); //=> 0.71\n\nconst half = R.divide(R.__, 2);\nhalf(42); //=> 21\n\nconst reciprocal = R.divide(1);\nreciprocal(4);   //=> 0.25"
   },
   "drop": {
     "name": "drop",
@@ -531,7 +550,7 @@ module.exports = {
     "command": "Number → [a] → [a]",
     "category": "List",
     "since": "v0.16.0",
-    "description": "Returns a list containing all but the last `n` elements of the given `list`.",
+    "description": "Returns a list containing all but the last `n` elements of the given `list`. Acts as a transducer if a transformer is given in list position.",
     "see": [
       "takeLast",
       "drop",
@@ -545,14 +564,14 @@ module.exports = {
     "command": "(a → Boolean) → [a] → [a]",
     "category": "List",
     "since": "v0.16.0",
-    "description": "Returns a new list excluding all the tailing elements of a given list which satisfy the supplied predicate function. It passes each value from the right to the supplied predicate function, skipping elements until the predicate function returns a `falsy` value. The predicate function is applied to one argument: (value).",
+    "description": "Returns a new list excluding all the tailing elements of a given list which satisfy the supplied predicate function. It passes each value from the right to the supplied predicate function, skipping elements until the predicate function returns a `falsy` value. The predicate function is applied to one argument: (value). Acts as a transducer if a transformer is given in list position.",
     "see": [
       "takeLastWhile",
       "addIndex",
       "drop",
       "dropWhile"
     ],
-    "example": "var lteThree = x => x <= 3;\n\nR.dropLastWhile(lteThree, [1, 2, 3, 4, 3, 2, 1]); //=> [1, 2, 3, 4]\n\nR.dropLastWhile(x => x !== 'd' , 'Ramda'); //=> 'Ramd'"
+    "example": "const lteThree = x => x <= 3;\n\nR.dropLastWhile(lteThree, [1, 2, 3, 4, 3, 2, 1]); //=> [1, 2, 3, 4]\n\nR.dropLastWhile(x => x !== 'd' , 'Ramda'); //=> 'Ramd'"
   },
   "droprepeats": {
     "name": "dropRepeats",
@@ -574,7 +593,7 @@ module.exports = {
     "see": [
       "transduce"
     ],
-    "example": "var l = [1, -1, 1, 3, 4, -4, -4, -5, 5, 3, 3];\nR.dropRepeatsWith(R.eqBy(Math.abs), l); //=> [1, 3, 4, -5, 3]"
+    "example": "const l = [1, -1, 1, 3, 4, -4, -4, -5, 5, 3, 3];\nR.dropRepeatsWith(R.eqBy(Math.abs), l); //=> [1, 3, 4, -5, 3]"
   },
   "dropwhile": {
     "name": "dropWhile",
@@ -587,7 +606,7 @@ module.exports = {
       "transduce",
       "addIndex"
     ],
-    "example": "var lteTwo = x => x <= 2;\n\nR.dropWhile(lteTwo, [1, 2, 3, 4, 3, 2, 1]); //=> [3, 4, 3, 2, 1]\n\nR.dropWhile(x => x !== 'd' , 'Ramda'); //=> 'da'"
+    "example": "const lteTwo = x => x <= 2;\n\nR.dropWhile(lteTwo, [1, 2, 3, 4, 3, 2, 1]); //=> [3, 4, 3, 2, 1]\n\nR.dropWhile(x => x !== 'd' , 'Ramda'); //=> 'da'"
   },
   "either": {
     "name": "either",
@@ -598,7 +617,7 @@ module.exports = {
     "see": [
       "or"
     ],
-    "example": "var gt10 = x => x > 10;\nvar even = x => x % 2 === 0;\nvar f = R.either(gt10, even);\nf(101); //=> true\nf(8); //=> true"
+    "example": "const gt10 = x => x > 10;\nconst even = x => x % 2 === 0;\nconst f = R.either(gt10, even);\nf(101); //=> true\nf(8); //=> true\n\nR.either(Maybe.Just(false), Maybe.Just(55)); // => Maybe.Just(55)\nR.either([false, false, 'a'], [11]) // => [11, 11, \"a\"]"
   },
   "empty": {
     "name": "empty",
@@ -611,11 +630,13 @@ module.exports = {
   },
   "endswith": {
     "name": "endsWith",
-    "command": "[a] → Boolean",
+    "command": "[a] → [a] → Boolean",
     "category": "List",
     "since": "v0.24.0",
-    "description": "Checks if a list ends with the provided values",
-    "see": [],
+    "description": "Checks if a list ends with the provided sublist. Similarly, checks if a string ends with the provided substring.",
+    "see": [
+      "startsWith"
+    ],
     "example": "R.endsWith('c', 'abc')                //=> true\nR.endsWith('b', 'abc')                //=> false\nR.endsWith(['c'], ['a', 'b', 'c'])    //=> true\nR.endsWith(['b'], ['a', 'b', 'c'])    //=> false"
   },
   "eqby": {
@@ -634,7 +655,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Reports whether two objects have the same value, in `R.equals` terms, for the specified property. Useful as a curried predicate.",
     "see": [],
-    "example": "var o1 = { a: 1, b: 2, c: 3, d: 4 };\nvar o2 = { a: 10, b: 20, c: 3, d: 40 };\nR.eqProps('a', o1, o2); //=> false\nR.eqProps('c', o1, o2); //=> true"
+    "example": "const o1 = { a: 1, b: 2, c: 3, d: 4 };\nconst o2 = { a: 10, b: 20, c: 3, d: 40 };\nR.eqProps('a', o1, o2); //=> false\nR.eqProps('c', o1, o2); //=> true"
   },
   "equals": {
     "name": "equals",
@@ -643,7 +664,7 @@ module.exports = {
     "since": "v0.15.0",
     "description": "Returns `true` if its arguments are equivalent, `false` otherwise. Handles cyclical data structures. Dispatches symmetrically to the `equals` methods of both arguments, if present.",
     "see": [],
-    "example": "R.equals(1, 1); //=> true\nR.equals(1, '1'); //=> false\nR.equals([1, 2, 3], [1, 2, 3]); //=> true\n\nvar a = {}; a.v = a;\nvar b = {}; b.v = b;\nR.equals(a, b); //=> true"
+    "example": "R.equals(1, 1); //=> true\nR.equals(1, '1'); //=> false\nR.equals([1, 2, 3], [1, 2, 3]); //=> true\n\nconst a = {}; a.v = a;\nconst b = {}; b.v = b;\nR.equals(a, b); //=> true"
   },
   "evolve": {
     "name": "evolve",
@@ -652,7 +673,7 @@ module.exports = {
     "since": "v0.9.0",
     "description": "Creates a new object by recursively evolving a shallow copy of `object`, according to the `transformation` functions. All non-primitive properties are copied by reference. A `transformation` function will not be invoked if its corresponding key does not exist in the evolved object.",
     "see": [],
-    "example": "var tomato  = {firstName: '  Tomato ', data: {elapsed: 100, remaining: 1400}, id:123};\nvar transformations = {\n  firstName: R.trim,\n  lastName: R.trim, // Will not get invoked.\n  data: {elapsed: R.add(1), remaining: R.add(-1)}\n};\nR.evolve(transformations, tomato); //=> {firstName: 'Tomato', data: {elapsed: 101, remaining: 1399}, id:123}"
+    "example": "const tomato = {firstName: '  Tomato ', data: {elapsed: 100, remaining: 1400}, id:123};\nconst transformations = {\n  firstName: R.trim,\n  lastName: R.trim, // Will not get invoked.\n  data: {elapsed: R.add(1), remaining: R.add(-1)}\n};\nR.evolve(transformations, tomato); //=> {firstName: 'Tomato', data: {elapsed: 101, remaining: 1399}, id:123}"
   },
   "f": {
     "name": "F",
@@ -661,7 +682,6 @@ module.exports = {
     "since": "v0.9.0",
     "description": "A function that always returns `false`. Any passed in parameters are ignored.",
     "see": [
-      "always",
       "T"
     ],
     "example": "R.F(); //=> false"
@@ -677,7 +697,7 @@ module.exports = {
       "transduce",
       "addIndex"
     ],
-    "example": "var isEven = n => n % 2 === 0;\n\nR.filter(isEven, [1, 2, 3, 4]); //=> [2, 4]\n\nR.filter(isEven, {a: 1, b: 2, c: 3, d: 4}); //=> {b: 2, d: 4}"
+    "example": "const isEven = n => n % 2 === 0;\n\nR.filter(isEven, [1, 2, 3, 4]); //=> [2, 4]\n\nR.filter(isEven, {a: 1, b: 2, c: 3, d: 4}); //=> {b: 2, d: 4}"
   },
   "find": {
     "name": "find",
@@ -688,7 +708,7 @@ module.exports = {
     "see": [
       "transduce"
     ],
-    "example": "var xs = [{a: 1}, {a: 2}, {a: 3}];\nR.find(R.propEq('a', 2))(xs); //=> {a: 2}\nR.find(R.propEq('a', 4))(xs); //=> undefined"
+    "example": "const xs = [{a: 1}, {a: 2}, {a: 3}];\nR.find(R.propEq('a', 2))(xs); //=> {a: 2}\nR.find(R.propEq('a', 4))(xs); //=> undefined"
   },
   "findindex": {
     "name": "findIndex",
@@ -699,7 +719,7 @@ module.exports = {
     "see": [
       "transduce"
     ],
-    "example": "var xs = [{a: 1}, {a: 2}, {a: 3}];\nR.findIndex(R.propEq('a', 2))(xs); //=> 1\nR.findIndex(R.propEq('a', 4))(xs); //=> -1"
+    "example": "const xs = [{a: 1}, {a: 2}, {a: 3}];\nR.findIndex(R.propEq('a', 2))(xs); //=> 1\nR.findIndex(R.propEq('a', 4))(xs); //=> -1"
   },
   "findlast": {
     "name": "findLast",
@@ -710,7 +730,7 @@ module.exports = {
     "see": [
       "transduce"
     ],
-    "example": "var xs = [{a: 1, b: 0}, {a:1, b: 1}];\nR.findLast(R.propEq('a', 1))(xs); //=> {a: 1, b: 1}\nR.findLast(R.propEq('a', 4))(xs); //=> undefined"
+    "example": "const xs = [{a: 1, b: 0}, {a:1, b: 1}];\nR.findLast(R.propEq('a', 1))(xs); //=> {a: 1, b: 1}\nR.findLast(R.propEq('a', 4))(xs); //=> undefined"
   },
   "findlastindex": {
     "name": "findLastIndex",
@@ -721,7 +741,7 @@ module.exports = {
     "see": [
       "transduce"
     ],
-    "example": "var xs = [{a: 1, b: 0}, {a:1, b: 1}];\nR.findLastIndex(R.propEq('a', 1))(xs); //=> 1\nR.findLastIndex(R.propEq('a', 4))(xs); //=> -1"
+    "example": "const xs = [{a: 1, b: 0}, {a:1, b: 1}];\nR.findLastIndex(R.propEq('a', 1))(xs); //=> 1\nR.findLastIndex(R.propEq('a', 4))(xs); //=> -1"
   },
   "flatten": {
     "name": "flatten",
@@ -741,7 +761,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Returns a new function much like the supplied one, except that the first two arguments' order is reversed.",
     "see": [],
-    "example": "var mergeThree = (a, b, c) => [].concat(a, b, c);\n\nmergeThree(1, 2, 3); //=> [1, 2, 3]\n\nR.flip(mergeThree)(1, 2, 3); //=> [2, 1, 3]"
+    "example": "const mergeThree = (a, b, c) => [].concat(a, b, c);\n\nmergeThree(1, 2, 3); //=> [1, 2, 3]\n\nR.flip(mergeThree)(1, 2, 3); //=> [2, 1, 3]"
   },
   "foreach": {
     "name": "forEach",
@@ -752,7 +772,7 @@ module.exports = {
     "see": [
       "addIndex"
     ],
-    "example": "var printXPlusFive = x => console.log(x + 5);\nR.forEach(printXPlusFive, [1, 2, 3]); //=> [1, 2, 3]\n// logs 6\n// logs 7\n// logs 8"
+    "example": "const printXPlusFive = x => console.log(x + 5);\nR.forEach(printXPlusFive, [1, 2, 3]); //=> [1, 2, 3]\n// logs 6\n// logs 7\n// logs 8"
   },
   "foreachobjindexed": {
     "name": "forEachObjIndexed",
@@ -761,7 +781,7 @@ module.exports = {
     "since": "v0.23.0",
     "description": "Iterate over an input `object`, calling a provided function `fn` for each key and value in the object. `fn` receives three argument: (value, key, obj).",
     "see": [],
-    "example": "var printKeyConcatValue = (value, key) => console.log(key + ':' + value);\nR.forEachObjIndexed(printKeyConcatValue, {x: 1, y: 2}); //=> {x: 1, y: 2}\n// logs x:1\n// logs y:2"
+    "example": "const printKeyConcatValue = (value, key) => console.log(key + ':' + value);\nR.forEachObjIndexed(printKeyConcatValue, {x: 1, y: 2}); //=> {x: 1, y: 2}\n// logs x:1\n// logs y:2"
   },
   "frompairs": {
     "name": "fromPairs",
@@ -782,9 +802,10 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Splits a list into sub-lists stored in an object, based on the result of calling a String-returning function on each element, and grouping the results according to values returned. Dispatches to the `groupBy` method of the second argument, if present. Acts as a transducer if a transformer is given in list position.",
     "see": [
+      "reduceBy",
       "transduce"
     ],
-    "example": "var byGrade = R.groupBy(function(student) {\n  var score = student.score;\n  return score < 65 ? 'F' :\n         score < 70 ? 'D' :\n         score < 80 ? 'C' :\n         score < 90 ? 'B' : 'A';\n});\nvar students = [{name: 'Abby', score: 84},\n                {name: 'Eddy', score: 58},\n                // ...\n                {name: 'Jack', score: 69}];\nbyGrade(students);\n// {\n//   'A': [{name: 'Dianne', score: 99}],\n//   'B': [{name: 'Abby', score: 84}]\n//   // ...,\n//   'F': [{name: 'Eddy', score: 58}]\n// }"
+    "example": "const byGrade = R.groupBy(function(student) {\n  const score = student.score;\n  return score < 65 ? 'F' :\n         score < 70 ? 'D' :\n         score < 80 ? 'C' :\n         score < 90 ? 'B' : 'A';\n});\nconst students = [{name: 'Abby', score: 84},\n                {name: 'Eddy', score: 58},\n                // ...\n                {name: 'Jack', score: 69}];\nbyGrade(students);\n// {\n//   'A': [{name: 'Dianne', score: 99}],\n//   'B': [{name: 'Abby', score: 84}]\n//   // ...,\n//   'F': [{name: 'Eddy', score: 58}]\n// }"
   },
   "groupwith": {
     "name": "groupWith",
@@ -824,7 +845,7 @@ module.exports = {
     "since": "v0.7.0",
     "description": "Returns whether or not an object has an own property with the specified name",
     "see": [],
-    "example": "var hasName = R.has('name');\nhasName({name: 'alice'});   //=> true\nhasName({name: 'bob'});     //=> true\nhasName({});                //=> false\n\nvar point = {x: 0, y: 0};\nvar pointHas = R.has(R.__, point);\npointHas('x');  //=> true\npointHas('y');  //=> true\npointHas('z');  //=> false"
+    "example": "const hasName = R.has('name');\nhasName({name: 'alice'});   //=> true\nhasName({name: 'bob'});     //=> true\nhasName({});                //=> false\n\nconst point = {x: 0, y: 0};\nconst pointHas = R.has(R.__, point);\npointHas('x');  //=> true\npointHas('y');  //=> true\npointHas('z');  //=> false"
   },
   "hasin": {
     "name": "hasIn",
@@ -833,7 +854,18 @@ module.exports = {
     "since": "v0.7.0",
     "description": "Returns whether or not an object or its prototype chain has a property with the specified name",
     "see": [],
-    "example": "function Rectangle(width, height) {\n  this.width = width;\n  this.height = height;\n}\nRectangle.prototype.area = function() {\n  return this.width * this.height;\n};\n\nvar square = new Rectangle(2, 2);\nR.hasIn('width', square);  //=> true\nR.hasIn('area', square);  //=> true"
+    "example": "function Rectangle(width, height) {\n  this.width = width;\n  this.height = height;\n}\nRectangle.prototype.area = function() {\n  return this.width * this.height;\n};\n\nconst square = new Rectangle(2, 2);\nR.hasIn('width', square);  //=> true\nR.hasIn('area', square);  //=> true"
+  },
+  "haspath": {
+    "name": "hasPath",
+    "command": "[Idx] → {a} → Boolean",
+    "category": "Object",
+    "since": "v0.26.0",
+    "description": "Returns whether or not a path exists in an object. Only the object's own properties are checked.",
+    "see": [
+      "has"
+    ],
+    "example": "R.hasPath(['a', 'b'], {a: {b: 2}});         // => true\nR.hasPath(['a', 'b'], {a: {b: undefined}}); // => true\nR.hasPath(['a', 'b'], {a: {c: 2}});         // => false\nR.hasPath(['a', 'b'], {});                  // => false"
   },
   "head": {
     "name": "head",
@@ -853,9 +885,9 @@ module.exports = {
     "command": "a → a → Boolean",
     "category": "Relation",
     "since": "v0.15.0",
-    "description": "Returns true if its arguments are identical, false otherwise. Values are identical if they reference the same memory. `NaN` is identical to `NaN`; `0` and `-0` are not identical.",
+    "description": "Returns true if its arguments are identical, false otherwise. Values are identical if they reference the same memory. `NaN` is identical to `NaN`; `0` and `-0` are not identical. Note this is merely a curried version of ES6 `Object.is`.",
     "see": [],
-    "example": "var o = {};\nR.identical(o, o); //=> true\nR.identical(1, 1); //=> true\nR.identical(1, '1'); //=> false\nR.identical([], []); //=> false\nR.identical(0, -0); //=> false\nR.identical(NaN, NaN); //=> true"
+    "example": "const o = {};\nR.identical(o, o); //=> true\nR.identical(1, 1); //=> true\nR.identical(1, '1'); //=> false\nR.identical([], []); //=> false\nR.identical(0, -0); //=> false\nR.identical(NaN, NaN); //=> true"
   },
   "identity": {
     "name": "identity",
@@ -864,7 +896,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "A function that does nothing but return the parameter supplied to it. Good as a default or placeholder function.",
     "see": [],
-    "example": "R.identity(1); //=> 1\n\nvar obj = {};\nR.identity(obj) === obj; //=> true"
+    "example": "R.identity(1); //=> 1\n\nconst obj = {};\nR.identity(obj) === obj; //=> true"
   },
   "ifelse": {
     "name": "ifElse",
@@ -874,9 +906,10 @@ module.exports = {
     "description": "Creates a function that will process either the `onTrue` or the `onFalse` function depending upon the result of the `condition` predicate.",
     "see": [
       "unless",
-      "when"
+      "when",
+      "cond"
     ],
-    "example": "var incCount = R.ifElse(\n  R.has('count'),\n  R.over(R.lensProp('count'), R.inc),\n  R.assoc('count', 1)\n);\nincCount({});           //=> { count: 1 }\nincCount({ count: 1 }); //=> { count: 2 }"
+    "example": "const incCount = R.ifElse(\n  R.has('count'),\n  R.over(R.lensProp('count'), R.inc),\n  R.assoc('count', 1)\n);\nincCount({});           //=> { count: 1 }\nincCount({ count: 1 }); //=> { count: 2 }"
   },
   "inc": {
     "name": "inc",
@@ -889,6 +922,17 @@ module.exports = {
     ],
     "example": "R.inc(42); //=> 43"
   },
+  "includes": {
+    "name": "includes",
+    "command": "a → [a] → Boolean",
+    "category": "List",
+    "since": "v0.1.0",
+    "description": "Returns `true` if the specified value is equal, in `R.equals` terms, to at least one element of the given list; `false` otherwise. Works also with strings.",
+    "see": [
+      "any"
+    ],
+    "example": "R.includes(3, [1, 2, 3]); //=> true\nR.includes(4, [1, 2, 3]); //=> false\nR.includes({ name: 'Fred' }, [{ name: 'Fred' }]); //=> true\nR.includes([42], [[42]]); //=> true\nR.includes('ba', 'banana'); //=>true"
+  },
   "indexby": {
     "name": "indexBy",
     "command": "(a → String) → [{k: v}] → {k: {k: v}}",
@@ -896,7 +940,7 @@ module.exports = {
     "since": "v0.19.0",
     "description": "Given a function that generates a key, turns a list of objects into an object indexing the objects by the given key. Note that if multiple objects generate the same value for the indexing key only the last value will be included in the generated object. Acts as a transducer if a transformer is given in list position.",
     "see": [],
-    "example": "var list = [{id: 'xyz', title: 'A'}, {id: 'abc', title: 'B'}];\nR.indexBy(R.prop('id'), list);\n//=> {abc: {id: 'abc', title: 'B'}, xyz: {id: 'xyz', title: 'A'}}"
+    "example": "const list = [{id: 'xyz', title: 'A'}, {id: 'abc', title: 'B'}];\nR.indexBy(R.prop('id'), list);\n//=> {abc: {id: 'abc', title: 'B'}, xyz: {id: 'xyz', title: 'A'}}"
   },
   "indexof": {
     "name": "indexOf",
@@ -969,7 +1013,7 @@ module.exports = {
     "since": "v0.14.0",
     "description": "Creates a new list with the separator interposed between elements. Dispatches to the `intersperse` method of the second argument, if present.",
     "see": [],
-    "example": "R.intersperse('n', ['ba', 'a', 'a']); //=> ['ba', 'n', 'a', 'n', 'a']"
+    "example": "R.intersperse('a', ['b', 'n', 'n', 's']); //=> ['b', 'a', 'n', 'a', 'n', 'a', 's']"
   },
   "into": {
     "name": "into",
@@ -977,8 +1021,10 @@ module.exports = {
     "category": "List",
     "since": "v0.12.0",
     "description": "Transforms the items of the list with the transducer and appends the transformed items to the accumulator using an appropriate iterator function based on the accumulator type. The accumulator can be an array, string, object or a transformer. Iterated items will be appended to arrays and concatenated to strings. Objects will be merged directly or 2-item arrays will be merged as key, value pairs. The accumulator can also be a transformer object that provides a 2-arity reducing iterator function, step, 0-arity initial value function, init, and 1-arity result extraction function result. The step function is used as the iterator function in reduce. The result function is used to convert the final accumulator into the return type and in most cases is R.identity. The init function is used to provide the initial accumulator. The iteration is performed with `R.reduce` after initializing the transducer.",
-    "see": [],
-    "example": "var numbers = [1, 2, 3, 4];\nvar transducer = R.compose(R.map(R.add(1)), R.take(2));\n\nR.into([], transducer, numbers); //=> [2, 3]\n\nvar intoArray = R.into([]);\nintoArray(transducer, numbers); //=> [2, 3]"
+    "see": [
+      "transduce"
+    ],
+    "example": "const numbers = [1, 2, 3, 4];\nconst transducer = R.compose(R.map(R.add(1)), R.take(2));\n\nR.into([], transducer, numbers); //=> [2, 3]\n\nconst intoArray = R.into([]);\nintoArray(transducer, numbers); //=> [2, 3]"
   },
   "invert": {
     "name": "invert",
@@ -989,7 +1035,7 @@ module.exports = {
     "see": [
       "invertObj"
     ],
-    "example": "var raceResultsByFirstName = {\n  first: 'alice',\n  second: 'jake',\n  third: 'alice',\n};\nR.invert(raceResultsByFirstName);\n//=> { 'alice': ['first', 'third'], 'jake':['second'] }"
+    "example": "const raceResultsByFirstName = {\n  first: 'alice',\n  second: 'jake',\n  third: 'alice',\n};\nR.invert(raceResultsByFirstName);\n//=> { 'alice': ['first', 'third'], 'jake':['second'] }"
   },
   "invertobj": {
     "name": "invertObj",
@@ -1000,7 +1046,7 @@ module.exports = {
     "see": [
       "invert"
     ],
-    "example": "var raceResults = {\n  first: 'alice',\n  second: 'jake'\n};\nR.invertObj(raceResults);\n//=> { 'alice': 'first', 'jake':'second' }\n\n// Alternatively:\nvar raceResults = ['alice', 'jake'];\nR.invertObj(raceResults);\n//=> { 'alice': '0', 'jake':'1' }"
+    "example": "const raceResults = {\n  first: 'alice',\n  second: 'jake'\n};\nR.invertObj(raceResults);\n//=> { 'alice': 'first', 'jake':'second' }\n\n// Alternatively:\nconst raceResults = ['alice', 'jake'];\nR.invertObj(raceResults);\n//=> { 'alice': '0', 'jake':'1' }"
   },
   "invoker": {
     "name": "invoker",
@@ -1011,7 +1057,7 @@ module.exports = {
     "see": [
       "construct"
     ],
-    "example": "var sliceFrom = R.invoker(1, 'slice');\nsliceFrom(6, 'abcdefghijklm'); //=> 'ghijklm'\nvar sliceFrom6 = R.invoker(2, 'slice')(6);\nsliceFrom6(8, 'abcdefghijklm'); //=> 'gh'"
+    "example": "const sliceFrom = R.invoker(1, 'slice');\nsliceFrom(6, 'abcdefghijklm'); //=> 'ghijklm'\nconst sliceFrom6 = R.invoker(2, 'slice')(6);\nsliceFrom6(8, 'abcdefghijklm'); //=> 'gh'"
   },
   "is": {
     "name": "is",
@@ -1051,7 +1097,7 @@ module.exports = {
     "see": [
       "split"
     ],
-    "example": "var spacer = R.join(' ');\nspacer(['a', 2, 3.4]);   //=> 'a 2 3.4'\nR.join('|', [1, 2, 3]);    //=> '1|2|3'"
+    "example": "const spacer = R.join(' ');\nspacer(['a', 2, 3.4]);   //=> 'a 2 3.4'\nR.join('|', [1, 2, 3]);    //=> '1|2|3'"
   },
   "juxt": {
     "name": "juxt",
@@ -1062,7 +1108,7 @@ module.exports = {
     "see": [
       "applySpec"
     ],
-    "example": "var getRange = R.juxt([Math.min, Math.max]);\ngetRange(3, 4, 9, -3); //=> [-3, 9]"
+    "example": "const getRange = R.juxt([Math.min, Math.max]);\ngetRange(3, 4, 9, -3); //=> [-3, 9]"
   },
   "keys": {
     "name": "keys",
@@ -1086,7 +1132,7 @@ module.exports = {
       "keys",
       "valuesIn"
     ],
-    "example": "var F = function() { this.x = 'X'; };\nF.prototype.y = 'Y';\nvar f = new F();\nR.keysIn(f); //=> ['x', 'y']"
+    "example": "const F = function() { this.x = 'X'; };\nF.prototype.y = 'Y';\nconst f = new F();\nR.keysIn(f); //=> ['x', 'y']"
   },
   "last": {
     "name": "last",
@@ -1134,7 +1180,7 @@ module.exports = {
       "lensIndex",
       "lensProp"
     ],
-    "example": "var xLens = R.lens(R.prop('x'), R.assoc('x'));\n\nR.view(xLens, {x: 1, y: 2});            //=> 1\nR.set(xLens, 4, {x: 1, y: 2});          //=> {x: 4, y: 2}\nR.over(xLens, R.negate, {x: 1, y: 2});  //=> {x: -1, y: 2}"
+    "example": "const xLens = R.lens(R.prop('x'), R.assoc('x'));\n\nR.view(xLens, {x: 1, y: 2});            //=> 1\nR.set(xLens, 4, {x: 1, y: 2});          //=> {x: 4, y: 2}\nR.over(xLens, R.negate, {x: 1, y: 2});  //=> {x: -1, y: 2}"
   },
   "lensindex": {
     "name": "lensIndex",
@@ -1147,7 +1193,7 @@ module.exports = {
       "set",
       "over"
     ],
-    "example": "var headLens = R.lensIndex(0);\n\nR.view(headLens, ['a', 'b', 'c']);            //=> 'a'\nR.set(headLens, 'x', ['a', 'b', 'c']);        //=> ['x', 'b', 'c']\nR.over(headLens, R.toUpper, ['a', 'b', 'c']); //=> ['A', 'b', 'c']"
+    "example": "const headLens = R.lensIndex(0);\n\nR.view(headLens, ['a', 'b', 'c']);            //=> 'a'\nR.set(headLens, 'x', ['a', 'b', 'c']);        //=> ['x', 'b', 'c']\nR.over(headLens, R.toUpper, ['a', 'b', 'c']); //=> ['A', 'b', 'c']"
   },
   "lenspath": {
     "name": "lensPath",
@@ -1160,7 +1206,7 @@ module.exports = {
       "set",
       "over"
     ],
-    "example": "var xHeadYLens = R.lensPath(['x', 0, 'y']);\n\nR.view(xHeadYLens, {x: [{y: 2, z: 3}, {y: 4, z: 5}]});\n//=> 2\nR.set(xHeadYLens, 1, {x: [{y: 2, z: 3}, {y: 4, z: 5}]});\n//=> {x: [{y: 1, z: 3}, {y: 4, z: 5}]}\nR.over(xHeadYLens, R.negate, {x: [{y: 2, z: 3}, {y: 4, z: 5}]});\n//=> {x: [{y: -2, z: 3}, {y: 4, z: 5}]}"
+    "example": "const xHeadYLens = R.lensPath(['x', 0, 'y']);\n\nR.view(xHeadYLens, {x: [{y: 2, z: 3}, {y: 4, z: 5}]});\n//=> 2\nR.set(xHeadYLens, 1, {x: [{y: 2, z: 3}, {y: 4, z: 5}]});\n//=> {x: [{y: 1, z: 3}, {y: 4, z: 5}]}\nR.over(xHeadYLens, R.negate, {x: [{y: 2, z: 3}, {y: 4, z: 5}]});\n//=> {x: [{y: -2, z: 3}, {y: 4, z: 5}]}"
   },
   "lensprop": {
     "name": "lensProp",
@@ -1173,7 +1219,7 @@ module.exports = {
       "set",
       "over"
     ],
-    "example": "var xLens = R.lensProp('x');\n\nR.view(xLens, {x: 1, y: 2});            //=> 1\nR.set(xLens, 4, {x: 1, y: 2});          //=> {x: 4, y: 2}\nR.over(xLens, R.negate, {x: 1, y: 2});  //=> {x: -1, y: 2}"
+    "example": "const xLens = R.lensProp('x');\n\nR.view(xLens, {x: 1, y: 2});            //=> 1\nR.set(xLens, 4, {x: 1, y: 2});          //=> {x: 4, y: 2}\nR.over(xLens, R.negate, {x: 1, y: 2});  //=> {x: -1, y: 2}"
   },
   "lift": {
     "name": "lift",
@@ -1184,7 +1230,7 @@ module.exports = {
     "see": [
       "liftN"
     ],
-    "example": "var madd3 = R.lift((a, b, c) => a + b + c);\n\nmadd3([1,2,3], [1,2,3], [1]); //=> [3, 4, 5, 4, 5, 6, 5, 6, 7]\n\nvar madd5 = R.lift((a, b, c, d, e) => a + b + c + d + e);\n\nmadd5([1,2], [3], [4, 5], [6], [7, 8]); //=> [21, 22, 22, 23, 22, 23, 23, 24]"
+    "example": "const madd3 = R.lift((a, b, c) => a + b + c);\n\nmadd3([1,2,3], [1,2,3], [1]); //=> [3, 4, 5, 4, 5, 6, 5, 6, 7]\n\nconst madd5 = R.lift((a, b, c, d, e) => a + b + c + d + e);\n\nmadd5([1,2], [3], [4, 5], [6], [7, 8]); //=> [21, 22, 22, 23, 22, 23, 23, 24]"
   },
   "liftn": {
     "name": "liftN",
@@ -1196,7 +1242,7 @@ module.exports = {
       "lift",
       "ap"
     ],
-    "example": "var madd3 = R.liftN(3, (...args) => R.sum(args));\nmadd3([1,2,3], [1,2,3], [1]); //=> [3, 4, 5, 4, 5, 6, 5, 6, 7]"
+    "example": "const madd3 = R.liftN(3, (...args) => R.sum(args));\nmadd3([1,2,3], [1,2,3], [1]); //=> [3, 4, 5, 4, 5, 6, 5, 6, 7]"
   },
   "lt": {
     "name": "lt",
@@ -1230,7 +1276,7 @@ module.exports = {
       "transduce",
       "addIndex"
     ],
-    "example": "var double = x => x * 2;\n\nR.map(double, [1, 2, 3]); //=> [2, 4, 6]\n\nR.map(double, {x: 1, y: 2, z: 3}); //=> {x: 2, y: 4, z: 6}"
+    "example": "const double = x => x * 2;\n\nR.map(double, [1, 2, 3]); //=> [2, 4, 6]\n\nR.map(double, {x: 1, y: 2, z: 3}); //=> {x: 2, y: 4, z: 6}"
   },
   "mapaccum": {
     "name": "mapAccum",
@@ -1239,22 +1285,23 @@ module.exports = {
     "since": "v0.10.0",
     "description": "The `mapAccum` function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from left to right, and returning a final value of this accumulator together with the new list. The iterator function receives two arguments, acc and value, and should return a tuple [acc, value].",
     "see": [
+      "scan",
       "addIndex",
       "mapAccumRight"
     ],
-    "example": "var digits = ['1', '2', '3', '4'];\nvar appender = (a, b) => [a + b, a + b];\n\nR.mapAccum(appender, 0, digits); //=> ['01234', ['01', '012', '0123', '01234']]"
+    "example": "const digits = ['1', '2', '3', '4'];\nconst appender = (a, b) => [a + b, a + b];\n\nR.mapAccum(appender, 0, digits); //=> ['01234', ['01', '012', '0123', '01234']]"
   },
   "mapaccumright": {
     "name": "mapAccumRight",
-    "command": "((x, acc) → (y, acc)) → acc → [x] → ([y], acc)",
+    "command": "((acc, x) → (acc, y)) → acc → [x] → (acc, [y])",
     "category": "List",
     "since": "v0.10.0",
-    "description": "The `mapAccumRight` function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from right to left, and returning a final value of this accumulator together with the new list. Similar to `mapAccum`, except moves through the input list from the right to the left. The iterator function receives two arguments, value and acc, and should return a tuple [value, acc].",
+    "description": "The `mapAccumRight` function behaves like a combination of map and reduce; it applies a function to each element of a list, passing an accumulating parameter from right to left, and returning a final value of this accumulator together with the new list. Similar to `mapAccum`, except moves through the input list from the right to the left. The iterator function receives two arguments, acc and value, and should return a tuple [acc, value].",
     "see": [
       "addIndex",
       "mapAccum"
     ],
-    "example": "var digits = ['1', '2', '3', '4'];\nvar append = (a, b) => [a + b, a + b];\n\nR.mapAccumRight(append, 5, digits); //=> [['12345', '2345', '345', '45'], '12345']"
+    "example": "const digits = ['1', '2', '3', '4'];\nconst appender = (a, b) => [b + a, b + a];\n\nR.mapAccumRight(appender, 5, digits); //=> ['12345', ['12345', '2345', '345', '45']]"
   },
   "mapobjindexed": {
     "name": "mapObjIndexed",
@@ -1265,7 +1312,7 @@ module.exports = {
     "see": [
       "map"
     ],
-    "example": "var values = { x: 1, y: 2, z: 3 };\nvar prependKeyAndDouble = (num, key, obj) => key + (num * 2);\n\nR.mapObjIndexed(prependKeyAndDouble, values); //=> { x: 'x2', y: 'y4', z: 'z6' }"
+    "example": "const xyz = { x: 1, y: 2, z: 3 };\nconst prependKeyAndDouble = (num, key, obj) => key + (num * 2);\n\nR.mapObjIndexed(prependKeyAndDouble, xyz); //=> { x: 'x2', y: 'y4', z: 'z6' }"
   },
   "match": {
     "name": "match",
@@ -1287,7 +1334,7 @@ module.exports = {
     "see": [
       "modulo"
     ],
-    "example": "R.mathMod(-17, 5);  //=> 3\nR.mathMod(17, 5);   //=> 2\nR.mathMod(17, -5);  //=> NaN\nR.mathMod(17, 0);   //=> NaN\nR.mathMod(17.2, 5); //=> NaN\nR.mathMod(17, 5.3); //=> NaN\n\nvar clock = R.mathMod(R.__, 12);\nclock(15); //=> 3\nclock(24); //=> 0\n\nvar seventeenMod = R.mathMod(17);\nseventeenMod(3);  //=> 2\nseventeenMod(4);  //=> 1\nseventeenMod(10); //=> 7"
+    "example": "R.mathMod(-17, 5);  //=> 3\nR.mathMod(17, 5);   //=> 2\nR.mathMod(17, -5);  //=> NaN\nR.mathMod(17, 0);   //=> NaN\nR.mathMod(17.2, 5); //=> NaN\nR.mathMod(17, 5.3); //=> NaN\n\nconst clock = R.mathMod(R.__, 12);\nclock(15); //=> 3\nclock(24); //=> 0\n\nconst seventeenMod = R.mathMod(17);\nseventeenMod(3);  //=> 2\nseventeenMod(4);  //=> 1\nseventeenMod(10); //=> 7"
   },
   "max": {
     "name": "max",
@@ -1311,7 +1358,7 @@ module.exports = {
       "max",
       "minBy"
     ],
-    "example": "//  square :: Number -> Number\nvar square = n => n * n;\n\nR.maxBy(square, -3, 2); //=> -3\n\nR.reduce(R.maxBy(square), 0, [3, -5, 4, 1, -2]); //=> -5\nR.reduce(R.maxBy(square), 0, []); //=> 0"
+    "example": "//  square :: Number -> Number\nconst square = n => n * n;\n\nR.maxBy(square, -3, 2); //=> -3\n\nR.reduce(R.maxBy(square), 0, [3, -5, 4, 1, -2]); //=> -5\nR.reduce(R.maxBy(square), 0, []); //=> 0"
   },
   "mean": {
     "name": "mean",
@@ -1335,40 +1382,28 @@ module.exports = {
     ],
     "example": "R.median([2, 9, 7]); //=> 7\nR.median([7, 2, 10, 9]); //=> 8\nR.median([]); //=> NaN"
   },
-  "memoize": {
-    "name": "memoize",
-    "command": "memoize",
-    "category": "Function",
-    "since": "v0.1.0",
-    "description": "Creates a new function that, when invoked, caches the result of calling `fn` for a given argument set and returns the result. Subsequent calls to the memoized `fn` with the same argument set will not result in an additional call to `fn`; instead, the cached result for that set of arguments will be returned.",
-    "see": [
-      "memoizeWith"
-    ],
-    "example": "let count = 0;\nconst factorial = R.memoize(n => {\n  count += 1;\n  return R.product(R.range(1, n + 1));\n});\nfactorial(5); //=> 120\nfactorial(5); //=> 120\nfactorial(5); //=> 120\ncount; //=> 1"
-  },
   "memoizewith": {
     "name": "memoizeWith",
     "command": "(*… → String) → (*… → a) → (*… → a)",
     "category": "Function",
     "since": "v0.24.0",
-    "description": "A customisable version of `R.memoize`. `memoizeWith` takes an additional function that will be applied to a given argument set and used to create the cache key under which the results of the function to be memoized will be stored. Care must be taken when implementing key generation to avoid clashes that may overwrite previous entries erroneously.",
-    "see": [
-      "memoize"
-    ],
+    "description": "Creates a new function that, when invoked, caches the result of calling `fn` for a given argument set and returns the result. Subsequent calls to the memoized `fn` with the same argument set will not result in an additional call to `fn`; instead, the cached result for that set of arguments will be returned.",
+    "see": [],
     "example": "let count = 0;\nconst factorial = R.memoizeWith(R.identity, n => {\n  count += 1;\n  return R.product(R.range(1, n + 1));\n});\nfactorial(5); //=> 120\nfactorial(5); //=> 120\nfactorial(5); //=> 120\ncount; //=> 1"
   },
   "merge": {
     "name": "merge",
-    "command": "{k: v} → {k: v} → {k: v}",
+    "command": "merge",
     "category": "Object",
     "since": "v0.1.0",
     "description": "Create a new object with the own properties of the first object merged with the own properties of the second object. If a key exists in both objects, the value from the second object will be used.",
     "see": [
+      "mergeRight",
       "mergeDeepRight",
       "mergeWith",
       "mergeWithKey"
     ],
-    "example": "R.merge({ 'name': 'fred', 'age': 10 }, { 'age': 40 });\n//=> { 'name': 'fred', 'age': 40 }\n\nvar resetToDefault = R.merge(R.__, {x: 0});\nresetToDefault({x: 5, y: 2}); //=> {x: 0, y: 2}"
+    "example": "R.merge({ 'name': 'fred', 'age': 10 }, { 'age': 40 });\n//=> { 'name': 'fred', 'age': 40 }\n\nconst withDefaults = R.merge({x: 0, y: 0});\nwithDefaults({y: 2}); //=> {x: 0, y: 2}"
   },
   "mergeall": {
     "name": "mergeAll",
@@ -1417,7 +1452,6 @@ module.exports = {
     "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects: and both associated values are also objects then the values will be recursively merged. otherwise the provided function is applied to associated values using the resulting value as the new value associated with the key. If a key only exists in one object, the value will be associated with the key of the resulting object.",
     "see": [
       "mergeWith",
-      "mergeDeep",
       "mergeDeepWithKey"
     ],
     "example": "R.mergeDeepWith(R.concat,\n                { a: true, c: { values: [10, 20] }},\n                { b: true, c: { values: [15, 35] }});\n//=> { a: true, b: true, c: { values: [10, 20, 15, 35] }}"
@@ -1430,10 +1464,37 @@ module.exports = {
     "description": "Creates a new object with the own properties of the two provided objects. If a key exists in both objects: and both associated values are also objects then the values will be recursively merged. otherwise the provided function is applied to the key and associated values using the resulting value as the new value associated with the key. If a key only exists in one object, the value will be associated with the key of the resulting object.",
     "see": [
       "mergeWithKey",
-      "mergeDeep",
       "mergeDeepWith"
     ],
     "example": "let concatValues = (k, l, r) => k == 'values' ? R.concat(l, r) : r\nR.mergeDeepWithKey(concatValues,\n                   { a: true, c: { thing: 'foo', values: [10, 20] }},\n                   { b: true, c: { thing: 'bar', values: [15, 35] }});\n//=> { a: true, b: true, c: { thing: 'bar', values: [10, 20, 15, 35] }}"
+  },
+  "mergeleft": {
+    "name": "mergeLeft",
+    "command": "{k: v} → {k: v} → {k: v}",
+    "category": "Object",
+    "since": "Unknown",
+    "description": "Create a new object with the own properties of the first object merged with the own properties of the second object. If a key exists in both objects, the value from the first object will be used.",
+    "see": [
+      "mergeRight",
+      "mergeDeepLeft",
+      "mergeWith",
+      "mergeWithKey"
+    ],
+    "example": "R.mergeLeft({ 'age': 40 }, { 'name': 'fred', 'age': 10 });\n//=> { 'name': 'fred', 'age': 40 }\n\nconst resetToDefault = R.mergeLeft({x: 0});\nresetToDefault({x: 5, y: 2}); //=> {x: 0, y: 2}"
+  },
+  "mergeright": {
+    "name": "mergeRight",
+    "command": "{k: v} → {k: v} → {k: v}",
+    "category": "Object",
+    "since": "Unknown",
+    "description": "Create a new object with the own properties of the first object merged with the own properties of the second object. If a key exists in both objects, the value from the second object will be used.",
+    "see": [
+      "mergeLeft",
+      "mergeDeepRight",
+      "mergeWith",
+      "mergeWithKey"
+    ],
+    "example": "R.mergeRight({ 'name': 'fred', 'age': 10 }, { 'age': 40 });\n//=> { 'name': 'fred', 'age': 40 }\n\nconst withDefaults = R.mergeRight({x: 0, y: 0});\nwithDefaults({y: 2}); //=> {x: 0, y: 2}"
   },
   "mergewith": {
     "name": "mergeWith",
@@ -1483,7 +1544,7 @@ module.exports = {
       "min",
       "maxBy"
     ],
-    "example": "//  square :: Number -> Number\nvar square = n => n * n;\n\nR.minBy(square, -3, 2); //=> 2\n\nR.reduce(R.minBy(square), Infinity, [3, -5, 4, 1, -2]); //=> 1\nR.reduce(R.minBy(square), Infinity, []); //=> Infinity"
+    "example": "//  square :: Number -> Number\nconst square = n => n * n;\n\nR.minBy(square, -3, 2); //=> 2\n\nR.reduce(R.minBy(square), Infinity, [3, -5, 4, 1, -2]); //=> 1\nR.reduce(R.minBy(square), Infinity, []); //=> Infinity"
   },
   "modulo": {
     "name": "modulo",
@@ -1494,7 +1555,16 @@ module.exports = {
     "see": [
       "mathMod"
     ],
-    "example": "R.modulo(17, 3); //=> 2\n// JS behavior:\nR.modulo(-17, 3); //=> -2\nR.modulo(17, -3); //=> 2\n\nvar isOdd = R.modulo(R.__, 2);\nisOdd(42); //=> 0\nisOdd(21); //=> 1"
+    "example": "R.modulo(17, 3); //=> 2\n// JS behavior:\nR.modulo(-17, 3); //=> -2\nR.modulo(17, -3); //=> 2\n\nconst isOdd = R.modulo(R.__, 2);\nisOdd(42); //=> 0\nisOdd(21); //=> 1"
+  },
+  "move": {
+    "name": "move",
+    "command": "Number → Number → [a] → [a]",
+    "category": "List",
+    "since": "Unknown",
+    "description": "Move an item, at index `from`, to index `to`, in a list of elements. A new list will be created containing the new elements order.",
+    "see": [],
+    "example": "R.move(0, 2, ['a', 'b', 'c', 'd', 'e', 'f']); //=> ['b', 'c', 'a', 'd', 'e', 'f']\nR.move(-1, 0, ['a', 'b', 'c', 'd', 'e', 'f']); //=> ['f', 'a', 'b', 'c', 'd', 'e'] list rotation"
   },
   "multiply": {
     "name": "multiply",
@@ -1505,7 +1575,7 @@ module.exports = {
     "see": [
       "divide"
     ],
-    "example": "var double = R.multiply(2);\nvar triple = R.multiply(3);\ndouble(3);       //=>  6\ntriple(4);       //=> 12\nR.multiply(2, 5);  //=> 10"
+    "example": "const double = R.multiply(2);\nconst triple = R.multiply(3);\ndouble(3);       //=>  6\ntriple(4);       //=> 12\nR.multiply(2, 5);  //=> 10"
   },
   "nary": {
     "name": "nAry",
@@ -1517,7 +1587,7 @@ module.exports = {
       "binary",
       "unary"
     ],
-    "example": "var takesTwoArgs = (a, b) => [a, b];\n\ntakesTwoArgs.length; //=> 2\ntakesTwoArgs(1, 2); //=> [1, 2]\n\nvar takesOneArg = R.nAry(1, takesTwoArgs);\ntakesOneArg.length; //=> 1\n// Only `n` arguments are passed to the wrapped function\ntakesOneArg(1, 2); //=> [1, undefined]"
+    "example": "const takesTwoArgs = (a, b) => [a, b];\n\ntakesTwoArgs.length; //=> 2\ntakesTwoArgs(1, 2); //=> [1, 2]\n\nconst takesOneArg = R.nAry(1, takesTwoArgs);\ntakesOneArg.length; //=> 1\n// Only `n` arguments are passed to the wrapped function\ntakesOneArg(1, 2); //=> [1, undefined]"
   },
   "negate": {
     "name": "negate",
@@ -1533,12 +1603,12 @@ module.exports = {
     "command": "(a → Boolean) → [a] → Boolean",
     "category": "List",
     "since": "v0.12.0",
-    "description": "Returns `true` if no elements of the list match the predicate, `false` otherwise. Dispatches to the `any` method of the second argument, if present.",
+    "description": "Returns `true` if no elements of the list match the predicate, `false` otherwise. Dispatches to the `all` method of the second argument, if present. Acts as a transducer if a transformer is given in list position.",
     "see": [
       "all",
       "any"
     ],
-    "example": "var isEven = n => n % 2 === 0;\nvar isOdd = n => n % 2 === 1;\n\nR.none(isEven, [1, 3, 5, 7, 9, 11]); //=> true\nR.none(isOdd, [1, 3, 5, 7, 8, 11]); //=> false"
+    "example": "const isEven = n => n % 2 === 0;\nconst isOdd = n => n % 2 === 1;\n\nR.none(isEven, [1, 3, 5, 7, 9, 11]); //=> true\nR.none(isOdd, [1, 3, 5, 7, 8, 11]); //=> false"
   },
   "not": {
     "name": "not",
@@ -1558,7 +1628,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Returns the nth element of the given list or string. If n is negative the element at index length + n is returned.",
     "see": [],
-    "example": "var list = ['foo', 'bar', 'baz', 'quux'];\nR.nth(1, list); //=> 'bar'\nR.nth(-1, list); //=> 'quux'\nR.nth(-99, list); //=> undefined\n\nR.nth(2, 'abc'); //=> 'c'\nR.nth(3, 'abc'); //=> ''"
+    "example": "const list = ['foo', 'bar', 'baz', 'quux'];\nR.nth(1, list); //=> 'bar'\nR.nth(-1, list); //=> 'quux'\nR.nth(-99, list); //=> undefined\n\nR.nth(2, 'abc'); //=> 'c'\nR.nth(3, 'abc'); //=> ''"
   },
   "ntharg": {
     "name": "nthArg",
@@ -1574,12 +1644,12 @@ module.exports = {
     "command": "(b → c) → (a → b) → a → c",
     "category": "Function",
     "since": "v0.24.0",
-    "description": "`o` is a curried composition function that returns a unary function. Like `compose`, `o` performs right-to-left function composition. Unlike `compose`, the rightmost function passed to `o` will be invoked with only one argument.",
+    "description": "`o` is a curried composition function that returns a unary function. Like `compose`, `o` performs right-to-left function composition. Unlike `compose`, the rightmost function passed to `o` will be invoked with only one argument. Also, unlike `compose`, `o` is limited to accepting only 2 unary functions. The name o was chosen because of its similarity to the mathematical composition operator ∘.",
     "see": [
       "compose",
       "pipe"
     ],
-    "example": "var classyGreeting = name => \"The name's \" + name.last + \", \" + name.first + \" \" + name.last\nvar yellGreeting = R.o(R.toUpper, classyGreeting);\nyellGreeting({first: 'James', last: 'Bond'}); //=> \"THE NAME'S BOND, JAMES BOND\"\n\nR.o(R.multiply(10), R.add(10))(-4) //=> 60"
+    "example": "const classyGreeting = name => \"The name's \" + name.last + \", \" + name.first + \" \" + name.last\nconst yellGreeting = R.o(R.toUpper, classyGreeting);\nyellGreeting({first: 'James', last: 'Bond'}); //=> \"THE NAME'S BOND, JAMES BOND\"\n\nR.o(R.multiply(10), R.add(10))(-4) //=> 60"
   },
   "objof": {
     "name": "objOf",
@@ -1590,7 +1660,7 @@ module.exports = {
     "see": [
       "pair"
     ],
-    "example": "var matchPhrases = R.compose(\n  R.objOf('must'),\n  R.map(R.objOf('match_phrase'))\n);\nmatchPhrases(['foo', 'bar', 'baz']); //=> {must: [{match_phrase: 'foo'}, {match_phrase: 'bar'}, {match_phrase: 'baz'}]}"
+    "example": "const matchPhrases = R.compose(\n  R.objOf('must'),\n  R.map(R.objOf('match_phrase'))\n);\nmatchPhrases(['foo', 'bar', 'baz']); //=> {must: [{match_phrase: 'foo'}, {match_phrase: 'bar'}, {match_phrase: 'baz'}]}"
   },
   "of": {
     "name": "of",
@@ -1619,7 +1689,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Accepts a function `fn` and returns a function that guards invocation of `fn` such that `fn` can only ever be called once, no matter how many times the returned function is invoked. The first value calculated is returned in subsequent invocations.",
     "see": [],
-    "example": "var addOneOnce = R.once(x => x + 1);\naddOneOnce(10); //=> 11\naddOneOnce(addOneOnce(50)); //=> 11"
+    "example": "const addOneOnce = R.once(x => x + 1);\naddOneOnce(10); //=> 11\naddOneOnce(addOneOnce(50)); //=> 11"
   },
   "or": {
     "name": "or",
@@ -1632,6 +1702,17 @@ module.exports = {
     ],
     "example": "R.or(true, true); //=> true\nR.or(true, false); //=> true\nR.or(false, true); //=> true\nR.or(false, false); //=> false"
   },
+  "otherwise": {
+    "name": "otherwise",
+    "command": "(e → b) → (Promise e a) → (Promise e b)",
+    "category": "Function",
+    "since": "Unknown",
+    "description": "Returns the result of applying the onFailure function to the value inside a failed promise. This is useful for handling rejected promises inside function compositions.",
+    "see": [
+      "then"
+    ],
+    "example": "var failedFetch = (id) => Promise.reject('bad ID');\nvar useDefault = () => ({ firstName: 'Bob', lastName: 'Loblaw' })\n\n//recoverFromFailure :: String -> Promise ({firstName, lastName})\nvar recoverFromFailure = R.pipe(\n  failedFetch,\n  R.otherwise(useDefault),\n  R.then(R.pick(['firstName', 'lastName'])),\n);\nrecoverFromFailure(12345).then(console.log)"
+  },
   "over": {
     "name": "over",
     "command": "Lens s a → (a → a) → s → s",
@@ -1643,7 +1724,7 @@ module.exports = {
       "lensIndex",
       "lensProp"
     ],
-    "example": "var headLens = R.lensIndex(0);\n\nR.over(headLens, R.toUpper, ['foo', 'bar', 'baz']); //=> ['FOO', 'bar', 'baz']"
+    "example": "const headLens = R.lensIndex(0);\n\nR.over(headLens, R.toUpper, ['foo', 'bar', 'baz']); //=> ['FOO', 'bar', 'baz']"
   },
   "pair": {
     "name": "pair",
@@ -1664,9 +1745,10 @@ module.exports = {
     "since": "v0.10.0",
     "description": "Takes a function `f` and a list of arguments, and returns a function `g`. When applied, `g` returns the result of applying `f` to the arguments provided initially followed by the arguments provided to `g`.",
     "see": [
-      "partialRight"
+      "partialRight",
+      "curry"
     ],
-    "example": "var multiply2 = (a, b) => a * b;\nvar double = R.partial(multiply2, [2]);\ndouble(2); //=> 4\n\nvar greet = (salutation, title, firstName, lastName) =>\n  salutation + ', ' + title + ' ' + firstName + ' ' + lastName + '!';\n\nvar sayHello = R.partial(greet, ['Hello']);\nvar sayHelloToMs = R.partial(sayHello, ['Ms.']);\nsayHelloToMs('Jane', 'Jones'); //=> 'Hello, Ms. Jane Jones!'"
+    "example": "const multiply2 = (a, b) => a * b;\nconst double = R.partial(multiply2, [2]);\ndouble(2); //=> 4\n\nconst greet = (salutation, title, firstName, lastName) =>\n  salutation + ', ' + title + ' ' + firstName + ' ' + lastName + '!';\n\nconst sayHello = R.partial(greet, ['Hello']);\nconst sayHelloToMs = R.partial(sayHello, ['Ms.']);\nsayHelloToMs('Jane', 'Jones'); //=> 'Hello, Ms. Jane Jones!'"
   },
   "partialright": {
     "name": "partialRight",
@@ -1677,7 +1759,7 @@ module.exports = {
     "see": [
       "partial"
     ],
-    "example": "var greet = (salutation, title, firstName, lastName) =>\n  salutation + ', ' + title + ' ' + firstName + ' ' + lastName + '!';\n\nvar greetMsJaneJones = R.partialRight(greet, ['Ms.', 'Jane', 'Jones']);\n\ngreetMsJaneJones('Hello'); //=> 'Hello, Ms. Jane Jones!'"
+    "example": "const greet = (salutation, title, firstName, lastName) =>\n  salutation + ', ' + title + ' ' + firstName + ' ' + lastName + '!';\n\nconst greetMsJaneJones = R.partialRight(greet, ['Ms.', 'Jane', 'Jones']);\n\ngreetMsJaneJones('Hello'); //=> 'Hello, Ms. Jane Jones!'"
   },
   "partition": {
     "name": "partition",
@@ -1689,7 +1771,7 @@ module.exports = {
       "filter",
       "reject"
     ],
-    "example": "R.partition(R.contains('s'), ['sss', 'ttt', 'foo', 'bars']);\n// => [ [ 'sss', 'bars' ],  [ 'ttt', 'foo' ] ]\n\nR.partition(R.contains('s'), { a: 'sss', b: 'ttt', foo: 'bars' });\n// => [ { a: 'sss', foo: 'bars' }, { b: 'ttt' }  ]"
+    "example": "R.partition(R.includes('s'), ['sss', 'ttt', 'foo', 'bars']);\n// => [ [ 'sss', 'bars' ],  [ 'ttt', 'foo' ] ]\n\nR.partition(R.includes('s'), { a: 'sss', b: 'ttt', foo: 'bars' });\n// => [ { a: 'sss', foo: 'bars' }, { b: 'ttt' }  ]"
   },
   "path": {
     "name": "path",
@@ -1709,7 +1791,7 @@ module.exports = {
     "since": "v0.7.0",
     "description": "Determines whether a nested path on an object has a specific value, in `R.equals` terms. Most likely used to filter a list.",
     "see": [],
-    "example": "var user1 = { address: { zipCode: 90210 } };\nvar user2 = { address: { zipCode: 55555 } };\nvar user3 = { name: 'Bob' };\nvar users = [ user1, user2, user3 ];\nvar isFamous = R.pathEq(['address', 'zipCode'], 90210);\nR.filter(isFamous, users); //=> [ user1 ]"
+    "example": "const user1 = { address: { zipCode: 90210 } };\nconst user2 = { address: { zipCode: 55555 } };\nconst user3 = { name: 'Bob' };\nconst users = [ user1, user2, user3 ];\nconst isFamous = R.pathEq(['address', 'zipCode'], 90210);\nR.filter(isFamous, users); //=> [ user1 ]"
   },
   "pathor": {
     "name": "pathOr",
@@ -1765,7 +1847,7 @@ module.exports = {
       "pick",
       "filter"
     ],
-    "example": "var isUpperCase = (val, key) => key.toUpperCase() === key;\nR.pickBy(isUpperCase, {a: 1, b: 2, A: 3, B: 4}); //=> {A: 3, B: 4}"
+    "example": "const isUpperCase = (val, key) => key.toUpperCase() === key;\nR.pickBy(isUpperCase, {a: 1, b: 2, A: 3, B: 4}); //=> {A: 3, B: 4}"
   },
   "pipe": {
     "name": "pipe",
@@ -1776,29 +1858,41 @@ module.exports = {
     "see": [
       "compose"
     ],
-    "example": "var f = R.pipe(Math.pow, R.negate, R.inc);\n\nf(3, 4); // -(3^4) + 1"
+    "example": "const f = R.pipe(Math.pow, R.negate, R.inc);\n\nf(3, 4); // -(3^4) + 1"
   },
   "pipek": {
     "name": "pipeK",
-    "command": "Chain m => ((a → m b), (b → m c), …, (y → m z)) → (a → m z)",
+    "command": "pipeK",
     "category": "Function",
     "since": "v0.16.0",
     "description": "Returns the left-to-right Kleisli composition of the provided functions, each of which must return a value of a type supported by `chain`. `R.pipeK(f, g, h)` is equivalent to `R.pipe(f, R.chain(g), R.chain(h))`.",
     "see": [
       "composeK"
     ],
-    "example": "//  parseJson :: String -> Maybe *\n//  get :: String -> Object -> Maybe *\n\n//  getStateCode :: Maybe String -> Maybe String\nvar getStateCode = R.pipeK(\n  parseJson,\n  get('user'),\n  get('address'),\n  get('state'),\n  R.compose(Maybe.of, R.toUpper)\n);\n\ngetStateCode('{\"user\":{\"address\":{\"state\":\"ny\"}}}');\n//=> Just('NY')\ngetStateCode('[Invalid JSON]');\n//=> Nothing()"
+    "example": "//  parseJson :: String -> Maybe *\n//  get :: String -> Object -> Maybe *\n\n//  getStateCode :: Maybe String -> Maybe String\nconst getStateCode = R.pipeK(\n  parseJson,\n  get('user'),\n  get('address'),\n  get('state'),\n  R.compose(Maybe.of, R.toUpper)\n);\n\ngetStateCode('{\"user\":{\"address\":{\"state\":\"ny\"}}}');\n//=> Just('NY')\ngetStateCode('[Invalid JSON]');\n//=> Nothing()"
   },
   "pipep": {
     "name": "pipeP",
-    "command": "((a → Promise b), (b → Promise c), …, (y → Promise z)) → (a → Promise z)",
+    "command": "pipeP",
     "category": "Function",
     "since": "v0.10.0",
     "description": "Performs left-to-right composition of one or more Promise-returning functions. The leftmost function may have any arity; the remaining functions must be unary.",
     "see": [
       "composeP"
     ],
-    "example": "//  followersForUser :: String -> Promise [User]\nvar followersForUser = R.pipeP(db.getUserById, db.getFollowers);"
+    "example": "//  followersForUser :: String -> Promise [User]\nconst followersForUser = R.pipeP(db.getUserById, db.getFollowers);"
+  },
+  "pipewith": {
+    "name": "pipeWith",
+    "command": "((* → *), [((a, b, …, n) → o), (o → p), …, (x → y), (y → z)]) → ((a, b, …, n) → z)",
+    "category": "Function",
+    "since": "Unknown",
+    "description": "Performs left-to-right function composition using transforming function. The leftmost function may have any arity; the remaining functions must be unary. Note: The result of pipeWith is not automatically curried.",
+    "see": [
+      "composeWith",
+      "pipe"
+    ],
+    "example": "const pipeWhileNotNil = R.pipeWith((f, res) => R.isNil(res) ? res : f(res));\nconst f = pipeWhileNotNil([Math.pow, R.negate, R.inc])\n\nf(3, 4); // -(3^4) + 1"
   },
   "pluck": {
     "name": "pluck",
@@ -1809,7 +1903,7 @@ module.exports = {
     "see": [
       "props"
     ],
-    "example": "R.pluck('a')([{a: 1}, {a: 2}]); //=> [1, 2]\nR.pluck(0)([[1, 2], [3, 4]]);   //=> [1, 3]\nR.pluck('val', {a: {val: 3}, b: {val: 5}}); //=> {a: 3, b: 5}"
+    "example": "var getAges = R.pluck('age');\ngetAges([{name: 'fred', age: 29}, {name: 'wilma', age: 27}]); //=> [29, 27]\n\nR.pluck(0, [[1, 2], [3, 4]]);               //=> [1, 3]\nR.pluck('val', {a: {val: 3}, b: {val: 5}}); //=> {a: 3, b: 5}"
   },
   "prepend": {
     "name": "prepend",
@@ -1840,7 +1934,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Reasonable analog to SQL `select` statement.",
     "see": [],
-    "example": "var abby = {name: 'Abby', age: 7, hair: 'blond', grade: 2};\nvar fred = {name: 'Fred', age: 12, hair: 'brown', grade: 7};\nvar kids = [abby, fred];\nR.project(['name', 'grade'], kids); //=> [{name: 'Abby', grade: 2}, {name: 'Fred', grade: 7}]"
+    "example": "const abby = {name: 'Abby', age: 7, hair: 'blond', grade: 2};\nconst fred = {name: 'Fred', age: 12, hair: 'brown', grade: 7};\nconst kids = [abby, fred];\nR.project(['name', 'grade'], kids); //=> [{name: 'Abby', grade: 2}, {name: 'Fred', grade: 7}]"
   },
   "prop": {
     "name": "prop",
@@ -1851,20 +1945,20 @@ module.exports = {
     "see": [
       "path"
     ],
-    "example": "R.prop('x', {x: 100}); //=> 100\nR.prop('x', {}); //=> undefined"
+    "example": "R.prop('x', {x: 100}); //=> 100\nR.prop('x', {}); //=> undefined\nR.compose(R.inc, R.prop('x'))({ x: 3 }) //=> 4"
   },
   "propeq": {
     "name": "propEq",
     "command": "String → a → Object → Boolean",
     "category": "Relation",
     "since": "v0.1.0",
-    "description": "Returns `true` if the specified object property is equal, in `R.equals` terms, to the given value; `false` otherwise. You can test multiple properties with `R.where`.",
+    "description": "Returns `true` if the specified object property is equal, in `R.equals` terms, to the given value; `false` otherwise. You can test multiple properties with `R.whereEq`.",
     "see": [
       "whereEq",
       "propSatisfies",
       "equals"
     ],
-    "example": "var abby = {name: 'Abby', age: 7, hair: 'blond'};\nvar fred = {name: 'Fred', age: 12, hair: 'brown'};\nvar rusty = {name: 'Rusty', age: 10, hair: 'brown'};\nvar alois = {name: 'Alois', age: 15, disposition: 'surly'};\nvar kids = [abby, fred, rusty, alois];\nvar hasBrownHair = R.propEq('hair', 'brown');\nR.filter(hasBrownHair, kids); //=> [fred, rusty]"
+    "example": "const abby = {name: 'Abby', age: 7, hair: 'blond'};\nconst fred = {name: 'Fred', age: 12, hair: 'brown'};\nconst rusty = {name: 'Rusty', age: 10, hair: 'brown'};\nconst alois = {name: 'Alois', age: 15, disposition: 'surly'};\nconst kids = [abby, fred, rusty, alois];\nconst hasBrownHair = R.propEq('hair', 'brown');\nR.filter(hasBrownHair, kids); //=> [fred, rusty]"
   },
   "propis": {
     "name": "propIs",
@@ -1885,7 +1979,7 @@ module.exports = {
     "since": "v0.6.0",
     "description": "If the given, non-null object has an own property with the specified name, returns the value of that property. Otherwise returns the provided default value.",
     "see": [],
-    "example": "var alice = {\n  name: 'ALICE',\n  age: 101\n};\nvar favorite = R.prop('favoriteLibrary');\nvar favoriteWithDefault = R.propOr('Ramda', 'favoriteLibrary');\n\nfavorite(alice);  //=> undefined\nfavoriteWithDefault(alice);  //=> 'Ramda'"
+    "example": "const alice = {\n  name: 'ALICE',\n  age: 101\n};\nconst favorite = R.prop('favoriteLibrary');\nconst favoriteWithDefault = R.propOr('Ramda', 'favoriteLibrary');\n\nfavorite(alice);  //=> undefined\nfavoriteWithDefault(alice);  //=> 'Ramda'"
   },
   "props": {
     "name": "props",
@@ -1894,7 +1988,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Acts as multiple `prop`: array of keys in, array of values out. Preserves order.",
     "see": [],
-    "example": "R.props(['x', 'y'], {x: 1, y: 2}); //=> [1, 2]\nR.props(['c', 'a', 'b'], {b: 2, a: 1}); //=> [undefined, 1, 2]\n\nvar fullName = R.compose(R.join(' '), R.props(['first', 'last']));\nfullName({last: 'Bullet-Tooth', age: 33, first: 'Tony'}); //=> 'Tony Bullet-Tooth'"
+    "example": "R.props(['x', 'y'], {x: 1, y: 2}); //=> [1, 2]\nR.props(['c', 'a', 'b'], {b: 2, a: 1}); //=> [undefined, 1, 2]\n\nconst fullName = R.compose(R.join(' '), R.props(['first', 'last']));\nfullName({last: 'Bullet-Tooth', age: 33, first: 'Tony'}); //=> 'Tony Bullet-Tooth'"
   },
   "propsatisfies": {
     "name": "propSatisfies",
@@ -1941,16 +2035,17 @@ module.exports = {
       "groupBy",
       "reduce"
     ],
-    "example": "var reduceToNamesBy = R.reduceBy((acc, student) => acc.concat(student.name), []);\nvar namesByGrade = reduceToNamesBy(function(student) {\n  var score = student.score;\n  return score < 65 ? 'F' :\n         score < 70 ? 'D' :\n         score < 80 ? 'C' :\n         score < 90 ? 'B' : 'A';\n});\nvar students = [{name: 'Lucy', score: 92},\n                {name: 'Drew', score: 85},\n                // ...\n                {name: 'Bart', score: 62}];\nnamesByGrade(students);\n// {\n//   'A': ['Lucy'],\n//   'B': ['Drew']\n//   // ...,\n//   'F': ['Bart']\n// }"
+    "example": "const groupNames = (acc, {name}) => acc.concat(name)\nconst toGrade = ({score}) =>\n  score < 65 ? 'F' :\n  score < 70 ? 'D' :\n  score < 80 ? 'C' :\n  score < 90 ? 'B' : 'A'\n\nvar students = [\n  {name: 'Abby', score: 83},\n  {name: 'Bart', score: 62},\n  {name: 'Curt', score: 88},\n  {name: 'Dora', score: 92},\n]\n\nreduceBy(groupNames, [], toGrade, students)\n//=> {\"A\": [\"Dora\"], \"B\": [\"Abby\", \"Curt\"], \"F\": [\"Bart\"]}"
   },
   "reduced": {
     "name": "reduced",
     "command": "a → *",
     "category": "List",
     "since": "v0.15.0",
-    "description": "Returns a value wrapped to indicate that it is the final value of the reduce and transduce functions. The returned value should be considered a black box: the internal structure is not guaranteed to be stable. Note: this optimization is unavailable to functions not explicitly listed above. For instance, it is not currently supported by `reduceRight`.",
+    "description": "Returns a value wrapped to indicate that it is the final value of the reduce and transduce functions. The returned value should be considered a black box: the internal structure is not guaranteed to be stable. Note: this optimization is only available to the below functions: `reduce` `reduceWhile` `transduce`",
     "see": [
       "reduce",
+      "reduceWhile",
       "transduce"
     ],
     "example": "R.reduce(\n (acc, item) => item > 3 ? R.reduced(acc) : acc.concat(item),\n [],\n [1, 2, 3, 4, 5]) // [1, 2, 3]"
@@ -1977,7 +2072,7 @@ module.exports = {
       "reduce",
       "reduced"
     ],
-    "example": "var isOdd = (acc, x) => x % 2 === 1;\nvar xs = [1, 3, 5, 60, 777, 800];\nR.reduceWhile(isOdd, R.add, 0, xs); //=> 9\n\nvar ys = [2, 4, 6]\nR.reduceWhile(isOdd, R.add, 111, ys); //=> 111"
+    "example": "const isOdd = (acc, x) => x % 2 === 1;\nconst xs = [1, 3, 5, 60, 777, 800];\nR.reduceWhile(isOdd, R.add, 0, xs); //=> 9\n\nconst ys = [2, 4, 6]\nR.reduceWhile(isOdd, R.add, 111, ys); //=> 111"
   },
   "reject": {
     "name": "reject",
@@ -1990,7 +2085,7 @@ module.exports = {
       "transduce",
       "addIndex"
     ],
-    "example": "var isOdd = (n) => n % 2 === 1;\n\nR.reject(isOdd, [1, 2, 3, 4]); //=> [2, 4]\n\nR.reject(isOdd, {a: 1, b: 2, c: 3, d: 4}); //=> {b: 2, d: 4}"
+    "example": "const isOdd = (n) => n % 2 === 1;\n\nR.reject(isOdd, [1, 2, 3, 4]); //=> [2, 4]\n\nR.reject(isOdd, {a: 1, b: 2, c: 3, d: 4}); //=> {b: 2, d: 4}"
   },
   "remove": {
     "name": "remove",
@@ -1998,7 +2093,9 @@ module.exports = {
     "category": "List",
     "since": "v0.2.2",
     "description": "Removes the sub-list of `list` starting at index `start` and containing `count` elements. Note that this is not destructive: it returns a copy of the list with the changes. No lists have been harmed in the application of this function.",
-    "see": [],
+    "see": [
+      "without"
+    ],
     "example": "R.remove(2, 3, [1,2,3,4,5,6,7,8]); //=> [1,2,6,7,8]"
   },
   "repeat": {
@@ -2010,14 +2107,14 @@ module.exports = {
     "see": [
       "times"
     ],
-    "example": "R.repeat('hi', 5); //=> ['hi', 'hi', 'hi', 'hi', 'hi']\n\nvar obj = {};\nvar repeatedObjs = R.repeat(obj, 5); //=> [{}, {}, {}, {}, {}]\nrepeatedObjs[0] === repeatedObjs[1]; //=> true"
+    "example": "R.repeat('hi', 5); //=> ['hi', 'hi', 'hi', 'hi', 'hi']\n\nconst obj = {};\nconst repeatedObjs = R.repeat(obj, 5); //=> [{}, {}, {}, {}, {}]\nrepeatedObjs[0] === repeatedObjs[1]; //=> true"
   },
   "replace": {
     "name": "replace",
     "command": "RegExp|String → String → String → String",
     "category": "String",
     "since": "v0.7.0",
-    "description": "Replace a substring or regex match in a string with a replacement.",
+    "description": "Replace a substring or regex match in a string with a replacement. The first two parameters correspond to the parameters of the `String.prototype.replace()` function, so the second parameter can also be a function.",
     "see": [],
     "example": "R.replace('foo', 'bar', 'foo foo foo'); //=> 'bar foo foo'\nR.replace(/foo/, 'bar', 'foo foo foo'); //=> 'bar foo foo'\n\n// Use the \"g\" (global) flag to replace all occurrences:\nR.replace(/foo/g, 'bar', 'foo foo foo'); //=> 'bar bar bar'"
   },
@@ -2037,9 +2134,10 @@ module.exports = {
     "since": "v0.10.0",
     "description": "Scan is similar to `reduce`, but returns a list of successively reduced values from the left",
     "see": [
-      "reduce"
+      "reduce",
+      "mapAccum"
     ],
-    "example": "var numbers = [1, 2, 3, 4];\nvar factorials = R.scan(R.multiply, 1, numbers); //=> [1, 1, 2, 6, 24]"
+    "example": "const numbers = [1, 2, 3, 4];\nconst factorials = R.scan(R.multiply, 1, numbers); //=> [1, 1, 2, 6, 24]"
   },
   "sequence": {
     "name": "sequence",
@@ -2063,7 +2161,7 @@ module.exports = {
       "lensIndex",
       "lensProp"
     ],
-    "example": "var xLens = R.lensProp('x');\n\nR.set(xLens, 4, {x: 1, y: 2});  //=> {x: 4, y: 2}\nR.set(xLens, 8, {x: 1, y: 2});  //=> {x: 8, y: 2}"
+    "example": "const xLens = R.lensProp('x');\n\nR.set(xLens, 4, {x: 1, y: 2});  //=> {x: 4, y: 2}\nR.set(xLens, 8, {x: 1, y: 2});  //=> {x: 8, y: 2}"
   },
   "slice": {
     "name": "slice",
@@ -2081,7 +2179,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Returns a copy of the list, sorted according to the comparator function, which should accept two values at a time and return a negative number if the first value is smaller, a positive number if it's larger, and zero if they are equal. Please note that this is a copy of the list. It does not modify the original.",
     "see": [],
-    "example": "var diff = function(a, b) { return a - b; };\nR.sort(diff, [4,2,7,5]); //=> [2, 4, 5, 7]"
+    "example": "const diff = function(a, b) { return a - b; };\nR.sort(diff, [4,2,7,5]); //=> [2, 4, 5, 7]"
   },
   "sortby": {
     "name": "sortBy",
@@ -2090,7 +2188,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Sorts the list according to the supplied function.",
     "see": [],
-    "example": "var sortByFirstItem = R.sortBy(R.prop(0));\nvar sortByNameCaseInsensitive = R.sortBy(R.compose(R.toLower, R.prop('name')));\nvar pairs = [[-1, 1], [-2, 2], [-3, 3]];\nsortByFirstItem(pairs); //=> [[-3, 3], [-2, 2], [-1, 1]]\nvar alice = {\n  name: 'ALICE',\n  age: 101\n};\nvar bob = {\n  name: 'Bob',\n  age: -10\n};\nvar clara = {\n  name: 'clara',\n  age: 314.159\n};\nvar people = [clara, bob, alice];\nsortByNameCaseInsensitive(people); //=> [alice, bob, clara]"
+    "example": "const sortByFirstItem = R.sortBy(R.prop(0));\nconst pairs = [[-1, 1], [-2, 2], [-3, 3]];\nsortByFirstItem(pairs); //=> [[-3, 3], [-2, 2], [-1, 1]]\n\nconst sortByNameCaseInsensitive = R.sortBy(R.compose(R.toLower, R.prop('name')));\nconst alice = {\n  name: 'ALICE',\n  age: 101\n};\nconst bob = {\n  name: 'Bob',\n  age: -10\n};\nconst clara = {\n  name: 'clara',\n  age: 314.159\n};\nconst people = [clara, bob, alice];\nsortByNameCaseInsensitive(people); //=> [alice, bob, clara]"
   },
   "sortwith": {
     "name": "sortWith",
@@ -2099,7 +2197,7 @@ module.exports = {
     "since": "v0.23.0",
     "description": "Sorts a list according to a list of comparators.",
     "see": [],
-    "example": "var alice = {\n  name: 'alice',\n  age: 40\n};\nvar bob = {\n  name: 'bob',\n  age: 30\n};\nvar clara = {\n  name: 'clara',\n  age: 40\n};\nvar people = [clara, bob, alice];\nvar ageNameSort = R.sortWith([\n  R.descend(R.prop('age')),\n  R.ascend(R.prop('name'))\n]);\nageNameSort(people); //=> [alice, clara, bob]"
+    "example": "const alice = {\n  name: 'alice',\n  age: 40\n};\nconst bob = {\n  name: 'bob',\n  age: 30\n};\nconst clara = {\n  name: 'clara',\n  age: 40\n};\nconst people = [clara, bob, alice];\nconst ageNameSort = R.sortWith([\n  R.descend(R.prop('age')),\n  R.ascend(R.prop('name'))\n]);\nageNameSort(people); //=> [alice, clara, bob]"
   },
   "split": {
     "name": "split",
@@ -2110,7 +2208,7 @@ module.exports = {
     "see": [
       "join"
     ],
-    "example": "var pathComponents = R.split('/');\nR.tail(pathComponents('/usr/local/bin/node')); //=> ['usr', 'local', 'bin', 'node']\n\nR.split('.', 'a.b.c.xyz.d'); //=> ['a', 'b', 'c', 'xyz', 'd']"
+    "example": "const pathComponents = R.split('/');\nR.tail(pathComponents('/usr/local/bin/node')); //=> ['usr', 'local', 'bin', 'node']\n\nR.split('.', 'a.b.c.xyz.d'); //=> ['a', 'b', 'c', 'xyz', 'd']"
   },
   "splitat": {
     "name": "splitAt",
@@ -2141,11 +2239,13 @@ module.exports = {
   },
   "startswith": {
     "name": "startsWith",
-    "command": "[a] → Boolean",
+    "command": "[a] → [a] → Boolean",
     "category": "List",
     "since": "v0.24.0",
-    "description": "Checks if a list starts with the provided values",
-    "see": [],
+    "description": "Checks if a list starts with the provided sublist. Similarly, checks if a string starts with the provided substring.",
+    "see": [
+      "endsWith"
+    ],
     "example": "R.startsWith('a', 'abc')                //=> true\nR.startsWith('b', 'abc')                //=> false\nR.startsWith(['a'], ['a', 'b', 'c'])    //=> true\nR.startsWith(['b'], ['a', 'b', 'c'])    //=> false"
   },
   "subtract": {
@@ -2157,7 +2257,7 @@ module.exports = {
     "see": [
       "add"
     ],
-    "example": "R.subtract(10, 8); //=> 2\n\nvar minus5 = R.subtract(R.__, 5);\nminus5(17); //=> 12\n\nvar complementaryAngle = R.subtract(90);\ncomplementaryAngle(30); //=> 60\ncomplementaryAngle(72); //=> 18"
+    "example": "R.subtract(10, 8); //=> 2\n\nconst minus5 = R.subtract(R.__, 5);\nminus5(17); //=> 12\n\nconst complementaryAngle = R.subtract(90);\ncomplementaryAngle(30); //=> 60\ncomplementaryAngle(72); //=> 18"
   },
   "sum": {
     "name": "sum",
@@ -2194,7 +2294,7 @@ module.exports = {
       "difference",
       "differenceWith"
     ],
-    "example": "var eqA = R.eqBy(R.prop('a'));\nvar l1 = [{a: 1}, {a: 2}, {a: 3}, {a: 4}];\nvar l2 = [{a: 3}, {a: 4}, {a: 5}, {a: 6}];\nR.symmetricDifferenceWith(eqA, l1, l2); //=> [{a: 1}, {a: 2}, {a: 5}, {a: 6}]"
+    "example": "const eqA = R.eqBy(R.prop('a'));\nconst l1 = [{a: 1}, {a: 2}, {a: 3}, {a: 4}];\nconst l2 = [{a: 3}, {a: 4}, {a: 5}, {a: 6}];\nR.symmetricDifferenceWith(eqA, l1, l2); //=> [{a: 1}, {a: 2}, {a: 5}, {a: 6}]"
   },
   "t": {
     "name": "T",
@@ -2203,7 +2303,6 @@ module.exports = {
     "since": "v0.9.0",
     "description": "A function that always returns `true`. Any passed in parameters are ignored.",
     "see": [
-      "always",
       "F"
     ],
     "example": "R.T(); //=> true"
@@ -2230,7 +2329,7 @@ module.exports = {
     "see": [
       "drop"
     ],
-    "example": "R.take(1, ['foo', 'bar', 'baz']); //=> ['foo']\nR.take(2, ['foo', 'bar', 'baz']); //=> ['foo', 'bar']\nR.take(3, ['foo', 'bar', 'baz']); //=> ['foo', 'bar', 'baz']\nR.take(4, ['foo', 'bar', 'baz']); //=> ['foo', 'bar', 'baz']\nR.take(3, 'ramda');               //=> 'ram'\n\nvar personnel = [\n  'Dave Brubeck',\n  'Paul Desmond',\n  'Eugene Wright',\n  'Joe Morello',\n  'Gerry Mulligan',\n  'Bob Bates',\n  'Joe Dodge',\n  'Ron Crotty'\n];\n\nvar takeFive = R.take(5);\ntakeFive(personnel);\n//=> ['Dave Brubeck', 'Paul Desmond', 'Eugene Wright', 'Joe Morello', 'Gerry Mulligan']"
+    "example": "R.take(1, ['foo', 'bar', 'baz']); //=> ['foo']\nR.take(2, ['foo', 'bar', 'baz']); //=> ['foo', 'bar']\nR.take(3, ['foo', 'bar', 'baz']); //=> ['foo', 'bar', 'baz']\nR.take(4, ['foo', 'bar', 'baz']); //=> ['foo', 'bar', 'baz']\nR.take(3, 'ramda');               //=> 'ram'\n\nconst personnel = [\n  'Dave Brubeck',\n  'Paul Desmond',\n  'Eugene Wright',\n  'Joe Morello',\n  'Gerry Mulligan',\n  'Bob Bates',\n  'Joe Dodge',\n  'Ron Crotty'\n];\n\nconst takeFive = R.take(5);\ntakeFive(personnel);\n//=> ['Dave Brubeck', 'Paul Desmond', 'Eugene Wright', 'Joe Morello', 'Gerry Mulligan']"
   },
   "takelast": {
     "name": "takeLast",
@@ -2253,7 +2352,7 @@ module.exports = {
       "dropLastWhile",
       "addIndex"
     ],
-    "example": "var isNotOne = x => x !== 1;\n\nR.takeLastWhile(isNotOne, [1, 2, 3, 4]); //=> [2, 3, 4]\n\nR.takeLastWhile(x => x !== 'R' , 'Ramda'); //=> 'amda'"
+    "example": "const isNotOne = x => x !== 1;\n\nR.takeLastWhile(isNotOne, [1, 2, 3, 4]); //=> [2, 3, 4]\n\nR.takeLastWhile(x => x !== 'R' , 'Ramda'); //=> 'amda'"
   },
   "takewhile": {
     "name": "takeWhile",
@@ -2266,7 +2365,7 @@ module.exports = {
       "transduce",
       "addIndex"
     ],
-    "example": "var isNotFour = x => x !== 4;\n\nR.takeWhile(isNotFour, [1, 2, 3, 4, 3, 2, 1]); //=> [1, 2, 3]\n\nR.takeWhile(x => x !== 'd' , 'Ramda'); //=> 'Ram'"
+    "example": "const isNotFour = x => x !== 4;\n\nR.takeWhile(isNotFour, [1, 2, 3, 4, 3, 2, 1]); //=> [1, 2, 3]\n\nR.takeWhile(x => x !== 'd' , 'Ramda'); //=> 'Ram'"
   },
   "tap": {
     "name": "tap",
@@ -2275,7 +2374,7 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Runs the given function with the supplied object, then returns the object. Acts as a transducer if a transformer is given as second parameter.",
     "see": [],
-    "example": "var sayX = x => console.log('x is ' + x);\nR.tap(sayX, 100); //=> 100\n// logs 'x is 100'"
+    "example": "const sayX = x => console.log('x is ' + x);\nR.tap(sayX, 100); //=> 100\n// logs 'x is 100'"
   },
   "test": {
     "name": "test",
@@ -2287,6 +2386,29 @@ module.exports = {
       "match"
     ],
     "example": "R.test(/^x/, 'xyz'); //=> true\nR.test(/^y/, 'xyz'); //=> false"
+  },
+  "then": {
+    "name": "then",
+    "command": "(a → b) → (Promise e a) → (Promise e b)",
+    "category": "Function",
+    "since": "Unknown",
+    "description": "Returns the result of applying the onSuccess function to the value inside a successfully resolved promise. This is useful for working with promises inside function compositions.",
+    "see": [
+      "otherwise"
+    ],
+    "example": "var makeQuery = (email) => ({ query: { email }});\n\n//getMemberName :: String -> Promise ({firstName, lastName})\nvar getMemberName = R.pipe(\n  makeQuery,\n  fetchMember,\n  R.then(R.pick(['firstName', 'lastName']))\n);"
+  },
+  "thunkify": {
+    "name": "thunkify",
+    "command": "((a, b, …, j) → k) → (a, b, …, j) → (() → k)",
+    "category": "Function",
+    "since": "Unknown",
+    "description": "Creates a thunk out of a function. A thunk delays a calculation until its result is needed, providing lazy evaluation of arguments.",
+    "see": [
+      "partial",
+      "partialRight"
+    ],
+    "example": "R.thunkify(R.identity)(42)(); //=> 42\nR.thunkify((a, b) => a + b)(25, 17)(); //=> 42"
   },
   "times": {
     "name": "times",
@@ -2328,7 +2450,7 @@ module.exports = {
     "since": "v0.4.0",
     "description": "Converts an object into an array of key, value arrays. The object's own properties and prototype properties are used. Note that the order of the output array is not guaranteed to be consistent across different JS platforms.",
     "see": [],
-    "example": "var F = function() { this.x = 'X'; };\nF.prototype.y = 'Y';\nvar f = new F();\nR.toPairsIn(f); //=> [['x','X'], ['y','Y']]"
+    "example": "const F = function() { this.x = 'X'; };\nF.prototype.y = 'Y';\nconst f = new F();\nR.toPairsIn(f); //=> [['x','X'], ['y','Y']]"
   },
   "tostring": {
     "name": "toString",
@@ -2361,7 +2483,7 @@ module.exports = {
       "reduced",
       "into"
     ],
-    "example": "var numbers = [1, 2, 3, 4];\nvar transducer = R.compose(R.map(R.add(1)), R.take(2));\nR.transduce(transducer, R.flip(R.append), [], numbers); //=> [2, 3]\n\nvar isOdd = (x) => x % 2 === 1;\nvar firstOddTransducer = R.compose(R.filter(isOdd), R.take(1));\nR.transduce(firstOddTransducer, R.flip(R.append), [], R.range(0, 100)); //=> [1]"
+    "example": "const numbers = [1, 2, 3, 4];\nconst transducer = R.compose(R.map(R.add(1)), R.take(2));\nR.transduce(transducer, R.flip(R.append), [], numbers); //=> [2, 3]\n\nconst isOdd = (x) => x % 2 === 1;\nconst firstOddTransducer = R.compose(R.filter(isOdd), R.take(1));\nR.transduce(firstOddTransducer, R.flip(R.append), [], R.range(0, 100)); //=> [1]"
   },
   "transpose": {
     "name": "transpose",
@@ -2381,7 +2503,7 @@ module.exports = {
     "see": [
       "sequence"
     ],
-    "example": "// Returns `Nothing` if the given divisor is `0`\nsafeDiv = n => d => d === 0 ? Nothing() : Just(n / d)\n\nR.traverse(Maybe.of, safeDiv(10), [2, 4, 5]); //=> Just([5, 2.5, 2])\nR.traverse(Maybe.of, safeDiv(10), [2, 0, 5]); //=> Nothing"
+    "example": "// Returns `Maybe.Nothing` if the given divisor is `0`\nconst safeDiv = n => d => d === 0 ? Maybe.Nothing() : Maybe.Just(n / d)\n\nR.traverse(Maybe.of, safeDiv(10), [2, 4, 5]); //=> Maybe.Just([5, 2.5, 2])\nR.traverse(Maybe.of, safeDiv(10), [2, 0, 5]); //=> Maybe.Nothing"
   },
   "trim": {
     "name": "trim",
@@ -2399,7 +2521,7 @@ module.exports = {
     "since": "v0.20.0",
     "description": "`tryCatch` takes two functions, a `tryer` and a `catcher`. The returned function evaluates the `tryer`; if it does not throw, it simply returns the result. If the `tryer` does throw, the returned function evaluates the `catcher` function and returns its result. Note that for effective composition with this function, both the `tryer` and `catcher` functions must return the same type of results.",
     "see": [],
-    "example": "R.tryCatch(R.prop('x'), R.F)({x: true}); //=> true\nR.tryCatch(R.prop('x'), R.F)(null);      //=> false"
+    "example": "R.tryCatch(R.prop('x'), R.F)({x: true}); //=> true\nR.tryCatch(() => { throw 'foo'}, R.always('catched'))('bar') // => 'catched'\nR.tryCatch(R.times(R.identity), R.always([]))('s') // => []\n ``"
   },
   "type": {
     "name": "type",
@@ -2431,7 +2553,7 @@ module.exports = {
       "binary",
       "nAry"
     ],
-    "example": "var takesTwoArgs = function(a, b) {\n  return [a, b];\n};\ntakesTwoArgs.length; //=> 2\ntakesTwoArgs(1, 2); //=> [1, 2]\n\nvar takesOneArg = R.unary(takesTwoArgs);\ntakesOneArg.length; //=> 1\n// Only 1 argument is passed to the wrapped function\ntakesOneArg(1, 2); //=> [1, undefined]"
+    "example": "const takesTwoArgs = function(a, b) {\n  return [a, b];\n};\ntakesTwoArgs.length; //=> 2\ntakesTwoArgs(1, 2); //=> [1, 2]\n\nconst takesOneArg = R.unary(takesTwoArgs);\ntakesOneArg.length; //=> 1\n// Only 1 argument is passed to the wrapped function\ntakesOneArg(1, 2); //=> [1, undefined]"
   },
   "uncurryn": {
     "name": "uncurryN",
@@ -2442,7 +2564,7 @@ module.exports = {
     "see": [
       "curry"
     ],
-    "example": "var addFour = a => b => c => d => a + b + c + d;\n\nvar uncurriedAddFour = R.uncurryN(4, addFour);\nuncurriedAddFour(1, 2, 3, 4); //=> 10"
+    "example": "const addFour = a => b => c => d => a + b + c + d;\n\nconst uncurriedAddFour = R.uncurryN(4, addFour);\nuncurriedAddFour(1, 2, 3, 4); //=> 10"
   },
   "unfold": {
     "name": "unfold",
@@ -2451,7 +2573,7 @@ module.exports = {
     "since": "v0.10.0",
     "description": "Builds a list from a seed value. Accepts an iterator function, which returns either false to stop iteration or an array of length 2 containing the value to add to the resulting list and the seed to be used in the next call to the iterator function. The iterator function receives one argument: (seed).",
     "see": [],
-    "example": "var f = n => n > 50 ? false : [-n, n + 10];\nR.unfold(f, 10); //=> [-10, -20, -30, -40, -50]"
+    "example": "const f = n => n > 50 ? false : [-n, n + 10];\nR.unfold(f, 10); //=> [-10, -20, -30, -40, -50]"
   },
   "union": {
     "name": "union",
@@ -2471,7 +2593,7 @@ module.exports = {
     "see": [
       "union"
     ],
-    "example": "var l1 = [{a: 1}, {a: 2}];\nvar l2 = [{a: 1}, {a: 4}];\nR.unionWith(R.eqBy(R.prop('a')), l1, l2); //=> [{a: 1}, {a: 2}, {a: 4}]"
+    "example": "const l1 = [{a: 1}, {a: 2}];\nconst l2 = [{a: 1}, {a: 4}];\nR.unionWith(R.eqBy(R.prop('a')), l1, l2); //=> [{a: 1}, {a: 2}, {a: 4}]"
   },
   "uniq": {
     "name": "uniq",
@@ -2498,7 +2620,7 @@ module.exports = {
     "since": "v0.2.0",
     "description": "Returns a new list containing only one copy of each element in the original list, based upon the value returned by applying the supplied predicate to two list elements. Prefers the first item if two items compare equal based on the predicate.",
     "see": [],
-    "example": "var strEq = R.eqBy(String);\nR.uniqWith(strEq)([1, '1', 2, 1]); //=> [1, 2]\nR.uniqWith(strEq)([{}, {}]);       //=> [{}]\nR.uniqWith(strEq)([1, '1', 1]);    //=> [1]\nR.uniqWith(strEq)(['1', 1, 1]);    //=> ['1']"
+    "example": "const strEq = R.eqBy(String);\nR.uniqWith(strEq)([1, '1', 2, 1]); //=> [1, 2]\nR.uniqWith(strEq)([{}, {}]);       //=> [{}]\nR.uniqWith(strEq)([1, '1', 1]);    //=> [1]\nR.uniqWith(strEq)(['1', 1, 1]);    //=> ['1']"
   },
   "unless": {
     "name": "unless",
@@ -2508,7 +2630,8 @@ module.exports = {
     "description": "Tests the final argument by passing it to the given predicate function. If the predicate is not satisfied, the function will return the result of calling the `whenFalseFn` function with the same argument. If the predicate is satisfied, the argument is returned as is.",
     "see": [
       "ifElse",
-      "when"
+      "when",
+      "cond"
     ],
     "example": "let safeInc = R.unless(R.isNil, R.inc);\nsafeInc(null); //=> null\nsafeInc(1); //=> 2"
   },
@@ -2542,7 +2665,7 @@ module.exports = {
     "see": [
       "adjust"
     ],
-    "example": "R.update(1, 11, [0, 1, 2]);     //=> [0, 11, 2]\nR.update(1)(11)([0, 1, 2]);     //=> [0, 11, 2]"
+    "example": "R.update(1, '_', ['a', 'b', 'c']);      //=> ['a', '_', 'c']\nR.update(-1, '_', ['a', 'b', 'c']);     //=> ['a', 'b', '_']"
   },
   "usewith": {
     "name": "useWith",
@@ -2577,7 +2700,7 @@ module.exports = {
       "values",
       "keysIn"
     ],
-    "example": "var F = function() { this.x = 'X'; };\nF.prototype.y = 'Y';\nvar f = new F();\nR.valuesIn(f); //=> ['X', 'Y']"
+    "example": "const F = function() { this.x = 'X'; };\nF.prototype.y = 'Y';\nconst f = new F();\nR.valuesIn(f); //=> ['X', 'Y']"
   },
   "view": {
     "name": "view",
@@ -2590,7 +2713,7 @@ module.exports = {
       "lensIndex",
       "lensProp"
     ],
-    "example": "var xLens = R.lensProp('x');\n\nR.view(xLens, {x: 1, y: 2});  //=> 1\nR.view(xLens, {x: 4, y: 2});  //=> 4"
+    "example": "const xLens = R.lensProp('x');\n\nR.view(xLens, {x: 1, y: 2});  //=> 1\nR.view(xLens, {x: 4, y: 2});  //=> 4"
   },
   "when": {
     "name": "when",
@@ -2600,9 +2723,10 @@ module.exports = {
     "description": "Tests the final argument by passing it to the given predicate function. If the predicate is satisfied, the function will return the result of calling the `whenTrueFn` function with the same argument. If the predicate is not satisfied, the argument is returned as is.",
     "see": [
       "ifElse",
-      "unless"
+      "unless",
+      "cond"
     ],
-    "example": "// truncate :: String -> String\nvar truncate = R.when(\n  R.propSatisfies(R.gt(R.__, 10), 'length'),\n  R.pipe(R.take(10), R.append('…'), R.join(''))\n);\ntruncate('12345');         //=> '12345'\ntruncate('0123456789ABC'); //=> '0123456789…'"
+    "example": "// truncate :: String -> String\nconst truncate = R.when(\n  R.propSatisfies(R.gt(R.__, 10), 'length'),\n  R.pipe(R.take(10), R.append('…'), R.join(''))\n);\ntruncate('12345');         //=> '12345'\ntruncate('0123456789ABC'); //=> '0123456789…'"
   },
   "where": {
     "name": "where",
@@ -2614,7 +2738,7 @@ module.exports = {
       "propSatisfies",
       "whereEq"
     ],
-    "example": "// pred :: Object -> Boolean\nvar pred = R.where({\n  a: R.equals('foo'),\n  b: R.complement(R.equals('bar')),\n  x: R.gt(R.__, 10),\n  y: R.lt(R.__, 20)\n});\n\npred({a: 'foo', b: 'xxx', x: 11, y: 19}); //=> true\npred({a: 'xxx', b: 'xxx', x: 11, y: 19}); //=> false\npred({a: 'foo', b: 'bar', x: 11, y: 19}); //=> false\npred({a: 'foo', b: 'xxx', x: 10, y: 19}); //=> false\npred({a: 'foo', b: 'xxx', x: 11, y: 20}); //=> false"
+    "example": "// pred :: Object -> Boolean\nconst pred = R.where({\n  a: R.equals('foo'),\n  b: R.complement(R.equals('bar')),\n  x: R.gt(R.__, 10),\n  y: R.lt(R.__, 20)\n});\n\npred({a: 'foo', b: 'xxx', x: 11, y: 19}); //=> true\npred({a: 'xxx', b: 'xxx', x: 11, y: 19}); //=> false\npred({a: 'foo', b: 'bar', x: 11, y: 19}); //=> false\npred({a: 'foo', b: 'xxx', x: 10, y: 19}); //=> false\npred({a: 'foo', b: 'xxx', x: 11, y: 20}); //=> false"
   },
   "whereeq": {
     "name": "whereEq",
@@ -2626,7 +2750,7 @@ module.exports = {
       "propEq",
       "where"
     ],
-    "example": "// pred :: Object -> Boolean\nvar pred = R.whereEq({a: 1, b: 2});\n\npred({a: 1});              //=> false\npred({a: 1, b: 2});        //=> true\npred({a: 1, b: 2, c: 3});  //=> true\npred({a: 1, b: 1});        //=> false"
+    "example": "// pred :: Object -> Boolean\nconst pred = R.whereEq({a: 1, b: 2});\n\npred({a: 1});              //=> false\npred({a: 1, b: 2});        //=> true\npred({a: 1, b: 2, c: 3});  //=> true\npred({a: 1, b: 1});        //=> false"
   },
   "without": {
     "name": "without",
@@ -2636,7 +2760,8 @@ module.exports = {
     "description": "Returns a new list without values in the first argument. `R.equals` is used to determine equality. Acts as a transducer if a transformer is given in list position.",
     "see": [
       "transduce",
-      "difference"
+      "difference",
+      "remove"
     ],
     "example": "R.without([1, 2], [1, 2, 1, 3, 4]); //=> [3, 4]"
   },
@@ -2674,6 +2799,6 @@ module.exports = {
     "since": "v0.1.0",
     "description": "Creates a new list out of the two supplied by applying the function to each equally-positioned pair in the lists. The returned list is truncated to the length of the shorter of the two input lists.",
     "see": [],
-    "example": "var f = (x, y) => {\n  // ...\n};\nR.zipWith(f, [1, 2, 3], ['a', 'b', 'c']);\n//=> [f(1, 'a'), f(2, 'b'), f(3, 'c')]"
+    "example": "const f = (x, y) => {\n  // ...\n};\nR.zipWith(f, [1, 2, 3], ['a', 'b', 'c']);\n//=> [f(1, 'a'), f(2, 'b'), f(3, 'c')]"
   }
 }
