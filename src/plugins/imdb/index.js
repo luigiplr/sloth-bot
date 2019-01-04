@@ -38,7 +38,7 @@ export async function imdb(user, channel, input) {
 
       const date = new Date(data.datePublished)
       const year = date.getFullYear()
-      const title = `${data.name}${!_.isNaN ? ` (${year})` : ''}`
+      const title = `${data.name}${!_.isNaN(year) ? ` (${year})` : ''}`
 
       return {
         type: 'channel',
