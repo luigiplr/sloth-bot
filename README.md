@@ -15,6 +15,13 @@ You can use the `forever` npm module to run this bot
 in the background forever using the command:
 `npm run forever`
 
+## Custom Plugins
+You can add custom plugins by putting your plugins your own `plugins` folder located in the root directory.
+
+You can look at other plugins to figure out how they should be structured.
+
+You cannot name the folder of a plugin the same as any existing plugin.
+
 ## Config File
 config.json should resemble:
 ```

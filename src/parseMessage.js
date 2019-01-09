@@ -2,7 +2,7 @@ import _ from 'lodash'
 import permissions from './permissions'
 import config from '../config.json'
 import { deleteMessage, getHistory, findUser } from './slack'
-import { getPlugins as plugins } from './plugins'
+import plugins from './plugins'
 import { Remembers } from './database'
 
 const getUserlevel = user => {

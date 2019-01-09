@@ -1,10 +1,30 @@
 import path from 'path'
 import fs from 'fs'
+import _ from 'lodash'
 import config from '../config'
 
-const dir = './src/plugins'
-const disabled = config.disabledPlugins || []
+const disabledPlugins = config.disabledPlugins || []
 
-export const getPlugins = fs.readdirSync(dir)
-  .map(file => (fs.statSync(path.join(dir, file)).isDirectory() && !disabled.includes(file)) ? require(`./plugins/${file}`) : false)
-  .filter(Boolean)
+const notDisabledFilter = plugin => !disabledPlugins.includes(plugin)
+const getValidPlugins = dir => fs.readdirSync(dir).filter(file => fs.statSync(path.join(dir, file)).isDirectory())
+
+let basePlugins = getValidPlugins('./src/plugins')
+let customPlugins = fs.existsSync('./plugins') ? getValidPlugins('./plugins') : []
+
+if (_.intersection(basePlugins, customPlugins).length > 0) {
+  console.error('Duplicate plugin names detected in custom plugins! Duplicate names are not allowed!')
+  process.exit()
+}
+
+basePlugins = basePlugins.filter(notDisabledFilter)
+customPlugins = customPlugins.filter(notDisabledFilter)
+
+export const loadedPlugins = {
+  base: basePlugins,
+  custom: customPlugins
+}
+
+export default [
+  ...basePlugins.map(plugin => require(`./plugins/${plugin}`)),
+  ...customPlugins.map(plugin => require(`../plugins/${plugin}`))
+]
