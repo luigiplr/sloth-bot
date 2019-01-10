@@ -1,4 +1,4 @@
-import { getDataViaImdb, getImdbDataViaSearch } from './util/imdb'
+import { getDataViaImdb, getImdbDataViaSearch } from './utils/imdb'
 
 export const plugin_info = [{
   alias: ['imdb'],
