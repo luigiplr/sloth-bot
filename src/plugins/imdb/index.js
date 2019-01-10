@@ -1,4 +1,4 @@
-import { getDataViaImdb } from './util/imdb'
+import { getDataViaImdb, getImdbDataViaSearch } from './util/imdb'
 
 export const plugin_info = [{
   alias: ['imdb'],
@@ -13,14 +13,9 @@ export async function imdb(user, channel, input) {
     return { type: 'dm', message: 'Usage: imdb <imdb id> - Returns information from IMDB for an IMDB id.' }
   }
 
-  if (!IMDB_RX.test(input)) {
-    throw 'Invalid IMDB ID.'
+  if (IMDB_RX.test(input)) {
+    return await getDataViaImdb(input)
   }
 
-  if (!input.startsWith('tt')) {
-    throw 'Only movie/show IMDB IDs are supported'
-  }
-
-  return await getDataViaImdb(input)
+  return await getImdbDataViaSearch(input)
 }
-
