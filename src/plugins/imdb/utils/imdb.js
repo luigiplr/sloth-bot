@@ -18,6 +18,12 @@ function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+const imdbTypes = {
+  'tv series': 'TVS',
+  'feature': 'MOV',
+  'tv movie': 'TVM'
+}
+
 export const getDataViaImdb = async imdbId => {
   try {
     const pageData = await needle('GET', `https://www.imdb.com/title/${imdbId}/`)
@@ -120,7 +126,7 @@ export const getDataViaImdb = async imdbId => {
   }
 }
 
-export const getImdbDataViaSearch = async rawQuery => {
+export const getImdbDataViaSearch = async (rawQuery, showDetails) => {
   try {
     const query = rawQuery.toLowerCase().replace(/ /g, '_').trim()
     const firstLetter = query.slice(0, 1).toLowerCase()
@@ -137,7 +143,22 @@ export const getImdbDataViaSearch = async rawQuery => {
       return { type: 'channel', message: 'Got no results from IMDB' }
     }
 
-    return await getDataViaImdb(items[0].id)
+    if (showDetails || items.length === 0) {
+      return await getDataViaImdb(items[0].id)
+    }
+
+    return {
+      type: 'channel',
+      message: {
+        attachments: [{
+          pretext: [
+            '```',
+            items.map(item => `<https://www.imdb.com/title/${item.id}|${item.id}> - ${imdbTypes[item.q.toLowerCase()]} - ${item.y || 'UNKN'} - ${item.l}`).join('\n'),
+            '```'
+          ].join('\n')
+        }]
+      }
+    }
   } catch (e) {
     console.error(e)
     throw 'Error parsing IMDB search data'

@@ -28,6 +28,7 @@
   "license": "Beerware",
   "dependencies": {
     "@slack/client": "^3.16.0",
+    "arg": "^4.1.0",
     "async": "^2.6.1",
     "caniuse-api": "3.0.0",
     "cheerio": "^0.22.0",
