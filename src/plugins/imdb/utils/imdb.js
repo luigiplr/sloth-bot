@@ -126,7 +126,7 @@ export const getDataViaImdb = async imdbId => {
   }
 }
 
-export const getImdbDataViaSearch = async (rawQuery, showDetails) => {
+export const getImdbDataViaSearch = async (rawQuery, showDetails, year) => {
   try {
     const query = rawQuery.toLowerCase().replace(/ /g, '_').trim()
     const firstLetter = query.slice(0, 1).toLowerCase()
@@ -137,13 +137,13 @@ export const getImdbDataViaSearch = async (rawQuery, showDetails) => {
     }
 
     const data = JSON.parse(rawData.body.toString().split('(').slice(1).join('').slice(0, -1))
-    const items = _.get(data, 'd', []).filter(item => item.q && item.q.match(/(tv movie|tv series|feature)/i))
+    const items = _.get(data, 'd', []).filter(item => item.q && item.q.match(/(tv movie|tv series|feature)/i) && (!year || year && year === item.y))
 
     if (items.length === 0) {
       return { type: 'channel', message: 'Got no results from IMDB' }
     }
 
-    if (showDetails || items.length === 0) {
+    if (showDetails || items.length === 1) {
       return await getDataViaImdb(items[0].id)
     }
 

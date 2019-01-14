@@ -14,10 +14,10 @@ export async function imdb(user, channel, input) {
     return { type: 'dm', message: 'Usage: imdb [-d] <imdb id|query> - Returns information from IMDB for an IMDB id or title.' }
   }
 
-  let queryArray, showDetail
+  let queryArray, showDetail, year
 
   try {
-    ({ _: queryArray, '-d': showDetail } = arg({ '-d': Boolean }, { argv: input.split(' ') }))
+    ({ _: queryArray, '-d': showDetail, '-y': year } = arg({ '-d': Boolean, '-y': Number }, { argv: input.split(' ') }))
   } catch (err) {
     throw err.message
   }
@@ -28,5 +28,5 @@ export async function imdb(user, channel, input) {
     return await getDataViaImdb(query)
   }
 
-  return await getImdbDataViaSearch(query, showDetail)
+  return await getImdbDataViaSearch(query, showDetail, year)
 }
