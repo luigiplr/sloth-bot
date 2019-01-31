@@ -13,6 +13,10 @@ const API_URL = 'https://api.remove.bg/v1.0/removebg'
 const URL_RX = /^<https?:\/\/[^ ]+>$/i
 
 export async function removeBg(user, channel, input) {
+  if (!config.removeBgAPIKey) {
+    throw 'Missing remove.bg API Key! You must add it before you can use this command.'
+  }
+
   if (!input) {
     return { type: 'dm', message: 'Usage: removebg <url> - Returns an image with the background removed' }
   }
@@ -35,10 +39,10 @@ export async function removeBg(user, channel, input) {
     throw `Error from API - ${_.get(data.body, ['errors', 0, 'title'])}`
   }
 
-  await uploadImageToSlack(data.raw, input, channel.id)
+  await uploadImageToSlack(data.raw, channel.id)
 }
 
-function uploadImageToSlack(image, filename, channelId) {
+function uploadImageToSlack(image, channelId) {
   return new Promise(resolve => {
     request.post('https://slack.com/api/files.upload', {
       url: 'https://slack.com/api/files.upload',
@@ -50,7 +54,7 @@ function uploadImageToSlack(image, filename, channelId) {
         file: {
           value: image,
           options: {
-            filename: filename,
+            filename: 'The image without a BG',
             contentType: 'image/png'
           }
         }
