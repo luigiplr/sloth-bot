@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const moment = require('moment')
 const puppeteer = require('puppeteer')
-import { _getStandings, makePuppeteerUndetectable, uploadImageToSlack, cacheTs } from './helpers'
+import { getStandingsData, makePuppeteerUndetectable, uploadImageToSlack, cacheTs } from './helpers'
 require('./definitions')
 
 /**
@@ -120,7 +120,7 @@ const getDaysForWeek = weekMatches => {
 
 /* eslint-disable */
 /**
- * @param {[Stage]} stages 
+ * @param {[Stage]} stages
  */
 const mapData = stages => {
   const mappedStages = stages.map(stage => Object.assign({}, stage, { weeks: generateWeeksForStage(stage) }))
@@ -173,22 +173,19 @@ export async function getLiveMatch(channelId) {
 /**
  * @returns {MappedStandings}
  */
-export async function getOverallStandaings() {
-  return _getStandings().then(data => {
-    const rankData = data.ranks.map(rank => {
-      const team = rank.competitor
-      const record = rank.records[0]
-
+export async function getOverallStandaings(year) {
+  return getStandingsData(year).then(teamsStandings => {
+    const rankData = teamsStandings.map(team => {
       return {
         name: team.abbreviatedName,
-        match_wins: record.matchWin,
-        match_losses: record.matchLoss,
-        match_win_percent: record.matchWin / (record.matchLoss + record.matchWin),
-        map_wins: record.gameWin,
-        map_losses: record.gameLoss,
-        map_ties: record.gameTie,
-        map_win_percent: record.gameWin / (record.gameLoss + record.gameWin + record.gameTie),
-        map_differential: record.gameWin - record.gameLoss
+        match_wins: team.league.matchWin,
+        match_losses: team.league.matchLoss,
+        match_win_percent: team.league.matchWin / (team.league.matchLoss + team.league.matchWin),
+        map_wins: team.league.gameWin,
+        map_losses: team.league.gameLoss,
+        map_ties: team.league.gameTie,
+        map_win_percent: team.league.gameWin / (team.league.gameLoss + team.league.gameWin + team.league.gameTie),
+        map_differential: team.league.gameWin - team.league.gameLoss
       }
     })
 
@@ -218,8 +215,8 @@ const stageNameMapping = {
   7: 'All-Star Weekend'
 }
 
-export async function getStandingsForStage(stage) {
-  return _getStandings().then(data => {
+export async function getStandingsForStage(year, stage) {
+  return getStandingsData(year).then(data => {
     const stageNum = stageMapping[stage.toString().replace(/[- ]g/, '')] || stage
     const stageData = data.stages[stageNum]
 

@@ -5,9 +5,9 @@ import request from 'request'
 const config = require('../../../../config.json')
 require('./definitions')
 
-const baseUrl = 'https://api.overwatchleague.com'
+const baseUrl = 'https://api.overwatchleague.com/v2'
 const urls = {
-  'standings': `${baseUrl}/standings`
+  'standings': `${baseUrl}/standings?season=%year%`
 }
 
 export const makePuppeteerUndetectable = async (page) => {
@@ -75,11 +75,11 @@ export async function uploadImageToSlack(image, filename, channelId) {
 }
 
 /**
- * @returns {Promise<Standings>}
+ * @returns {Promise<[Standings]>}
  */
-export async function _getStandings() {
+export async function getStandingsData(year) {
   try {
-    return _request('standings')
+    return _request(urls.standings.replace('%year%', year || ''))
   } catch (e) {
     return null
   }
@@ -88,15 +88,15 @@ export async function _getStandings() {
 export const cache = {}
 export const cacheTs = {}
 async function _request(what, noCache = false) {
-  if (!noCache && cache[what] && +moment(cacheTs[what]).add(6, 'minutes') > Date.now()) {
+  if (!noCache && cache[what] && +moment(cacheTs[what]).add(5, 'minutes') > Date.now()) {
     return cache[what]
   }
 
-  return needle('GET', urls[what], { json: true }).then(response => {
+  return needle('GET', what).then(response => {
     if (response.statusCode === 200) {
-      cache[what] = response.body
+      cache[what] = response.body.data
       cacheTs[what] = Date.now()
-      return response.body
+      return response.body.data
     }
 
     console.error('[OWL] Error getting data', what)

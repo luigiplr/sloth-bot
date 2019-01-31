@@ -88,16 +88,19 @@ export async function userInfo(user, channel, input) {
 }
 
 export async function owl(user, channel, input) {
-  const help = 'Usage: owl <what> - valid options include `scores`, `live`'
+  const help = 'Usage: owl <command> [year] [stage] - valid options include `scores`, `live`'
   if (!input) return { type: 'dm', message: help }
 
-  const [ type, param ] = input.split(' ')
+  const [ type, rawYear, rawStage ] = input.split(' ')
+
+  const year = rawYear && rawYear.match(/\d{4}/) ? rawYear : undefined
+  const stage = rawStage && _.isNumber(rawStage) ? rawStage : rawYear && !year && _.isNumber(rawYear) ? rawYear : undefined
 
   switch (type) {
     case 'standings':
     case 'scores':
     case 'score':
-      return await (param ? _getStageStandings(param) : _getOverallStandings())
+      return await _getStandings(year, stage)
     case 'live':
     case 'live-match':
     case 'current-match':
@@ -124,8 +127,13 @@ async function _getLiveMatch(channel) {
   }
 }
 
-async function _getStageStandings(stage) {
-  const data = await getStandingsForStage(stage)
+function _getStandings(year, stage) {
+  const fn = stage ? _getStageStandings : _getOverallStandings
+  return fn(year, stage)
+}
+
+async function _getStageStandings(year, stage) {
+  const data = await getStandingsForStage(year, stage)
 
   if (!data) {
     return { type: 'channel', message: 'Error fetching data' }
@@ -156,8 +164,8 @@ async function _getStageStandings(stage) {
   }
 }
 
-async function _getOverallStandings() {
-  const data = await getOverallStandaings()
+async function _getOverallStandings(year) {
+  const data = await getOverallStandaings(year)
   if (!data) {
     return { type: 'channel', message: 'Error fetching data' }
   }

@@ -120,10 +120,23 @@
 /**
  * Standings
  * @typedef Standings
- * @property {[StandingsRank]} ranks
- * @property {{}} season
- * @property {{}} stages
- * @property {{}} owl_divisions
+ * @property {Number} id
+ * @property {Number} divisionId
+ * @property {string} name
+ * @property {string} abbreviatedName
+ * @property {StandingsRankRecords} league
+ * @property {StandingsRankRecords} preseason
+ * @property {StandingsRankRecords} divLeader
+ * @property {StandingsRankRecords} wildcard
+ * @property {StandingsRankRecordsStageContainer} stages
+ */
+
+/**
+ * @typedef StandingsRankRecordsStageContainer
+ * @property {StandingsRankRecords} stage1
+ * @property {StandingsRankRecords} stage2
+ * @property {StandingsRankRecords} stage3
+ * @property {StandingsRankRecords} stage4
  */
 
 /**
@@ -147,6 +160,14 @@
  * @property {Number} gameTie
  * @property {Number} gamePointsFor
  * @property {Number} gamePointsAgainst
+ * @property {[StandingsRankRecordsComparisons]} comparisons
+ */
+
+/**
+ * StandingsRankRecordsComparisons
+ * @typedef StandingsRankRecordsComparisons
+ * @property {string} key
+ * @property {Number} value
  */
 
 /**
