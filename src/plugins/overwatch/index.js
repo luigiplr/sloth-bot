@@ -6,6 +6,7 @@ import { generateHeroesResp, generateHeroResp, generateInfoResp, generateStatsRe
 import { getOverallStandaings, getStandingsForStage, getLiveMatch } from './utils/owl'
 import { tryGetUserAlias } from '../../database'
 import { valuePadding as vp, diffFormater as df } from './utils/helpers'
+import { parseInputAsArgs } from '../../utils'
 
 export const plugin_info = [{
   alias: ['overwatch'],
@@ -87,20 +88,41 @@ export async function userInfo(user, channel, input) {
   }
 }
 
+const OWL_ARGS = {
+  '--help': Boolean,
+  '--stage': Number,
+  '--year': Number,
+  '--full': Boolean,
+  '--compact': Boolean
+}
+
 export async function owl(user, channel, input) {
-  const help = 'Usage: owl <command> [year] [stage] - valid options include `scores`, `live`'
+  const help = 'Usage: owl <command> [--full] [--compact] [--year] [--stage]'
   if (!input) return { type: 'dm', message: help }
 
-  const [ type, rawYear, rawStage ] = input.split(' ')
+  const {
+    _: rawInput,
+    '--stage': rawStage,
+    '--year': rawYear,
+    '--full': fullMode,
+    '--compact': compactMode
+  } = parseInputAsArgs(input, OWL_ARGS)
 
-  const year = rawYear && rawYear.match(/\d{4}/) ? rawYear : undefined
-  const stage = rawStage && _.isNumber(rawStage) ? rawStage : rawYear && !year && _.isNumber(rawYear) ? rawYear : undefined
+  const command = rawInput.join('\n')
+  const year = rawYear && _.isNumber(rawYear) && rawYear.match(/\d{4}/) ? rawYear : undefined
+  const stage = rawStage && _.isNumber(rawStage) ? rawStage : undefined
 
-  switch (type) {
+  if (stage > 4) {
+    throw 'Stage cannot be greater than 4. Sorry.'
+  }
+
+  const opts = { year, stage, fullMode, compactMode }
+
+  switch (command) {
     case 'standings':
     case 'scores':
     case 'score':
-      return await _getStandings(year, stage)
+      return await _getStandings(opts)
     case 'live':
     case 'live-match':
     case 'current-match':
@@ -127,24 +149,26 @@ async function _getLiveMatch(channel) {
   }
 }
 
-function _getStandings(year, stage) {
-  const fn = stage ? _getStageStandings : _getOverallStandings
-  return fn(year, stage)
+function _getStandings(opts) {
+  const fn = opts.stage ? _getStageStandings : _getOverallStandings
+  return fn(opts)
 }
 
-async function _getStageStandings(year, stage) {
+async function _getStageStandings({ year, stage, compactMode, fullMode }) {
   const data = await getStandingsForStage(year, stage)
 
   if (!data) {
     return { type: 'channel', message: 'Error fetching data' }
   }
 
-  const { data: standings, stage_name, updated } = data
+  const { data: rawStandings, stage_name, updated } = data
   const standingsTable = new CliTable({ head: [], style: { head: [], border: [] } })
+
+  const standings = fullMode ? rawStandings : rawStandings.slice(0, 8)
 
   standingsTable.push([ 'Team', 'Wins', 'Losses', 'Win %', 'Map Wins' ])
   standingsTable.push(...standings.map(team => [
-    { content: team.name, hAlign: 'center' },
+    { content: compactMode || fullMode ? team.shortName : team.name, hAlign: 'center' },
     { content: team.match_wins, hAlign: 'center' },
     { content: team.match_losses, hAlign: 'center' },
     { content: `${(team.match_win_percent * 100).toFixed(2)}%`, hAlign: 'center' },
@@ -156,21 +180,22 @@ async function _getStageStandings(year, stage) {
     messages: [
       `*Standings for ${stage_name}*`,
       '```',
+      !fullMode && 'Top 8 Teams',
       standingsTable.toString(),
       'Stage specific data lacks detailed statistics.',
       `Updated ${moment(updated).from(Date.now())}`,
       '```'
-    ]
+    ].filter(Boolean)
   }
 }
 
-async function _getOverallStandings(year) {
+async function _getOverallStandings({ year, fullMode, compactMode }) {
   const data = await getOverallStandaings(year)
   if (!data) {
     return { type: 'channel', message: 'Error fetching data' }
   }
 
-  const { data: standings, updated } = data
+  const { data: rawStandings, updated } = data
   const standingsTable = new CliTable({
     head: [],
     style: {
@@ -178,6 +203,8 @@ async function _getOverallStandings(year) {
       border: []
     }
   })
+
+  const standings = fullMode ? rawStandings : rawStandings.slice(0, 8)
 
   standingsTable.push([
     { content: '' },
@@ -188,12 +215,12 @@ async function _getOverallStandings(year) {
   ])
   standingsTable.push(['Team', 'Win - Loss', 'Win %', ' ', 'Win-Loss-Tie', 'Win %', 'Map +-'])
   standingsTable.push(...standings.map(team => [
-    team.name,
-    { content: `${vp(team.match_wins, 2)} - ${vp(team.match_losses, 2)}`, hAlign: 'center' },
-    `${vp((team.match_win_percent * 100).toFixed(1), 4) + '%'}`,
+    compactMode || fullMode ? team.shortName : team.name,
+    { content: `${team.match_wins} - ${team.match_losses}`, hAlign: 'center' },
+    `${team.match_win_percent}%`,
     ' ',
-    { content: `${vp(team.map_wins, 2)}-${vp(team.map_losses, 2)}-${team.map_ties}`, hAlign: 'center' },
-    `${vp((team.map_win_percent * 100).toFixed(2), 5) + '%'}`,
+    { content: `${team.map_wins}-${team.map_losses}-${team.map_ties}`, hAlign: 'center' },
+    `${team.map_win_percent}%`,
     { content: df(team.map_differential), hAlign: 'center' }
   ]))
 
@@ -201,10 +228,11 @@ async function _getOverallStandings(year) {
     type: 'channel',
     messages: [
       '```',
+      !fullMode && 'Top 8 Teams',
       standingsTable.toString(),
       'overwatchitemtracker.com/owl-standings/',
       `Updated ${moment(updated).from(Date.now())}`,
       '```'
-    ]
+    ].filter(Boolean)
   }
 }

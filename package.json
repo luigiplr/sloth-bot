@@ -54,6 +54,7 @@
     "shakespeare-insult": "^1.0.0",
     "sqlstring": "^2.3.1",
     "steamid": "^1.1.0",
+    "string-argv": "^0.1.1",
     "striptags": "^3.1.1",
     "xml2js": "^0.4.17",
     "youtube-search": "1.1.4",

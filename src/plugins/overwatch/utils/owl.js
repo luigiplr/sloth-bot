@@ -176,15 +176,18 @@ export async function getLiveMatch(channelId) {
 export async function getOverallStandaings(year) {
   return getStandingsData(year).then(teamsStandings => {
     const rankData = teamsStandings.map(team => {
+      const matchWinPercent = team.league.matchWin / (team.league.matchLoss + team.league.matchWin)
+      const mapWinPercent = team.league.gameWin / (team.league.gameLoss + team.league.gameWin + team.league.gameTie)
       return {
-        name: team.abbreviatedName,
+        name: team.name,
+        shortName: team.abbreviatedName,
         match_wins: team.league.matchWin,
         match_losses: team.league.matchLoss,
-        match_win_percent: team.league.matchWin / (team.league.matchLoss + team.league.matchWin),
+        match_win_percent: percentageFormatter(matchWinPercent),
         map_wins: team.league.gameWin,
         map_losses: team.league.gameLoss,
         map_ties: team.league.gameTie,
-        map_win_percent: team.league.gameWin / (team.league.gameLoss + team.league.gameWin + team.league.gameTie),
+        map_win_percent: percentageFormatter(mapWinPercent),
         map_differential: team.league.gameWin - team.league.gameLoss
       }
     })
@@ -196,28 +199,18 @@ export async function getOverallStandaings(year) {
   }, Promise.reject)
 }
 
-const stageMapping = {
-  'preseason': 0,
-  'playoffs': 5,
-  'grandfinal': 6,
-  'grandfinals': 6,
-  'allstar': 7
-}
+const percentageFormatter = val => _.isNaN(val) || val === 0 ? 0 : val * 100 % 1 > 0 ? (val * 100).toFixed(2) : val * 100
 
 const stageNameMapping = {
-  0: 'The Preseason',
   1: 'Stage 1',
   2: 'Stage 2',
   3: 'Stage 3',
-  4: 'Stage 4',
-  5: 'The Playoffs',
-  6: 'The Grand Finals',
-  7: 'All-Star Weekend'
+  4: 'Stage 4'
 }
 
 export async function getStandingsForStage(year, stage) {
   return getStandingsData(year).then(data => {
-    const stageNum = stageMapping[stage.toString().replace(/[- ]g/, '')] || stage
+    const stageNum = stage
     const stageData = data.stages[stageNum]
 
     if (!stageData) {
