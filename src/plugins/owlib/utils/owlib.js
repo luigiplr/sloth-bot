@@ -848,7 +848,7 @@ export const FileInfo = {
     "removed": false
   },
   "0C7": {
-    "name": null,
+    "name": "Brawl",
     "desc": null,
     "state": null,
     "fileType": "STU",
@@ -960,8 +960,8 @@ export const FileInfo = {
     "removed": false
   },
   "0EE": {
-    "name": null,
-    "desc": null,
+    "name": "Arcade",
+    "desc": "Arcade modes",
     "state": null,
     "fileType": "STU",
     "removed": false
