@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import CliTable from 'cli-table2'
 import moment from 'moment'
-import { getStandings, getLiveMatch } from './utils/owl'
+import { getStandings, getPlayer, getLiveMatch } from './utils/owl'
 import { diffFormater as df } from './utils/helpers'
 import { parseInputAsArgs } from '../../utils'
 
@@ -20,7 +20,7 @@ const OWL_ARGS = {
 }
 
 export async function owl(user, channel, input) {
-  const halp = 'Usage: owl <command> [--full] [--compact] [--year] [--stage]'
+  const halp = 'Usage: owl <command> [...args] [--full] [--compact] [--year] [--stage]'
   if (!input) return { type: 'dm', message: halp }
 
   const {
@@ -31,7 +31,7 @@ export async function owl(user, channel, input) {
     '--compact': compactMode
   } = parseInputAsArgs(input, OWL_ARGS)
 
-  const command = rawInput.join('\n')
+  const command = rawInput[0]
   const year = rawYear && _.isNumber(rawYear) && rawYear.toString().match(/^\d{4}$/) ? rawYear : undefined
   const stage = rawStage && _.isNumber(rawStage) ? rawStage : undefined
 
@@ -50,6 +50,8 @@ export async function owl(user, channel, input) {
     case 'live-match':
     case 'current-match':
       return await _getLiveMatch(channel)
+    case 'player':
+      return await _getPlayer(rawInput.slice(1).join(' '))
     default:
       return { type: 'channel', message: halp }
   }
@@ -117,5 +119,62 @@ async function _getStandings({ year, stage, fullMode, compactMode }) {
       `Updated ${moment(updated).from(Date.now())}`,
       '```'
     ].filter(Boolean)
+  }
+}
+
+async function _getPlayer(input) {
+  const data = await getPlayer(input)
+
+  console.log(input, data)
+
+  if (!data || data.length === 0) {
+    return { type: 'channel', message: "Couldn't find any players matching input" }
+  }
+
+  if (data.length > 1) {
+    return {
+      type: 'channel',
+      message: [
+        'Found multiple players matching input',
+        '```',
+        data.slice(0, 8).map(player => (
+          ` * ${player.name} - ${player.teams.map(x => x.team.name).join(', ')}`
+        )).join('\n'),
+        '```'
+      ].join('\n')
+    }
+  }
+
+  const player = data[0]
+  return {
+    type: 'channel',
+    message: {
+      attachments: [{
+        title: `Player Info for (${player.attributes.player_number}) ${player.name}`,
+        color: _.get(player, ['teams', 0, 'team', 'primaryColor']),
+        fields: [{
+          title: 'Full Name',
+          value: `${player.givenName} ${player.familyName}`,
+          short: true
+        }, {
+          title: player.teams.length === 1 ? 'Team' : 'Teams',
+          value: player.teams.map(x => x.team.name).join(', '),
+          short: true
+        }, {
+          title: 'Role',
+          value: player.attributes.role ? _.capitalize(player.attributes.role) : 'Unknown',
+          short: true
+        }, {
+          title: 'Heroes',
+          value: player.attributes.heroes.length > 0 ? player.attributes.heroes.map(x => _.capitalize(x)).join(', ') : 'Unknown',
+          short: true
+        }, {
+          title: 'Hometown',
+          value: `:flag-${player.nationality.toLowerCase()}: ${player.nationality} | ${player.homeLocation}`,
+          short: true
+        }],
+        footer: `Handle: ${player.handle}`
+      }]
+    }
   }
 }
