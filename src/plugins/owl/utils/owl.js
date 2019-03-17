@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const moment = require('moment')
 const puppeteer = require('puppeteer')
-import { getStandingsData, makePuppeteerUndetectable, uploadImageToSlack, cacheTs } from './helpers'
-require('./definitions')
+import { makePuppeteerUndetectable, uploadImageToSlack, cacheTs } from './helpers'
+import * as OWLAPI from './owlapi'
 
 /**
  * Generates list of weeks in each stage
@@ -170,37 +170,6 @@ export async function getLiveMatch(channelId) {
   }
 }
 
-/**
- * @returns {MappedStandings}
- */
-export async function getOverallStandaings(year) {
-  return getStandingsData(year).then(teamsStandings => {
-    const rankData = teamsStandings.map(team => {
-      const matchWinPercent = team.league.matchWin / (team.league.matchLoss + team.league.matchWin)
-      const mapWinPercent = team.league.gameWin / (team.league.gameLoss + team.league.gameWin + team.league.gameTie)
-      return {
-        name: team.name,
-        shortName: team.abbreviatedName,
-        match_wins: team.league.matchWin,
-        match_losses: team.league.matchLoss,
-        match_win_percent: percentageFormatter(matchWinPercent),
-        map_wins: team.league.gameWin,
-        map_losses: team.league.gameLoss,
-        map_ties: team.league.gameTie,
-        map_win_percent: percentageFormatter(mapWinPercent),
-        map_differential: team.league.gameWin - team.league.gameLoss
-      }
-    })
-
-    return {
-      data: rankData,
-      updated: cacheTs['standings']
-    }
-  }, Promise.reject)
-}
-
-const percentageFormatter = val => _.isNaN(val) || val === 0 ? 0 : val * 100 % 1 > 0 ? (val * 100).toFixed(2) : val * 100
-
 const stageNameMapping = {
   1: 'Stage 1',
   2: 'Stage 2',
@@ -208,32 +177,36 @@ const stageNameMapping = {
   4: 'Stage 4'
 }
 
-export async function getStandingsForStage(year, stage) {
-  return getStandingsData(year).then(data => {
-    const stageNum = stage
-    const stageData = data.stages[stageNum]
+/**
+ * @returns {MappedStandings}
+ */
+export async function getStandings(year, stage) {
+  const data = await OWLAPI.getStandings(year)
 
-    if (!stageData) {
-      throw 'Invalid stage specified! Valid values are 0-7, preseason, playoffs, grandfinal, allstar'
-    }
+  const rankData = data.map(team => {
+    const stageData = _.isNumber(stage) ? team.stages[`stage${stage}`] : team.league
 
-    const outStageData = stageData.teams.map(team => {
-      const standings = team.standings
-      const winPercent = standings.wins / (standings.losses + standings.wins)
-
-      return {
-        name: team.abbreviatedName,
-        match_wins: standings.wins,
-        match_losses: standings.losses,
-        match_win_percent: _.isNaN(winPercent) ? 0 : winPercent,
-        map_wins: standings.points
-      }
-    })
+    const matchWinPercent = stageData.matchWin / (stageData.matchLoss + stageData.matchWin)
+    const mapWinPercent = stageData.gameWin / (stageData.gameLoss + stageData.gameWin + stageData.gameTie)
 
     return {
-      data: outStageData,
-      stage_name: stageNameMapping[stageNum],
-      updated: cacheTs['standings']
+      name: team.name,
+      shortName: team.abbreviatedName,
+      match_wins: stageData.matchWin,
+      match_losses: stageData.matchLoss,
+      match_win_percent: percentageFormatter(matchWinPercent),
+      map_wins: stageData.gameWin,
+      map_losses: stageData.gameLoss,
+      map_ties: stageData.gameTie,
+      map_win_percent: percentageFormatter(mapWinPercent),
+      map_differential: stageData.gameWin - stageData.gameLoss
     }
-  }, Promise.reject)
+  })
+
+  return {
+    data: rankData,
+    updated: cacheTs['standings']
+  }
 }
+
+const percentageFormatter = val => _.isNaN(val) || val === 0 ? 0 : val * 100 % 1 > 0 ? (val * 100).toFixed(2) : val * 100

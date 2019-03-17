@@ -76,6 +76,62 @@
  * @property {string} addressCountry
  * @property {string} primaryColor
  * @property {string} secondaryColor
+ * @property {string} secondaryPhoto
+ * @property {CompetitorAttributes} attributes
+ */
+
+/**
+ * CompetitorAttributes
+ * @typedef CompetitorAttributes
+ * @property {string} city
+ * @property {string} hero_image
+ * @property {string} manager
+ * @property {string} team_guid
+ */
+
+/**
+ * Player
+ * @typedef Player
+ * @property {Number} id
+ * @property {string} type
+ * @property {string} handle
+ * @property {string} name
+ * @property {string} familyName
+ * @property {string} givenName
+ * @property {string} game
+ * @property {string} homeLocation
+ * @property {string} nationality
+ * @property {PlayerAttributes} attributes
+ * @property {PlayerAttributes} attributes
+ */
+
+/**
+ * PlayerAttributes
+ * @typedef PlayerAttributes
+ * @property {string} hero_image
+ * @property {[string]} heroes
+ * @property {string} hometown
+ * @property {Number} player_number
+ * @property {string} preferred_slot
+ * @property {string} role
+ */
+
+/**
+ * PlayerTeam
+ * @typedef PlayerTeam
+ * @property {[]} flags
+ * @property {Object} player
+ * @property {number} player.id
+ * @property {string} player.type
+ * @property {Competitor} team
+ */
+
+/**
+ * Team
+ * @typedef PlayerTeam
+ * @property {any} flags
+ * @property {any} player
+ * @property {Team} team
  */
 
 /**
