@@ -127,14 +127,6 @@
  */
 
 /**
- * Team
- * @typedef PlayerTeam
- * @property {any} flags
- * @property {any} player
- * @property {Team} team
- */
-
-/**
  * Tournament
  * @typedef Tournament
  * @property {Number} id
