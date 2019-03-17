@@ -12,3 +12,4 @@ out.log
 .history/
 src/plugins/overwatch/utils/data.json
 /plugins/
+yarn-error.log
