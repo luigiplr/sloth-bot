@@ -102,7 +102,7 @@
  * @property {string} homeLocation
  * @property {string} nationality
  * @property {PlayerAttributes} attributes
- * @property {PlayerAttributes} attributes
+ * @property {[PlayerTeam]} teams
  */
 
 /**

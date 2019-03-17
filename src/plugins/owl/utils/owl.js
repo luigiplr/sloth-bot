@@ -4,6 +4,17 @@ const puppeteer = require('puppeteer')
 import { makePuppeteerUndetectable, uploadImageToSlack, cacheTs } from './helpers'
 import * as OWLAPI from './owlapi'
 
+export async function getPlayer(input) {
+  const players = await OWLAPI.getPlayers()
+  const _input = input.toLowerCase()
+
+  return players.filter(player => (
+    ~player.name.toLowerCase().indexOf(_input) ||
+    player.handle === _input ||
+    `${player.givenName} ${player.familyName}`.toLowerCase() === _input
+  ))
+}
+
 /**
  * Generates list of weeks in each stage
  * @param {Stage} stage
