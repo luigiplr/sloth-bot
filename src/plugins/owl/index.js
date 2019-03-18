@@ -150,7 +150,7 @@ async function _getPlayer(input) {
     type: 'channel',
     message: {
       attachments: [{
-        title: `Player Info for (${player.attributes.player_number}) ${player.name}`,
+        title: `Player Info for ${player.name} (${player.attributes.player_number})`,
         title_link: `https://overwatchleague.com/en-us/players/${player.id}`,
         color: _.get(player, ['teams', 0, 'team', 'primaryColor']),
         fields: [{
