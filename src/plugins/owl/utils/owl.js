@@ -11,6 +11,7 @@ export async function getPlayer(input) {
   return players.filter(player => (
     ~player.name.toLowerCase().indexOf(_input) ||
     player.handle === _input ||
+    player.id === +_input ||
     `${player.givenName} ${player.familyName}`.toLowerCase() === _input
   ))
 }

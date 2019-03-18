@@ -151,6 +151,7 @@ async function _getPlayer(input) {
     message: {
       attachments: [{
         title: `Player Info for (${player.attributes.player_number}) ${player.name}`,
+        title_link: `https://overwatchleague.com/en-us/players/${player.id}`,
         color: _.get(player, ['teams', 0, 'team', 'primaryColor']),
         fields: [{
           title: 'Full Name',
@@ -173,7 +174,7 @@ async function _getPlayer(input) {
           value: `:flag-${player.nationality.toLowerCase()}: ${player.nationality} | ${player.homeLocation}`,
           short: true
         }],
-        footer: `Handle: ${player.handle}`
+        footer: `ID: ${player.id} | Handle: ${player.handle}`
       }]
     }
   }
