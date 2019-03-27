@@ -108,8 +108,8 @@ export async function purge(user, channel, input) {
     return 'Invalid number'
   }
 
-  if (amount > 35) {
-    return 'Maximum purge amount is 35'
+  if (amount > 45) {
+    return 'Maximum purge amount is 45'
   }
 
   const uniqueId = `${user.id}@${channel.id}`
@@ -123,7 +123,7 @@ export async function purge(user, channel, input) {
   delete awaitingPurgeConfirmation[uniqueId]
 
   try {
-    const messages = await getHistory(channel.id, amount)
+    const messages = await getHistory(channel.id, amount + 3)
 
     messages.forEach(msg => deleteMessage(channel.id, msg.ts))
   } catch (e) {
