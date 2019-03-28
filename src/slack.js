@@ -290,7 +290,7 @@ const deleteQueue = queue((task, cb) => {
         return callback(err || error)
       }
 
-      delay(() => { callback() }, 500)
+      delay(() => { callback() }, 550)
     })
   }
 
@@ -306,7 +306,7 @@ const deleteQueue = queue((task, cb) => {
 
     cb()
   })
-}, 4)
+}, 3)
 
 const _logErr = (type, err) => {
   console.error(type, ':', err)
