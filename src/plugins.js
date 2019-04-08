@@ -4,7 +4,10 @@ import _ from 'lodash'
 import config from '../config'
 
 require('@babel/register')({
-  only: '/plugins'
+  ignore: [
+    /\/node_modules\//g,
+    /\/build\//g
+  ]
 })
 
 const disabledPlugins = config.disabledPlugins || []
