@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development node --expose-gc -r @babel/register ./index.js",
-    "build": "rimraf build && babel src --out-dir build --copy-files && babel plugins --out-dir build/customplugins --copy-files",
+    "build": "rimraf build && babel src --out-dir build --copy-files && babel customplugins --out-dir build/customplugins --copy-files",
     "start": "cross-env NODE_ENV=production node --expose-gc ./index.js",
     "forever": "cross-env NODE_ENV=production forever start -a -o out.log -e err.log -m 1 index.js"
   },

@@ -9,7 +9,7 @@ const notDisabledFilter = plugin => !disabledPlugins.includes(plugin)
 const getValidPlugins = dir => fs.readdirSync(dir).filter(file => fs.statSync(path.join(dir, file)).isDirectory())
 
 let basePlugins = getValidPlugins('./src/plugins')
-let customPlugins = fs.existsSync(path.join(__dirname, 'customplugins')) ? getValidPlugins(path.join(__dirname, 'customplugins')) : []
+let customPlugins = fs.existsSync('./customplugins') ? getValidPlugins('./customplugins') : []
 
 if (_.intersection(basePlugins, customPlugins).length > 0) {
   console.error('Duplicate plugin names detected in custom plugins! Duplicate names are not allowed!')
@@ -26,5 +26,5 @@ export const loadedPlugins = {
 
 export default [
   ...basePlugins.map(plugin => require(`./plugins/${plugin}`)),
-  ...customPlugins.map(plugin => require(`./customplugins/${plugin}`))
+  ...customPlugins.map(plugin => require(`${__DEVELOPMENT__ ? '..' : '.'}/customplugins/${plugin}`))
 ]

@@ -11,6 +11,6 @@ err.log
 out.log
 .history/
 src/plugins/overwatch/utils/data.json
-/plugins/*
-!/plugins/.gitignore
+/customplugins/*
+!/customplugins/.gitignore
 yarn-error.log
