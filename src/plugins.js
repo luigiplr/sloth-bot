@@ -3,6 +3,10 @@ import fs from 'fs'
 import _ from 'lodash'
 import config from '../config'
 
+require('@babel/register')({
+  only: '/plugins'
+})
+
 const disabledPlugins = config.disabledPlugins || []
 
 const notDisabledFilter = plugin => !disabledPlugins.includes(plugin)

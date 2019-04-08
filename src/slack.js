@@ -301,7 +301,7 @@ const deleteQueue = queue((task, cb) => {
     }
   }, deleteMessageFn, (err, res) => {
     if (err) {
-      console.error('Error deleteing message??', err)
+      console.error('Error deleteing message after 4 times', err)
     }
 
     cb()
