@@ -295,13 +295,13 @@ const deleteQueue = queue((task, cb) => {
   }
 
   retry({
-    times: 4,
+    times: 5,
     interval: retryCount => {
-      return 50 * Math.pow(2, retryCount)
+      return 140 * Math.pow(2, retryCount)
     }
   }, deleteMessageFn, (err, res) => {
     if (err) {
-      console.error('Error deleteing message after 4 times', err)
+      console.error('Error deleteing message after 5 times', err)
     }
 
     cb()

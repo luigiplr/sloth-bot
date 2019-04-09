@@ -108,8 +108,8 @@ export async function purge(user, channel, input) {
     return 'Invalid number'
   }
 
-  if (amount > 45) {
-    return 'Maximum purge amount is 45'
+  if (amount > 40) {
+    return 'Maximum purge amount is 40'
   }
 
   const uniqueId = `${user.id}@${channel.id}`
