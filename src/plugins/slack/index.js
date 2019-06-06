@@ -91,6 +91,11 @@ export const plugin_info = [{
   command: 'renamechannel',
   usage: 'renamechannel <name> - renames a channel',
   userLevel: ['admin', 'superadmin']
+}, {
+  alias: ['disablechannel'],
+  command: 'disableChannel',
+  usage: 'disablechannel',
+  userLevel: ['superadmin']
 }]
 
 const canPerformAdminCommands = config.slackAPIToken && config.slackAPIToken.length > 0
@@ -98,6 +103,19 @@ const adminErr = '`missing admin api key, cannot perform admin commands`'
 const cantDisable = u => u.id === config.botid || perms.superadmins.includes(u.name) || (config.noDisable && config.noDisable.includes(u.id))
 
 const awaitingPurgeConfirmation = {}
+
+export async function disableChannel(user, channel, input) {
+  if (!('disabledChannels' in config)) {
+    config.disabledChannels = []
+  }
+
+  if (config.disabledChannels.includes(channel.id)) {
+    const idx = config.disabledChannels.indexOf(channel.id)
+    config.disabledChannels.splice(idx, 1)
+  } else {
+    config.disabledChannels.push(channel.id)
+  }
+}
 
 export async function purge(user, channel, input) {
   if (!input) return 'Usage: purge <count> - purges the amount of messages'
