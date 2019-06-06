@@ -31,7 +31,7 @@ export function parse(user, channel, text, ts) {
       return resolve(false)
     }
 
-    if (config.disabledChannels && config.disabledChannels.includes(channel.id) && userLevel !== 'superadmin') {
+    if (config.disabledChannels && config.disabledChannels.includes(channel.id) && userLevel !== 'superadmin' && isABotCommand) {
       return resolve({ type: 'channel', message: 'Sorry, bot cannot be used in this channel.' })
     }
 

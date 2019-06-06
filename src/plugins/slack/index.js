@@ -112,8 +112,10 @@ export async function disableChannel(user, channel, input) {
   if (config.disabledChannels.includes(channel.id)) {
     const idx = config.disabledChannels.indexOf(channel.id)
     config.disabledChannels.splice(idx, 1)
+    return 'Bot is no longer disabled in this channel.'
   } else {
     config.disabledChannels.push(channel.id)
+    return 'Bot has now been disabled in this channel.'
   }
 }
 
