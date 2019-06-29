@@ -1,9 +1,6 @@
 import moment from 'moment'
-import needle from 'needle'
 import { filter, capitalize, truncate } from 'lodash'
 import striptags from 'striptags'
-import config from '../../../../config.json'
-var AUDRate
 
 const formatTimeCreated = time => {
   if (!time) return null
@@ -66,12 +63,13 @@ export function generateProfileResponse(profile) {
   return out
 }
 
-export function generateAppDetailsResponse(app, cc = 'US') {
-  if (!app) return `Error: App: *${app.name}* _(${app.steam_appid})_ isn't a valid game`
+export function generateAppDetailsResponse(app, cc = 'us') {
+  if (!app) {
+    return `Error: App: *${app.name}* _(${app.steam_appid})_ isn't a valid game`
+  }
+
   let price = getPriceForApp(app)
   let date = getDateForApp(app)
-
-  console.log(app)
 
   let out = {
     attachments: [{
@@ -86,10 +84,6 @@ export function generateAppDetailsResponse(app, cc = 'US') {
   out.attachments[0].fields = filter([{
     "title": "Cost",
     "value": price || null,
-    "short": true
-  }, {
-    "title": "Real Cost",
-    "value": (AUDRate && cc.toUpperCase() === 'AU') ? '~$' + formatCurrency((app.price_overview.final / 100) * AUDRate, 'AUD') : null,
     "short": true
   }, {
     "title": app.release_date ? (app.release_date.coming_soon ? "Release Date" : "Released") : null,
@@ -162,23 +156,3 @@ const getPersonaState = state => {
       return 'Offline'
   }
 }
-
-const currencyAPI = `http://www.apilayer.net/api/live?access_key=${config.currencyLayerAPIKey}&currencies=AUD&source=USD`
-const getAUDRate = () => needle.get(currencyAPI, (err, resp, body) => {
-  if (!err && body && body.quotes) {
-    AUDRate = body.quotes.USDAUD
-    return
-  }
-
-  console.error("Error fetching AUD Rate")
-})
-
-// Fetch AUD rate on startup and update every 12 hours
-setTimeout(() => {
-  console.log("Fetching AUD Rate")
-  setInterval(() => {
-    console.log("Updating AUD Rate")
-    getAUDRate()
-  }, 4.32e+7)
-  getAUDRate()
-}, 2000)
