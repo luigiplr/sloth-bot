@@ -440,8 +440,8 @@ export async function renamechannel(user, channel, input) {
     return { type: 'dm', message: 'Usage: renamechannel <name> - renames a channel' }
   }
 
-  if (input.length <= 1 || input.length > 21) {
-    throw 'Channel name is too long, must be 21 characters or less'
+  if (input.length <= 1 || input.length > 80) {
+    throw 'Channel name is too long, must be 80 characters or less'
   }
 
   if (!channelNameRx.test(input)) {
