@@ -7,7 +7,7 @@ export const plugin_info = [{
   usage: 'imdb [-d] <id|query> - returns info for imdb id or query'
 }]
 
-const IMDB_RX = /^tt\d{7}$/
+const IMDB_RX = /^tt\d+$/
 
 export async function imdb(user, channel, input) {
   if (!input) {
