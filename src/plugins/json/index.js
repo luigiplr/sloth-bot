@@ -12,8 +12,8 @@ export async function parseJson(user, channel, input, ts) {
   }
 
   let rawJson = input
-  if (input.match(/^```().+?```$/)) {
-    rawJson = input.slice(3, -3)
+  if (input.match(/^```([\s\S]+)```$/)) {
+    rawJson = input.slice(3, -3).trim()
   }
 
   if (!rawJson.match(/^[{[](.+)?[}\]]$/)) {
@@ -23,7 +23,9 @@ export async function parseJson(user, channel, input, ts) {
   try {
     const json = JSON.parse(rawJson)
 
+    // Delete original message
     deleteMessage(channel.id, ts)
+
     return {
       type: 'channel',
       message: `\`\`\`${JSON.stringify(json, null, 2)}\`\`\``
