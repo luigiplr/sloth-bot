@@ -28,7 +28,7 @@ export async function parseJson(user, channel, input, ts) {
 
     return {
       type: 'channel',
-      message: `\`\`\`${JSON.stringify(json, null, 2)}\`\`\``
+      message: `JSON Output: \`\`\`${JSON.stringify(json, null, 2)}\`\`\``
     }
   } catch (err) {
     throw `Error: ${err.message}`
