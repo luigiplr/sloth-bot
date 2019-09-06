@@ -14,7 +14,7 @@ export function wolfram(user, channel, input) {
 
     if (!config.wolframAPIKey) return reject("Error: WolframAlpha API Key required to use this function")
 
-    let url = `http://api.wolframalpha.com/v2/query?input=${input}&appid=${config.wolframAPIKey}`
+    let url = `http://api.wolframalpha.com/v2/query?input=${encodeURIComponent(input)}&appid=${config.wolframAPIKey}`
 
     needle.get(url, (err, resp, body) => {
       if (err || !body) {
