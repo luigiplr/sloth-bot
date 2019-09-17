@@ -91,6 +91,10 @@ export const plugin_info = [{
   alias: ['hellosnake', 'snek'],
   command: 'snek',
   usage: 'hellosnake - returns a snake'
+}, {
+  alias: ['uncleiroh', 'iroh'],
+  command: 'uncleiroh',
+  usage: 'uncleiroh - returns an iroh quote'
 }]
 
 const _cleanInput = input => {
@@ -98,6 +102,29 @@ const _cleanInput = input => {
   if (input.slice(0, 2) === "<@") return findUser(input).name || input
   if (input.includes('<http:')) return input.split('|')[1].slice(0, -1)
   return input
+}
+
+let irohQuotesRemaining = [...data.uncle_iroh]
+
+export async function uncleiroh() {
+  const quoteIndex = Math.floor(Math.random() * irohQuotesRemaining.length)
+  const quote = irohQuotesRemaining[quoteIndex]
+
+  if (irohQuotesRemaining.length === 1) {
+    irohQuotesRemaining = [...data.uncle_iroh]
+  } else {
+    irohQuotesRemaining.splice(quoteIndex, 1)
+  }
+
+  return {
+    type: 'channel',
+    message: quote,
+    options: {
+      username: 'Uncle Iroh',
+      icon_url: 'https://i.imgur.com/JJVttUc.png',
+      as_user: false
+    }
+  }
 }
 
 export function status(user, channel, input) {
