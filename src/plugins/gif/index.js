@@ -1,5 +1,6 @@
 import Giphy from 'giphy'
 import config from '../../../config'
+import _ from 'lodash'
 
 const giphy = new Giphy('dc6zaTOxFJmzC')
 
@@ -19,7 +20,9 @@ export function gif(user, channel, input = false) {
       rating: config.giphyRating || 'r',
       fmt: 'json'
     }, (err, res) => {
-      if (err || res.pagination.count === 0) return reject('No Gifs Found :(')
+      if (err || _.get(res, 'pagination.count', 0) === 0) {
+        return reject('No Gifs Found :(')
+      }
 
       return resolve({
         type: 'channel',
