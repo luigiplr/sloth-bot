@@ -13,12 +13,14 @@ export const plugin_info = [{
 
 const browserIDs = {
   and_chr: 'Chrome for Android',
+  and_ff: 'Firefox for Android',
   chrome: 'Google Chrome',
   edge: 'Edge',
   firefox: 'Firefox',
   ie: 'Internet Explorer',
   ie_mob: 'IE Mobile',
   opera: 'Opera',
+  op_mob: 'Opera Mobile',
   ios_saf: 'iOS Safari',
   safari: 'Safari',
   android: 'Android'
@@ -58,6 +60,7 @@ export function caniuse(user, channel, input) {
       })
       resolve({ type: 'channel', message })
     } catch (e) {
+      console.error(e)
       reject(`Error: CSS term either too vague or I couldn't find match by that name, use the \`css\` command to search for exact names`)
     }
   })
