@@ -211,6 +211,10 @@ export async function getQuoteById(id) {
 
   const quote = await Quotes.findOneById(+id)
 
+  if (!quote) {
+    throw 'No quote with that id.'
+  }
+
   return urlify(`<${quote.user}>\n${quote.message}`)
 }
 
