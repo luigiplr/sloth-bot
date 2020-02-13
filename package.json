@@ -39,6 +39,7 @@
     "did-you-mean": "0.0.1",
     "eightball": "1.0.1",
     "external-ip": "2.1.1",
+    "figlet": "^1.2.4",
     "giphy": "0.0.4",
     "lodash": "4.17.15",
     "mc-ping-updated": "0.1.0",
