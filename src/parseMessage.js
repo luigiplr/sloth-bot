@@ -125,7 +125,15 @@ export function parse(user, channel, text, ts) {
 
     if ((plugin && call.disabled) || !plugin) return reject()
 
-    if (_.get(config, ['disabledCommandsPerChannel', channel.id], []).includes(call.command)) {
+    const allChannelConfig =  _.get(config, ['commandChannelConfig', '__ALL__'], { whitelist: [], blacklist: [] })
+    const channelConfig = _.get(config, ['commandChannelConfig', channel.id], { whitelist: [], blacklist: [] })
+    const cmdName = call.command
+
+    if (
+      !channelConfig.whitelist.includes('*') && (
+      ((allChannelConfig.blacklist.includes(cmdName) || allChannelConfig.blacklist.includes('*')) && !channelConfig.whitelist.includes(cmdName)) ||
+      (channelConfig.whitelist.length > 0 && !channelConfig.whitelist.includes(cmdName)))
+    ) {
       return resolve({ type: 'channel', message: 'This command cannot be used in this channel.' })
     }
 
