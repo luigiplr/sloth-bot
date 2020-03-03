@@ -132,6 +132,7 @@ export function parse(user, channel, text, ts) {
     if (
       !channelConfig.whitelist.includes('*') && (
       ((allChannelConfig.blacklist.includes(cmdName) || allChannelConfig.blacklist.includes('*')) && !channelConfig.whitelist.includes(cmdName)) ||
+      ((channelConfig.blacklist.includes(cmdName) || channelConfig.blacklist.includes('*')) && !channelConfig.whitelist.includes(cmdName)) ||
       (channelConfig.whitelist.length > 0 && !channelConfig.whitelist.includes(cmdName)))
     ) {
       return resolve({ type: 'channel', message: 'This command cannot be used in this channel.' })
